@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/roles/parents/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -12,7 +13,18 @@ class ParentAuthController extends GetxController {
   final birthday = ''.obs;
   final username = ''.obs;
   final pin = ''.obs;
+  final confirmPin = "".obs;
   final selectedGender = ''.obs; // "Male" or "Female"
+  
+
+    // Reactive state for tracking if fields are filled
+    final isButtonEnabled = false.obs;
+
+    // Update button state whenever a field changes
+    void checkFields() {
+      isButtonEnabled.value =  email.value.isNotEmpty &&
+          pin.value.isNotEmpty;
+    }
 
   void setBirthday(DateTime date) {
     birthday.value = "${date.year}-${date.month}-${date.day}";
@@ -23,7 +35,7 @@ class ParentAuthController extends GetxController {
   }
 
   Future<void> signUpWithEmail() async {
-    if (username.isEmpty || pin.isEmpty || birthday.isEmpty || email.isEmpty) {
+    if (username.isEmpty || pin.isEmpty || birthday.isEmpty || email.isEmpty && pin != confirmPin) {
       Get.snackbar(
         "Error",
         "All fields (except gender) are required!",
@@ -218,7 +230,7 @@ class ParentAuthController extends GetxController {
           await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        Get.off(() => ParentLoginScreen());
+        Get.off(() => ParentsHomeScreen());
       }
     } catch (e) {
       Get.log('log: Error during Google Sign-In: $e');

@@ -10,16 +10,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;
 
-  const CustomAppBar({
-    Key? key,
-    required this.title,
+  CustomAppBar({
+    super.key,
+    required this.title, // Enforce required     title
     this.backgroundColor = Colors.transparent,
-    this.titleColor = Colors.black,
-    this.iconColor = Colors.black,
+    Color? titleColor, // Nullable, initialized in constructor body
+    Color? iconColor, // Nullable, initialized in constructor body
     this.elevation = 0.0,
     this.onBackPressed,
     this.actions,
-  }) : super(key: key);
+  })  : titleColor = titleColor ?? Colors.blue.shade900,
+        iconColor = iconColor ?? Colors.blue.shade900;
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +36,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: TextStyle(
           color: titleColor,
-          fontSize: 18,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
-      centerTitle: false,
+      centerTitle: false, // Adjust center alignment based on your design
       actions: actions, // Add custom actions if provided
     );
   }

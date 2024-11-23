@@ -13,7 +13,7 @@ class AddChildScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // ),
-      appBar: const CustomAppBar(title: "Add your child"),
+      appBar:   CustomAppBar(title: "Add your child"),
       body: Container(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
