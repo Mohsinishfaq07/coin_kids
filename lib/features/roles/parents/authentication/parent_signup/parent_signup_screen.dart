@@ -25,7 +25,7 @@ class SignupParentScreen extends StatelessWidget {
               CustomTextField(
                 hintText: 'Full Name',
                 onChanged: (value) {
-                  _controller.username.value = value;
+                  _controller.username.value =  value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
                 titleText: 'Full Name',
@@ -36,7 +36,7 @@ class SignupParentScreen extends StatelessWidget {
               CustomTextField(
                 hintText: 'Email',
                 onChanged: (value) {
-                  _controller.email.value = value;
+                  _controller.email.value =  value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
                 titleText: 'Email',
@@ -47,7 +47,7 @@ class SignupParentScreen extends StatelessWidget {
               CustomTextField(
                 hintText: 'Password',
                 onChanged: (value) {
-                  _controller.pin.value = value;
+                  _controller.pin.value =  value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
                 titleText: 'Password',
@@ -56,7 +56,7 @@ class SignupParentScreen extends StatelessWidget {
               CustomTextField(
                 hintText: 'Confirm Password',
                 onChanged: (value) {
-                  _controller.confirmPin.value = value;
+                  _controller.confirmPin.value =  value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
                 titleText: 'Confirm Password',

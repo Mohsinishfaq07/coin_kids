@@ -1,4 +1,5 @@
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
+import 'package:coin_kids/features/roles/parents/authentication/forgot_password.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,8 +16,6 @@ class ParentLoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
- 
-
     return Scaffold(
       appBar: CustomAppBar(title: "Welcome Back!"),
       body: Padding(
@@ -31,7 +30,7 @@ class ParentLoginScreen extends StatelessWidget {
                 hintText: 'Email',
                 titleText: 'Email',
                 onChanged: (value) {
-                  _controller.email.value = value;
+                  _controller.email.value = value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
               ),
@@ -41,7 +40,7 @@ class ParentLoginScreen extends StatelessWidget {
               CustomTextField(
                 hintText: 'Enter 6 digit PIN',
                 onChanged: (value) {
-                  _controller.pin.value = value;
+                  _controller.pin.value = value.trim();
                   _controller.checkFields(); // Check fields on change
                 },
                 titleText: 'Password',
@@ -51,9 +50,14 @@ class ParentLoginScreen extends StatelessWidget {
               // Forgot Credentials
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  "Forgot Credentials?",
-                  style: TextStyle(color: Colors.blue.shade900),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(() => ForgotPasswordScreen());
+                  },
+                  child: Text(
+                    "Forgot Credentials?",
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
                 ),
               ),
               const SizedBox(height: 40),

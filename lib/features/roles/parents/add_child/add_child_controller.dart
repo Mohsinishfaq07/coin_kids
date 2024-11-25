@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Define the AddChildController
 class AddChildController extends GetxController {
@@ -11,6 +16,7 @@ class AddChildController extends GetxController {
   var selectedGrade = ''.obs;
   var selectedAvatar = 0.obs;
   var customAvatarPath = ''.obs; // Path for custom uploaded avatar
+   final selectedImagePath = ''.obs;
   var parentId = ''.obs; // Observable for parentId
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -54,18 +60,42 @@ class AddChildController extends GetxController {
 
   // Function to open camera or gallery to upload photo
   Future<void> pickCustomAvatar() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery, // Change to ImageSource.camera for camera
-      imageQuality: 80,
-    );
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
 
-    if (pickedFile != null) {
-      customAvatarPath.value = pickedFile.path;
-      selectedAvatar.value = -1; // To differentiate custom avatar
+      if (pickedFile != null) {
+        final String localPath = await saveImageLocally(File(pickedFile.path));
+        customAvatarPath.value = localPath;
+
+        // Save the image path in SQLite
+        await DatabaseHelper.instance.insertImage(localPath);
+
+        Get.snackbar("Success", "Image saved locally.");
+      } else {
+        Get.snackbar("No Image Selected", "Please select an image.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to pick and save image: $e");
     }
   }
 
-  // Function to update selected grade
+     // Save the image locally
+  Future<String> saveImageLocally(File image) async {
+    try {
+      final Directory appDir = await getApplicationDocumentsDirectory();
+      final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final File localImage = await image.copy('${appDir.path}/$fileName.jpg');
+      return localImage.path; // Return the local path
+    } catch (e) {
+      Get.snackbar("Error", "Failed to save image locally: $e");
+      rethrow;
+    }
+  }
+
+    
   void setGrade(String grade) {
     selectedGrade.value = grade;
   }
@@ -81,15 +111,13 @@ class AddChildController extends GetxController {
     Get.log(
       'Adding new child with parent ID: ${parentId.value}',
     );
-    if (childName.isEmpty || selectedGrade.isEmpty) {
+    if (childName.value.isEmpty || childAge.isEmpty) {
       Get.snackbar("Error", "All fields are required");
       return;
     }
 
     try {
-      String avatarUrl = customAvatarPath.value.isNotEmpty
-          ? customAvatarPath.value // Use custom avatar if uploaded
-          : avatars[selectedAvatar.value]; // Use selected avatar
+       final String avatarUrl = customAvatarPath.value; // Use selected avatar
 
       // Reference to the parent document
       DocumentReference parentRef =
@@ -122,6 +150,7 @@ class AddChildController extends GetxController {
           'kids': FieldValue.arrayUnion([newChildRef])
         });
       });
+      Get.to(() => ParentsHomeScreen());
 
       Get.snackbar("Success", "Child added and parent updated successfully");
     } catch (e) {
