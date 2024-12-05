@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/features/roles/parents/drawer/drawer.dart';
+import 'package:coin_kids/features/roles/parents/kid_management/kid_profile_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -227,28 +228,35 @@ class ParentsHomeScreen extends StatelessWidget {
                           return Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: kid['avatar'] != null &&
-                                          kid['avatar'].toString().isNotEmpty
-                                      ? (kid['avatar'].startsWith('/')
-                                          ? FileImage(File(kid[
-                                              'avatar'])) // Load local image
-                                          : NetworkImage(kid[
-                                                  'avatar']) // Load network image
-                                              as ImageProvider) // Determine if it's a local or network image
-                                      : const AssetImage("assets/avatar1.png"),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  kid['name'] ?? 'No Name',
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.log('hello world');
+                                Get.to(() => const KidProfileManagementPage());
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: kid['avatar'] != null &&
+                                            kid['avatar'].toString().isNotEmpty
+                                        ? (kid['avatar'].startsWith('/')
+                                            ? FileImage(File(kid[
+                                                'avatar'])) // Load local image
+                                            : NetworkImage(kid[
+                                                    'avatar']) // Load network image
+                                                as ImageProvider) // Determine if it's a local or network image
+                                        : const AssetImage(
+                                            "assets/avatar1.png"),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    kid['name'] ?? 'No Name',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         }
