@@ -19,8 +19,14 @@ class HomeController extends GetxController {
           .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .snapshots()
           .listen((QuerySnapshot snapshot) {
-        kidsList.value = snapshot.docs.map((doc) => doc.data()).toList();
-        isLoading.value = false; //
+        kidsList.value = snapshot.docs.map((doc) {
+          var docData = doc.data() as Map<String, dynamic>?;
+          if (docData != null) {
+            docData['id'] = doc.id;
+          }
+          return docData ?? {};
+        }).toList();
+        isLoading.value = false;
       });
     } catch (e) {
       Get.snackbar("Error", "Failed to fetch kids: $e");

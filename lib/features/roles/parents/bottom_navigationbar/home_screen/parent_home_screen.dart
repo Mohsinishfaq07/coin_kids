@@ -230,8 +230,10 @@ class ParentsHomeScreen extends StatelessWidget {
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
                               onTap: () {
-                                Get.log('hello world');
-                                Get.to(() => const KidProfileManagementPage());
+                                Get.log('kid id: ${kid['id']}');
+                                Get.to(() => KidProfileManagementPage(
+                                      childId: '${kid['id']}',
+                                    ));
                               },
                               child: Column(
                                 children: [
