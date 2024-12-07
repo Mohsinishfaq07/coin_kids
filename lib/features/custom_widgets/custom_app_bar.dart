@@ -9,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double elevation;
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;
+  final bool showBackButton;
 
   CustomAppBar({
     super.key,
@@ -19,6 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation = 0.0,
     this.onBackPressed,
     this.actions,
+    this.showBackButton = false,
   })  : titleColor = titleColor ?? Colors.blue.shade900,
         iconColor = iconColor ?? Colors.blue.shade900;
 
@@ -27,11 +29,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: elevation,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: iconColor),
-        onPressed:
-            onBackPressed ?? () => Get.back(), // Default action is Get.back
-      ),
+      leading: showBackButton
+          ? IconButton(
+              icon: Icon(Icons.arrow_back, color: iconColor),
+              onPressed: onBackPressed ??
+                  () => Get.back(), // Default action is Get.back
+            )
+          : null,
       title: Text(
         title,
         style: TextStyle(
@@ -40,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      centerTitle: false, // Adjust center alignment based on your design
+      centerTitle: true, // Adjust center alignment based on your design
       actions: actions, // Add custom actions if provided
     );
   }

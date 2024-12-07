@@ -13,6 +13,7 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: CustomAppBar(
+          showBackButton: false,
           title: 'Messages',
         ),
         body: Padding(
@@ -72,7 +73,7 @@ class MessagesScreen extends StatelessWidget {
                         ],
                       ),
                       Padding(
-                        padding:   EdgeInsets.symmetric(vertical: 12.0),
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +88,7 @@ class MessagesScreen extends StatelessWidget {
                                 width: 170,
                                 text: "Approve",
                                 onPressed: () {},
-                               textColor: Colors.blue),
+                                textColor: Colors.blue),
                           ],
                         ),
                       ),

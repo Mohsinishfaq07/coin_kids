@@ -214,7 +214,7 @@ class ParentsHomeScreen extends StatelessWidget {
                                     "Add Child",
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey,
+                                      color: Colors.green,
                                     ),
                                   ),
                                 ],
@@ -289,9 +289,9 @@ class ParentsHomeScreen extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 60.0),
                               child: RichText(
                                 textAlign: TextAlign.center,
-                                text: TextSpan(
+                                text: const TextSpan(
                                   text: 'Send ',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     color: Colors
                                         .black, // Default color for non-bold text
@@ -299,7 +299,7 @@ class ParentsHomeScreen extends StatelessWidget {
                                   children: [
                                     TextSpan(
                                       text: 'Send ',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors
                                             .purple, // Purple color for "Send"
@@ -307,14 +307,14 @@ class ParentsHomeScreen extends StatelessWidget {
                                     ),
                                     TextSpan(
                                       text: 'or ',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors
                                             .black, // Default color for "or"
                                       ),
                                     ),
                                     TextSpan(
                                       text: 'remove ',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors
                                             .purple, // Purple color for "remove"
@@ -322,7 +322,7 @@ class ParentsHomeScreen extends StatelessWidget {
                                     ),
                                     TextSpan(
                                       text: 'money from your child\'s account',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors
                                             .black, // Default color for the remaining text
                                       ),
