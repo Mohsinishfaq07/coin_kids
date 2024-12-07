@@ -6,6 +6,7 @@ class CustomButton extends StatelessWidget {
   final Color color;
   final double width;
   final double height;
+  final Color? textColor;
 
   const CustomButton({
     required this.text,
@@ -13,7 +14,9 @@ class CustomButton extends StatelessWidget {
     this.color = Colors.purple, // Default color
     this.width = 320,
     this.height = 50,
+    this.textColor = Colors.white, // Default text color
     Key? key,
+    
   }) : super(key: key);
 
   @override

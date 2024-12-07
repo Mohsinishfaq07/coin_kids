@@ -198,7 +198,7 @@ class EditProfile extends StatelessWidget {
                                   grade: editProfileController
                                       .selectedGrade.value);
                             }
-                          },
+                          }, textColor: Colors.black,
                         );
                 }),
               ),
