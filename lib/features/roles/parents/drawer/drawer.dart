@@ -1,4 +1,7 @@
+import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/features/roles/parents/drawer/update_profile.dart';
+import 'package:coin_kids/features/roles/role_selection_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -151,6 +154,15 @@ class ProfileDrawer extends StatelessWidget {
                     _buildProfileRowWithArrow("Feedback", Icons.abc_outlined),
                     _buildProfileRowWithArrow(
                         "Privacy Policy", Icons.abc_outlined),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut().then((val) {
+                          DatabaseHelper.instance.clearCredentials();
+                          Get.offAll(() => const RoleSelectionScreen());
+                        });
+                      },
+                      child: const Text('Logout'),
+                    )
                   ])),
 
               const SizedBox(height: 30),

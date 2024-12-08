@@ -96,9 +96,10 @@ class ParentLoginScreen extends StatelessWidget {
                           Get.off(() => BottomNavigationBarScreen());
                           // Form is valid
                         } else {
-                          print("Form has errors");
+                          Get.log("Form has errors");
                         }
                       },
+                      isLoading: _controller.isLoading.value,
                     )),
                 const SizedBox(height: 40),
 

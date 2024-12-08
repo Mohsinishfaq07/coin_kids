@@ -52,7 +52,12 @@ class KidProfileManagementPage extends StatelessWidget {
                             title: 'Quick\nTransfer',
                             assetPath:
                                 'assets/kidManageIcons/quickTransfer.svg',
-                            onTap: () {}),
+                            onTap: () {
+                              Get.to(() => QuickTransferPage(
+                                    docData: docData,
+                                    childId: childId,
+                                  ));
+                            }),
                         kidMainButtons(
                             title: 'Schedule\nAllowance',
                             assetPath:
@@ -297,10 +302,10 @@ emptyTypeData({required String assetPath, required String line}) {
 // jar data
 
 Widget jarData({required String childId}) {
-  return StreamBuilder<QuerySnapshot>(
+  return StreamBuilder<DocumentSnapshot>(
     stream: FirebaseFirestore.instance
-        .collection('Jars') // Access the 'Jars' collection
-        .where('childId', isEqualTo: childId) // Filter docs by childId
+        .collection('kids') // Access the 'kids' collection
+        .doc(childId) // Fetch document where ID matches childId
         .snapshots(),
     builder: (context, snapshot) {
       // Loading State
@@ -311,12 +316,12 @@ Widget jarData({required String childId}) {
       // Error State
       if (snapshot.hasError) {
         return const Center(
-          child: Text('Failed to load jars data!'),
+          child: Text('Failed to load jar data!'),
         );
       }
 
-      // Check if there are no documents
-      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      // Check if document does not exist or has no data
+      if (!snapshot.hasData || !snapshot.data!.exists) {
         return Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -329,70 +334,71 @@ Widget jarData({required String childId}) {
                   width: 100,
                 ),
               ),
-              const SizedBox(
-                height: 20,
+              const SizedBox(height: 20),
+              const Text(
+                'Your child has not set any jars yet',
+                style: TextStyle(fontSize: 12),
+                textAlign: TextAlign.center,
               ),
-              const Text('Your child has not set any jars yet',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                  textAlign: TextAlign.center),
             ],
           ),
         );
       }
 
-      // Extract the first jar document (adjust logic as per your needs)
-      var jarData = snapshot.data!.docs[0].data() as Map<String, dynamic>;
+      // Extract data from the document
+      var jarData = snapshot.data!.data() as Map<String, dynamic>;
 
-      // Default values in case data is missing
+      // Fetch savings and spending amounts, fallback to '0' if missing
       final savingsAmount = jarData['savings']?['amount']?.toString() ?? '0';
       final spendingAmount = jarData['spendings']?['amount']?.toString() ?? '0';
 
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // Savings Column
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: SvgPicture.asset(
-                  'assets/kidManageIcons/savingJar.svg',
-                  height: 100,
-                  width: 100,
+      // Return the UI with savings and spendings displayed
+      return Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Savings Column
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: SvgPicture.asset(
+                    'assets/kidManageIcons/savingJar.svg',
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Savings: \$ $savingsAmount',
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-          // Spendings Column
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: SvgPicture.asset(
-                  'assets/kidManageIcons/spendingJar.svg',
-                  height: 100,
-                  width: 100,
+                const SizedBox(height: 20),
+                Text(
+                  'Savings: \$ $savingsAmount',
+                  style: const TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Spendings: \$ $spendingAmount',
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            // Spendings Column
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: SvgPicture.asset(
+                    'assets/kidManageIcons/spendingJar.svg',
+                    height: 100,
+                    width: 100,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Spendings: \$ $spendingAmount',
+                  style: const TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ],
+        ),
       );
     },
   );
