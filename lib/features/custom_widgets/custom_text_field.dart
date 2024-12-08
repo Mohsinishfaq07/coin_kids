@@ -12,6 +12,7 @@ class CustomTextField extends StatelessWidget {
   final bool
       obscureText; // Whether the text should be obscured (e.g., password)
   final TextInputType keyboardType; // Input type for the keyboard
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     required this.titleText, // Title for the field is now required
@@ -24,8 +25,9 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
-    Key? key,
-  }) : super(key: key);
+    this.validator,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +44,12 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8), // Spacing between title and text field
-        TextField(
+        TextFormField(
           controller: controller,
           onChanged: onChanged,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          validator: validator,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white38, // Background color for the text field

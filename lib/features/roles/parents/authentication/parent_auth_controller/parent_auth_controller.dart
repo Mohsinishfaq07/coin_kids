@@ -200,7 +200,7 @@ class ParentAuthController extends GetxController {
       await saveCredentialsLocally(email.value, pin.value);
       isLoading.value = false; // Stop loading
       // Navigate to Home Screen
-      Get.off(() => BottomNavigationBarScreen());
+      
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Get.snackbar("Error", "No user found for that email.",

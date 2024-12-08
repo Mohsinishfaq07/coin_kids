@@ -1,9 +1,10 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({Key? key}) : super(key: key);
+  const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class OptionCard extends StatelessWidget {
   final String description;
   final String description1;
   final VoidCallback onTap;
+  final Color? imageColor;
 
   const OptionCard({
     Key? key,
@@ -65,6 +67,7 @@ class OptionCard extends StatelessWidget {
     required this.description,
     required this.description1,
     required this.onTap,
+    this.imageColor,
   }) : super(key: key);
 
   @override
@@ -93,6 +96,7 @@ class OptionCard extends StatelessWidget {
               child: Image.asset(
                 imagePath,
                 fit: BoxFit.contain,
+                color: imageColor,
               ),
             ),
             const SizedBox(width: 20),

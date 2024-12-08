@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/roles/parents/add_child/add_child_screen.dart';
+import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -59,8 +60,8 @@ class HomeController extends GetxController {
             await _firestore.collection('parents').doc(email).get();
 
         if (parentDoc.exists) {
-          parentName.value = parentDoc.data()?['name'] ??
-              'Guest'; // Default to "Guest" if name is not found
+          final parent = ParentModelClass.fromFirestore(parentDoc);
+          parentName.value = parent.name ?? 'Guest';
         } else {
           parentName.value = 'Guest';
         }

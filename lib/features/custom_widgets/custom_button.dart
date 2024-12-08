@@ -7,6 +7,7 @@ class CustomButton extends StatelessWidget {
   final double width;
   final double height;
   final Color? textColor;
+  final bool isLoading;
 
   const CustomButton({
     required this.text,
@@ -15,8 +16,8 @@ class CustomButton extends StatelessWidget {
     this.width = 320,
     this.height = 50,
     this.textColor = Colors.white, // Default text color
+    this.isLoading = false,
     Key? key,
-    
   }) : super(key: key);
 
   @override
@@ -34,10 +35,14 @@ class CustomButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(30), // Rounded corners
             ),
           ),
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
-          ),
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                )
+              : Text(
+                  text,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
         ),
       ),
     );

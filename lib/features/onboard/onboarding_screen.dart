@@ -75,7 +75,10 @@ class OnboardingScreen extends StatelessWidget {
                                   curve: Curves.ease,
                                 );
                               },
-                              child: const Text("Skip"),
+                              child: const Text(
+                                "Skip",
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
@@ -139,7 +142,7 @@ class OnboardingPage extends StatelessWidget {
           const SizedBox(height: 40),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,

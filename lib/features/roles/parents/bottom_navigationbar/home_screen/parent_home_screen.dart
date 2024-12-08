@@ -7,33 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ParentsHomeScreen extends StatelessWidget {
-  final HomeController controller = Get.put(HomeController());
+  final HomeController controller = Get.find<HomeController>();
 
   ParentsHomeScreen({super.key});
-  void navigateToProfileScreen(BuildContext context) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration:
-            const Duration(milliseconds: 300), // Animation duration
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ProfileDrawer(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(-1.0, 0.0); // Start from left
-          const end = Offset.zero; // End at the current position
-          const curve = Curves.easeInOut;
-
-          final tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          final offsetAnimation = animation.drive(tween);
-
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +33,13 @@ class ParentsHomeScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  navigateToProfileScreen(context);
+                  Get.to(
+                    const ProfileDrawer(),
+                    transition:
+                        Transition.leftToRightWithFade, // Custom transition
+                    duration:
+                        const Duration(milliseconds: 300), // Animation duration
+                  );
                 },
                 child: Container(
                   width: 45, // Adjust the size of the border

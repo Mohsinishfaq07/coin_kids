@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;
   final bool showBackButton;
+  final bool centerTitle;
 
   CustomAppBar({
     super.key,
@@ -21,6 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.actions,
     this.showBackButton = false,
+    this.centerTitle = true,
   })  : titleColor = titleColor ?? Colors.blue.shade900,
         iconColor = iconColor ?? Colors.blue.shade900;
 
@@ -44,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      centerTitle: true, // Adjust center alignment based on your design
+      centerTitle: centerTitle, // Adjust center alignment based on your design
       actions: actions, // Add custom actions if provided
     );
   }

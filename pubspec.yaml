@@ -76,6 +76,8 @@ flutter:
   assets:
     - assets/
     - assets/kidManageIcons/
+    - assets/role_selection_icons/
+
 
   #   - assets/images/icon.png
    

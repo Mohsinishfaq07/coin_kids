@@ -1,3 +1,4 @@
+import 'package:coin_kids/bindings/controller_bindings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       debugShowCheckedModeBanner: false,
+      initialBinding: ControllerBindings(),
       home: SplashScreen(),
     );
   }
