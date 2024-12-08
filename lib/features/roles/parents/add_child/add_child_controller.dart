@@ -16,7 +16,7 @@ class AddChildController extends GetxController {
   var selectedGrade = ''.obs;
   var selectedAvatar = 0.obs;
   var customAvatarPath = ''.obs; // Path for custom uploaded avatar
-   final selectedImagePath = ''.obs;
+  final selectedImagePath = ''.obs;
   var parentId = ''.obs; // Observable for parentId
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -82,7 +82,7 @@ class AddChildController extends GetxController {
     }
   }
 
-     // Save the image locally
+  // Save the image locally
   Future<String> saveImageLocally(File image) async {
     try {
       final Directory appDir = await getApplicationDocumentsDirectory();
@@ -95,7 +95,6 @@ class AddChildController extends GetxController {
     }
   }
 
-    
   void setGrade(String grade) {
     selectedGrade.value = grade;
   }
@@ -117,7 +116,7 @@ class AddChildController extends GetxController {
     }
 
     try {
-       final String avatarUrl = customAvatarPath.value; // Use selected avatar
+      final String avatarUrl = customAvatarPath.value; // Use selected avatar
 
       // Reference to the parent document
       DocumentReference parentRef =
@@ -127,9 +126,10 @@ class AddChildController extends GetxController {
       final Map<String, dynamic> childData = {
         'name': childName.value,
         'parentId': FirebaseAuth.instance.currentUser!.uid,
-        'grade': selectedGrade.value,
+        'grade': 'Grade 1',
         'parent': parentRef,
         'avatar': avatarUrl,
+        'age': childAge.value,
         'savings': {
           'amount': '15', // Default savings value
           'color': '#227799',

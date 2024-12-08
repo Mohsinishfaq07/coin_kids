@@ -17,8 +17,7 @@ class ParentAuthController extends GetxController {
   final confirmPin = "".obs;
   final selectedGender = ''.obs; // "Male" or "Female"
   final isLoading = false.obs; // New reactive loading state
-    String? _selectedDate;
-  
+  String? _selectedDate;
 
   // Reactive state for tracking if fields are filled
   final isButtonEnabled = false.obs;
@@ -200,8 +199,8 @@ class ParentAuthController extends GetxController {
       await saveCredentialsLocally(email.value, pin.value);
       isLoading.value = false; // Stop loading
       // Navigate to Home Screen
-      
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       if (e.code == 'user-not-found') {
         Get.snackbar("Error", "No user found for that email.",
             snackPosition: SnackPosition.BOTTOM);
@@ -213,6 +212,7 @@ class ParentAuthController extends GetxController {
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         "Error",
         "Failed to login. Please try again later.",
@@ -303,49 +303,44 @@ class ParentAuthController extends GetxController {
     Get.off(() => ParentLoginScreen()); // Navigate back to login screen
   }
 
-Future<void> updateProfile() async {
-  try {
-    isLoading.value = true;
+  Future<void> updateProfile() async {
+    try {
+      isLoading.value = true;
 
-    // Update Firebase Firestore
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('parents')
-          .doc(user.email)
-          .update({
-        'name': username.value,
-        'dob': birthday.value,
-        'gender': selectedGender.value.isNotEmpty
-            ? selectedGender.value
-            : 'Not specified',
-      });
+      // Update Firebase Firestore
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('parents')
+            .doc(user.email)
+            .update({
+          'name': username.value,
+          'dob': birthday.value,
+          'gender': selectedGender.value.isNotEmpty
+              ? selectedGender.value
+              : 'Not specified',
+        });
 
-      Get.snackbar(
-        "Success",
-        "Profile updated successfully!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } else {
+        Get.snackbar(
+          "Success",
+          "Profile updated successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          "User not logged in. Please log in again.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
       Get.snackbar(
         "Error",
-        "User not logged in. Please log in again.",
+        "Failed to update profile: $e",
         snackPosition: SnackPosition.BOTTOM,
       );
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    Get.snackbar(
-      "Error",
-      "Failed to update profile: $e",
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  } finally {
-    isLoading.value = false;
   }
-}
-
-
-
-
-
 }

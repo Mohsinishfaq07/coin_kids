@@ -73,7 +73,38 @@ class EditProfile extends StatelessWidget {
                           child: Obx(() {
                             return customDropdown(
                               context,
-                              options: ['1', '2', '3', '4'],
+                              options: [
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                '11',
+                                '12',
+                                '13',
+                                '14',
+                                '15',
+                                '16',
+                                '17',
+                                '18',
+                                '19',
+                                '20',
+                                '21',
+                                '22',
+                                '23',
+                                '24',
+                                '25',
+                                '26',
+                                '27',
+                                '28',
+                                '29',
+                                '30'
+                              ],
                               onChanged: (value) {
                                 Get.log('Selected: $value');
                                 editProfileController.selectedAge.value =
@@ -198,7 +229,8 @@ class EditProfile extends StatelessWidget {
                                   grade: editProfileController
                                       .selectedGrade.value);
                             }
-                          }, textColor: Colors.black,
+                          },
+                          textColor: Colors.black,
                         );
                 }),
               ),
