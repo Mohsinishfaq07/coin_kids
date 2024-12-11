@@ -17,8 +17,8 @@ class CustomButton extends StatelessWidget {
     this.height = 50,
     this.textColor = Colors.white, // Default text color
     this.isLoading = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,7 @@ class CustomButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
+            elevation: 5,
             backgroundColor: color,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30), // Rounded corners
@@ -41,7 +42,7 @@ class CustomButton extends StatelessWidget {
                 )
               : Text(
                   text,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
                 ),
         ),
       ),

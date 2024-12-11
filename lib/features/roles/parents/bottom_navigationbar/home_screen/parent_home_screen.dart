@@ -4,17 +4,22 @@ import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_scree
 import 'package:coin_kids/features/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/features/roles/parents/kid_management/kid_profile_management_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ParentsHomeScreen extends StatelessWidget {
-  final HomeController controller = Get.find<HomeController>();
-
   ParentsHomeScreen({super.key});
+  final HomeController controller = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor:
+                Colors.transparent, // Make the status bar transparent
+            statusBarIconBrightness: Brightness.dark,
+          ),
           elevation: 0,
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
@@ -47,11 +52,12 @@ class ParentsHomeScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.blue, // Border color
-                      // Border width
-                    ),
+                        color: Colors.purple, // Border color
+                        width: 2
+                        // Border width
+                        ),
                   ),
-                  child: const Icon(Icons.person, color: Colors.white),
+                  child: Icon(Icons.person, color: Colors.blue[900]),
                 ),
               ),
               const SizedBox(width: 20),
@@ -61,7 +67,7 @@ class ParentsHomeScreen extends StatelessWidget {
                   Obx(() => Text(
                         controller.parentName.value,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.blue.shade900,
                         ),
@@ -156,9 +162,15 @@ class ParentsHomeScreen extends StatelessWidget {
                       height: 50,
                     ),
                   ),
-                  const Align(
+                  Align(
                       alignment: Alignment.centerLeft,
-                      child: Text("Family Profile")),
+                      child: Text(
+                        "Family Profile",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade900,
+                            fontSize: 12),
+                      )),
                   SizedBox(
                     height: 150, // Set a fixed height for the horizontal list
                     child: ListView.builder(
@@ -179,7 +191,8 @@ class ParentsHomeScreen extends StatelessWidget {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.purple),
+                                      border: Border.all(
+                                          color: Colors.purple, width: 2),
                                       borderRadius: BorderRadius.circular(40),
                                     ),
                                     child: const Padding(
@@ -192,12 +205,12 @@ class ParentsHomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 10),
-                                  const Text(
+                                  Text(
                                     "Add Child",
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.green,
-                                    ),
+                                        fontSize: 12,
+                                        color: Colors.blue[900],
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -235,8 +248,10 @@ class ParentsHomeScreen extends StatelessWidget {
                                   const SizedBox(height: 10),
                                   Text(
                                     kid['name'] ?? 'No Name',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
+                                      color: Colors.blue[900],
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
@@ -248,7 +263,7 @@ class ParentsHomeScreen extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
                     child: Center(
                       child: Container(
                         height: 200,
@@ -262,22 +277,16 @@ class ParentsHomeScreen extends StatelessWidget {
                           children: [
                             CustomButton(
                               width: 180,
-                              text: 'Quick transfer',
+                              text: 'Quick Transfer',
                               onPressed: controller.navigateToAddChild,
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 60.0),
                               child: RichText(
                                 textAlign: TextAlign.center,
                                 text: const TextSpan(
-                                  text: 'Send ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors
-                                        .black, // Default color for non-bold text
-                                  ),
                                   children: [
                                     TextSpan(
                                       text: 'Send ',

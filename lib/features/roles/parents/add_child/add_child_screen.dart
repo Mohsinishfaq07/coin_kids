@@ -169,6 +169,7 @@ class AddChildScreen extends StatelessWidget {
               CustomTextField(
                 titleText: "Age",
                 hintText: "Enter your child age",
+                keyboardType: TextInputType.number,
                 onChanged: (value) => _controller.childAge.value = value.trim(),
               ),
               const SizedBox(height: 40),
@@ -192,15 +193,19 @@ class AddChildScreen extends StatelessWidget {
                           await _controller.pickCustomAvatar();
                         },
                         child: Obx(() => CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.grey[300],
+                              radius: 32,
+                              backgroundColor: Colors.purple,
                               backgroundImage: _controller
                                       .customAvatarPath.value.isEmpty
                                   ? null
                                   : FileImage(
                                       File(_controller.customAvatarPath.value)),
                               child: _controller.customAvatarPath.value.isEmpty
-                                  ? const Icon(Icons.camera_alt, size: 30)
+                                  ? const Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: 30,
+                                      color: Colors.white,
+                                    )
                                   : null,
                             )),
                       ), // Predefined avatars

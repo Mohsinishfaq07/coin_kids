@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title, // Enforce required     title
     this.backgroundColor = Colors.transparent,
     Color? titleColor, // Nullable, initialized in constructor body
-    Color? iconColor, // Nullable, initialized in constructor body
+    Color? iconColor = Colors.blue, // Nullable, initialized in constructor body
     this.elevation = 0.0,
     this.onBackPressed,
     this.actions,
