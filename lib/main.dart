@@ -1,4 +1,5 @@
 import 'package:coin_kids/bindings/controller_bindings.dart';
+import 'package:coin_kids/features/roles/kid/kid_jar_section/add_in_spending/add_in_spending.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,7 @@ void main() async {
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // Make the status bar transparent
+      statusBarColor: Colors.transparent, //Make the status bar transparent
       statusBarIconBrightness:
           Brightness.dark, // Dark icons for light background
     ),
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: ControllerBindings(),
-      home: SplashScreen(),
+      home: AddInSpending(),
     );
   }
 }

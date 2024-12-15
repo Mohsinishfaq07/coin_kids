@@ -49,6 +49,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   flutter_svg:
   cached_network_image: ^3.4.1
+  google_fonts: 6.0.0
 
 
 dev_dependencies:
@@ -80,6 +81,7 @@ flutter:
     - assets/role_selection_icons/
     - assets/background_image/
     - assets/on_board/
+    - assets/kid_section_icons/
 
 
   #   - assets/images/icon.png

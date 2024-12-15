@@ -1,4 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/features/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,7 @@ class RoleSelectionScreen extends StatelessWidget {
                 onTap: () {
                   // Navigate to Child Screen (e.g., ChildLoginScreen)
                   //Get.to(() => ChildLoginScreen());
+                  Get.to(() => KidBottomNavScreen());
                 },
                 description1: 'Set up saving goals',
               ),
