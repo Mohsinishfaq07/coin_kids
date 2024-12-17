@@ -10,6 +10,8 @@ class ProfileDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final email = FirebaseAuth.instance.currentUser?.email;
+
     return Scaffold(
       backgroundColor: Colors.blue.shade50, // Light blue background
       body: SingleChildScrollView(

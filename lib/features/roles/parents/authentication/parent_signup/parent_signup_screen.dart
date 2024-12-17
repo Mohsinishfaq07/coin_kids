@@ -2,6 +2,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../parent_auth_controller/parent_auth_controller.dart';
@@ -114,24 +115,22 @@ class SignupParentScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Already have an account,"),
+                     Text("Already have an account,",style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => ParentLoginScreen());
                       },
-                      child: const Text(
-                        " LOGIN",
-                        style: TextStyle(
-                            color: Colors.purple, fontWeight: FontWeight.bold),
-                      ),
+                      child:  Text(
+                        " Login",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor,fontWeight: FontWeight.w800))
                     ),
                   ],
                 ),
-                const Padding(
+                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 25.0),
                   child: Text(
                     "OR",
-                    style: TextStyle(color: Colors.purple, fontSize: 14),
+                    style: Theme.of(context).textTheme.bodySmall
                   ),
                 ),
 
@@ -154,9 +153,9 @@ class SignupParentScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0, left: 10),
                         child: Image.asset("assets/googlelogo.png", height: 24),
                       ),
-                      const Text(
+                       Text(
                         "Sign in with Google",
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
                       ),
                     ],
                   ),
@@ -182,9 +181,9 @@ class SignupParentScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0),
                         child: Image.asset("assets/apple_logo.png", height: 24),
                       ),
-                      const Text(
+                       Text(
                         "Sign in with Apple",
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
                       ),
                     ],
                   ),

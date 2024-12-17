@@ -2,6 +2,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/roles/parents/authentication/forgot_password.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
@@ -78,7 +79,7 @@ class ParentLoginScreen extends StatelessWidget {
                     },
                     child: Text(
                       "Forgot Credentials?",
-                      style: TextStyle(color: Colors.blue.shade900),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),
                     ),
                   ),
                 ),
@@ -87,7 +88,7 @@ class ParentLoginScreen extends StatelessWidget {
                 // Login Button
                 Obx(() => CustomButton(
                       color: _controller.isButtonEnabled.value
-                          ? Colors.purple
+                          ? CustomThemeData().primaryButtonColor
                           : Colors.grey,
                       text: 'Login',
                       onPressed: () async {
@@ -107,26 +108,23 @@ class ParentLoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don’t have an account?"),
+                     Text("Don’t have an account?",style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => SignupParentScreen());
                       },
-                      child: const Text(
-                        " SIGN UP",
-                        style: TextStyle(
-                          color: Colors.purple,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child:  Text(
+                        "Sign Up",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor,fontWeight: FontWeight.w800)
                       ),
                     ),
                   ],
                 ),
-                const Padding(
+                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 30.0),
                   child: Text(
                     "OR",
-                    style: TextStyle(color: Colors.purple, fontSize: 14),
+                    style: Theme.of(context).textTheme.bodySmall
                   ),
                 ),
 
@@ -149,9 +147,9 @@ class ParentLoginScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0, left: 10),
                         child: Image.asset("assets/googlelogo.png", height: 24),
                       ),
-                      const Text(
+                       Text(
                         "Sign in with Google",
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
                       ),
                     ],
                   ),
@@ -174,12 +172,12 @@ class ParentLoginScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
+                        padding: const EdgeInsets.only(right: 30.0,),
                         child: Image.asset("assets/apple_logo.png", height: 24),
                       ),
-                      const Text(
+                       Text(
                         "Sign in with Apple",
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText),
                       ),
                     ],
                   ),

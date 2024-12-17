@@ -1,3 +1,5 @@
+import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -42,7 +44,7 @@ class CustomButton extends StatelessWidget {
                 )
               : Text(
                   text,
-                  style: const TextStyle(fontSize: 14, color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().whiteColorText), 
                 ),
         ),
       ),

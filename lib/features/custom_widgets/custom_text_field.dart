@@ -1,3 +1,4 @@
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -35,15 +36,15 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment:
           CrossAxisAlignment.start, // Align title text to the left
       children: [
-        Text(
-          titleText,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Color.fromARGB(255, 9, 90, 156), // Title color
-          ),
-        ),
-        const SizedBox(height: 8), // Spacing between title and text field
+        // Text(
+        //   titleText,
+        //   style: const TextStyle(
+        //     fontWeight: FontWeight.bold,
+        //     fontSize: 14,
+        //     color: Color.fromARGB(255, 9, 90, 156), // Title color
+        //   ),
+        // ),
+        // const SizedBox(height: 8), // Spacing between title and text field
         TextFormField(
           controller: controller,
           onChanged: onChanged,
@@ -52,25 +53,25 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white38, // Background color for the text field
+            fillColor: Theme.of(context).inputDecorationTheme.fillColor, // Background color for the text field
             hintText: hintText,
-            hintStyle: const TextStyle(color: Colors.grey), // Hint text color
+            hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Colors.grey, // Border color when unfocused
+              borderRadius: BorderRadius.circular(15),
+              borderSide:  BorderSide(
+                color: CustomThemeData().borderColor, // Border color when unfocused
                 width: 1.5,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Colors.grey, // Border color when enabled
+              borderRadius: BorderRadius.circular(15),
+              borderSide:  BorderSide(
+                color: CustomThemeData().borderColor, // Border color when enabled
                 width: 1.5,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(15),
               borderSide: const BorderSide(
                 color: Colors.blue, // Border color when focused
                 width: 2.0,

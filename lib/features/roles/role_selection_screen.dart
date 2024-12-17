@@ -1,6 +1,7 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/features/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,11 +20,7 @@ class RoleSelectionScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 "Are you a parent\nor a child?",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade900,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge, 
               ),
               const SizedBox(height: 40),
               OptionCard(
@@ -108,11 +105,7 @@ class OptionCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade900,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18), 
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -121,10 +114,7 @@ class OptionCard extends StatelessWidget {
                       SizedBox(width: 10),
                       Text(
                         description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)
                       ),
                     ],
                   ),
@@ -136,10 +126,7 @@ class OptionCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           description1,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.blue,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)
                         ),
                       ),
                     ],
