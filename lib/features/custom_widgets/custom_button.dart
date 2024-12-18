@@ -9,20 +9,27 @@ class CustomButton extends StatelessWidget {
   final double height;
   final Color? textColor;
   final bool isLoading;
+  final TextStyle? buttonStyle;
 
   const CustomButton({
     required this.text,
     required this.onPressed,
     this.color = Colors.purple, // Default color
-    this.width = 320,
+    this.width = 330,
     this.height = 50,
     this.textColor = Colors.white, // Default text color
     this.isLoading = false,
     super.key,
+    this.buttonStyle,
   });
 
   @override
   Widget build(BuildContext context) {
+    final defaultButtonStyle = buttonStyle ??
+        Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: CustomThemeData().whiteColorText,
+              fontWeight: FontWeight.bold,
+            );
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: SizedBox(
@@ -43,7 +50,8 @@ class CustomButton extends StatelessWidget {
                 )
               : Text(
                   text,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().whiteColorText), 
+                  style: defaultButtonStyle,
+                  selectionColor: textColor,
                 ),
         ),
       ),

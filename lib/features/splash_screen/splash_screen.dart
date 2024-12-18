@@ -4,25 +4,28 @@ import 'package:get/get.dart';
 import 'splash_controller.dart';
 
 class SplashScreen extends StatelessWidget {
-  final SplashController splashController = Get.put(SplashController());
-
   SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final splashController = Get.find<SplashController>();
+
     return Scaffold(
       backgroundColor: Colors.blue.shade50, // Light blue background
       body: SafeArea(
         child: Stack(
           children: [
-            // Clouds Image at the top
             Align(
               alignment: Alignment.topCenter,
-              child: Image.asset(
-                AppAssets.appCloudsImage, // Replace with your cloud image path
-                fit: BoxFit.cover,
-                height: MediaQuery.of(context).size.height * 0.3,
-                width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Image.asset(
+                  AppAssets.appCloudsImage, // Path to your image
+                  fit: BoxFit.cover, // Adjust fit to your needs
+                  height: MediaQuery.of(context).size.height *
+                      0.3, // Top 30% of the screen
+                  width: double.infinity,
+                ),
               ),
             ),
             Center(

@@ -3,6 +3,7 @@ import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/features/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/features/roles/parents/kid_management/kid_profile_management_page.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class ParentsHomeScreen extends StatelessWidget {
                 color: Colors.purple,
               ),
               onPressed: () {
-                Get.snackbar("Settings", "Settings screen navigation");
+                // Get.snackbar("Settings", "Settings screen navigation");
               },
             ),
           ],
@@ -38,13 +39,13 @@ class ParentsHomeScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Get.to(
-                    const ProfileDrawer(),
-                    transition:
-                        Transition.leftToRightWithFade, // Custom transition
-                    duration:
-                        const Duration(milliseconds: 300), // Animation duration
-                  );
+                  // Get.to(
+                  //   const ProfileDrawer(),
+                  //   transition:
+                  //       Transition.leftToRightWithFade, // Custom transition
+                  //   duration:
+                  //       const Duration(milliseconds: 300), // Animation duration
+                  // );
                 },
                 child: Container(
                   width: 45, // Adjust the size of the border
@@ -52,12 +53,14 @@ class ParentsHomeScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: Colors.purple, // Border color
+                        color: CustomThemeData()
+                            .primaryButtonColor, // Border color
                         width: 2
                         // Border width
                         ),
                   ),
-                  child: Icon(Icons.person, color: Colors.blue[900]),
+                  child: Icon(Icons.person,
+                      color: CustomThemeData().disabledIconColor),
                 ),
               ),
               const SizedBox(width: 20),
@@ -66,19 +69,13 @@ class ParentsHomeScreen extends StatelessWidget {
                 children: [
                   Obx(() => Text(
                         controller.parentName.value,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade900,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontSize: 18),
                       )),
-                  const Text(
-                    "Welcome 👋",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  )
+                  Text("Welcome 👋",
+                      style: Theme.of(context).textTheme.bodySmall)
                 ],
               ),
             ],
@@ -117,30 +114,28 @@ class ParentsHomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              "Almost There!",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple,
-                              ),
-                            ),
+                            Text("Almost There!",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium!
+                                    .copyWith(
+                                        color: CustomThemeData()
+                                            .primaryButtonColor)),
                             const SizedBox(height: 10),
-                            Text(
-                              "Start by adding your first child.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade900,
-                              ),
-                            ),
+                            Text("Start by adding your first child.",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                        color:
+                                            CustomThemeData().primaryTextColor,
+                                        fontWeight: FontWeight.w700)),
                             const SizedBox(height: 20),
                             CustomButton(
-                              width: 180,
-                              text: 'Add Child',
-                              onPressed: controller.navigateToAddChild,
-                            ),
+                                width: 180, text: 'Add Child', onPressed: () {}
+                                //controller.navigateToAddChild,
+                                ),
                           ],
                         ),
                       ),
@@ -279,6 +274,13 @@ class ParentsHomeScreen extends StatelessWidget {
                               width: 180,
                               text: 'Quick Transfer',
                               onPressed: controller.navigateToAddChild,
+                              buttonStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: CustomThemeData().whiteColorText,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
                             ),
                             const SizedBox(height: 20),
                             Padding(
@@ -286,38 +288,46 @@ class ParentsHomeScreen extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 60.0),
                               child: RichText(
                                 textAlign: TextAlign.center,
-                                text: const TextSpan(
+                                text: TextSpan(
                                   children: [
                                     TextSpan(
                                       text: 'Send ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors
-                                            .purple, // Purple color for "Send"
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                              color: CustomThemeData()
+                                                  .primaryButtonColor,
+                                              fontWeight: FontWeight.w600),
                                     ),
                                     TextSpan(
-                                      text: 'or ',
-                                      style: TextStyle(
-                                        color: Colors
-                                            .black, // Default color for "or"
-                                      ),
-                                    ),
+                                        text: 'or ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                                color: CustomThemeData()
+                                                    .secondaryTextColor,
+                                                fontWeight: FontWeight.w600)),
                                     TextSpan(
-                                      text: 'remove ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors
-                                            .purple, // Purple color for "remove"
-                                      ),
-                                    ),
+                                        text: 'remove ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                                color: CustomThemeData()
+                                                    .primaryButtonColor,
+                                                fontWeight: FontWeight.w600)),
                                     TextSpan(
-                                      text: 'money from your child\'s account',
-                                      style: TextStyle(
-                                        color: Colors
-                                            .black, // Default color for the remaining text
-                                      ),
-                                    ),
+                                        text:
+                                            'money from your child\'s account',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                                color: CustomThemeData()
+                                                    .secondaryTextColor,
+                                                fontWeight: FontWeight.w600)),
                                   ],
                                 ),
                               ),

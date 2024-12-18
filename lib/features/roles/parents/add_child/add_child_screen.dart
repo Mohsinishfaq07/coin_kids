@@ -138,6 +138,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/roles/parents/add_child/add_child_controller.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -149,7 +150,10 @@ class AddChildScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Add your child"),
+      appBar: CustomAppBar(
+        title: "Add your child",
+        centerTitle: false,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -175,13 +179,10 @@ class AddChildScreen extends StatelessWidget {
               const SizedBox(height: 40),
 
               // Avatar Selection Title
-              Text(
-                "Select Avatar",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade900,
-                ),
-              ),
+              Text("Select Avatar",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: CustomThemeData().primaryTextColor,
+                      fontWeight: FontWeight.w700)),
               const SizedBox(height: 10),
 
               // Avatar Selection

@@ -44,7 +44,7 @@ class SignupParentScreen extends StatelessWidget {
                 ),
                 // email
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 14),
                 CustomTextField(
                   hintText: 'Email',
                   onChanged: (value) {
@@ -63,7 +63,7 @@ class SignupParentScreen extends StatelessWidget {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 14),
 
                 // PIN Input
                 CustomTextField(
@@ -79,7 +79,7 @@ class SignupParentScreen extends StatelessWidget {
                     }
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 14),
                 CustomTextField(
                     hintText: 'Confirm Password',
                     onChanged: (value) {
@@ -115,23 +115,31 @@ class SignupParentScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text("Already have an account,",style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),),
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => ParentLoginScreen());
-                      },
-                      child:  Text(
-                        " Login",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor,fontWeight: FontWeight.w800))
+                    Text(
+                      "Already have an account? ",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: CustomThemeData().primaryTextColor),
                     ),
+                    GestureDetector(
+                        onTap: () {
+                          Get.to(() => ParentLoginScreen());
+                        },
+                        child: Text("LOGIN",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(
+                                    color: CustomThemeData().primaryButtonColor,
+                                    fontWeight: FontWeight.w800))),
                   ],
                 ),
-                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 25.0),
-                  child: Text(
-                    "OR",
-                    style: Theme.of(context).textTheme.bodySmall
-                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 22.0),
+                  child: Text("OR",
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.grey, fontWeight: FontWeight.w800)),
                 ),
 
                 // Google Login Button
@@ -153,9 +161,12 @@ class SignupParentScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0, left: 10),
                         child: Image.asset("assets/googlelogo.png", height: 24),
                       ),
-                       Text(
+                      Text(
                         "Sign in with Google",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().whiteColorText,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
@@ -181,25 +192,27 @@ class SignupParentScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0),
                         child: Image.asset("assets/apple_logo.png", height: 24),
                       ),
-                       Text(
+                      Text(
                         "Sign in with Apple",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().whiteColorText,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 40),
-
+                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
                 // Terms and Signup Button
                 RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: "By clicking Sign Up, you are agreeing to the ",
                         style: TextStyle(
-                          color: Colors.black54,
+                          color: Colors.blue.shade900,
                           fontWeight: FontWeight.normal,
                           fontSize: 14,
                         ),
@@ -207,7 +220,7 @@ class SignupParentScreen extends StatelessWidget {
                       TextSpan(
                         text: "Terms of services & Privacy Policy.",
                         style: TextStyle(
-                          color: Colors.black54,
+                          color: Colors.blue.shade900,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),

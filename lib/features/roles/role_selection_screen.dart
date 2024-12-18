@@ -1,8 +1,9 @@
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/features/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
@@ -20,20 +21,21 @@ class RoleSelectionScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 "Are you a parent\nor a child?",
-                style: Theme.of(context).textTheme.bodyLarge, 
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 40),
               OptionCard(
-                imagePath: "assets/select_parents.png",
+                imagePath: "assets/role_selection_icons/im_parent_icon.svg",
                 title: "I’m a Parent",
                 description: "Give allowances",
                 onTap: () {
-                  Get.to(() => ParentLoginScreen());
+                  Get.to(() => SignupParentScreen());
                 },
-                description1: "Support your child's financial journey",
+                description1: "Support your child's",
+                description2: "       financial goals",
               ),
               OptionCard(
-                imagePath: "assets/select_child.png",
+                imagePath: "assets/role_selection_icons/Group.svg",
                 title: "I’m a Child",
                 description: "Receive allowance",
                 onTap: () {
@@ -42,6 +44,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   Get.to(() => KidBottomNavScreen());
                 },
                 description1: 'Set up saving goals',
+                description2: '',
               ),
             ],
           ),
@@ -56,6 +59,7 @@ class OptionCard extends StatelessWidget {
   final String title;
   final String description;
   final String description1;
+  final String description2;
   final VoidCallback onTap;
   final Color? imageColor;
 
@@ -65,6 +69,7 @@ class OptionCard extends StatelessWidget {
     required this.title,
     required this.description,
     required this.description1,
+    required this.description2,
     required this.onTap,
     this.imageColor,
   }) : super(key: key);
@@ -75,7 +80,7 @@ class OptionCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -90,9 +95,9 @@ class OptionCard extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              radius: 35,
+              radius: 50,
               backgroundColor: Colors.purple,
-              child: Image.asset(
+              child: SvgPicture.asset(
                 imagePath,
                 fit: BoxFit.contain,
                 color: imageColor,
@@ -105,17 +110,25 @@ class OptionCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18), 
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontSize: 20),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Image.asset("assets/dollar_coin.png"),
-                      SizedBox(width: 10),
-                      Text(
-                        description,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)
+                      SvgPicture.asset(
+                        "assets/role_selection_icons/coin_icon.svg",
+                        height: 30,
                       ),
+                      const SizedBox(width: 10),
+                      Text(description,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor)),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -123,14 +136,20 @@ class OptionCard extends StatelessWidget {
                     children: [
                       Image.asset("assets/saving_goals.png"),
                       SizedBox(width: 10),
-                      Flexible(
-                        child: Text(
-                          description1,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)
-                        ),
-                      ),
+                      Text(description1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor)),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  Text(description2,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: CustomThemeData().primaryTextColor)),
                 ],
               ),
             ),

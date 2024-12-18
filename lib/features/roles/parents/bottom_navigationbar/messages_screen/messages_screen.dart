@@ -73,22 +73,22 @@ class MessagesScreen extends StatelessWidget {
                         ],
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomButton(
-                                color: Colors.white,
+                                 
                                 width: 170,
                                 text: "Decline",
-                                textColor: Colors.purple,
+                                 
                                 onPressed: () {}),
                             CustomButton(
                                 width: 170,
                                 text: "Approve",
                                 onPressed: () {},
-                                textColor: Colors.blue),
+                               ),
                           ],
                         ),
                       ),
