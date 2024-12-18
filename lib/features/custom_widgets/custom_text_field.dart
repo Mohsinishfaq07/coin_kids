@@ -46,53 +46,58 @@ class CustomTextField extends StatelessWidget {
         // ),
         // const SizedBox(height: 8), // Spacing between title and text field
         TextFormField(
-          controller: controller,
-          onChanged: onChanged,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          validator: validator,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Theme.of(context).inputDecorationTheme.fillColor, // Background color for the text field
-            hintText: hintText,
-            hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide:  BorderSide(
-                color: CustomThemeData().borderColor, // Border color when unfocused
-                width: 1.5,
+            controller: controller,
+            onChanged: onChanged,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            validator: validator,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Theme.of(context)
+                  .inputDecorationTheme
+                  .fillColor, // Background color for the text field
+              hintText: hintText,
+              // hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  color: CustomThemeData()
+                      .borderColor, // Border color when unfocused
+                  width: 1.5,
+                ),
               ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide:  BorderSide(
-                color: CustomThemeData().borderColor, // Border color when enabled
-                width: 1.5,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  color: CustomThemeData()
+                      .borderColor, // Border color when enabled
+                  width: 1.5,
+                ),
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(
-                color: Colors.blue, // Border color when focused
-                width: 2.0,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(
+                  color: Colors.blue, // Border color when focused
+                  width: 2.0,
+                ),
               ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              prefixIcon: prefixIcon != null
+                  ? GestureDetector(
+                      onTap: onPrefixTap,
+                      child: Icon(prefixIcon, color: Colors.grey),
+                    )
+                  : null, // Show prefix icon if provided
+              suffixIcon: suffixIcon != null
+                  ? GestureDetector(
+                      onTap: onSuffixTap,
+                      child: Icon(suffixIcon, color: Colors.grey),
+                    )
+                  : null, // Show suffix icon if provided
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            prefixIcon: prefixIcon != null
-                ? GestureDetector(
-                    onTap: onPrefixTap,
-                    child: Icon(prefixIcon, color: Colors.grey),
-                  )
-                : null, // Show prefix icon if provided
-            suffixIcon: suffixIcon != null
-                ? GestureDetector(
-                    onTap: onSuffixTap,
-                    child: Icon(suffixIcon, color: Colors.grey),
-                  )
-                : null, // Show suffix icon if provided
-          ),
-          style: const TextStyle(color: Colors.black), // Input text color
-        ),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                fontWeight: FontWeight.w700,
+                color: CustomThemeData().primaryTextColor)),
       ],
     );
   }

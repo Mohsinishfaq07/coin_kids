@@ -1,6 +1,7 @@
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -10,8 +11,9 @@ class CustomButton extends StatelessWidget {
   final double height;
   final Color? textColor;
   final bool isLoading;
+  final TextStyle? buttonStyle;
 
-  const CustomButton({
+  CustomButton({
     required this.text,
     required this.onPressed,
     this.color = Colors.purple, // Default color
@@ -20,10 +22,16 @@ class CustomButton extends StatelessWidget {
     this.textColor = Colors.white, // Default text color
     this.isLoading = false,
     super.key,
+    this.buttonStyle,
   });
 
   @override
   Widget build(BuildContext context) {
+    final defaultButtonStyle = buttonStyle ??
+        Theme.of(context)
+            .textTheme
+            .bodyMedium!
+            .copyWith(color: CustomThemeData().whiteColorText);
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: SizedBox(
@@ -42,10 +50,7 @@ class CustomButton extends StatelessWidget {
               ? const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 )
-              : Text(
-                  text,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().whiteColorText), 
-                ),
+              : Text(text, style: defaultButtonStyle),
         ),
       ),
     );

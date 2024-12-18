@@ -7,6 +7,7 @@ import 'package:coin_kids/features/roles/parents/authentication/parent_login/par
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class ParentAuthController extends GetxController {
   final email = ''.obs;
@@ -294,6 +295,35 @@ class ParentAuthController extends GetxController {
       Get.off(() => ParentLoginScreen()); // Fallback to login screen on failure
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // apple sign in
+
+  signinWithApple() async {
+    try {
+      FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName
+        ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: '<>',
+          redirectUri: Uri.parse('<>'),
+        ),
+        // need client id from apple developer console from client side
+        // need redirect url of domain from client side
+      );
+
+      final oAuth = OAuthProvider("apple.com").credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+      await firebaseAuth.signInWithCredential(oAuth);
+      Get.log('credentials:$credential');
+    } catch (e) {
+      Get.log('error in apple login:${e.toString()}');
     }
   }
 

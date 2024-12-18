@@ -50,6 +50,7 @@ dependencies:
   flutter_svg:
   cached_network_image: ^3.4.1
   google_fonts: 6.0.0
+  sign_in_with_apple: ^6.1.3
 
 
 dev_dependencies:

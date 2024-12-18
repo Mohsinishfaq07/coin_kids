@@ -79,7 +79,10 @@ class ParentLoginScreen extends StatelessWidget {
                     },
                     child: Text(
                       "Forgot Credentials?",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: CustomThemeData().primaryTextColor),
                     ),
                   ),
                 ),
@@ -108,24 +111,31 @@ class ParentLoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text("Don’t have an account?",style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),),
+                    Text(
+                      "Don’t have an account?",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: CustomThemeData().primaryTextColor),
+                    ),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => SignupParentScreen());
                       },
-                      child:  Text(
-                        "Sign Up",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor,fontWeight: FontWeight.w800)
-                      ),
+                      child: Text("Sign Up",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: CustomThemeData().primaryButtonColor,
+                                  fontWeight: FontWeight.w800)),
                     ),
                   ],
                 ),
-                 Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 30.0),
-                  child: Text(
-                    "OR",
-                    style: Theme.of(context).textTheme.bodySmall
-                  ),
+                  child:
+                      Text("OR", style: Theme.of(context).textTheme.bodySmall),
                 ),
 
                 // Google Login Button
@@ -147,9 +157,12 @@ class ParentLoginScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 30.0, left: 10),
                         child: Image.asset("assets/googlelogo.png", height: 24),
                       ),
-                       Text(
+                      Text(
                         "Sign in with Google",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText), 
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: CustomThemeData().whiteColorText),
                       ),
                     ],
                   ),
@@ -167,17 +180,23 @@ class ParentLoginScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     //_controller.loginWithApple();
+                    _controller.signinWithApple();
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 30.0,),
+                        padding: const EdgeInsets.only(
+                          right: 30.0,
+                        ),
                         child: Image.asset("assets/apple_logo.png", height: 24),
                       ),
-                       Text(
+                      Text(
                         "Sign in with Apple",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().whiteColorText),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: CustomThemeData().whiteColorText),
                       ),
                     ],
                   ),
