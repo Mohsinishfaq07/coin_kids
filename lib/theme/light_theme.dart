@@ -1,32 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// class ThemeClass{
-
-//   Color primaryTextColor=const Color(0xff015486);
-//   Color secondaryTextColor=const Color(0xff676666);
-//   Color whiteColorText=const Color(0xffFFFFFF);
-
-//   Color primaryButtonColor=const Color(0xffA421D9);
-
-//   Color disabledIconColor=const Color(0xff848484);
-//   Color activeIconColor=const Color(0xffA421D9);
-
-
-//   TextStyle openSansStyle({
-//     required Color textColor,
-//       required double fontSize,
-//       required FontWeight fontWeight
-//   }){
-//     return GoogleFonts.openSans(
-//       color: textColor,
-//       fontSize: fontSize,
-//       fontWeight: fontWeight,
-//     );
-
-//   }
-
-// }
+ 
 
 
 class CustomThemeData {

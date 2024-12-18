@@ -1,6 +1,4 @@
 import 'package:coin_kids/bindings/controller_bindings.dart';
-import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/features/roles/kid/kid_jar_section/add_in_spending/add_in_spending.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +15,7 @@ void main() async {
       statusBarColor: Colors.transparent, //Make the status bar transparent
       statusBarIconBrightness:
           Brightness.dark, // Dark icons for light background
+      statusBarBrightness: Brightness.dark, //
     ),
   );
 
@@ -24,6 +23,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

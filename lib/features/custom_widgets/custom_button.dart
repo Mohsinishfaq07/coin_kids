@@ -1,4 +1,3 @@
-import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 

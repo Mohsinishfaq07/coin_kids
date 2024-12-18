@@ -50,6 +50,7 @@ dependencies:
   flutter_svg:
   cached_network_image: ^3.4.1
   google_fonts: 6.0.0
+  lottie: ^3.2.0
 
 
 dev_dependencies:

@@ -17,7 +17,6 @@ class ParentAuthController extends GetxController {
   final confirmPin = "".obs;
   final selectedGender = ''.obs; // "Male" or "Female"
   final isLoading = false.obs; // New reactive loading state
-  String? _selectedDate;
 
   // Reactive state for tracking if fields are filled
   final isButtonEnabled = false.obs;

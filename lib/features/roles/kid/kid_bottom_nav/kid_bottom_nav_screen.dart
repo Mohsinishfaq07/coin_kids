@@ -1,5 +1,4 @@
 import 'package:coin_kids/features/roles/kid/kid_bottom_nav/kid_nav_controller.dart';
-import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

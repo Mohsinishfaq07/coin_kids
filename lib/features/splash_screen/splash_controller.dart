@@ -20,7 +20,7 @@ class SplashController extends GetxController {
  /// Check if the user is logged in and navigate accordingly
   void _checkLoginStatus() async {
     // Simulate a splash screen delay (3 seconds)
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 4));
 
     // Check if user is already logged in with Firebase
     final user = FirebaseAuth.instance.currentUser;
