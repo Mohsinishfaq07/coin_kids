@@ -50,17 +50,19 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            CarouselSlider(
-              items: pages,
-              carouselController: _carouselController,
-              options: CarouselOptions(
-                height: MediaQuery.of(context).size.height * 0.7,
-                enableInfiniteScroll: false,
-                enlargeCenterPage: true,
-                viewportFraction: 1.0,
-                onPageChanged: (index, reason) {
-                  _controller.updatePageIndex(index);
-                },
+            Center(
+              child: CarouselSlider(
+                items: pages,
+                carouselController: _carouselController,
+                options: CarouselOptions(
+                  aspectRatio: 1.0,
+                  enableInfiniteScroll: false,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.0,
+                  onPageChanged: (index, reason) {
+                    _controller.updatePageIndex(index);
+                  },
+                ),
               ),
             ),
             Positioned(
@@ -169,20 +171,19 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+       children: [
         Lottie.asset(
           imagePath,
-          height: 220,
-          width: 220,
+          height: 190,
+          width: 190,
           fit: BoxFit.contain,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         Text(
           title,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         Text(
           description,
           textAlign: TextAlign.center,

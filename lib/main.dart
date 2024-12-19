@@ -3,6 +3,7 @@ import 'package:coin_kids/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'features/splash_screen/splash_screen.dart';
 
@@ -21,7 +22,7 @@ void main() async {
     ),
   );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,11 +30,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      theme: CustomThemeData.getThemeData(),
-      debugShowCheckedModeBanner: false,
-      initialBinding: ControllerBindings(),
-      home: SplashScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(360, 800),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      child: GetMaterialApp(
+        theme: CustomThemeData.getThemeData(),
+        debugShowCheckedModeBanner: false,
+        initialBinding: ControllerBindings(),
+        home: SplashScreen(),
+      ),
     );
   }
 }
