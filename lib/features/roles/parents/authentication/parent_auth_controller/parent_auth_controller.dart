@@ -17,8 +17,10 @@ class ParentAuthController extends GetxController {
   final pin = ''.obs;
   final confirmPin = "".obs;
   final selectedGender = ''.obs; // "Male" or "Female"
-  final isLoading = false.obs; // New reactive loading state
-
+  final isEmailLoading = false.obs;
+  final isGoogleLoading = false.obs;
+  final isAppleLoading = false.obs;
+  final isNormalLoading = false.obs;
   // Reactive state for tracking if fields are filled
   final isButtonEnabled = false.obs;
 
@@ -59,6 +61,7 @@ class ParentAuthController extends GetxController {
 
     try {
       try {
+        isEmailLoading.value = true;
         final credential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.value,
@@ -66,16 +69,20 @@ class ParentAuthController extends GetxController {
         );
         saveUserInfo(fieldName: 'email', fieldValue: email.value);
         await saveCredentialsLocally(email.value, pin.value);
+        Get.offAll(() => BottomNavigationBarScreen());
       } on FirebaseAuthException catch (e) {
+        isEmailLoading.value = false;
         Get.snackbar("Error", "Failed to create account: $e",
             snackPosition: SnackPosition.BOTTOM);
       } catch (e) {
+        isEmailLoading.value = false;
         Get.log(e.toString());
       }
       Get.to(BottomNavigationBarScreen());
 
       // Show success message and navigate to the next screen
     } catch (e) {
+      isEmailLoading.value = false;
       Get.snackbar("Error", "Failed to create account: $e",
           snackPosition: SnackPosition.BOTTOM);
     }
@@ -97,6 +104,7 @@ class ParentAuthController extends GetxController {
 
       if (googleUser == null) {
         Get.log('Google sign-in cancelled');
+        isGoogleLoading.value = false;
         return;
       }
 
@@ -111,7 +119,8 @@ class ParentAuthController extends GetxController {
           await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        saveUserInfo(fieldName: 'email', fieldValue: user.email!);
+        saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+        Get.offAll(() => BottomNavigationBarScreen());
       }
     } catch (e) {
       Get.log('log: Error during Google Sign-In: $e');
@@ -176,7 +185,7 @@ class ParentAuthController extends GetxController {
       }, SetOptions(merge: true));
       Get.snackbar("Success", "Account created",
           snackPosition: SnackPosition.BOTTOM);
-      Get.off(() => ParentLoginScreen());
+      // Get.off(() => ParentLoginScreen());
     } catch (e) {
       Get.log(e.toString());
     }
@@ -193,15 +202,16 @@ class ParentAuthController extends GetxController {
     }
 
     try {
-      isLoading.value = true; // Start loading
+      isEmailLoading.value = true; // Start loading
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
       await saveCredentialsLocally(email.value, pin.value);
-      isLoading.value = false; // Stop loading
+      isEmailLoading.value = false; // Stop loading
+      Get.offAll(() => BottomNavigationBarScreen());
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
-      isLoading.value = false;
+      isEmailLoading.value = false;
       if (e.code == 'user-not-found') {
         Get.snackbar("Error", "No user found for that email.",
             snackPosition: SnackPosition.BOTTOM);
@@ -213,7 +223,7 @@ class ParentAuthController extends GetxController {
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      isLoading.value = false;
+      isEmailLoading.value = false;
       Get.snackbar(
         "Error",
         "Failed to login. Please try again later.",
@@ -224,11 +234,12 @@ class ParentAuthController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     try {
-      isLoading.value = true; // Stop loading
+      isGoogleLoading.value = true; // start loading
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
         Get.log('Google sign-in cancelled');
+        isGoogleLoading.value = false;
         return;
       }
 
@@ -243,10 +254,12 @@ class ParentAuthController extends GetxController {
           await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        isLoading.value = false; // Stop loading
-        Get.off(() => ParentsHomeScreen());
+        saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+        isGoogleLoading.value = false; // Stop loading
+        Get.off(() => BottomNavigationBarScreen());
       }
     } catch (e) {
+      isGoogleLoading.value = false;
       Get.log('log: Error during Google Sign-In: $e');
     }
   }
@@ -267,41 +280,42 @@ class ParentAuthController extends GetxController {
     }
   }
 
-  Future<void> autoLogin() async {
-    try {
-      isLoading.value = true;
+  // Future<void> autoLogin() async {
+  //   try {
+  //     isLoading.value = true;
 
-      // Load saved credentials
-      final credentials = await DatabaseHelper.instance.fetchCredentials();
-      if (credentials != null) {
-        email.value = credentials['email']!;
-        pin.value = credentials['password']!;
+  //     // Load saved credentials
+  //     final credentials = await DatabaseHelper.instance.fetchCredentials();
+  //     if (credentials != null) {
+  //       email.value = credentials['email']!;
+  //       pin.value = credentials['password']!;
 
-        // Attempt Firebase login with saved credentials
-        final UserCredential credential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-                email: email.value, password: pin.value);
+  //       // Attempt Firebase login with saved credentials
+  //       final UserCredential credential = await FirebaseAuth.instance
+  //           .signInWithEmailAndPassword(
+  //               email: email.value, password: pin.value);
 
-        if (credential.user != null) {
-          // Navigate to home screen
-          Get.off(() => BottomNavigationBarScreen());
-        }
-      } else {
-        // If no saved credentials, navigate to the login screen
-        Get.off(() => ParentLoginScreen());
-      }
-    } catch (e) {
-      Get.log("Auto-login failed: $e");
-      Get.off(() => ParentLoginScreen()); // Fallback to login screen on failure
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  //       if (credential.user != null) {
+  //         // Navigate to home screen
+  //         Get.off(() => BottomNavigationBarScreen());
+  //       }
+  //     } else {
+  //       // If no saved credentials, navigate to the login screen
+  //       Get.off(() => ParentLoginScreen());
+  //     }
+  //   } catch (e) {
+  //     Get.log("Auto-login failed: $e");
+  //     Get.off(() => ParentLoginScreen()); // Fallback to login screen on failure
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   // apple sign in
 
   signinWithApple() async {
     try {
+      isAppleLoading.value = true;
       FirebaseAuth firebaseAuth = FirebaseAuth.instance;
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -323,6 +337,7 @@ class ParentAuthController extends GetxController {
       await firebaseAuth.signInWithCredential(oAuth);
       Get.log('credentials:$credential');
     } catch (e) {
+      isAppleLoading.value = false;
       Get.log('error in apple login:${e.toString()}');
     }
   }
@@ -335,7 +350,7 @@ class ParentAuthController extends GetxController {
 
   Future<void> updateProfile() async {
     try {
-      isLoading.value = true;
+      isNormalLoading.value = true;
 
       // Update Firebase Firestore
       final user = FirebaseAuth.instance.currentUser;
@@ -370,7 +385,7 @@ class ParentAuthController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
-      isLoading.value = false;
+      isNormalLoading.value = false;
     }
   }
 }
