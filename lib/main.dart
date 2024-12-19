@@ -16,6 +16,8 @@ void main() async {
       statusBarIconBrightness:
           Brightness.dark, // Dark icons for light background
       statusBarBrightness: Brightness.dark, //
+      systemNavigationBarColor:
+          Colors.transparent, // Black background for dark icons
     ),
   );
 
