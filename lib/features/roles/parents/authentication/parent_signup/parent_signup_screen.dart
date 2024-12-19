@@ -2,6 +2,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_google_signup.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -109,6 +110,7 @@ class SignupParentScreen extends StatelessWidget {
                           }
                           // Call signup method
                         },
+                        isLoading: _controller.isEmailLoading.value,
                       ),
                     )),
                 const SizedBox(height: 20),
@@ -153,23 +155,37 @@ class SignupParentScreen extends StatelessWidget {
                   ),
                   onPressed: () {
                     _controller.loginWithGoogle();
+                    //  Get.to(() => ParentGoogleSignup());
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30.0, left: 10),
-                        child: Image.asset("assets/googlelogo.png", height: 24),
-                      ),
-                      Text(
-                        "Sign in with Google",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: CustomThemeData().whiteColorText,
-                              fontWeight: FontWeight.bold,
+                  child: Obx(() {
+                    return _controller.isGoogleLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
                             ),
-                      ),
-                    ],
-                  ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 30.0, left: 10),
+                                child: Image.asset("assets/googlelogo.png",
+                                    height: 24),
+                              ),
+                              Text(
+                                "Sign in with Google",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                      color: CustomThemeData().whiteColorText,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          );
+                  }),
                 ),
                 const SizedBox(height: 20),
 
@@ -183,23 +199,37 @@ class SignupParentScreen extends StatelessWidget {
                     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                   ),
                   onPressed: () {
-                    //_controller.loginWithApple();
+                    _controller.signinWithApple();
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: Image.asset("assets/apple_logo.png", height: 24),
-                      ),
-                      Text(
-                        "Sign in with Apple",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: CustomThemeData().whiteColorText,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
+                  child: Obx(
+                    () {
+                      return _controller.isAppleLoading.value
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 30.0),
+                                  child: Image.asset("assets/apple_logo.png",
+                                      height: 24),
+                                ),
+                                Text(
+                                  "Sign in with Apple",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                        color: CustomThemeData().whiteColorText,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            );
+                    },
                   ),
                 ),
 
