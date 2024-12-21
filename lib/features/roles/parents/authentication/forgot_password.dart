@@ -14,7 +14,11 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "We got you covered ;)",centerTitle: false,),
+      appBar: CustomAppBar(
+        title: "We got you covered ;)",
+        centerTitle: false,
+        showBackButton: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
         child: SingleChildScrollView(
@@ -46,13 +50,13 @@ class ForgotPasswordScreen extends StatelessWidget {
               const SizedBox(height: 40),
 
               // Login Button
-              Obx(() => CustomButton(
-                    color:   Colors.purple,
-                    text: 'Send',
-                    onPressed: () async {
-                      await _controller.loginWithEmail();
-                    },
-                  )),
+              CustomButton(
+                color: Colors.purple,
+                text: 'Send',
+                onPressed: () async {
+                  await _controller.sendPasswordResetEmail();
+                },
+              ),
               const SizedBox(height: 40),
             ],
           ),

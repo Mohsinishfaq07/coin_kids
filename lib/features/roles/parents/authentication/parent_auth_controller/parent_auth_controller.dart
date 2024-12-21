@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -78,8 +77,7 @@ class ParentAuthController extends GetxController {
         isEmailLoading.value = false;
         Get.log(e.toString());
       }
-      Get.to(BottomNavigationBarScreen());
-
+       
       // Show success message and navigate to the next screen
     } catch (e) {
       isEmailLoading.value = false;
@@ -345,7 +343,10 @@ class ParentAuthController extends GetxController {
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     await clearCredentials(); // Clear local credentials
-    Get.off(() => ParentLoginScreen()); // Navigate back to login screen
+    isEmailLoading.value = false;
+    isGoogleLoading.value = false;
+    isAppleLoading.value = false;
+    Get.offAll(() => ParentLoginScreen());
   }
 
   Future<void> updateProfile() async {
@@ -386,6 +387,17 @@ class ParentAuthController extends GetxController {
       );
     } finally {
       isNormalLoading.value = false;
+    }
+  }
+
+  Future<void> sendPasswordResetEmail() async {
+    String email1 = email.trim();
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email1);
+      print("Password reset ${email} sent.");
+    } catch (e) {
+      print("Error: $e");
+      // Handle errors such as invalid email, user not found, etc.
     }
   }
 }

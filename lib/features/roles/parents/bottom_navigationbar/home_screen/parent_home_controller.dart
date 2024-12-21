@@ -12,6 +12,20 @@ class HomeController extends GetxController {
   var parentName = ''.obs; // Observable to hold the parent's name
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Add any controller logic if needed (e.g., API calls, navigation)
+  void navigateToAddChild() {
+    Get.to(() => AddChildScreen());
+    // Get.snackbar("Navigation", "Navigating to Add Child Screen");
+  }
+
+  @override
+  void onInit() {
+ //   fetchKids();
+   // fetchParentDetails();
+    super.onInit();
+  }
+
   void fetchKids() {
     try {
       isLoading.value = true; // Start loading
@@ -32,19 +46,6 @@ class HomeController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", "Failed to fetch kids: $e");
     }
-  }
-
-  // Add any controller logic if needed (e.g., API calls, navigation)
-  void navigateToAddChild() {
-    Get.to(() => AddChildScreen());
-    // Get.snackbar("Navigation", "Navigating to Add Child Screen");
-  }
-
-  @override
-  void onInit() {
-    fetchKids();
-    fetchParentDetails();
-    super.onInit();
   }
 
   void fetchParentDetails() async {

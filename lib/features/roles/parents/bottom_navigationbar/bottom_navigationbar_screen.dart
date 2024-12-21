@@ -1,6 +1,7 @@
-import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class BottomNavigationBarScreen extends StatelessWidget {
   BottomNavigationBarScreen({super.key});
@@ -14,14 +15,12 @@ class BottomNavigationBarScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (controller.currentIndex.value != 0) {
-          // Agar current index home pe nahi hai
-          controller.currentIndex.value = 0; // Home index pe navigate karna
+          controller.currentIndex.value = 0;
           _isOnHomeScreen = true;
-          return false; // Pop nahi hone dena
+          return false;
         }
 
         if (_isOnHomeScreen) {
-          // Agar home screen pe aur back button press ho gaya
           bool shouldExit = await _showExitConfirmation(context);
           return shouldExit;
         }
@@ -35,32 +34,56 @@ class BottomNavigationBarScreen extends StatelessWidget {
             currentIndex: controller.currentIndex.value,
             onTap: (index) {
               controller.currentIndex.value = index;
-              _isOnHomeScreen = index == 0; // Track if user is on home screen
+              _isOnHomeScreen = index == 0;
             },
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.purple,
             unselectedItemColor: Colors.grey,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+            items: [
+              _buildNavBarItem(
+                iconPath: 'assets/home_icon.svg',
                 label: 'Home',
+                index: 0,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.message),
+              _buildNavBarItem(
+                iconPath: 'assets/messages_icon.svg',
                 label: 'Messages',
+                index: 1,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
+              _buildNavBarItem(
+                iconPath: 'assets/cart_icon.svg',
                 label: 'Shop',
+                index: 2,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.child_care),
+              _buildNavBarItem(
+                iconPath: 'assets/Coin.svg',
                 label: 'Kid Zone',
+                index: 3,
               ),
             ],
           );
         }),
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavBarItem({
+    required String iconPath,
+    required String label,
+    required int index,
+  }) {
+    return BottomNavigationBarItem(
+      icon: SvgPicture.asset(
+        iconPath,
+        width: 24,
+        height: 24,
+        color: index == 3 // Check if it's the Kid Zone index
+            ? null // No color assigned for Kid Zone icon
+            : (controller.currentIndex.value == index
+                ? Colors.purple
+                : Colors.grey),
+      ),
+      label: label,
     );
   }
 
@@ -72,8 +95,8 @@ class BottomNavigationBarScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            title: Row(
-              children: const [
+            title: const Row(
+              children: [
                 Icon(Icons.exit_to_app, color: Colors.red, size: 28),
                 SizedBox(width: 8),
                 Text(
