@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/features/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -78,7 +77,6 @@ class ParentAuthController extends GetxController {
         isEmailLoading.value = false;
         Get.log(e.toString());
       }
-      Get.to(BottomNavigationBarScreen());
 
       // Show success message and navigate to the next screen
     } catch (e) {
@@ -353,7 +351,10 @@ class ParentAuthController extends GetxController {
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     await clearCredentials(); // Clear local credentials
-    Get.off(() => ParentLoginScreen()); // Navigate back to login screen
+    isEmailLoading.value = false;
+    isGoogleLoading.value = false;
+    isAppleLoading.value = false;
+    Get.offAll(() => ParentLoginScreen());
   }
 
   Future<void> updateProfile() async {
@@ -394,24 +395,6 @@ class ParentAuthController extends GetxController {
       );
     } finally {
       isNormalLoading.value = false;
-    }
-  }
-
-  Future<bool> isEmailMatchedWithDocId(String email) async {
-    try {
-      CollectionReference parentsCollection =
-          FirebaseFirestore.instance.collection('parents');
-
-      DocumentSnapshot docSnapshot = await parentsCollection.doc(email).get();
-
-      if (docSnapshot.exists) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      Get.log('Error checking email match: $e');
-      return false;
     }
   }
 }

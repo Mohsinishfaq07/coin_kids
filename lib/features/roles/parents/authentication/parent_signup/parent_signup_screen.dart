@@ -2,7 +2,6 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
-import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_google_signup.dart';
 import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +9,9 @@ import 'package:get/get.dart';
 import '../parent_auth_controller/parent_auth_controller.dart';
 
 class SignupParentScreen extends StatelessWidget {
+  SignupParentScreen({super.key});
   final ParentAuthController _controller = Get.put(ParentAuthController());
   final _formKey = GlobalKey<FormState>();
-
-  SignupParentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +20,7 @@ class SignupParentScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Lets's Get Start!",
+        showBackButton: true,
         centerTitle: false,
       ),
       body: Padding(
@@ -58,10 +57,12 @@ class SignupParentScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Email is required";
                     }
-                    // if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
-                    //     .hasMatch(value)) {
-                    //   return "Enter a valid email";
-                    // }
+                    // Validate email format
+                    if (!RegExp(
+                            r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                        .hasMatch(value)) {
+                      return "Enter a valid email address";
+                    }
                     return null;
                   },
                 ),
@@ -103,13 +104,12 @@ class SignupParentScreen extends StatelessWidget {
                             : Colors.grey,
                         text: 'Signup',
                         onPressed: () {
+                          
+
                           if (_formKey.currentState?.validate() ?? false) {
                             // Form is valid
                             _controller.signUpWithEmail();
-                            Get.off(() => BottomNavigationBarScreen());
-                          } else {
-                            print("Form has errors");
-                          }
+                          } else {}
                           // Call signup method
                         },
                         isLoading: _controller.isEmailLoading.value,

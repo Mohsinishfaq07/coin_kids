@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -11,6 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool showBackButton;
   final bool centerTitle;
+  final Color backButtonColor;
 
   CustomAppBar({
     super.key,
@@ -23,6 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.showBackButton = false,
     this.centerTitle = true,
+    this.backButtonColor = const Color(0xFF0D47A1),
   }) : titleColor = titleColor ?? Colors.blue.shade900;
 
   @override

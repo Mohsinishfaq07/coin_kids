@@ -32,7 +32,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   Get.to(() => SignupParentScreen());
                 },
                 description1: "Support your child's",
-                description2: "       financial goals",
+                description2: "financial goals",
               ),
               OptionCard(
                 imagePath: "assets/role_selection_icons/Group.svg",
@@ -64,7 +64,7 @@ class OptionCard extends StatelessWidget {
   final Color? imageColor;
 
   const OptionCard({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.title,
     required this.description,
@@ -72,7 +72,7 @@ class OptionCard extends StatelessWidget {
     required this.description2,
     required this.onTap,
     this.imageColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +134,11 @@ class OptionCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Image.asset("assets/saving_goals.png"),
-                      SizedBox(width: 10),
+                      SvgPicture.asset(
+                        "assets/role_selection_icons/support_icon.svg",
+                        height: 30,
+                      ),
+                      const SizedBox(width: 10),
                       Text(description1,
                           style: Theme.of(context)
                               .textTheme
@@ -145,11 +148,22 @@ class OptionCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(description2,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: CustomThemeData().primaryTextColor)),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/role_selection_icons/support_icon.svg",
+                        height: 30,
+                        color: Colors.transparent,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(description2,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor)),
+                    ],
+                  ),
                 ],
               ),
             ),

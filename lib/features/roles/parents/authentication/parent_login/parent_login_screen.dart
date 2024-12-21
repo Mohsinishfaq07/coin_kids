@@ -23,6 +23,7 @@ class ParentLoginScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: "Welcome Back!",
         centerTitle: false,
+        showBackButton: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
@@ -45,10 +46,10 @@ class ParentLoginScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Email is required";
                     }
-                    // if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
-                    //     .hasMatch(value)) {
-                    //   return "Enter a valid email";
-                    // }
+                    if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
+                        .hasMatch(value)) {
+                      return "Enter a valid email";
+                    }
                     return null;
                   },
                 ),
@@ -121,7 +122,7 @@ class ParentLoginScreen extends StatelessWidget {
                       onTap: () {
                         Get.to(() => SignupParentScreen());
                       },
-                      child: Text("Sign Up",
+                      child: Text("SignUp",
                           style:
                               Theme.of(context).textTheme.bodySmall!.copyWith(
                                     color: CustomThemeData().primaryButtonColor,
@@ -148,8 +149,8 @@ class ParentLoginScreen extends StatelessWidget {
                     ),
                     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                   ),
-                  onPressed: () {
-                    _controller.loginWithGoogle();
+                  onPressed: () async {
+                    await _controller.loginWithGoogle();
                   },
                   child: Obx(() {
                     return _controller.isGoogleLoading.value

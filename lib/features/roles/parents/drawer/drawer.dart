@@ -1,4 +1,5 @@
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/features/roles/parents/authentication/parent_auth_controller/parent_auth_controller.dart';
 import 'package:coin_kids/features/roles/parents/drawer/update_profile.dart';
 import 'package:coin_kids/features/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileDrawer extends StatelessWidget {
-  const ProfileDrawer({super.key});
+   ProfileDrawer({super.key});
+  final parentAuthController = Get.put(ParentAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -158,11 +160,9 @@ class ProfileDrawer extends StatelessWidget {
                         "Privacy Policy", Icons.abc_outlined),
                     ElevatedButton(
                       onPressed: () async {
-                        await FirebaseAuth.instance.signOut().then((val) {
-                          DatabaseHelper.instance.clearCredentials();
-                          Get.offAll(() => const RoleSelectionScreen());
-                        });
-                      },
+                       await parentAuthController.logout();
+                        }
+                      ,
                       child: const Text('Logout'),
                     )
                   ])),

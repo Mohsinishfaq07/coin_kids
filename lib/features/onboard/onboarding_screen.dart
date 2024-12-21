@@ -4,6 +4,7 @@ import 'package:coin_kids/features/onboard/onboard_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
@@ -123,23 +124,43 @@ class OnboardingScreen extends StatelessWidget {
                               }),
                               Padding(
                                 padding: const EdgeInsets.only(right: 20.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: CustomThemeData().primaryButtonColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.arrow_forward),
-                                    onPressed: () {
-                                      _carouselController.animateToPage(
-                                        _controller.pageIndex.value +
-                                            1, // Move to the next index
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.ease,
-                                      );
-                                    },
-                                    color: Colors.white,
+                                child: InkWell(
+                                  onTap: () {
+                                    _carouselController.animateToPage(
+                                      _controller.pageIndex.value +
+                                          1, // Move to the next index
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.ease,
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          CustomThemeData().primaryButtonColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SvgPicture.asset(
+                                        "assets/on_board/arrow_forward_icon.svg",
+                                        height: 28,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    // IconButton(
+                                    //   icon: const Icon(Icons.arrow_forward),
+                                    //   onPressed: () {
+                                    //     _carouselController.animateToPage(
+                                    //       _controller.pageIndex.value +
+                                    //           1, // Move to the next index
+                                    //       duration:
+                                    //           const Duration(milliseconds: 500),
+                                    //       curve: Curves.ease,
+                                    //     );
+                                    //   },
+                                    //   color: Colors.white,
+                                    // ),
                                   ),
                                 ),
                               ),
@@ -171,7 +192,7 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-       children: [
+      children: [
         Lottie.asset(
           imagePath,
           height: 190,

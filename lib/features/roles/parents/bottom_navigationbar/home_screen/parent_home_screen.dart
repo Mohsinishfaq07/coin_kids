@@ -8,9 +8,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class ParentsHomeScreen extends StatelessWidget {
+class ParentsHomeScreen extends StatefulWidget {
   ParentsHomeScreen({super.key});
+
+  @override
+  State<ParentsHomeScreen> createState() => _ParentsHomeScreenState();
+}
+
+class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   final HomeController controller = Get.find<HomeController>();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchParentDetails();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +53,7 @@ class ParentsHomeScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   Get.to(
-                    const ProfileDrawer(),
+                    ProfileDrawer(),
                     transition:
                         Transition.leftToRightWithFade, // Custom transition
                     duration:
