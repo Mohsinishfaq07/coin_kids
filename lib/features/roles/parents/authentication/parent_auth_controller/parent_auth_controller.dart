@@ -78,6 +78,7 @@ class ParentAuthController extends GetxController {
         isEmailLoading.value = false;
         Get.log(e.toString());
       }
+      Get.to(BottomNavigationBarScreen());
 
       // Show success message and navigate to the next screen
     } catch (e) {

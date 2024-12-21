@@ -3,6 +3,7 @@ import 'package:coin_kids/features/roles/parents/authentication/parent_login/par
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/roles/parents/authentication/parent_signup/parent_google_signup.dart';
+import 'package:coin_kids/features/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -105,6 +106,7 @@ class SignupParentScreen extends StatelessWidget {
                           if (_formKey.currentState?.validate() ?? false) {
                             // Form is valid
                             _controller.signUpWithEmail();
+                            Get.off(() => BottomNavigationBarScreen());
                           } else {
                             print("Form has errors");
                           }

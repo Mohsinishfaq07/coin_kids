@@ -39,13 +39,13 @@ class ParentsHomeScreen extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  // Get.to(
-                  //   const ProfileDrawer(),
-                  //   transition:
-                  //       Transition.leftToRightWithFade, // Custom transition
-                  //   duration:
-                  //       const Duration(milliseconds: 300), // Animation duration
-                  // );
+                  Get.to(
+                    const ProfileDrawer(),
+                    transition:
+                        Transition.leftToRightWithFade, // Custom transition
+                    duration:
+                        const Duration(milliseconds: 300), // Animation duration
+                  );
                 },
                 child: Container(
                   width: 45, // Adjust the size of the border
