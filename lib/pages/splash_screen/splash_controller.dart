@@ -2,7 +2,7 @@ import 'package:coin_kids/pages/onboard/onboarding_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_auth_controller/parent_auth_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
-import 'package:coin_kids/firebase/authentication/firebase_auth.dart';
+import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 

@@ -3,7 +3,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/forgot_password.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/firebase/authentication/firebase_auth.dart';
+import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

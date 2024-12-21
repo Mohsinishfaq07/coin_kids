@@ -15,169 +15,196 @@ class ProfileDrawer extends StatelessWidget {
     final email = FirebaseAuth.instance.currentUser?.email;
 
     return Scaffold(
-      backgroundColor: Colors.blue.shade50, // Light blue background
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              // Header with profile information
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.purple,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(60)),
-                          child: const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Icon(
-                              Icons.person,
-                              size: 50,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const CircleAvatar(
-                          radius: 15,
-                          backgroundColor: Colors.yellow,
-                          child: Icon(
-                            Icons.edit,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Nora Fatehi",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Text(
-                      "@nora_fath",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
+        backgroundColor: Colors.blue.shade50, // Light blue background
+        body: StreamBuilder(
+            stream:
+                firestoreOperations.parentFirebaseFunctions.fetchParentData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-              // My Profile Section
-              _buildSectionHeader("My Profile", onEdit: () {
-                Get.to(() => ParentUpdateProfileScreen());
-                Get.snackbar("Edit", "Edit profile clicked!");
-              }),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white38,
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  children: [
-                    _buildProfileRow(
-                        "Full name", "Nora Fatehi", Icons.abc_outlined),
-                    _buildProfileRow(
-                        "Date of birth", "19-July-1993", Icons.abc_outlined),
-                    _buildProfileRow("Gender", "Female", Icons.abc_outlined),
-                  ],
-                ),
-              ),
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
 
-              const SizedBox(height: 20),
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Center(child: Text('No data found.'));
+              }
 
-              // Personalization Section
-              _buildSectionHeader("Personalization"),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white38,
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  children: [
-                    _buildProfileRowWithArrow(
-                        "Change Language", Icons.abc_outlined),
-                    _buildProfileRowWithArrow(
-                        "Parent Zone Pin", Icons.abc_outlined),
-                  ],
-                ),
-              ),
+              Map<String, dynamic> data = snapshot.data!;
+              firebaseAuthController.username.value = data['name'];
+              firebaseAuthController.birthday.value = data['dob'];
+              firebaseAuthController.selectedGender.value = data['gender'];
+              return originalWidget(parentData: data);
+            }));
+  }
 
-              const SizedBox(height: 20),
-
-              // Notifications Section
-              _buildSectionHeader("Notifications"),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white38,
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  children: [
-                    _buildToggleRow(
-                        "Goal Achievement", true, Icons.abc_outlined),
-                    _buildToggleRow("Money Request", false, Icons.abc_outlined),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Others Section
-              _buildSectionHeader("Others"),
-              Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white38,
-                    border: Border.all(color: Colors.grey.shade300),
+  // after data fetched widget
+  originalWidget({required Map<String, dynamic> parentData}) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            // Header with profile information
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 40,
                   ),
-                  child: Column(children: [
-                    _buildProfileRowWithArrow("Share app", Icons.abc_outlined),
-                    _buildProfileRowWithArrow("Feedback", Icons.abc_outlined),
-                    _buildProfileRowWithArrow(
-                        "Privacy Policy", Icons.abc_outlined),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await firebaseAuthController.logout();
-                      },
-                      child: const Text('Logout'),
-                    )
-                  ])),
-
-              const SizedBox(height: 30),
-
-              // Version
-              const Text(
-                "Version 1.0.1",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.purple,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(60)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const CircleAvatar(
+                        radius: 15,
+                        backgroundColor: Colors.yellow,
+                        child: Icon(
+                          Icons.edit,
+                          size: 15,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "${parentData['name']}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    "@${parentData['name']}",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+
+            // My Profile Section
+            _buildSectionHeader("My Profile", onEdit: () {
+              Get.to(() => ParentUpdateProfileScreen(
+                    parentData: parentData,
+                  ));
+              Get.snackbar("Edit", "Edit profile clicked!");
+            }),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white38,
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                children: [
+                  _buildProfileRow(
+                      "Full name", "${parentData['name']}", Icons.abc_outlined),
+                  _buildProfileRow("Date of birth", "${parentData['dob']}",
+                      Icons.abc_outlined),
+                  _buildProfileRow(
+                      "Gender", "${parentData['gender']}", Icons.abc_outlined),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Personalization Section
+            _buildSectionHeader("Personalization"),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white38,
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                children: [
+                  _buildProfileRowWithArrow(
+                      "Change Language", Icons.abc_outlined),
+                  _buildProfileRowWithArrow(
+                      "Parent Zone Pin", Icons.abc_outlined),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Notifications Section
+            _buildSectionHeader("Notifications"),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white38,
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                children: [
+                  _buildToggleRow("Goal Achievement", true, Icons.abc_outlined),
+                  _buildToggleRow("Money Request", false, Icons.abc_outlined),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Others Section
+            _buildSectionHeader("Others"),
+            Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white38,
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(children: [
+                  _buildProfileRowWithArrow("Share app", Icons.abc_outlined),
+                  _buildProfileRowWithArrow("Feedback", Icons.abc_outlined),
+                  _buildProfileRowWithArrow(
+                      "Privacy Policy", Icons.abc_outlined),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await firebaseAuthController.logout();
+                    },
+                    child: const Text('Logout'),
+                  )
+                ])),
+
+            const SizedBox(height: 30),
+
+            // Version
+            const Text(
+              "Version 1.0.1",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -7,7 +7,8 @@ import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 
 class ParentUpdateProfileScreen extends StatelessWidget {
-  ParentUpdateProfileScreen({super.key});
+  Map<String, dynamic>? parentData;
+  ParentUpdateProfileScreen({super.key, required this.parentData});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                 titleText: 'Full name',
                 hintText: 'What should we call you ',
                 onChanged: (value) {
-                  firebaseAuthController.pin.value = value.trim();
+                  firebaseAuthController.username.value = value.trim();
                   firebaseAuthController
                       .checkFields(); // Check fields on change
                 },
@@ -118,12 +119,14 @@ class ParentUpdateProfileScreen extends StatelessWidget {
               // Login Button
               Obx(() => Center(
                     child: CustomButton(
-                      color: firebaseAuthController.isButtonEnabled.value
-                          ? Colors.purple
-                          : Colors.grey,
+                      isLoading: firebaseAuthController.isNormalLoading.value,
+                      color: isButtonEnabled() ? Colors.purple : Colors.grey,
                       text: 'Update profile',
                       onPressed: () async {
-                        await firebaseAuthController.loginWithEmail();
+                        if (isButtonEnabled()) {
+                          await firestoreOperations.parentFirebaseFunctions
+                              .updateParentProfile();
+                        }
                       },
                     ),
                   )),
@@ -135,5 +138,17 @@ class ParentUpdateProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool isButtonEnabled() {
+    if (parentData!['name'] != firebaseAuthController.username.value ||
+        parentData!['dob'] != firebaseAuthController.birthday.value ||
+        parentData!['gender'] != firebaseAuthController.selectedGender.value) {
+      // enable button
+      return true;
+    } else {
+      // disable the button
+      return false;
+    }
   }
 }

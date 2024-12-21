@@ -4,7 +4,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class FirestoreOperations {
-  Future<void> updateProfile() async {
+  ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
+  ChildFirebaseFunctions childFirebaseFunctions = ChildFirebaseFunctions();
+}
+
+class ParentFirebaseFunctions {
+  // fetch the details of parent
+  Stream<Map<String, dynamic>?> fetchParentData() {
+    try {
+      String? userEmail = FirebaseAuth.instance.currentUser?.email;
+
+      if (userEmail == null) {
+        return Stream.value(null);
+      }
+
+      DocumentReference parentDocRef =
+          FirebaseFirestore.instance.collection('parents').doc(userEmail);
+
+      return parentDocRef.snapshots().map((docSnapshot) {
+        if (docSnapshot.exists) {
+          return docSnapshot.data() as Map<String, dynamic>?;
+        } else {
+          return null;
+        }
+      });
+    } catch (e) {
+      Get.log('Error fetching document fields: $e');
+      return Stream.value(null); // Return an empty stream on error
+    }
+  }
+
+  // update the profile of parent
+  Future<void> updateParentProfile() async {
     try {
       firebaseAuthController.isNormalLoading.value = true;
 
@@ -27,6 +58,8 @@ class FirestoreOperations {
           "Profile updated successfully!",
           snackPosition: SnackPosition.BOTTOM,
         );
+        Get.back(closeOverlays: true);
+        Get.log('profile updated');
       } else {
         Get.snackbar(
           "Error",
@@ -45,3 +78,5 @@ class FirestoreOperations {
     }
   }
 }
+
+class ChildFirebaseFunctions {}
