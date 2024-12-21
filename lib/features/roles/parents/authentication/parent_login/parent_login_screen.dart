@@ -96,7 +96,7 @@ class ParentLoginScreen extends StatelessWidget {
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
                           await _controller.loginWithEmail();
-                          Get.off(() => BottomNavigationBarScreen());
+
                           // Form is valid
                         } else {
                           Get.log("Form has errors");
