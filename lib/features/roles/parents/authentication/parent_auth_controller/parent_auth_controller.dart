@@ -245,16 +245,24 @@ class ParentAuthController extends GetxController {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+      bool emailExist = await isEmailMatchedWithDocId(googleUser.email);
 
+      if (emailExist) {
+        Get.log('Google email already exist');
+        isGoogleLoading.value = false;
+        Get.snackbar('Alert', 'Email Already exists');
+        return;
+      }
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+        // saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
         isGoogleLoading.value = false; // Stop loading
         Get.off(() => BottomNavigationBarScreen());
       }
@@ -386,6 +394,24 @@ class ParentAuthController extends GetxController {
       );
     } finally {
       isNormalLoading.value = false;
+    }
+  }
+
+  Future<bool> isEmailMatchedWithDocId(String email) async {
+    try {
+      CollectionReference parentsCollection =
+          FirebaseFirestore.instance.collection('parents');
+
+      DocumentSnapshot docSnapshot = await parentsCollection.doc(email).get();
+
+      if (docSnapshot.exists) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      Get.log('Error checking email match: $e');
+      return false;
     }
   }
 }
