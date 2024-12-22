@@ -14,7 +14,7 @@ class FirestoreOperations {
 class ParentFirebaseFunctions {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   AddChildController addChildController = Get.put(AddChildController());
-  final HomeController homeController = Get.find<HomeController>();
+  final HomeController homeController = Get.put(HomeController());
   // fetch the details of parent
   Stream<Map<String, dynamic>?> fetchParentData() {
     try {
