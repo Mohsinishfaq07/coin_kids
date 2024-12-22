@@ -119,7 +119,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
               // Login Button
               Obx(() => Center(
                     child: CustomButton(
-                      isLoading: firebaseAuthController.isNormalLoading.value,
+                      isLoading: false,
                       color: isButtonEnabled() ? Colors.purple : Colors.grey,
                       text: 'Update profile',
                       onPressed: () async {

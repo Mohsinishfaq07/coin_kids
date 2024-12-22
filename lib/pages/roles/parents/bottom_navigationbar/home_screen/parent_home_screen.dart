@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
+import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
@@ -300,7 +301,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                               width: 180,
                               text: 'Quick Transfer',
                               onPressed: () {
-                                Get.to(() => AddChildScreen());
+                                Get.to(() => const AllChildrenPage());
                               },
                               buttonStyle: Theme.of(context)
                                   .textTheme

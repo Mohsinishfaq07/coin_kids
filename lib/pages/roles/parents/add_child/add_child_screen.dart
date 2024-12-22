@@ -140,21 +140,18 @@ class AddChildScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // Add Child Button
-              Center(child: Obx(() {
-                return CustomButton(
-                  text: "Add Child",
-                  onPressed: () async {
-                    if (!firebaseAuthController.isNormalLoading.value) {
-                      firebaseAuthController.isNormalLoading.value = true;
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        firestoreOperations.parentFirebaseFunctions
-                            .addChildAndUpdateParent();
-                      });
-                    }
-                  },
-                  isLoading: firebaseAuthController.isNormalLoading.value,
-                );
-              })),
+              Center(
+                  child: CustomButton(
+                text: "Add Child",
+                onPressed: () async {
+                  if (!firebaseAuthController.isNormalLoading.value) {
+                    firebaseAuthController.isNormalLoading.value = true;
+                    firestoreOperations.parentFirebaseFunctions
+                        .addChildAndUpdateParent();
+                  }
+                },
+                isLoading: false,
+              )),
             ],
           ),
         ),

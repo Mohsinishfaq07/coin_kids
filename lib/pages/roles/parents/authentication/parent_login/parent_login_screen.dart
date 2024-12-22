@@ -105,7 +105,7 @@ class ParentLoginScreen extends StatelessWidget {
                           Get.log("Form has errors");
                         }
                       },
-                      isLoading: firebaseAuthController.isEmailLoading.value,
+                      isLoading: false,
                     )),
                 const SizedBox(height: 40),
 
