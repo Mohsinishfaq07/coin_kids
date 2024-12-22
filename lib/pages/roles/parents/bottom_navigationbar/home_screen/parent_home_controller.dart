@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -14,18 +13,9 @@ class HomeController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Add any controller logic if needed (e.g., API calls, navigation)
-  void navigateToAddChild() {
-    Get.to(() => AddChildScreen());
-    // Get.snackbar("Navigation", "Navigating to Add Child Screen");
-  }
+  
 
-  @override
-  void onInit() {
-    //   fetchKids();
-    // fetchParentDetails();
-    super.onInit();
-  }
-
+  
   void fetchKids() {
     try {
       isLoading.value = true; // Start loading

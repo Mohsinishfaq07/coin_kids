@@ -3,6 +3,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
@@ -350,11 +351,7 @@ class QuickTransferPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Child Avatar
-                  Image.asset(
-                    "assets/avatar1.png",
-                    height: 80,
-                    width: 80,
-                  ),
+                 SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
                   const SizedBox(height: 10),
 
                   // Available Money

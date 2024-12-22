@@ -5,6 +5,7 @@ import 'package:coin_kids/pages/roles/parents/drawer/update_profile.dart';
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ProfileDrawer extends StatelessWidget {
@@ -123,12 +124,12 @@ class ProfileDrawer extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildProfileRow(
-                      "Full name", "${parentData['name']}", Icons.abc_outlined),
+                  _buildProfileRow("Full name", "${parentData['name']}",
+                      "assets/drawer_svgs/3p.svg"),
                   _buildProfileRow("Date of birth", "${parentData['dob']}",
-                      Icons.abc_outlined),
-                  _buildProfileRow(
-                      "Gender", "${parentData['gender']}", Icons.abc_outlined),
+                      "assets/drawer_svgs/calendar_month.svg"),
+                  _buildProfileRow("Gender", "${parentData['gender']}",
+                      "assets/drawer_svgs/wc.svg"),
                 ],
               ),
             ),
@@ -146,9 +147,9 @@ class ProfileDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   _buildProfileRowWithArrow(
-                      "Change Language", Icons.abc_outlined),
+                      "Change Language", "assets/drawer_svgs/wc.svg"),
                   _buildProfileRowWithArrow(
-                      "Parent Zone Pin", Icons.abc_outlined),
+                      "Parent Zone Pin", "assets/drawer_svgs/wc.svg"),
                 ],
               ),
             ),
@@ -182,10 +183,12 @@ class ProfileDrawer extends StatelessWidget {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Column(children: [
-                  _buildProfileRowWithArrow("Share app", Icons.abc_outlined),
-                  _buildProfileRowWithArrow("Feedback", Icons.abc_outlined),
                   _buildProfileRowWithArrow(
-                      "Privacy Policy", Icons.abc_outlined),
+                      "Share app", "assets/drawer_svgs/wc.svg"),
+                  _buildProfileRowWithArrow(
+                      "Feedback", "assets/drawer_svgs/wc.svg"),
+                  _buildProfileRowWithArrow(
+                      "Privacy Policy", "assets/drawer_svgs/wc.svg"),
                   ElevatedButton(
                     onPressed: () async {
                       await firebaseAuthController.logout();
@@ -246,7 +249,7 @@ class ProfileDrawer extends StatelessWidget {
   }
 
   // Build profile row (key-value pair)
-  Widget _buildProfileRow(String title, String value, IconData icon) {
+  Widget _buildProfileRow(String title, String value, String iconPath) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       child: Row(
@@ -254,10 +257,11 @@ class ProfileDrawer extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
+              SvgPicture.asset(
+                iconPath, // Path to your SVG asset
                 color: Colors.purple,
-                size: 30,
+                height: 30, // Adjust the size as needed
+                width: 30, // Adjust the size as needed
               ),
               const SizedBox(width: 10),
               Text(
@@ -282,7 +286,7 @@ class ProfileDrawer extends StatelessWidget {
   }
 
   // Build profile row with arrow
-  Widget _buildProfileRowWithArrow(String title, IconData icon) {
+  Widget _buildProfileRowWithArrow(String title, String iconPath) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       child: Row(
@@ -290,10 +294,11 @@ class ProfileDrawer extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
+              SvgPicture.asset(
+                iconPath, // Path to your SVG asset
                 color: Colors.purple,
-                size: 30,
+                height: 25, // Adjust the size as needed
+                width: 25, // Adjust the size as needed
               ),
               const SizedBox(width: 10),
               Text(

@@ -14,7 +14,7 @@ class KidMyMoney extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: CircleAvatar(
-            child: Image.asset('assets/avatar1.png'),
+            child: SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
           ),
         ),
         title: Text(

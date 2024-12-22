@@ -21,11 +21,26 @@ class AddChildController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // List of predefined avatars
   final List<String> avatars = [
-    'assets/avatar1.png',
-    'assets/avatar2.png',
-    'assets/avatar3.png',
+    'assets/child_avatar_images/avatar1.svg',
+    'assets/child_avatar_images/avatar2.svg',
+    'assets/child_avatar_images/avatar3.svg',
+    'assets/child_avatar_images/avatar4.svg',
+    'assets/child_avatar_images/avatar5.svg',
+    'assets/child_avatar_images/avatar6.svg',
+    'assets/child_avatar_images/avatar7.svg',
+    'assets/child_avatar_images/avatar8.svg',
+    'assets/child_avatar_images/avatar9.svg',
+    'assets/child_avatar_images/avatar10.svg',
+    'assets/child_avatar_images/avatar11.svg',
+    'assets/child_avatar_images/avatar12.svg',
+    'assets/child_avatar_images/avatar13.svg',
+    'assets/child_avatar_images/avatar14.svg',
+    'assets/child_avatar_images/avatar15.svg',
+    'assets/child_avatar_images/avatar16.svg',
+    'assets/child_avatar_images/avatar17.svg',
+    'assets/child_avatar_images/avatar18.svg',
+    'assets/child_avatar_images/avatar19.svg',
   ];
   @override
   void onInit() {

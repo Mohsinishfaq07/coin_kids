@@ -21,7 +21,7 @@ class MessagesScreen extends StatelessWidget {
           child: Column(
             children: [
               CustomCard(
-                avatarImage: "assets/avatar3.png",
+                avatarImage: "assets/googlelogo.png",
                 title: "Saving Goals Completed!",
                 subtitle: "Today at 9:42 AM",
                 icon: Icons.import_contacts,
@@ -57,7 +57,7 @@ class MessagesScreen extends StatelessWidget {
                             radius: 20,
                             backgroundColor: Colors.grey.shade200,
                             child: Image.asset(
-                              'assets/avatar3.png',
+                              'assets/googlelogo.png',
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -101,7 +101,7 @@ class MessagesScreen extends StatelessWidget {
                 ),
               ),
               CustomCard(
-                avatarImage: "assets/avatar3.png",
+                avatarImage: "assets/googlelogo.png",
                 title: "James Goals Completed!",
                 subtitle: "Today at 9:42 AM",
                 icon: Icons.import_contacts,

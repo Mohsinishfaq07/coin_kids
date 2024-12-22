@@ -3,7 +3,6 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -83,6 +82,7 @@ class SignupParentScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Password is required";
                     }
+                    return null;
                   },
                 ),
                 const SizedBox(height: 14),
@@ -96,8 +96,12 @@ class SignupParentScreen extends StatelessWidget {
                     titleText: 'Confirm Password',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "COnfirm Password is required";
+                        return "Confirm Password is required";
                       }
+                      if (value != firebaseAuthController.pin.value) {
+                        return "Passwords do not match";
+                      }
+                      return null;
                     }),
 
                 const SizedBox(height: 30),
@@ -107,14 +111,20 @@ class SignupParentScreen extends StatelessWidget {
                             ? Colors.purple
                             : Colors.grey,
                         text: 'Signup',
+                        isLoading: firebaseAuthController.isEmailLoading.value,
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            // Form is valid
-                            firebaseAuthController.signUpWithEmail();
-                          } else {}
-                          // Call signup method
+                            // If the form is valid, proceed with the signup action
+                            try {
+                              firebaseAuthController.signUpWithEmail();
+                            } catch (e) {
+                              print("Error: $e");
+                            }
+                          } else {
+                            // If the form is not valid, show error messages
+                            print("Form validation failed");
+                          }
                         },
-                        isLoading: firebaseAuthController.isEmailLoading.value,
                       ),
                     )),
                 const SizedBox(height: 20),
@@ -158,8 +168,17 @@ class SignupParentScreen extends StatelessWidget {
                     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                   ),
                   onPressed: () {
-                    firebaseAuthController.loginWithGoogle();
-                    //  Get.to(() => ParentGoogleSignup());
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // If the form is valid, proceed with the signup action
+                      try {
+                        firebaseAuthController.signUpWithEmail();
+                      } catch (e) {
+                        print("Error: $e");
+                      }
+                    } else {
+                      // If the form is not valid, show error messages
+                      print("Form validation failed");
+                    }
                   },
                   child: Obx(() {
                     return firebaseAuthController.isGoogleLoading.value

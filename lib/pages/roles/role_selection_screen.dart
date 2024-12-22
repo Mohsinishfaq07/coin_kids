@@ -80,7 +80,7 @@ class OptionCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -95,7 +95,7 @@ class OptionCard extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              radius: 50,
+              radius: 45,
               backgroundColor: Colors.purple,
               child: SvgPicture.asset(
                 imagePath,
@@ -113,7 +113,7 @@ class OptionCard extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontSize: 20),
+                        .copyWith(fontSize: 19  ),
                   ),
                   const SizedBox(height: 8),
                   Row(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
+import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ParentsHomeScreen extends StatefulWidget {
-  ParentsHomeScreen({super.key});
+  const ParentsHomeScreen({super.key});
 
   @override
   State<ParentsHomeScreen> createState() => _ParentsHomeScreenState();
@@ -22,6 +23,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchParentDetails();
+      controller.fetchKids();
     });
   }
 
@@ -146,7 +148,11 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                         fontWeight: FontWeight.w700)),
                             const SizedBox(height: 20),
                             CustomButton(
-                                width: 180, text: 'Add Child', onPressed: () {}
+                                width: 180,
+                                text: 'Add Child',
+                                onPressed: () {
+                                  Get.to(() => AddChildScreen());
+                                }
                                 //controller.navigateToAddChild,
                                 ),
                           ],
@@ -159,7 +165,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
             }
 
             // Display list of kids
-            return Padding(
+            return  Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
@@ -193,8 +199,9 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
-                              onTap: controller
-                                  .navigateToAddChild, // Navigate to add child screen
+                              onTap: () {
+                                Get.to(() => AddChildScreen());
+                              }, // Navigate to add child screen
                               child: Column(
                                 children: [
                                   Container(
@@ -233,7 +240,6 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                 const EdgeInsets.symmetric(horizontal: 10.0),
                             child: GestureDetector(
                               onTap: () {
-                                Get.log('kid id: ${kid['id']}');
                                 Get.to(() => KidProfileManagementPage(
                                       childId: '${kid['id']}',
                                     ));
@@ -251,7 +257,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                                     'avatar']) // Load network image
                                                 as ImageProvider) // Determine if it's a local or network image
                                         : const AssetImage(
-                                            "assets/avatar1.png"),
+                                            "assets/googlelogo.png"),
                                   ),
                                   const SizedBox(height: 10),
                                   Text(
@@ -286,7 +292,9 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                             CustomButton(
                               width: 180,
                               text: 'Quick Transfer',
-                              onPressed: controller.navigateToAddChild,
+                              onPressed: () {
+                                Get.to(() => AddChildScreen());
+                              },
                               buttonStyle: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -358,4 +366,3 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
         ));
   }
 }
-///

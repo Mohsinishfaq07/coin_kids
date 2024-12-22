@@ -202,7 +202,7 @@ childGeneralDetailWidget({required dynamic docData}) {
           // name
           Text(docData['name']),
           // avatar
-          Image.asset("assets/avatar1.png"),
+          Image.asset("assets/apple_logo.png"),
           // available money
           const Text('Available Money'),
           Text(docData['savings']['amount']),
