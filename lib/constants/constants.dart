@@ -6,5 +6,5 @@ late FirebaseAuthController firebaseAuthController;
 late FirestoreOperations firestoreOperations;
 controllerAndClassInitialization() async {
   firebaseAuthController = Get.put(FirebaseAuthController());
-  firestoreOperations = FirestoreOperations();
+  firestoreOperations = Get.put(FirestoreOperations());
 }

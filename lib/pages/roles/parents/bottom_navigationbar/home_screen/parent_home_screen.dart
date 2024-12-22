@@ -7,6 +7,7 @@ import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_managem
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ParentsHomeScreen extends StatefulWidget {
@@ -165,7 +166,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
             }
 
             // Display list of kids
-            return  Padding(
+            return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
@@ -235,6 +236,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                           // Other items: Display kids' data
                           final kid = controller.kidsList[
                               index]; // Use index directly for kidsList
+
                           return Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 10.0),
@@ -248,16 +250,21 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                 children: [
                                   CircleAvatar(
                                     radius: 30,
-                                    backgroundImage: kid['avatar'] != null &&
-                                            kid['avatar'].toString().isNotEmpty
-                                        ? (kid['avatar'].startsWith('/')
-                                            ? FileImage(File(kid[
-                                                'avatar'])) // Load local image
-                                            : NetworkImage(kid[
-                                                    'avatar']) // Load network image
-                                                as ImageProvider) // Determine if it's a local or network image
-                                        : const AssetImage(
-                                            "assets/googlelogo.png"),
+                                    backgroundImage: kid['avatar']
+                                            .startsWith('/')
+                                        ? FileImage(File(kid['avatar']))
+                                        : (kid['avatar'].startsWith('assets') &&
+                                                !kid['avatar'].endsWith('.svg'))
+                                            ? AssetImage(kid['avatar'])
+                                            : kid['avatar'].startsWith('http')
+                                                ? NetworkImage(kid['avatar'])
+                                                : null,
+                                    child: kid['avatar'].endsWith('.svg')
+                                        ? SvgPicture.asset(
+                                            kid['avatar'],
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
                                   ),
                                   const SizedBox(height: 10),
                                   Text(
@@ -366,3 +373,20 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
         ));
   }
 }
+
+
+
+/*
+
+kid['avatar'] != null &&
+                                            kid['avatar'].toString().isNotEmpty
+                                        ? (kid['avatar'].startsWith('/')
+                                            ? FileImage(File(kid[
+                                                'avatar'])) // Load local image
+                                            :  NetworkImage(kid[
+                                                    'avatar']) // Load network image
+                                                as ImageProvider) // Determine if it's a local or network image
+                                        : const AssetImage(
+                                            "assets/googlelogo.png"),
+
+*/

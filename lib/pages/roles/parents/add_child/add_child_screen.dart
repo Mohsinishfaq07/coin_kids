@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
@@ -105,7 +106,9 @@ class AddChildScreen extends StatelessWidget {
                             index - 1; // Adjust index for predefined avatars
                         return Obx(
                           () => GestureDetector(
-                            onTap: () => _controller.selectAvatar(avatarIndex),
+                            onTap: () {
+                              _controller.selectAvatar(avatarIndex);
+                            },
                             child: Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Container(
@@ -137,15 +140,21 @@ class AddChildScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // Add Child Button
-              Center(
-                child: CustomButton(
+              Center(child: Obx(() {
+                return CustomButton(
                   text: "Add Child",
                   onPressed: () async {
-                    await _controller.addChildAndUpdateParent();
-                    _controller.customAvatarPath.value = "";
+                    if (!firebaseAuthController.isNormalLoading.value) {
+                      firebaseAuthController.isNormalLoading.value = true;
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        firestoreOperations.parentFirebaseFunctions
+                            .addChildAndUpdateParent();
+                      });
+                    }
                   },
-                ),
-              ),
+                  isLoading: firebaseAuthController.isNormalLoading.value,
+                );
+              })),
             ],
           ),
         ),

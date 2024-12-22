@@ -16,7 +16,7 @@ class AddChildController extends GetxController {
   var selectedGrade = ''.obs;
   var selectedAvatar = 0.obs;
   var customAvatarPath = ''.obs; // Path for custom uploaded avatar
-  final selectedImagePath = ''.obs;
+  final selectedAvatarPath = ''.obs;
   var parentId = ''.obs; // Observable for parentId
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,6 +49,7 @@ class AddChildController extends GetxController {
   }
 
   Future<void> fetchParentId() async {
+    Get.log('fetch parent id function starts');
     try {
       final user = _auth.currentUser;
       if (user != null) {
@@ -84,7 +85,7 @@ class AddChildController extends GetxController {
       if (pickedFile != null) {
         final String localPath = await saveImageLocally(File(pickedFile.path));
         customAvatarPath.value = localPath;
-
+        selectedAvatarPath.value = '';
         // Save the image path in SQLite
         await DatabaseHelper.instance.insertImage(localPath);
 
@@ -118,59 +119,11 @@ class AddChildController extends GetxController {
   void selectAvatar(int index) {
     selectedAvatar.value = index;
     customAvatarPath.value = ''; // Clear custom avatar selection
+
+    selectedAvatarPath.value = avatars[index];
+
+    Get.log('selected avatar path: ${selectedAvatarPath.value}');
   }
 
   // Add new child and update parent reference
-  Future<void> addChildAndUpdateParent() async {
-    Get.log(
-      'Adding new child with parent ID: ${parentId.value}',
-    );
-    if (childName.value.isEmpty || childAge.isEmpty) {
-      Get.snackbar("Error", "All fields are required");
-      return;
-    }
-
-    try {
-      final String avatarUrl = customAvatarPath.value; // Use selected avatar
-
-      // Reference to the parent document
-      DocumentReference parentRef =
-          _firestore.collection('parents').doc(parentId.value);
-
-      // Prepare child data
-      final Map<String, dynamic> childData = {
-        'name': childName.value,
-        'parentId': FirebaseAuth.instance.currentUser!.uid,
-        'grade': 'Grade 1',
-        'parent': parentRef,
-        'avatar': avatarUrl,
-        'age': childAge.value,
-        'savings': {
-          'amount': '15', // Default savings value
-          'color': '#227799',
-          'name': 'Savings',
-        },
-        'spendings': {
-          'amount': 45, // Default spendings value
-          'color': '#F54422',
-          'name': 'Spendings',
-        },
-      };
-
-      // Add child and update parent in a transaction
-      await _firestore.runTransaction((transaction) async {
-        DocumentReference newChildRef = _firestore.collection('kids').doc();
-        transaction.set(newChildRef, childData);
-        transaction.update(parentRef, {
-          'kids': FieldValue.arrayUnion([newChildRef])
-        });
-      });
-      Get.to(() => ParentsHomeScreen());
-
-      Get.snackbar("Success", "Child added and parent updated successfully");
-    } catch (e) {
-      Get.snackbar("Error", "Failed to add child: $e");
-      Get.log(e.toString());
-    }
-  }
 }
