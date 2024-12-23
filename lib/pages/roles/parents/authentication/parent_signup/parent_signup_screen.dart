@@ -34,7 +34,7 @@ class SignupParentScreen extends StatelessWidget {
                   onChanged: (value) {
                     firebaseAuthController.username.value = value.trim();
                     firebaseAuthController
-                        .checkFields(); // Check fields on change
+                        .signUpCheckField(); // Check fields on change
                   },
                   titleText: 'Full Name',
                   validator: (value) {
@@ -51,7 +51,7 @@ class SignupParentScreen extends StatelessWidget {
                   onChanged: (value) {
                     firebaseAuthController.email.value = value.trim();
                     firebaseAuthController
-                        .checkFields(); // Check fields on change
+                        .signUpCheckField(); // Check fields on change
                   },
                   titleText: 'Email',
                   validator: (value) {
@@ -75,7 +75,7 @@ class SignupParentScreen extends StatelessWidget {
                   onChanged: (value) {
                     firebaseAuthController.pin.value = value.trim();
                     firebaseAuthController
-                        .checkFields(); // Check fields on change
+                        .signUpCheckField(); // Check fields on change
                   },
                   titleText: 'Password',
                   validator: (value) {
@@ -91,7 +91,7 @@ class SignupParentScreen extends StatelessWidget {
                     onChanged: (value) {
                       firebaseAuthController.confirmPin.value = value.trim();
                       firebaseAuthController
-                          .checkFields(); // Check fields on change
+                          .signUpCheckField(); // Check fields on change
                     },
                     titleText: 'Confirm Password',
                     validator: (value) {
@@ -100,6 +100,9 @@ class SignupParentScreen extends StatelessWidget {
                       }
                       if (value != firebaseAuthController.pin.value) {
                         return "Passwords do not match";
+                      }
+                      if (value.length < 6) {
+                        return "Password must be at least 6 characters long";
                       }
                       return null;
                     }),

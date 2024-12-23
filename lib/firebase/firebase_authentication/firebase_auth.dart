@@ -30,6 +30,14 @@ class FirebaseAuthController extends GetxController {
     isButtonEnabled.value = email.value.isNotEmpty && pin.value.isNotEmpty;
   }
 
+  void signUpCheckField() {
+    isButtonEnabled.value = username.isNotEmpty &&
+        email.isNotEmpty &&
+        pin.isNotEmpty &&
+        confirmPin.isNotEmpty &&
+        pin == confirmPin;
+  }
+
   void setBirthday(DateTime date) {
     birthday.value = "${date.year}-${date.month}-${date.day}";
   }
@@ -39,63 +47,34 @@ class FirebaseAuthController extends GetxController {
   }
 
   Future<void> signUpWithEmail() async {
-    if (username.value.isEmpty ||
-        pin.value.isEmpty ||
-        email.value.isEmpty ||
-        pin.value != confirmPin.value) {
-      Get.snackbar(
-        "Error",
-        "All fields (except gender) are required!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    if (pin.value.length < 6) {
-      Get.snackbar(
-        "Error",
-        "Pin must be at-least 6 digits long!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
     try {
-      try {
-        isEmailLoading.value = true;
+      isEmailLoading.value = true;
 
-        showDialog(
-            context: Get.context!,
-            builder: (context) =>
-                LoadingProgressDialogueWidget(title: 'Signup....'));
-        final credential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.value,
-          password: pin.value,
-        );
-        saveUserInfo(fieldName: 'email', fieldValue: email.value);
-        await saveCredentialsLocally(email.value, pin.value);
-        Get.back(); // Stop loading
-        Get.offAll(() => BottomNavigationBarScreen());
-      } on FirebaseAuthException catch (e) {
-        Get.back();
-        isEmailLoading.value = false;
-        Get.snackbar("Error", "Failed to create account: $e",
-            snackPosition: SnackPosition.BOTTOM);
-      } catch (e) {
-        Get.back();
-        isEmailLoading.value = false;
-        Get.log(e.toString());
-      }
-
-      // Show success message and navigate to the next screen
-    } catch (e) {
+      showDialog(
+          context: Get.context!,
+          builder: (context) =>
+              LoadingProgressDialogueWidget(title: 'Signup....'));
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.value,
+        password: pin.value,
+      );
+      saveUserInfo(fieldName: 'email', fieldValue: email.value);
+      await saveCredentialsLocally(email.value, pin.value);
+      Get.back(); // Stop loading
+      Get.offAll(() => BottomNavigationBarScreen());
+    } on FirebaseAuthException catch (e) {
       Get.back();
       isEmailLoading.value = false;
       Get.snackbar("Error", "Failed to create account: $e",
           snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.back();
+      isEmailLoading.value = false;
+      Get.log(e.toString());
     }
-  }
+
+   }
 
   Future<void> saveCredentialsLocally(String email, String password) async {
     try {
@@ -139,14 +118,7 @@ class FirebaseAuthController extends GetxController {
   // number sign up
 
   signUpWithNumber() {
-    if (username.isEmpty || birthday.isEmpty || number.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "All fields (except gender) are required!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
+   
 
     if (!RegExp(r'^\d+$').hasMatch(number.value)) {
       Get.snackbar(
