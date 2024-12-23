@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
@@ -6,83 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-
-class QuickTransferPageController extends GetxController {
-  RxString amount = ''.obs;
-  RxString message = ''.obs;
-  RxString amountValidation = ''.obs;
-
-  Future<void> updateSavings({
-    required bool save,
-    required String childId,
-    required int enteredAmount,
-  }) async {
-    try {
-      // Reference to the document in the 'kids' collection
-      DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(childId);
-
-      // Fetch the current document
-      DocumentSnapshot snapshot = await kidDocRef.get();
-
-      if (snapshot.exists) {
-        // Retrieve the current savings amount
-        final currentSavings =
-            (snapshot.data() as Map<String, dynamic>?)?['savings']?['amount'] ??
-                0;
-        int updatedAmount = 0;
-        if (save) {
-          updatedAmount = int.parse(currentSavings) + enteredAmount;
-          Get.log("Current Savings Amount: $currentSavings");
-
-          // Update the savings field with the new amount
-          await kidDocRef.set({
-            'savings': {'amount': updatedAmount.toString()},
-          }, SetOptions(merge: true));
-
-          Get.log("Savings updated successfully to: $updatedAmount");
-          showDialog(
-            context: Get.context!,
-            builder: (context) => TransferSuccessDialog(
-              receiverName: snapshot['name'],
-              amount: amount.toString(),
-              dateTime: '01/10/23, 11:00 AM',
-              title: 'Transfer Successful',
-              transferType: 'received',
-            ),
-          );
-        } else {
-          if (enteredAmount >= int.parse(currentSavings)) {
-            amountValidation.value = 'Not Enough Funds, can not remove';
-          } else {
-            updatedAmount = int.parse(currentSavings) - enteredAmount;
-            Get.log("Current Savings Amount: $currentSavings");
-
-            // Update the savings field with the new amount
-            await kidDocRef.set({
-              'savings': {'amount': updatedAmount.toString()},
-            }, SetOptions(merge: true));
-
-            Get.log("Savings updated successfully to: $updatedAmount");
-            showDialog(
-              context: Get.context!,
-              builder: (context) => TransferSuccessDialog(
-                  receiverName: snapshot['name'],
-                  amount: amount.toString(),
-                  dateTime: '01/10/23, 11:00 AM',
-                  title: 'Deduction Successful',
-                  transferType: 'deducted'),
-            );
-          }
-        }
-      } else {
-        Get.log("Document does not exist for childId: $childId");
-      }
-    } catch (e) {
-      Get.log("Error updating savings: $e");
-    }
-  }
-}
 
 class QuickTransferPage extends StatelessWidget {
   final dynamic docData;
@@ -92,8 +16,6 @@ class QuickTransferPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    QuickTransferPageController quickTransferPageController =
-        Get.put(QuickTransferPageController());
     return Scaffold(
       appBar: CustomAppBar(
         title: "Quick Transfer",
@@ -157,19 +79,18 @@ class QuickTransferPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 quickTransferFields(
                     onChanged: (val) {
-                      quickTransferPageController.amount.value = val;
+                      parentController.amount.value = val;
                     },
                     keyboardType: const TextInputType.numberWithOptions(),
                     hintText: 'Enter Amount',
                     onTap: () {
-                      quickTransferPageController.amountValidation.value = '';
+                      parentController.amountValidation.value = '';
                     },
                     showPrefix: true),
                 Obx(() {
-                  return quickTransferPageController
-                          .amountValidation.value.isEmpty
+                  return parentController.amountValidation.value.isEmpty
                       ? const SizedBox.shrink()
-                      : Text(quickTransferPageController.amountValidation.value,
+                      : Text(parentController.amountValidation.value,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.red,
@@ -196,22 +117,21 @@ class QuickTransferPage extends StatelessWidget {
                   children: [
                     Obx(() {
                       return CustomButton(
-                        color:
-                            quickTransferPageController.amount.value.isNotEmpty
-                                ? Colors.purple
-                                : Colors.grey,
+                        color: parentController.amount.value.isNotEmpty
+                            ? Colors.purple
+                            : Colors.grey,
                         text: '- Remove',
                         onPressed: () async {
-                          if (quickTransferPageController
-                              .amount.value.isEmpty) {
-                            quickTransferPageController.amountValidation.value =
+                          if (parentController.amount.value.isEmpty) {
+                            parentController.amountValidation.value =
                                 'Enter valid amount';
                           } else {
-                            quickTransferPageController.updateSavings(
-                                childId: childId,
-                                enteredAmount: int.parse(
-                                    quickTransferPageController.amount.value),
-                                save: false);
+                            firestoreOperations.parentFirebaseFunctions
+                                .updateSavings(
+                                    childId: childId,
+                                    enteredAmount: int.parse(
+                                        parentController.amount.value),
+                                    save: false);
                           }
                         },
                         width: 150,
@@ -219,22 +139,21 @@ class QuickTransferPage extends StatelessWidget {
                     }),
                     Obx(() {
                       return CustomButton(
-                        color:
-                            quickTransferPageController.amount.value.isNotEmpty
-                                ? Colors.purple
-                                : Colors.grey,
+                        color: parentController.amount.value.isNotEmpty
+                            ? Colors.purple
+                            : Colors.grey,
                         text: '+ Send',
                         onPressed: () async {
-                          if (quickTransferPageController
-                              .amount.value.isEmpty) {
-                            quickTransferPageController.amountValidation.value =
+                          if (parentController.amount.value.isEmpty) {
+                            parentController.amountValidation.value =
                                 'Enter valid amount';
                           } else {
-                            quickTransferPageController.updateSavings(
-                                childId: childId,
-                                enteredAmount: int.parse(
-                                    quickTransferPageController.amount.value),
-                                save: true);
+                            firestoreOperations.parentFirebaseFunctions
+                                .updateSavings(
+                                    childId: childId,
+                                    enteredAmount: int.parse(
+                                        parentController.amount.value),
+                                    save: true);
                           }
                         },
                         width: 150,
@@ -247,55 +166,6 @@ class QuickTransferPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  quickTransferFields({
-    required Function()? onTap,
-    required Function(String)? onChanged,
-    required TextInputType? keyboardType,
-    required String hintText,
-    required bool showPrefix,
-  }) {
-    return TextField(
-      onTap: onTap,
-      onChanged: onChanged,
-
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white38, // Background color for the text field
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey), // Hint text color
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Colors.grey, // Border color when unfocused
-              width: 1.5,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Colors.grey, // Border color when enabled
-              width: 1.5,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Colors.blue, // Border color when focused
-              width: 2.0,
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          prefixIcon: showPrefix
-              ? const Icon(
-                  Icons.money,
-                  color: Colors.blue,
-                )
-              : const SizedBox.shrink()),
-      style: const TextStyle(color: Colors.black), // Input text color
     );
   }
 
@@ -380,6 +250,55 @@ class QuickTransferPage extends StatelessWidget {
       },
     );
   }
+}
+
+quickTransferFields({
+  required Function()? onTap,
+  required Function(String)? onChanged,
+  required TextInputType? keyboardType,
+  required String hintText,
+  required bool showPrefix,
+}) {
+  return TextField(
+    onTap: onTap,
+    onChanged: onChanged,
+
+    keyboardType: keyboardType,
+    decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white38, // Background color for the text field
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.grey), // Hint text color
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+            color: Colors.grey, // Border color when unfocused
+            width: 1.5,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+            color: Colors.grey, // Border color when enabled
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+            color: Colors.blue, // Border color when focused
+            width: 2.0,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        prefixIcon: showPrefix
+            ? const Icon(
+                Icons.money,
+                color: Colors.blue,
+              )
+            : const SizedBox.shrink()),
+    style: const TextStyle(color: Colors.black), // Input text color
+  );
 }
 
 class TransferSuccessDialog extends StatelessWidget {

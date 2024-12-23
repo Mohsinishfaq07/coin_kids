@@ -1,9 +1,11 @@
 // signup_controller.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -61,6 +63,11 @@ class FirebaseAuthController extends GetxController {
     try {
       try {
         isEmailLoading.value = true;
+
+        showDialog(
+            context: Get.context!,
+            builder: (context) =>
+                LoadingProgressDialogueWidget(title: 'Signup....'));
         final credential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email.value,
@@ -68,18 +75,22 @@ class FirebaseAuthController extends GetxController {
         );
         saveUserInfo(fieldName: 'email', fieldValue: email.value);
         await saveCredentialsLocally(email.value, pin.value);
+        Get.back(); // Stop loading
         Get.offAll(() => BottomNavigationBarScreen());
       } on FirebaseAuthException catch (e) {
+        Get.back();
         isEmailLoading.value = false;
         Get.snackbar("Error", "Failed to create account: $e",
             snackPosition: SnackPosition.BOTTOM);
       } catch (e) {
+        Get.back();
         isEmailLoading.value = false;
         Get.log(e.toString());
       }
 
       // Show success message and navigate to the next screen
     } catch (e) {
+      Get.back();
       isEmailLoading.value = false;
       Get.snackbar("Error", "Failed to create account: $e",
           snackPosition: SnackPosition.BOTTOM);
@@ -201,27 +212,41 @@ class FirebaseAuthController extends GetxController {
 
     try {
       isEmailLoading.value = true; // Start loading
+      showDialog(
+          context: Get.context!,
+          builder: (context) =>
+              LoadingProgressDialogueWidget(title: 'Login....'));
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
       await saveCredentialsLocally(email.value, pin.value);
-      isEmailLoading.value = false; // Stop loading
+      Get.back(); // Stop loading
       Get.offAll(() => BottomNavigationBarScreen());
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
       isEmailLoading.value = false;
       if (e.code == 'user-not-found') {
-        Get.snackbar("Error", "No user found for that email.",
-            snackPosition: SnackPosition.BOTTOM);
+        Get.back();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Get.snackbar("Error", "No user found for that email.",
+              snackPosition: SnackPosition.BOTTOM);
+        });
       } else if (e.code == 'wrong-password') {
-        Get.snackbar("Error", "Incorrect password entered.",
-            snackPosition: SnackPosition.BOTTOM);
+        Get.back();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Get.snackbar("Error", "Incorrect password entered.",
+              snackPosition: SnackPosition.BOTTOM);
+        });
       } else {
-        Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
-            snackPosition: SnackPosition.BOTTOM);
+        Get.back();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
+              snackPosition: SnackPosition.BOTTOM);
+        });
       }
     } catch (e) {
       isEmailLoading.value = false;
+      Get.back();
       Get.snackbar(
         "Error",
         "Failed to login. Please try again later.",

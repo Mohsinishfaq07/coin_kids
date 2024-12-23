@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
+import 'package:coin_kids/pages/roles/parents/kid_management/quick_transfer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FirestoreOperations {
@@ -40,10 +43,24 @@ class ParentFirebaseFunctions {
     }
   }
 
+  // get all the children related to current logged in parent
+
+  Stream<List<DocumentSnapshot>> fetchChildrenForParent(String currentUserId) {
+    return FirebaseFirestore.instance
+        .collection('kids')
+        .where('parentId', isEqualTo: currentUserId)
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs);
+  }
+
   // update the profile of parent
   Future<void> updateParentProfile() async {
     try {
       firebaseAuthController.isNormalLoading.value = true;
+      showDialog(
+          context: Get.context!,
+          builder: (context) =>
+              LoadingProgressDialogueWidget(title: 'Updating....'));
 
       // Update Firebase Firestore
       final user = FirebaseAuth.instance.currentUser;
@@ -59,7 +76,7 @@ class ParentFirebaseFunctions {
               : 'Not specified',
         });
         homeController.parentName.value = firebaseAuthController.username.value;
-
+        Get.back();
         Get.snackbar(
           "Success",
           "Profile updated successfully!",
@@ -75,6 +92,7 @@ class ParentFirebaseFunctions {
         );
       }
     } catch (e) {
+      Get.back();
       Get.snackbar(
         "Error",
         "Failed to update profile: $e",
@@ -88,7 +106,7 @@ class ParentFirebaseFunctions {
   // add child to parent
   Future<void> addChildAndUpdateParent() async {
     Get.log(
-      'Adding new child with parent ID: ${addChildController.parentId.value} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
+      'Adding new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
     );
     if (addChildController.childName.value.isEmpty ||
         addChildController.childAge.isEmpty) {
@@ -98,6 +116,10 @@ class ParentFirebaseFunctions {
     }
 
     try {
+      showDialog(
+          context: Get.context!,
+          builder: (context) =>
+              LoadingProgressDialogueWidget(title: 'Adding....'));
       final String avatarUrl = addChildController
               .selectedAvatarPath.value.isEmpty
           ? addChildController.customAvatarPath.value
@@ -139,18 +161,96 @@ class ParentFirebaseFunctions {
       });
       firebaseAuthController.isNormalLoading.value = false;
       Get.log(
-        'Added new child with parent ID: ${addChildController.parentId.value} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
+        'Added new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
+      Get.back();
       Get.to(() => const ParentsHomeScreen());
 
       Get.snackbar("Success", "Child added and parent updated successfully");
     } catch (e) {
+      Get.back();
       firebaseAuthController.isNormalLoading.value = false;
       Get.snackbar("Error", "Failed to add child: $e");
       Get.log(
-        'Error adding new child with parent ID: ${addChildController.parentId.value} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
+        'Error adding new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
       Get.log(e.toString());
+    }
+  }
+
+  // update savings of child
+  Future<void> updateSavings({
+    required bool save,
+    required String childId,
+    required int enteredAmount,
+  }) async {
+    try {
+      showDialog(
+          context: Get.context!,
+          builder: (context) => LoadingProgressDialogueWidget(
+              title: save ? 'Sending....' : 'Removing...'));
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(childId);
+
+      DocumentSnapshot snapshot = await kidDocRef.get();
+
+      if (snapshot.exists) {
+        final currentSavings =
+            (snapshot.data() as Map<String, dynamic>?)?['savings']?['amount'] ??
+                0;
+        int updatedAmount = 0;
+        if (save) {
+          updatedAmount = int.parse(currentSavings) + enteredAmount;
+          Get.log("Current Savings Amount: $currentSavings");
+
+          await kidDocRef.set({
+            'savings': {'amount': updatedAmount.toString()},
+          }, SetOptions(merge: true));
+          Get.back();
+          Get.log("Savings updated successfully to: $updatedAmount");
+          showDialog(
+            context: Get.context!,
+            builder: (context) => TransferSuccessDialog(
+              receiverName: snapshot['name'],
+              amount: parentController.amount.toString(),
+              dateTime: '01/10/23, 11:00 AM',
+              title: 'Transfer Successful',
+              transferType: 'received',
+            ),
+          );
+        } else {
+          if (enteredAmount >= int.parse(currentSavings)) {
+            Get.back();
+            parentController.amountValidation.value =
+                'Not Enough Funds, can not remove';
+          } else {
+            Get.back();
+            updatedAmount = int.parse(currentSavings) - enteredAmount;
+            Get.log("Current Savings Amount: $currentSavings");
+
+            await kidDocRef.set({
+              'savings': {'amount': updatedAmount.toString()},
+            }, SetOptions(merge: true));
+
+            Get.log("Savings updated successfully to: $updatedAmount");
+            showDialog(
+              context: Get.context!,
+              builder: (context) => TransferSuccessDialog(
+                  receiverName: snapshot['name'],
+                  amount: parentController.amount.toString(),
+                  dateTime: '01/10/23, 11:00 AM',
+                  title: 'Deduction Successful',
+                  transferType: 'deducted'),
+            );
+          }
+        }
+      } else {
+        Get.back();
+        Get.log("Document does not exist for childId: $childId");
+      }
+    } catch (e) {
+      Get.back();
+      Get.log("Error updating savings: $e");
     }
   }
 }
