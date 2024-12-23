@@ -1,3 +1,4 @@
+import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -33,8 +34,19 @@ class BottomNavigationBarScreen extends StatelessWidget {
           return BottomNavigationBar(
             currentIndex: controller.currentIndex.value,
             onTap: (index) {
-              controller.currentIndex.value = index;
-              _isOnHomeScreen = index == 0;
+              if (index == 3) {
+                showKidsZoneDialog(
+                  context,
+                  purpleBgPath: 'assets/bottomSheetIcons/bottomSheetBg.svg',
+                  coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
+                  closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
+                  greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
+                  tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
+                );
+              } else {
+                controller.currentIndex.value = index;
+                _isOnHomeScreen = index == 0;
+              }
             },
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.purple,
@@ -58,7 +70,7 @@ class BottomNavigationBarScreen extends StatelessWidget {
               _buildNavBarItem(
                 iconPath: 'assets/Coin.svg',
                 label: 'Kid Zone',
-                index: 3,
+                index: controller.currentIndex.value,
               ),
             ],
           );

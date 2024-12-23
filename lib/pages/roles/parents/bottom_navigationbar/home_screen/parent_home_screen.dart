@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
@@ -49,6 +50,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
               ),
               onPressed: () {
                 // Get.snackbar("Settings", "Settings screen navigation");
+                showKidsZoneDialog(
+                  context,
+                  purpleBgPath: 'assets/bottomSheetIcons/bottomSheetBg.svg',
+                  coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
+                  closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
+                  greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
+                  tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
+                );
               },
             ),
           ],

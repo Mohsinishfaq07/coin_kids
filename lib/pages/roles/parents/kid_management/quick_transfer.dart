@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
+import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -168,88 +171,6 @@ class QuickTransferPage extends StatelessWidget {
       ),
     );
   }
-
-  Widget quickTransferChildGeneralDetailWidget({required String childId}) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('kids')
-          .doc(childId)
-          .snapshots(), // Stream for the specific child document
-      builder: (context, snapshot) {
-        // Loading State
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        // Error State
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error loading child details'));
-        }
-
-        // Check if document does not exist
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(
-            child: Text(
-              'Child details not found!',
-              style: TextStyle(fontSize: 16),
-            ),
-          );
-        }
-
-        // Extract document data safely
-        var docData = snapshot.data!.data() as Map<String, dynamic>;
-
-        // Default values if fields are null
-        final name = docData['name'] ?? 'Unknown Name';
-        final savings = docData['savings']?['amount']?.toString() ?? '0';
-
-        return Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Child Name
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Child Avatar
-                  SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
-                  const SizedBox(height: 10),
-
-                  // Available Money
-                  const Text(
-                    'Available Money',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '\$ $savings',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
 
 quickTransferFields({
@@ -298,6 +219,103 @@ quickTransferFields({
               )
             : const SizedBox.shrink()),
     style: const TextStyle(color: Colors.black), // Input text color
+  );
+}
+
+Widget quickTransferChildGeneralDetailWidget({required String childId}) {
+  return StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('kids')
+        .doc(childId)
+        .snapshots(), // Stream for the specific child document
+    builder: (context, snapshot) {
+      // Loading State
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      // Error State
+      if (snapshot.hasError) {
+        return const Center(child: Text('Error loading child details'));
+      }
+
+      // Check if document does not exist
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        return const Center(
+          child: Text(
+            'Child details not found!',
+            style: TextStyle(fontSize: 16),
+          ),
+        );
+      }
+
+      // Extract document data safely
+      var docData = snapshot.data!.data() as Map<String, dynamic>;
+
+      // Default values if fields are null
+      final name = docData['name'] ?? 'Unknown Name';
+      final savings = docData['savings']?['amount']?.toString() ?? '0';
+
+      return Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Child Name
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Child Avatar
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: docData['avatar'].startsWith('/')
+                      ? FileImage(File(docData['avatar']))
+                      : (docData['avatar'].startsWith('assets') &&
+                              !docData['avatar'].endsWith('.svg'))
+                          ? AssetImage(docData['avatar'])
+                          : docData['avatar'].startsWith('http')
+                              ? NetworkImage(docData['avatar'])
+                              : null,
+                  child: docData['avatar'].endsWith('.svg')
+                      ? SvgPicture.asset(
+                          docData['avatar'],
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                const SizedBox(height: 10),
+
+                // Available Money
+                const Text(
+                  'Available Money',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  '\$ $savings',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
   );
 }
 

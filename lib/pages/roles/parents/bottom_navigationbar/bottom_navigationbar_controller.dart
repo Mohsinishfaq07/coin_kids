@@ -10,7 +10,7 @@ class BottomNavigationbarController extends GetxController {
     ParentsHomeScreen(),
     MessagesScreen(),
     ShopScreen(),
-    KidZoneScreen(),
+    //KidZoneScreen(),
   ];
 }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/edit_profile.dart';
@@ -219,7 +221,23 @@ childGeneralDetailWidget(
             // avatar
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: docData['avatar'].startsWith('/')
+                    ? FileImage(File(docData['avatar']))
+                    : (docData['avatar'].startsWith('assets') &&
+                            !docData['avatar'].endsWith('.svg'))
+                        ? AssetImage(docData['avatar'])
+                        : docData['avatar'].startsWith('http')
+                            ? NetworkImage(docData['avatar'])
+                            : null,
+                child: docData['avatar'].endsWith('.svg')
+                    ? SvgPicture.asset(
+                        docData['avatar'],
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
             ),
             // available money
             const Text(
