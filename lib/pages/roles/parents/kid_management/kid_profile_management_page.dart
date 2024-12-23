@@ -13,7 +13,10 @@ class KidProfileManagementPageController extends GetxController {
 
 class KidProfileManagementPage extends StatelessWidget {
   final String childId;
-  const KidProfileManagementPage({super.key, required this.childId});
+  final dynamic docData;
+
+  const KidProfileManagementPage(
+      {super.key, required this.childId, this.docData});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,11 @@ class KidProfileManagementPage extends StatelessWidget {
         FirebaseFirestore.instance.collection('kids').doc(childId);
 
     return Scaffold(
-      appBar: CustomAppBar(title: "Child Name"),
+      appBar: CustomAppBar(
+        title: "Quick Transfer",
+        centerTitle: false,
+        showBackButton: true,
+      ),
       body: SafeArea(
         child: StreamBuilder<DocumentSnapshot>(
           stream: kidDocRef.snapshots(),
@@ -42,7 +49,7 @@ class KidProfileManagementPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  childGeneralDetailWidget(docData: docData),
+                  childGeneralDetailWidget(docData: docData, context: context),
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0, bottom: 30),
                     child: Row(
@@ -189,24 +196,46 @@ class KidProfileManagementPage extends StatelessWidget {
   }
 }
 
-childGeneralDetailWidget({required dynamic docData}) {
-  return Center(
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(children: [
-          // name
-          Text(docData['name']),
-          // avatar
-          Image.asset("assets/apple_logo.png"),
-          // available money
-          const Text('Available Money'),
-          Text(docData['savings']['amount']),
-        ]),
+childGeneralDetailWidget(
+    {required dynamic docData, required BuildContext context}) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 30.0),
+    child: Center(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            // name
+            Text(docData['name'],
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontSize: 16)),
+
+            // avatar
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
+            ),
+            // available money
+            const Text(
+              'Available Money',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+              ),
+            ),
+            Text(docData['savings']['amount'],
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontSize: 16)),
+          ]),
+        ),
       ),
     ),
   );

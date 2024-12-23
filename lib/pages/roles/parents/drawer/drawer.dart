@@ -147,9 +147,9 @@ class ProfileDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   _buildProfileRowWithArrow(
-                      "Change Language", "assets/drawer_svgs/wc.svg"),
+                      "Change Language", "assets/drawer_svgs/language.svg"),
                   _buildProfileRowWithArrow(
-                      "Parent Zone Pin", "assets/drawer_svgs/wc.svg"),
+                      "Parent Zone Pin", "assets/drawer_svgs/password_2.svg"),
                 ],
               ),
             ),
@@ -166,8 +166,10 @@ class ProfileDrawer extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildToggleRow("Goal Achievement", true, Icons.abc_outlined),
-                  _buildToggleRow("Money Request", false, Icons.abc_outlined),
+                  _buildToggleRow("Goal Achievement", true,
+                      "assets/drawer_svgs/flag_check.svg"),
+                  _buildToggleRow(
+                      "Money Request", false, "assets/drawer_svgs/euro.svg"),
                 ],
               ),
             ),
@@ -184,11 +186,11 @@ class ProfileDrawer extends StatelessWidget {
                 ),
                 child: Column(children: [
                   _buildProfileRowWithArrow(
-                      "Share app", "assets/drawer_svgs/wc.svg"),
+                      "Share app", "assets/drawer_svgs/share.svg"),
                   _buildProfileRowWithArrow(
-                      "Feedback", "assets/drawer_svgs/wc.svg"),
+                      "Feedback", "assets/drawer_svgs/rate_review.svg"),
                   _buildProfileRowWithArrow(
-                      "Privacy Policy", "assets/drawer_svgs/wc.svg"),
+                      "Privacy Policy", "assets/drawer_svgs/lock.svg"),
                   ElevatedButton(
                     onPressed: () async {
                       await firebaseAuthController.logout();
@@ -317,7 +319,7 @@ class ProfileDrawer extends StatelessWidget {
   }
 
   // Build toggle row
-  Widget _buildToggleRow(String title, bool value, IconData icon) {
+  Widget _buildToggleRow(String title, bool value, String iconPath) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       child: Row(
@@ -325,11 +327,13 @@ class ProfileDrawer extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
+              SvgPicture.asset(
+                iconPath, // Path to your SVG asset
                 color: Colors.purple,
-                size: 30,
+                height: 25, // Adjust the size as needed
+                width: 25, // Adjust the size as needed
               ),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(

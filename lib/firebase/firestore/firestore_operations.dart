@@ -106,7 +106,7 @@ class ParentFirebaseFunctions {
       // Reference to the parent document
       DocumentReference parentRef = _firebaseFirestore
           .collection('parents')
-          .doc(addChildController.parentId.value);
+          .doc(FirebaseAuth.instance.currentUser!.email);
 
       // Prepare child data
       final Map<String, dynamic> childData = {

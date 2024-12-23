@@ -95,7 +95,11 @@ class QuickTransferPage extends StatelessWidget {
     QuickTransferPageController quickTransferPageController =
         Get.put(QuickTransferPageController());
     return Scaffold(
-      appBar: CustomAppBar(title: "Quick Transfer"),
+      appBar: CustomAppBar(
+        title: "Quick Transfer",
+        showBackButton: true,
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -351,7 +355,7 @@ class QuickTransferPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Child Avatar
-                 SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
+                  SvgPicture.asset('assets/child_avatar_images/avatar2.svg'),
                   const SizedBox(height: 10),
 
                   // Available Money
