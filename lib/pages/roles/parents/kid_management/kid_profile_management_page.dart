@@ -31,7 +31,7 @@ class KidProfileManagementPage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Quick Transfer",
-        centerTitle: false,
+        centerTitle: true,
         showBackButton: true,
       ),
       body: SafeArea(
@@ -204,55 +204,62 @@ childGeneralDetailWidget(
     padding: const EdgeInsets.only(top: 30.0),
     child: Center(
       child: Container(
+        height: 160,
+        width: 140,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(color: Colors.grey, width: 0.5),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: [
-            // name
-            Text(docData['name'],
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(fontSize: 16)),
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // name
+                Text(docData['name'],
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontSize: 14)),
 
-            // avatar
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: docData['avatar'].startsWith('/')
-                    ? FileImage(File(docData['avatar']))
-                    : (docData['avatar'].startsWith('assets') &&
-                            !docData['avatar'].endsWith('.svg'))
-                        ? AssetImage(docData['avatar'])
-                        : docData['avatar'].startsWith('http')
-                            ? NetworkImage(docData['avatar'])
-                            : null,
-                child: docData['avatar'].endsWith('.svg')
-                    ? SvgPicture.asset(
-                        docData['avatar'],
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-            ),
-            // available money
-            const Text(
-              'Available Money',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-              ),
-            ),
-            Text(docData['savings']['amount'],
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(fontSize: 16)),
-          ]),
+                // avatar
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: docData['avatar'].startsWith('/')
+                        ? FileImage(File(docData['avatar']))
+                        : (docData['avatar'].startsWith('assets') &&
+                                !docData['avatar'].endsWith('.svg'))
+                            ? AssetImage(docData['avatar'])
+                            : docData['avatar'].startsWith('http')
+                                ? NetworkImage(docData['avatar'])
+                                : null,
+                    child: docData['avatar'].endsWith('.svg')
+                        ? SvgPicture.asset(
+                            docData['avatar'],
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                ),
+                // available money
+                const Text(
+                  'Available Money',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  "€${docData['savings']['amount']}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(fontSize: 14),
+                ),
+              ]),
         ),
       ),
     ),
