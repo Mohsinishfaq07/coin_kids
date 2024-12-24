@@ -54,7 +54,13 @@ class ForgotPasswordScreen extends StatelessWidget {
                 color: Colors.purple,
                 text: 'Send',
                 onPressed: () async {
-                  //  await firebaseAuthController.sendPasswordResetEmail();
+                  if (firebaseAuthController.email.value.isNotEmpty &&
+                      firebaseAuthController.email.value.contains('@')) {
+                    await firebaseAuthController
+                        .resetPassword(firebaseAuthController.email.value);
+                  } else {
+                    Get.snackbar('Alert', 'Check your email');
+                  }
                 },
               ),
               const SizedBox(height: 40),

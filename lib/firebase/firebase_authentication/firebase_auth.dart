@@ -73,8 +73,7 @@ class FirebaseAuthController extends GetxController {
       isEmailLoading.value = false;
       Get.log(e.toString());
     }
-
-   }
+  }
 
   Future<void> saveCredentialsLocally(String email, String password) async {
     try {
@@ -118,8 +117,6 @@ class FirebaseAuthController extends GetxController {
   // number sign up
 
   signUpWithNumber() {
-   
-
     if (!RegExp(r'^\d+$').hasMatch(number.value)) {
       Get.snackbar(
         "Error",
@@ -335,6 +332,24 @@ class FirebaseAuthController extends GetxController {
     } catch (e) {
       isAppleLoading.value = false;
       Get.log('error in apple login:${e.toString()}');
+    }
+  }
+
+  // forget credentials
+
+  Future<void> resetPassword(String email) async {
+    showDialog(
+        context: Get.context!,
+        builder: (context) =>
+            LoadingProgressDialogueWidget(title: 'Sending Reset Email....'));
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      Get.back();
+      Get.snackbar('Alert', 'Check your inbox for password reset link');
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Alert', e.toString());
     }
   }
 
