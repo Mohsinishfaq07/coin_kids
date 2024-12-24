@@ -50,14 +50,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
               ),
               onPressed: () {
                 // Get.snackbar("Settings", "Settings screen navigation");
-                showKidsZoneDialog(
-                  context,
-                  purpleBgPath: 'assets/bottomSheetIcons/bottomSheetBg.svg',
-                  coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
-                  closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
-                  greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
-                  tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
-                );
+                // showKidsZoneDialog(
+                //   context,
+                //   purpleBgPath: 'assets/bottomSheetIcons/bottomSheetBg.svg',
+                //   coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
+                //   closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
+                //   greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
+                //   tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg', label: '', subLabel: '',
+                // );
               },
             ),
           ],

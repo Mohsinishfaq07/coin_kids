@@ -42,6 +42,8 @@ class BottomNavigationBarScreen extends StatelessWidget {
                   closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
                   greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
                   tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
+                  label: 'Go To Kids Zone!',
+                  subLabel: 'Lets start your kids financial journey',
                 );
               } else {
                 controller.currentIndex.value = index;

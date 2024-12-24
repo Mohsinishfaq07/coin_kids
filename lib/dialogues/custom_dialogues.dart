@@ -47,6 +47,8 @@ class KidsZoneDialog extends StatelessWidget {
   final String closeIconPath;
   final String greenButtonBgPath;
   final String tickIconPath;
+  final String label;
+  final String subLabel;
 
   const KidsZoneDialog({
     Key? key,
@@ -55,6 +57,8 @@ class KidsZoneDialog extends StatelessWidget {
     required this.closeIconPath,
     required this.greenButtonBgPath,
     required this.tickIconPath,
+    required this.label,
+    required this.subLabel,
   }) : super(key: key);
 
   @override
@@ -99,7 +103,7 @@ class KidsZoneDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Go To Kids Zone!',
+                  label,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -109,7 +113,7 @@ class KidsZoneDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Let's start your kid's financial\njourney",
+                  subLabel,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -173,6 +177,8 @@ void showKidsZoneDialog(
   required String closeIconPath,
   required String greenButtonBgPath,
   required String tickIconPath,
+  required String label,
+  required String subLabel,
 }) {
   showDialog(
     context: context,
@@ -182,6 +188,8 @@ void showKidsZoneDialog(
       closeIconPath: closeIconPath,
       greenButtonBgPath: greenButtonBgPath,
       tickIconPath: tickIconPath,
+      label: label,
+      subLabel: subLabel,
     ),
   );
 }
