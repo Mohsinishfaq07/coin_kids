@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class LoadingProgressDialogueWidget extends StatelessWidget {
   String title;
-  LoadingProgressDialogueWidget({super.key, required this.title});
+    LoadingProgressDialogueWidget({super.key,required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -11,30 +11,36 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
         onWillPop: () async {
           return false;
         },
-        child: Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          elevation: 10,
+        child: Center(
           child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            height: 200, // Square height
+            width: 200, // Square width
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16.0),
               color: Colors.white,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Icon
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                Text(title),
+            child:   Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icon
+                  const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.purple,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 14, color: Colors.black),
+                  ),
 
-                // Close Button
-              ],
+                  // Close Button
+                ],
+              ),
             ),
           ),
         ));

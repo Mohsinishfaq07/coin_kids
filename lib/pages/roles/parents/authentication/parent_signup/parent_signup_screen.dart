@@ -170,17 +170,11 @@ class SignupParentScreen extends StatelessWidget {
                     ),
                     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // If the form is valid, proceed with the signup action
-                      try {
-                        firebaseAuthController.signUpWithEmail();
-                      } catch (e) {
-                        print("Error: $e");
-                      }
-                    } else {
-                      // If the form is not valid, show error messages
-                      print("Form validation failed");
+                  onPressed: () async {
+                    try {
+                      await firebaseAuthController.signUpWithGoogle();
+                    } catch (e) {
+                      print("Error: $e");
                     }
                   },
                   child: Obx(() {

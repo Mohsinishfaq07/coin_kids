@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ParentGoogleSignup extends StatelessWidget {
-  ParentGoogleSignup({super.key});
+  const ParentGoogleSignup({super.key});
 
   @override
   Widget build(BuildContext context) {

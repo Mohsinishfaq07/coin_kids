@@ -60,7 +60,7 @@ class ParentFirebaseFunctions {
       showDialog(
           context: Get.context!,
           builder: (context) =>
-              LoadingProgressDialogueWidget(title: 'Updating....'));
+              LoadingProgressDialogueWidget(title: "updating..",));
 
       // Update Firebase Firestore
       final user = FirebaseAuth.instance.currentUser;
@@ -119,7 +119,7 @@ class ParentFirebaseFunctions {
       showDialog(
           context: Get.context!,
           builder: (context) =>
-              LoadingProgressDialogueWidget(title: 'Adding....'));
+              LoadingProgressDialogueWidget(title: "adding..",));
       final String avatarUrl = addChildController
               .selectedAvatarPath.value.isEmpty
           ? addChildController.customAvatarPath.value
@@ -187,8 +187,7 @@ class ParentFirebaseFunctions {
     try {
       showDialog(
           context: Get.context!,
-          builder: (context) => LoadingProgressDialogueWidget(
-              title: save ? 'Sending....' : 'Removing...'));
+          builder: (context) => LoadingProgressDialogueWidget(title: "saving..",));
       DocumentReference kidDocRef =
           FirebaseFirestore.instance.collection('kids').doc(childId);
 

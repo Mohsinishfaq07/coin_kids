@@ -53,7 +53,7 @@ class FirebaseAuthController extends GetxController {
       showDialog(
           context: Get.context!,
           builder: (context) =>
-              LoadingProgressDialogueWidget(title: 'Signup....'));
+              LoadingProgressDialogueWidget(title: "Sign up..",));
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email.value,
@@ -85,34 +85,93 @@ class FirebaseAuthController extends GetxController {
   }
 
   // signup with google
+
+  // Method to handle Google Sign-In
   Future<void> signUpWithGoogle() async {
     try {
+      isGoogleLoading.value = true; // Show loading state
+      // Initiate Google Sign-In
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        Get.log('Google sign-in cancelled');
-        isGoogleLoading.value = false;
+        // User canceled the Google Sign-In process
+        Get.snackbar("Sign-In Canceled", "You canceled the Google Sign-In.");
         return;
       }
 
+      // Authenticate the Google user
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
+      // Create a new credential using the Google authentication tokens
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
+      // Sign in to Firebase using the Google credential
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Retrieve the user information
       final User? user = userCredential.user;
+
       if (user != null) {
-        saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+        // Save user information or perform further actions
+        await saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+
+        // Navigate to the main screen
         Get.offAll(() => BottomNavigationBarScreen());
+        Get.snackbar("Welcome", "Logged in as ${user.email}");
+      } else {
+        // Handle null user case
+        Get.snackbar("Sign-In Failed", "User data could not be retrieved.");
       }
+    } on FirebaseAuthException catch (e) {
+      // Handle Firebase authentication errors
+      Get.snackbar("Error", "Firebase Auth Error: ${e.message}");
     } catch (e) {
-      Get.log('log: Error during Google Sign-In: $e');
+      // Handle general errors
+      Get.snackbar("Error", "An error occurred: $e");
+    } finally {
+      // Reset the loading state
+      isGoogleLoading.value = false;
     }
   }
+
+  // Dummy method to simulate saving user information
+
+  // Future<void> signUpWithGoogle() async {
+  //   try {
+  //     isGoogleLoading.value = true;
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+  //     if (googleUser == null) {
+  //       Get.log('Google sign-in cancelled');
+  //       isGoogleLoading.value = false;
+  //       return;
+  //     }
+
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+
+  //     final OAuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //     final UserCredential userCredential =
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
+  //     final User? user = userCredential.user;
+  //     if (user != null) {
+  //       saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+  //       Get.offAll(() => BottomNavigationBarScreen());
+  //     }
+  //   } catch (e) {
+  //     Get.log('log: Error during Google Sign-In: $e');
+  //   } finally {
+  //     isGoogleLoading.value = false;
+  //   }
+  // }
 
   // number sign up
 
@@ -184,7 +243,7 @@ class FirebaseAuthController extends GetxController {
       showDialog(
           context: Get.context!,
           builder: (context) =>
-              LoadingProgressDialogueWidget(title: 'Login....'));
+              LoadingProgressDialogueWidget(title: "loading..",));
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
@@ -341,7 +400,7 @@ class FirebaseAuthController extends GetxController {
     showDialog(
         context: Get.context!,
         builder: (context) =>
-            LoadingProgressDialogueWidget(title: 'Sending Reset Email....'));
+            LoadingProgressDialogueWidget(title: "Processing",));
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
