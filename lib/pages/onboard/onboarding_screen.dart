@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/onboard/onboard_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
+import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -77,8 +79,10 @@ class OnboardingScreen extends StatelessWidget {
                     return _controller.pageIndex.value == pages.length - 1
                         ? CustomButton(
                             text: 'Get Started',
-                            onPressed: _controller.navigateToRoleSelection,
-                          )
+                            onPressed: () {
+                              Get.off(() => SignupParentScreen());
+                              // Get.off(() =>  const RoleSelectionScreen());
+                            })
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

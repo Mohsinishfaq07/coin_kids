@@ -83,6 +83,6 @@ flutter:
     - assets/background_image/
     - assets/on_board/
     - assets/kid_section_icons/
-    - assets/child_avatar_images/
+    - assets/child_avatar_image_pngs/
     - assets/drawer_svgs/
     - assets/bottomSheetIcons/

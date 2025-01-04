@@ -6,8 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class KidBottomNavScreen extends StatelessWidget {
   KidBottomNavScreen({super.key});
-  final KidNavigationBarController controller =
-      Get.put(KidNavigationBarController());
+  final controller = KidNavigationBarController();
 
   bool _isOnHomeScreen = false;
 
@@ -73,15 +72,6 @@ class KidBottomNavScreen extends StatelessWidget {
                     'assets/kid_section_icons/kid_parent_zone.svg',
                   ),
                   label: 'Parent Zone')
-              // bottomBarItem(
-              //     assetName: 'assets/kid_section_icons/kid_goal_icon.svg',
-              //     label: 'Goals'),
-              // bottomBarItem(
-              //     assetName: 'assets/kid_section_icons/kid_shop_icon.svg',
-              //     label: 'Shop'),
-              // bottomBarItem(
-              //     assetName: 'assets/kid_section_icons/kid_parent_zone.svg',
-              //     label: 'Parent Zone')
             ],
           );
         }),

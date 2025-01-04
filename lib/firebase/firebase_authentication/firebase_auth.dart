@@ -2,8 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,17 +54,19 @@ class FirebaseAuthController extends GetxController {
 
       showDialog(
           context: Get.context!,
-          builder: (context) =>
-              LoadingProgressDialogueWidget(title: "Sign up..",));
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "Sign up..",
+              ));
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email.value,
         password: pin.value,
       );
-      saveUserInfo(fieldName: 'email', fieldValue: email.value);
-      await saveCredentialsLocally(email.value, pin.value);
+      // saveUserInfo(fieldName: 'email', fieldValue: email.value);
+      // await saveParentInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
-      Get.offAll(() => BottomNavigationBarScreen());
+      Get.offAll(() => const RoleSelectionScreen());
+      // Get.offAll(() => BottomNavigationBarScreen());
     } on FirebaseAuthException catch (e) {
       Get.back();
       isEmailLoading.value = false;
@@ -75,7 +79,7 @@ class FirebaseAuthController extends GetxController {
     }
   }
 
-  Future<void> saveCredentialsLocally(String email, String password) async {
+  Future<void> saveInfoLocally(String email, String password) async {
     try {
       await DatabaseHelper.instance.insertCredentials(email, password);
       Get.log("Credentials saved locally.");
@@ -118,10 +122,10 @@ class FirebaseAuthController extends GetxController {
 
       if (user != null) {
         // Save user information or perform further actions
-        await saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
+        await saveParentInfo(fieldName: 'gmail', fieldValue: user.email!);
 
         // Navigate to the main screen
-        Get.offAll(() => BottomNavigationBarScreen());
+        Get.offAll(() => ParentBottomNavigationBar());
         Get.snackbar("Welcome", "Logged in as ${user.email}");
       } else {
         // Handle null user case
@@ -138,42 +142,6 @@ class FirebaseAuthController extends GetxController {
       isGoogleLoading.value = false;
     }
   }
-
-  // Dummy method to simulate saving user information
-
-  // Future<void> signUpWithGoogle() async {
-  //   try {
-  //     isGoogleLoading.value = true;
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-  //     if (googleUser == null) {
-  //       Get.log('Google sign-in cancelled');
-  //       isGoogleLoading.value = false;
-  //       return;
-  //     }
-
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser.authentication;
-
-  //     final OAuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-  //     final UserCredential userCredential =
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //     final User? user = userCredential.user;
-  //     if (user != null) {
-  //       saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
-  //       Get.offAll(() => BottomNavigationBarScreen());
-  //     }
-  //   } catch (e) {
-  //     Get.log('log: Error during Google Sign-In: $e');
-  //   } finally {
-  //     isGoogleLoading.value = false;
-  //   }
-  // }
-
-  // number sign up
 
   signUpWithNumber() {
     if (!RegExp(r'^\d+$').hasMatch(number.value)) {
@@ -196,21 +164,13 @@ class FirebaseAuthController extends GetxController {
   }
 
   // save user info
-  saveUserInfo({required String fieldName, required String fieldValue}) async {
+  saveParentInfo(
+      {required String fieldName, required String fieldValue}) async {
     try {
       await FirebaseFirestore.instance
           .collection('parents')
           .doc(fieldValue)
           .set({
-        // add email or phone number field
-        // fieldName: fieldValue,
-        // 'name': username.value,
-        // 'dob': birthday.value,
-        // 'password': pin.value,
-        // 'gender': selectedGender.value.isNotEmpty
-        //     ? selectedGender.value
-        //     : 'Not specified',
-        // 'created_at': DateTime.now().toIso8601String(),
         fieldName: fieldValue,
         'name': username.value.isNotEmpty ? username.value : 'Not specified',
         'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
@@ -223,6 +183,25 @@ class FirebaseAuthController extends GetxController {
       Get.snackbar("Success", "Account created",
           snackPosition: SnackPosition.BOTTOM);
       // Get.off(() => ParentLoginScreen());
+    } catch (e) {
+      Get.log(e.toString());
+    }
+  }
+
+  saveKidInfo({required String fieldName, required String fieldValue}) async {
+    try {
+      await FirebaseFirestore.instance.collection('kids').doc(fieldValue).set({
+        fieldName: fieldValue,
+        'name': username.value.isNotEmpty ? username.value : 'Not specified',
+        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
+        'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
+        'gender': selectedGender.value.isNotEmpty
+            ? selectedGender.value
+            : 'Not specified',
+        'created_at': DateTime.now().toIso8601String(),
+      }, SetOptions(merge: true));
+      Get.snackbar("Success", "Account created",
+          snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
       Get.log(e.toString());
     }
@@ -242,14 +221,26 @@ class FirebaseAuthController extends GetxController {
       isEmailLoading.value = true; // Start loading
       showDialog(
           context: Get.context!,
-          builder: (context) =>
-              LoadingProgressDialogueWidget(title: "loading..",));
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "loading..",
+              ));
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
-      await saveCredentialsLocally(email.value, pin.value);
+      await saveInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
-      Get.offAll(() => BottomNavigationBarScreen());
+       
+      // Fetch user role from Firestore
+      final isParent = await _checkIfParent(email.value);
+      if (isParent) {
+        // Navigate to ParentBottomNavigationBar if user is a parent
+        Get.off(() => ParentBottomNavigationBar());
+      } else {
+        // Navigate to KidMyMoney if user is a kid
+        Get.off(() => KidBottomNavScreen());
+      
+    } 
+      
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
       isEmailLoading.value = false;
@@ -308,7 +299,7 @@ class FirebaseAuthController extends GetxController {
       if (user != null) {
         // saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
         isGoogleLoading.value = false; // Stop loading
-        Get.off(() => BottomNavigationBarScreen());
+        Get.off(() => ParentBottomNavigationBar());
       }
     } catch (e) {
       isGoogleLoading.value = false;
@@ -331,39 +322,6 @@ class FirebaseAuthController extends GetxController {
       Get.log("Error loading credentials: $e");
     }
   }
-
-  // Future<void> autoLogin() async {
-  //   try {
-  //     isLoading.value = true;
-
-  //     // Load saved credentials
-  //     final credentials = await DatabaseHelper.instance.fetchCredentials();
-  //     if (credentials != null) {
-  //       email.value = credentials['email']!;
-  //       pin.value = credentials['password']!;
-
-  //       // Attempt Firebase login with saved credentials
-  //       final UserCredential credential = await FirebaseAuth.instance
-  //           .signInWithEmailAndPassword(
-  //               email: email.value, password: pin.value);
-
-  //       if (credential.user != null) {
-  //         // Navigate to home screen
-  //         Get.off(() => BottomNavigationBarScreen());
-  //       }
-  //     } else {
-  //       // If no saved credentials, navigate to the login screen
-  //       Get.off(() => ParentLoginScreen());
-  //     }
-  //   } catch (e) {
-  //     Get.log("Auto-login failed: $e");
-  //     Get.off(() => ParentLoginScreen()); // Fallback to login screen on failure
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
-  // apple sign in
 
   signinWithApple() async {
     try {
@@ -399,8 +357,9 @@ class FirebaseAuthController extends GetxController {
   Future<void> resetPassword(String email) async {
     showDialog(
         context: Get.context!,
-        builder: (context) =>
-            LoadingProgressDialogueWidget(title: "Processing",));
+        builder: (context) => LoadingProgressDialogueWidget(
+              title: "Processing",
+            ));
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
@@ -420,4 +379,31 @@ class FirebaseAuthController extends GetxController {
     isAppleLoading.value = false;
     Get.offAll(() => ParentLoginScreen());
   }
+     Future<bool> _checkIfParent(String email) async {
+    try {
+      final parentSnapshot = await FirebaseFirestore.instance
+          .collection('parents')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (parentSnapshot.docs.isNotEmpty) {
+        return true; // User is a parent
+      }
+
+      // If not found in parents collection, check in kids collection
+      final kidSnapshot = await FirebaseFirestore.instance
+          .collection('kids')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (kidSnapshot.docs.isNotEmpty) {
+        return false; // User is a kid
+      }
+    } catch (e) {
+      Get.log("Error checking user role: $e");
+    }
+
+    return false; // Default to kid if no matching document is found
+  }
+
 }

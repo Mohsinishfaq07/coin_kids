@@ -5,15 +5,15 @@ import 'package:coin_kids/pages/roles/kid/kid_shop/kid_shop.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class KidNavigationBarController extends GetxController {
   var currentIndex = 0.obs; // Reactive index to track selected tab
 
   final List<Widget> screens = [
     KidMyMoney(),
-    KidGoals(),
-    KidShop(),
-    KidParentZone(),
+    const KidGoals(),
+    const KidShop(),
+    const KidParentZone(),
   ];
+  
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
@@ -20,13 +19,14 @@ class ParentsHomeScreen extends StatefulWidget {
 }
 
 class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
-  final HomeController controller = Get.find<HomeController>();
+  final ParentHomeController parentHomeController =
+      Get.find<ParentHomeController>();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchParentDetails();
-      controller.fetchKids();
+      parentHomeController.fetchParentDetails();
+      parentHomeController.fetchKids();
     });
   }
 
@@ -66,7 +66,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
               GestureDetector(
                 onTap: () {
                   Get.to(
-                    ProfileDrawer(),
+                    ParentDrawer(),
                     transition:
                         Transition.leftToRightWithFade, // Custom transition
                     duration:
@@ -94,7 +94,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(() => Text(
-                        controller.parentName.value,
+                        parentHomeController.parentName.value,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
@@ -109,14 +109,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
         ),
         body: Obx(
           () {
-            if (controller.isLoading.value) {
+            if (parentHomeController.isLoading.value) {
               // Show loading indicator
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
 
-            if (controller.kidsList.isEmpty) {
+            if (parentHomeController.kidsList.isEmpty) {
               // No kids available
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -201,10 +201,10 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.all(16),
-                      itemCount: controller.kidsList.length +
+                      itemCount: parentHomeController.kidsList.length +
                           1, // Add 1 for "Add" circle at the end
                       itemBuilder: (context, index) {
-                        if (index == controller.kidsList.length) {
+                        if (index == parentHomeController.kidsList.length) {
                           // Last item: Add circle
                           return Padding(
                             padding:
@@ -244,7 +244,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                           );
                         } else {
                           // Other items: Display kids' data
-                          final kid = controller.kidsList[
+                          final kid = parentHomeController.kidsList[
                               index]; // Use index directly for kidsList
 
                           return Padding(
@@ -310,7 +310,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                               width: 180,
                               text: 'Quick Transfer',
                               onPressed: () {
-                                Get.to(() => const AllChildrenPage());
+                                Get.to(() => AllChildrenPage());
                               },
                               buttonStyle: Theme.of(context)
                                   .textTheme

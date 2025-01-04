@@ -17,7 +17,7 @@ class FirestoreOperations {
 class ParentFirebaseFunctions {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   AddChildController addChildController = Get.put(AddChildController());
-  final HomeController homeController = Get.put(HomeController());
+  final ParentHomeController homeController = Get.put(ParentHomeController());
   // fetch the details of parent
   Stream<Map<String, dynamic>?> fetchParentData() {
     try {
@@ -29,6 +29,29 @@ class ParentFirebaseFunctions {
 
       DocumentReference parentDocRef =
           FirebaseFirestore.instance.collection('parents').doc(userEmail);
+
+      return parentDocRef.snapshots().map((docSnapshot) {
+        if (docSnapshot.exists) {
+          return docSnapshot.data() as Map<String, dynamic>?;
+        } else {
+          return null;
+        }
+      });
+    } catch (e) {
+      Get.log('Error fetching document fields: $e');
+      return Stream.value(null); // Return an empty stream on error
+    }
+  }
+Stream<Map<String, dynamic>?> fetchKidData() {
+    try {
+      String? userEmail = FirebaseAuth.instance.currentUser?.email;
+
+      if (userEmail == null) {
+        return Stream.value(null);
+      }
+
+      DocumentReference parentDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(userEmail);
 
       return parentDocRef.snapshots().map((docSnapshot) {
         if (docSnapshot.exists) {

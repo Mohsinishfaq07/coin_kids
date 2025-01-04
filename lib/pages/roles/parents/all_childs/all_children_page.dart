@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/controllers/parent_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
@@ -14,7 +15,8 @@ import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class AllChildrenPage extends StatelessWidget {
-  const AllChildrenPage({super.key});
+  final parentController = Get.find<ParentController>();
+  AllChildrenPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class AllChildrenPage extends StatelessWidget {
           List<DocumentSnapshot> documents = snapshot.data!;
 
           return Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -60,6 +62,15 @@ class AllChildrenPage extends StatelessWidget {
                         enlargeCenterPage:
                             true, // Makes the centered slide larger
                         scrollDirection: Axis.horizontal, // Scroll direction
+                        onPageChanged: (index, reason) {
+                          // Update the selected child index when the carousel slides
+                          var dataKid =
+                              documents[index].data() as Map<String, dynamic>;
+                          parentController.selectedChildIdForQuickTransfer
+                              .value = documents[index].id;
+                          parentController.selectedChildNameForQuickTransfer
+                              .value = dataKid['name'];
+                        },
                       ),
                       itemCount: documents.length,
                       itemBuilder: (context, index, realIndex) {
@@ -76,6 +87,7 @@ class AllChildrenPage extends StatelessWidget {
                             height: 160,
                             width: 140,
                             decoration: BoxDecoration(
+                              color: Colors.white38,
                               border:
                                   Border.all(color: Colors.grey, width: 0.5),
                               borderRadius: BorderRadius.circular(20.0),
@@ -95,23 +107,11 @@ class AllChildrenPage extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.purple,
-                                        width: 2.0,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: dataKid['avatar']
-                                                .startsWith('/')
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        dataKid['avatar'].startsWith('/')
                                             ? FileImage(File(dataKid['avatar']))
                                             : (dataKid['avatar']
                                                         .startsWith('assets') &&
@@ -123,15 +123,12 @@ class AllChildrenPage extends StatelessWidget {
                                                     ? NetworkImage(
                                                         dataKid['avatar'])
                                                     : null,
-                                        child:
-                                            dataKid['avatar'].endsWith('.svg')
-                                                ? SvgPicture.asset(
-                                                    dataKid['avatar'],
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : null,
-                                      ),
-                                    ),
+                                    child: dataKid['avatar'].endsWith('.svg')
+                                        ? SvgPicture.asset(
+                                            dataKid['avatar'],
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
                                   ),
                                 ),
                                 const Text(

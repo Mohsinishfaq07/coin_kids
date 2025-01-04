@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class ParentDrawer extends StatelessWidget {
-  ParentDrawer({super.key});
+class KidDrawer extends StatelessWidget {
+  KidDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ParentDrawer extends StatelessWidget {
         backgroundColor: Colors.blue.shade50, // Light blue background
         body: StreamBuilder(
             stream:
-                firestoreOperations.parentFirebaseFunctions.fetchParentData(),
+                firestoreOperations.parentFirebaseFunctions.fetchKidData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

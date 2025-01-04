@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class LoadingProgressDialogueWidget extends StatelessWidget {
   String title;
-    LoadingProgressDialogueWidget({super.key,required this.title});
+  LoadingProgressDialogueWidget({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               color: Colors.white,
             ),
-            child:   Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,11 +31,18 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Text(
                     title,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.black, // Ensure correct text color
+                              fontWeight: FontWeight.bold,
+                            ) ??
+                        TextStyle(
+                            color: Colors
+                                .black), // Fallback if no bodyText2 is defined
+                    textAlign: TextAlign.center,
                   ),
 
                   // Close Button

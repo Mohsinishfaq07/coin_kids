@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
@@ -7,7 +6,6 @@ import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class AddChildScreen extends StatelessWidget {
@@ -44,7 +42,7 @@ class AddChildScreen extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 onChanged: (value) => _controller.childAge.value = value.trim(),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               // Avatar Selection Title
               Text(
@@ -58,7 +56,7 @@ class AddChildScreen extends StatelessWidget {
 
               // Avatar Selection
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.all(12.0),
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: GridView.builder(
@@ -90,8 +88,8 @@ class AddChildScreen extends StatelessWidget {
                                 child:
                                     _controller.customAvatarPath.value.isEmpty
                                         ? Center(
-                                            child: SvgPicture.asset(
-                                              "assets/child_avatar_images/Vector (1).svg",
+                                            child: Image.asset(
+                                              "assets/child_avatar_image_pngs/Frame1.png",
                                               color: Colors.white,
                                             ),
                                           )
@@ -120,9 +118,9 @@ class AddChildScreen extends StatelessWidget {
                                                 ? Colors.purple
                                                 : Colors.green),
                                     borderRadius: BorderRadius.circular(50)),
-                                child: SvgPicture.asset(
+                                child: Image.asset(
                                   _controller.avatars[avatarIndex],
-                                  cacheColorFilter: true,
+
                                   height:
                                       10, // Set the height to fit the container size
                                   // Set the width to fit the container size
@@ -137,7 +135,6 @@ class AddChildScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
 
               // Add Child Button
               Center(

@@ -1,6 +1,6 @@
+import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,7 +29,15 @@ class RoleSelectionScreen extends StatelessWidget {
                 title: "I’m a Parent",
                 description: "Give allowances",
                 onTap: () {
-                  Get.to(() => SignupParentScreen());
+                    
+
+                  firebaseAuthController.saveParentInfo(
+                      fieldName: 'email',
+                      fieldValue: firebaseAuthController.email.value);
+                  firebaseAuthController.saveInfoLocally(
+                      firebaseAuthController.email.value,
+                      firebaseAuthController.pin.value);
+                  Get.offAll(ParentBottomNavigationBar());
                 },
                 description1: "Support your child's",
                 description2: "financial goals",
@@ -39,8 +47,13 @@ class RoleSelectionScreen extends StatelessWidget {
                 title: "I’m a Child",
                 description: "Receive allowance",
                 onTap: () {
-                  // Navigate to Child Screen (e.g., ChildLoginScreen)
-                  //Get.to(() => ChildLoginScreen());
+                    firebaseAuthController.saveKidInfo(
+                      fieldName: 'email',
+                      fieldValue: firebaseAuthController.email.value);
+                  firebaseAuthController.saveInfoLocally(
+                      firebaseAuthController.email.value,
+                      firebaseAuthController.pin.value);
+                  
                   Get.to(() => KidBottomNavScreen());
                 },
                 description1: 'Set up saving goals',
@@ -80,7 +93,7 @@ class OptionCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -113,7 +126,7 @@ class OptionCard extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
-                        .copyWith(fontSize: 19  ),
+                        .copyWith(fontSize: 19),
                   ),
                   const SizedBox(height: 8),
                   Row(

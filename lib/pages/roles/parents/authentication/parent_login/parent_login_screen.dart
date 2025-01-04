@@ -1,4 +1,5 @@
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/forgot_password.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
@@ -107,6 +108,8 @@ class ParentLoginScreen extends StatelessWidget {
                       },
                       isLoading: false,
                     )),
+             
+
                 const SizedBox(height: 40),
 
                 // Signup Link

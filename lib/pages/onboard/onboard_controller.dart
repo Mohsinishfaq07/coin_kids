@@ -9,7 +9,5 @@ class OnboardingController extends GetxController {
     pageIndex.value = index;
   }
 
-  void navigateToRoleSelection() {
-    Get.off(() => const RoleSelectionScreen());
-  }
+   
 }

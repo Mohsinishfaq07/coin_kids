@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
-class BottomNavigationBarScreen extends StatelessWidget {
-  BottomNavigationBarScreen({super.key});
+class ParentBottomNavigationBar extends StatelessWidget {
+  ParentBottomNavigationBar({super.key});
   final BottomNavigationbarController controller =
       Get.put(BottomNavigationbarController());
 
