@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "557180709877",
+    "project_id": "coinkids-75fcd",
+    "storage_bucket": "coinkids-75fcd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557180709877:android:19da149011fd94ad2f0ebc",
+        "android_client_info": {
+          "package_name": "com.example.coinkids"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuluCudvnJfSy28WoLqprQAlflhsboVjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
