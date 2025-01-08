@@ -85,8 +85,7 @@ class CustomTextField extends StatelessWidget {
                   width: 1.5,
                 ),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              prefixIcon: prefixIcon != null
+              contentPadding: const EdgeInsets.only(left: 20, right: 12),              prefixIcon: prefixIcon != null
                   ? GestureDetector(
                       onTap: onPrefixTap,
                       child: Icon(prefixIcon, color: Colors.grey),
