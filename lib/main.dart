@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         theme: CustomThemeData.getThemeData(),
         debugShowCheckedModeBanner: false,
         initialBinding: ControllerBindings(),
-        home: SplashScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
