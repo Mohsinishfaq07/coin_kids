@@ -1,10 +1,15 @@
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_auth_controller/parent_auth_controller.dart';
+import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+
+import '../../../../theme/color_theme.dart';
 
 class ParentUpdateProfileScreen extends StatelessWidget {
   Map<String, dynamic>? parentData;
@@ -15,125 +20,144 @@ class ParentUpdateProfileScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: CustomAppBar(title: "Update Profile"),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
+      appBar: const CustomAppBar(title: "Update Profile",centerTitle: false,showBackButton: true,),
+      body: Container(
+        decoration:   const BoxDecoration(
+          gradient: AppColors.background,
+        ),
+        child: Padding(
+          padding:   EdgeInsets.symmetric(horizontal: 20.w, vertical: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                  Text(
+                  "Birthday",style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp,fontWeight: FontWeight.w700), // Title color
+                  ),
 
-              // Email Input
-              CustomTextField(
-                hintText: firebaseAuthController.birthday.value.isEmpty
-                    ? 'Date'
-                    : firebaseAuthController.birthday.value,
-                titleText: 'Birthday',
-                suffixIcon: Icons.calendar_month,
-                onSuffixTap: () async {
-                  // Open DatePicker
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (pickedDate != null) {
+                SizedBox(height: 12.h), // Spacing between title and text field
+                // Email Input
+                CustomTextField(
+                  hintText: firebaseAuthController.birthday.value.isEmpty
+                      ? 'Date'
+                      : firebaseAuthController.birthday.value,
+                  titleText: 'Birthday',
+                  suffixIcon: Icons.calendar_month,
+                  onSuffixTap: () async {
+                    // Open DatePicker
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      firebaseAuthController
+                          .setBirthday(pickedDate); // Update Birthday
+                    }
+                  },
+                ),
+                const SizedBox(height: 25),
+                Text(
+                  "Full Name",style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp,fontWeight: FontWeight.w700), // Title color
+                ),
+                 SizedBox(height: 12.h),
+                // PIN Input
+                CustomTextField(
+                  titleText: 'Full name',
+                  hintText: 'What should we call you ',
+                  onChanged: (value) {
+                    firebaseAuthController.username.value = value.trim();
                     firebaseAuthController
-                        .setBirthday(pickedDate); // Update Birthday
-                  }
-                },
-              ),
-              const SizedBox(height: 25),
+                        .checkFields(); // Check fields on change
+                  },
+                ),
+                 SizedBox(height: 23.h),
+                // Gender Selection
 
-              // PIN Input
-              CustomTextField(
-                titleText: 'Full name',
-                hintText: 'What should we call you ',
-                onChanged: (value) {
-                  firebaseAuthController.username.value = value.trim();
-                  firebaseAuthController
-                      .checkFields(); // Check fields on change
-                },
-              ),
-              const SizedBox(height: 10),
-              // Gender Selection
-
-              Text("Gender (Optional)",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade900)),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        firebaseAuthController.selectGender("Male");
-                      },
-                      child: Obx(() => Container(
-                            margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            decoration: BoxDecoration(
-                              color:
-                                  firebaseAuthController.selectedGender.value ==
-                                          "Male"
-                                      ? Colors.blue.shade100
-                                      : Colors.white,
-                              border: Border.all(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.male, color: Colors.blue),
-                          )),
+                const Text("Gender (Optional)",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,)),
+                 SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          firebaseAuthController.selectGender("Male");
+                        },
+                        child: Container(
+                          height: 48.h,
+                          width: 154.w,
+                          padding: const EdgeInsets.only(
+                            top: 12.33,
+                            left: 20,
+                            right: 20,
+                            bottom: 13.33,
+                          ),
+                          decoration: ShapeDecoration(
+                            color: Colors.white54,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),),
+                          child:  SvgPicture.asset("assets/man_3.svg",height: 24.h,width: 24.w,),
+                        )
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        firebaseAuthController.selectGender("Female");
-                      },
-                      child: Obx(() => Container(
-                            margin: const EdgeInsets.only(left: 8),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            decoration: BoxDecoration(
-                              color:
-                                  firebaseAuthController.selectedGender.value ==
-                                          "Female"
-                                      ? Colors.pink.shade100
-                                      : Colors.white,
-                              border: Border.all(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.female, color: Colors.pink),
-                          )),
+                    SizedBox(width: 14.w,),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          firebaseAuthController.selectGender("Female");
+                        },
+                        child: Container(
+                          height: 48.h,
+                               width: 154.w,
+                          padding: const EdgeInsets.only(
+                            top: 12.33,
+                            left: 20,
+                            right: 20,
+                            bottom: 13.33,
+                          ),
+                            decoration: ShapeDecoration(
+                              color: Colors.white54,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                                borderRadius: BorderRadius.circular(12),
+                              ),),
+                              child:  SvgPicture.asset("assets/woman.svg",height: 24.h,width: 24.w,),
+                            )),
+
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 40),
+                  ],
+                ),
+                SizedBox(height: 40),
 
-              // Forgot Credentials
+                // Forgot Credentials
 
-              // Login Button
-              Obx(() => Center(
-                    child: CustomButton(
-                      isLoading: false,
-                      color: isButtonEnabled() ? Colors.purple : Colors.grey,
-                      text: 'Update profile',
-                      onPressed: () async {
-                        if (isButtonEnabled()) {
-                          await firestoreOperations.parentFirebaseFunctions
-                              .updateParentProfile();
-                        }
-                      },
-                    ),
-                  )),
-              const SizedBox(height: 40),
+                // Login Button
+                Obx(() => Center(
+                      child: AppButton(
+                       backgroundColor: AppColors.buttonPrimary,
 
-              // Signup Link
-            ],
+                        text: 'Update profile',
+                        onPressed: () async {
+                          if (isButtonEnabled()) {
+                            await firestoreOperations.parentFirebaseFunctions
+                                .updateParentProfile();
+                          }
+                        },
+                      ),
+                    )),
+                const SizedBox(height: 40),
+
+                // Signup Link
+              ],
+            ),
           ),
         ),
       ),

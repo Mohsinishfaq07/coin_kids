@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
@@ -6,7 +7,11 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../../../../theme/text_theme.dart';
 
 class SignupParentScreen extends StatelessWidget {
   SignupParentScreen({super.key});
@@ -17,241 +22,307 @@ class SignupParentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: "Let's Get Started!",
-        showBackButton: true,
-        centerTitle: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                CustomTextField(
-                  hintText: 'Full Name',
-                  onChanged: (value) {
-                    firebaseAuthController.username.value = value.trim();
-                    firebaseAuthController.signUpCheckField(); // Check fields on change
-                  },
-                  titleText: 'Full Name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Full Name is required";
-                    }
-                    return null;
-                  },
-                ),
-                // email
+    return PopScope(
+      canPop: false,
 
-                const SizedBox(height: 14),
-                CustomTextField(
-                  hintText: 'Email',
-                  onChanged: (value) {
-                    firebaseAuthController.email.value = value.trim();
-                    firebaseAuthController.signUpCheckField(); // Check fields on change
-                  },
-                  titleText: 'Email',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Email is required";
-                    }
-                    // Validate email format
-                    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
-                      return "Enter a valid email address";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
 
-                // PIN Input
-                CustomTextField(
-                  hintText: 'Password',
-                  onChanged: (value) {
-                    firebaseAuthController.pin.value = value.trim();
-                    firebaseAuthController.signUpCheckField(); // Check fields on change
-                  },
-                  titleText: 'Password',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password is required";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                CustomTextField(
-                    hintText: 'Confirm Password',
-                    onChanged: (value) {
-                      firebaseAuthController.confirmPin.value = value.trim();
-                      firebaseAuthController.signUpCheckField(); // Check fields on change
-                    },
-                    titleText: 'Confirm Password',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Confirm Password is required";
-                      }
-                      if (value != firebaseAuthController.pin.value) {
-                        return "Passwords do not match";
-                      }
-                      if (value.length < 6) {
-                        return "Password must be at least 6 characters long";
-                      }
-                      return null;
-                    }),
+      child: Scaffold(
+        appBar: CustomAppBar(
+          backgroundColor: const Color(0xFFCAF0FF),
+          title: "Let's Get Start!",
+          showBackButton: false,
+          centerTitle: false,
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Padding(
+            padding:   EdgeInsets.symmetric(horizontal: 19.w),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    CustomTextField(
+                      hintText: 'Full Name',
+                      onChanged: (value) {
+                        firebaseAuthController.username.value = value.trim();
+                        firebaseAuthController
+                            .signUpCheckField(); // Check fields on change
+                      },
+                      titleText: 'Full Name',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Full Name is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    // email
 
-                const SizedBox(height: 30),
-                Obx(() => Center(
-                      child: AppButton(
-                        backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                        text: 'Signup',
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            // If the form is valid, proceed with the signup action
-                            try {
-                              firebaseAuthController.signUpWithEmail();
-                            } catch (e) {
-                              print("Error: $e");
-                            }
-                          } else {
-                            // If the form is not valid, show error messages
-                            print("Form validation failed");
+                     Padding(
+                       padding:  EdgeInsets.symmetric(vertical: 16.h),
+                       child: CustomTextField(
+                        hintText: 'Email',
+                        onChanged: (value) {
+                          firebaseAuthController.email.value = value.trim();
+                          firebaseAuthController
+                              .signUpCheckField(); // Check fields on change
+                        },
+                        titleText: 'Email',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email is required";
                           }
+                          // Validate email format
+                          if (!RegExp(
+                                  r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                              .hasMatch(value)) {
+                            return "Enter a valid email address";
+                          }
+                          return null;
+                        },
+                                         ),
+                     ),
+
+                    // PIN Input
+                    CustomTextField(
+                      hintText: 'Password',
+                      onChanged: (value) {
+                        firebaseAuthController.pin.value = value.trim();
+                        firebaseAuthController
+                            .signUpCheckField(); // Check fields on change
+                      },
+                      titleText: 'Password',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is required";
+                        }
+                        return null;
+                      },
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(top: 16.h,bottom: 36.h),
+                      child: CustomTextField(
+                          hintText: 'Confirm Password',
+                          onChanged: (value) {
+                            firebaseAuthController.confirmPin.value = value.trim();
+                            firebaseAuthController
+                                .signUpCheckField(); // Check fields on change
+                          },
+                          titleText: 'Confirm Password',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Confirm Password is required";
+                            }
+                            if (value != firebaseAuthController.pin.value) {
+                              return "Passwords do not match";
+                            }
+                            if (value.length < 6) {
+                              return "Password must be at least 6 characters long";
+                            }
+                            return null;
+                          }),
+                    ),
+
+
+                  Center(
+                          child: AppButton(
+                            backgroundColor: AppColors.buttonPrimary,
+                            // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                            text: 'Signup',
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                // If the form is valid, proceed with the signup action
+                                try {
+                                  firebaseAuthController.signUpWithEmail();
+                                } catch (e) {
+                                  print("Error: $e");
+                                }
+                              } else {
+                                // If the form is not valid, show error messages
+                                print("Form validation failed");
+                              }
+                            },
+                          ),
+                        ),
+                     SizedBox(height: 12.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account? ",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().primaryTextColor,fontSize: 12.sp),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              Get.off(() => ParentLoginScreen());
+                            },
+                            child: Text("LOGIN",
+                                style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp,color: AppColors.buttonPrimary),)),
+                      ],
+                    ),
+                    Padding(
+                      padding:   EdgeInsets.only(top:16.h,bottom: 24.h),
+                      child: Text("OR",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w800)),
+                    ),
+
+                    // Google Login Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize:
+                            Size(screenWidth * 0.8, 50), // Responsive width
+                      ),
+                      onPressed: () async {
+                        try {
+                          await firebaseAuthController.signUpWithGoogle();
+                        } catch (e) {
+                          print("Error: $e");
+                        }
+                      },
+                      child: Obx(() {
+                        return firebaseAuthController.isGoogleLoading.value
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Padding(
+                                    padding:  EdgeInsets.only(
+                                        right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(AppAssets.googleIconSvg,
+                                        height: 24),
+                                  ),
+                                  Text(
+                                    "Sign in with Google",
+                                    style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                                  ),
+                                  Padding(
+                                    padding:   EdgeInsets.only(   right: 10.w, left: 10.w),
+                                    child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                        color: Colors.transparent,
+
+                                        height: 10),
+                                  ),
+                                ],
+                              );
+                      }),
+                    ),
+                     SizedBox(height: 16.h),
+
+                    // Apple Login Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize:
+                            Size(screenWidth * 0.8, 50), // Responsive width
+                      ),
+                      onPressed: () {
+                        firebaseAuthController.signinWithApple();
+                      },
+                      child: Obx(
+                        () {
+                          return firebaseAuthController.isAppleLoading.value
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Padding(
+                                      padding:   EdgeInsets.only(right: 10.w),
+                                      child:  SvgPicture.asset(AppAssets.appleIconSvg,
+
+                                          height: 24),
+                                    ),
+                                    Text(
+                                      "Sign in with Apple",
+                                      style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10.0),
+                                      child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                          color: Colors.transparent,
+
+                                          height: 10),
+                                    ),
+                                  ],
+                                );
                         },
                       ),
-                    )),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Already have an account? ",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor),
                     ),
-                    GestureDetector(
-                        onTap: () {
-                          Get.to(() => ParentLoginScreen());
-                        },
-                        child: Text("LOGIN", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w900))),
+
+                    SizedBox(height: 80.h),
+                    // Terms and Signup Button
+                    Padding(
+                      padding:  EdgeInsets.only(left: 24.w,right:24.w,bottom:10.h),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "By clicking Sign Up, you are agreeing to the ",
+                              style: TextStyle(
+                                color: Colors.blue.shade900,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Terms of services",
+                              style: TextStyle(
+                                color: Colors.blue.shade900,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize: 12,
+                              ),
+                            ),
+                            TextSpan(
+                              text: " & ",
+                              style: TextStyle(
+                                color: Colors.blue.shade900,
+
+
+                                fontSize: 12,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Privacy Policy.",
+                              style: TextStyle(
+                                color: Colors.blue.shade900,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize: 12,
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
-                ),
-
-                // Google Login Button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                  ),
-                  onPressed: () async {
-                    try {
-                      await firebaseAuthController.signUpWithGoogle();
-                    } catch (e) {
-                      print("Error: $e");
-                    }
-                  },
-                  child: Obx(() {
-                    return firebaseAuthController.isGoogleLoading.value
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 30.0, left: 10),
-                                child: Image.asset("assets/googlelogo.png", height: 24),
-                              ),
-                              Text(
-                                "Sign in with Google",
-                                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      color: CustomThemeData().whiteColorText,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
-                          );
-                  }),
-                ),
-                const SizedBox(height: 20),
-
-                // Apple Login Button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                  ),
-                  onPressed: () {
-                    firebaseAuthController.signinWithApple();
-                  },
-                  child: Obx(
-                    () {
-                      return firebaseAuthController.isAppleLoading.value
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 30.0),
-                                  child: Image.asset("assets/apple_logo.png", height: 24),
-                                ),
-                                Text(
-                                  "Sign in with Apple",
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                        color: CustomThemeData().whiteColorText,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
-                            );
-                    },
-                  ),
-                ),
-
-                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-                // Terms and Signup Button
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "By clicking Sign Up, you are agreeing to the ",
-                        style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 12,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "Terms of services & Privacy Policy.",
-                        style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

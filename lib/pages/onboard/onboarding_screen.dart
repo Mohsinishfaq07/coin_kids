@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/onboard/onboard_controller.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
@@ -49,9 +50,9 @@ class OnboardingScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(top: 46.h),
                 child: SvgPicture.asset(
-                  "assets/clouds_splash.svg",
-                  height: 252.h,
-                  width: 360.w,
+                  AppAssets.cloudImageSvg,
+                   fit: BoxFit.fitWidth,
+
                 ),
               ),
             ),

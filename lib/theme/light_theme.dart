@@ -66,9 +66,9 @@ class CustomThemeData {
         ),
         buttonColor: const Color(0xffA421D9),
       ),
-      scaffoldBackgroundColor: Colors.blue[50],
-      appBarTheme: const AppBarTheme(
-        color: Colors.transparent,
+      scaffoldBackgroundColor: Colors.white,
+      appBarTheme:  const AppBarTheme(
+        color: Color(0xFFCAF0FF),
         elevation: 0.0,
       ),
       inputDecorationTheme: InputDecorationTheme(

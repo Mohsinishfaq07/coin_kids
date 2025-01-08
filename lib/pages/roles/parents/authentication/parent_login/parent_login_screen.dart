@@ -7,9 +7,16 @@ import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_naviga
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+
+import '../../../../../app_assets.dart';
+import '../../../../../theme/color_theme.dart';
+import '../../../../../theme/components/AppButton.dart';
+import '../../../../../theme/text_theme.dart';
 
 class ParentLoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -20,220 +27,237 @@ class ParentLoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: "Welcome Back!",
-        centerTitle: false,
-        showBackButton: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
+    return PopScope(
+      canPop: false,
 
-                // Email Input
-                CustomTextField(
-                  hintText: 'Email',
-                  titleText: 'Email',
-                  onChanged: (value) {
-                    firebaseAuthController.email.value = value.trim();
-                    firebaseAuthController
-                        .checkFields(); // Check fields on change
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Email is required";
-                    }
-                    if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
-                        .hasMatch(value)) {
-                      return "Enter a valid email";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 25),
-
-                // PIN Input
-                CustomTextField(
-                  hintText: 'Password',
-                  onChanged: (value) {
-                    firebaseAuthController.pin.value = value.trim();
-                    firebaseAuthController
-                        .checkFields(); // Check fields on change
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password is required";
-                    }
-                  },
-                  titleText: 'Password',
-                ),
-                const SizedBox(height: 10),
-
-                // Forgot Credentials
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.to(() => ForgotPasswordScreen());
-                    },
-                    child: Text(
-                      "Forgot Credentials?",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: CustomThemeData().primaryTextColor,
-                          fontSize: 12),
+      child: Scaffold(
+        appBar: CustomAppBar(
+          backgroundColor: const Color(0xFFCAF0FF),
+          title: "Welcome Back!",
+          showBackButton: false,
+          centerTitle: false,
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Padding(
+            padding:  EdgeInsets.symmetric(horizontal: 20.w ),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10.h,
                     ),
-                  ),
-                ),
-                const SizedBox(height: 40),
 
-                // Login Button
-                Obx(() => CustomButton(
-                      color: firebaseAuthController.isButtonEnabled.value
-                          ? CustomThemeData().primaryButtonColor
-                          : Colors.grey,
-                      text: 'Login',
-                      onPressed: () async {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          await firebaseAuthController.loginWithEmail();
+                    // Email Input
+                    CustomTextField(
+                      hintText: 'Email',
+                      titleText: 'Email',
+                      onChanged: (value) {
+                        firebaseAuthController.email.value = value.trim();
+                        firebaseAuthController
+                            .checkFields(); // Check fields on change
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Email is required";
+                        }
+                        if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
+                            .hasMatch(value)) {
+                          return "Enter a valid email";
+                        }
+                        return null;
+                      },
+                    ),
+                     SizedBox(height: 16.h),
 
-                          // Form is valid
-                        } else {
-                          Get.log("Form has errors");
+                    // PIN Input
+                    CustomTextField(
+                      hintText: 'Password',
+                      onChanged: (value) {
+                        firebaseAuthController.pin.value = value.trim();
+                        firebaseAuthController
+                            .checkFields(); // Check fields on change
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is required";
                         }
                       },
-                      isLoading: false,
-                    )),
-             
-
-                const SizedBox(height: 40),
-
-                // Signup Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don’t have an account? ",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: CustomThemeData().primaryTextColor),
+                      titleText: 'Password',
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => SignupParentScreen());
+                      SizedBox(height: 62.h),
+
+                    // Forgot Credentials
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       Get.to(() => ForgotPasswordScreen());
+                    //     },
+                    //     child: Text(
+                    //       "Forgot Credentials?",
+                    //       style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    //           color: CustomThemeData().primaryTextColor,
+                    //           fontSize: 12),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 40),
+
+                    // Login Button
+                  AppButton(
+                    backgroundColor: AppColors.buttonPrimary,
+                    // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+
+                          // color: firebaseAuthController.isButtonEnabled.value
+                          //     ? CustomThemeData().primaryButtonColor
+                          //     : Colors.grey,
+                          text: 'Login',
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              await firebaseAuthController.loginWithEmail();
+
+                              // Form is valid
+                            } else {
+                              Get.log("Form has errors");
+                            }
+                          },
+
+                        ),
+
+
+                     SizedBox(height: 22.h),
+
+                    // Signup Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don’t have account? ",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().primaryTextColor,fontSize: 12.sp),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.off(() => SignupParentScreen());
+                          },
+                          child: Text("SignUp",
+                            style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp,color: AppColors.buttonPrimary),),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(top: 31.h,bottom: 20.h),
+                      child: Text("OR",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                color: CustomThemeData().disabledIconColor,
+                                fontWeight: FontWeight.w800,
+                              )),
+                    ),
+
+                    // Google Login Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize:
+                        Size(screenWidth * 0.8, 50), // Responsive width
+                      ),
+                      onPressed: () async {
+                        try {
+                          await firebaseAuthController.loginWithGoogle();
+                        } catch (e) {
+                          print("Error: $e");
+                        }
                       },
-                      child: Text("SignUp",
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: CustomThemeData().primaryButtonColor,
-                                    fontWeight: FontWeight.w800,
-                                  )),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 30.0),
-                  child: Text("OR",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: CustomThemeData().disabledIconColor,
-                            fontWeight: FontWeight.w800,
-                          )),
-                ),
+                      child: Obx(() {
+                        return firebaseAuthController.isGoogleLoading.value
+                            ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                            : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding:  EdgeInsets.only(
+                                  right: 10.w, left: 10.w),
+                              child: SvgPicture.asset(AppAssets.googleIconSvg,
+                                  height: 24),
+                            ),
+                            Text(
+                              "Sign in with Google",
+                              style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                            ),
+                            Padding(
+                              padding:   EdgeInsets.only(   right: 10.w, left: 10.w),
+                              child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                  color: Colors.transparent,
 
-                // Google Login Button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                                  height: 10),
+                            ),
+                          ],
+                        );
+                      }),
                     ),
-                    fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                  ),
-                  onPressed: () async {
-                    await firebaseAuthController.loginWithGoogle();
-                  },  
-                  child: Obx(() {
-                    return firebaseAuthController.isGoogleLoading.value
-                        ? const Center(
+                     SizedBox(height: 16.h),
+
+                    // Apple Login Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize:
+                        Size(screenWidth * 0.8, 50), // Responsive width
+                      ),
+                      onPressed: () {
+                        firebaseAuthController.signinWithApple();
+                      },
+                      child: Obx(
+                            () {
+                          return firebaseAuthController.isAppleLoading.value
+                              ? const Center(
                             child: CircularProgressIndicator(
                               color: Colors.white,
                             ),
                           )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 30.0, left: 10),
-                                child: Image.asset("assets/googlelogo.png",
+                                padding:   EdgeInsets.only(right: 10.w),
+                                child:  SvgPicture.asset(AppAssets.appleIconSvg,
+
                                     height: 24),
                               ),
                               Text(
-                                "Sign in with Google",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                      color: CustomThemeData().whiteColorText,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                "Sign in with Apple",
+                                style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10.0),
+                                child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                    color: Colors.transparent,
+
+                                    height: 10),
                               ),
                             ],
                           );
-                  }),
-                ),
-                const SizedBox(height: 20),
-
-                // Apple Login Button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                        },
+                      ),
                     ),
-                    fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                  ),
-                  onPressed: () {
-                    //firebaseAuthController.loginWithApple();
-                    firebaseAuthController.signinWithApple();
-                  },
-                  child: Obx(
-                    () {
-                      return firebaseAuthController.isAppleLoading.value
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 30.0),
-                                  child: Image.asset("assets/apple_logo.png",
-                                      height: 24),
-                                ),
-                                Text(
-                                  "Sign in with Apple",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(
-                                        color: CustomThemeData().whiteColorText,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
-                            );
-                    },
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

@@ -173,7 +173,7 @@ class FirebaseAuthController extends GetxController {
           .set({
         fieldName: fieldValue,
         'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
+        'dob': birthday.value.isNotEmpty ? birthday.value : 'Birthday not specified',
         'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
         'gender': selectedGender.value.isNotEmpty
             ? selectedGender.value

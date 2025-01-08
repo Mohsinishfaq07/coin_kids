@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const LinearGradient background = const LinearGradient(
+  static const LinearGradient background =   LinearGradient(
     colors: [
       Color(0xFFCAF0FF),
       Colors.white,

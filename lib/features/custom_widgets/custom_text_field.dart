@@ -1,5 +1,7 @@
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatelessWidget {
   final String titleText; // Required title for the field
@@ -58,6 +60,7 @@ class CustomTextField extends StatelessWidget {
                   .fillColor, // Background color for the text field
               hintText: hintText,
 
+
               // hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -78,8 +81,8 @@ class CustomTextField extends StatelessWidget {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(
-                  color: Colors.blue, // Border color when focused
-                  width: 2.0,
+                  color: AppColors.textPrimary, // Border color when focused
+                  width: 1.5,
                 ),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -97,8 +100,8 @@ class CustomTextField extends StatelessWidget {
                   : null, // Show suffix icon if provided
             ),
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w700,
-                color: CustomThemeData().primaryTextColor)),
+                fontWeight: FontWeight.w800,
+                color: CustomThemeData().primaryTextColor,)),
       ],
     );
   }

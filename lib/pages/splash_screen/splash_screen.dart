@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,7 +15,7 @@ class SplashScreen extends StatelessWidget {
     final splashController = Get.put(SplashController());
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Stack(
@@ -24,7 +25,7 @@ class SplashScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(top: 46.h),
                 child: SvgPicture.asset(
-                  "assets/clouds_splash.svg",
+                  AppAssets.cloudImageSvg,
                   height: 252.h,
                   width: 360.w,
                 ),
@@ -32,7 +33,7 @@ class SplashScreen extends StatelessWidget {
             ),
             Center(
               child: SvgPicture.asset(
-                "assets/coinkid_splash.svg",
+                AppAssets.appLogoSvg,
                 height: 57.h,
                 width: 253.w,
               ),
