@@ -27,8 +27,8 @@ class SignupParentScreen extends StatelessWidget {
 
 
       child: Scaffold(
-        appBar: CustomAppBar(
-          backgroundColor: const Color(0xFFCAF0FF),
+        appBar: const CustomAppBar(
+          backgroundColor: Color(0xFFCAF0FF),
           title: "Let's Get Start!",
           showBackButton: false,
           centerTitle: false,

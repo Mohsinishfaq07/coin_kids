@@ -134,9 +134,11 @@ class FirebaseAuthController extends GetxController {
     } on FirebaseAuthException catch (e) {
       // Handle Firebase authentication errors
       Get.snackbar("Error", "Firebase Auth Error: ${e.message}");
+      Get.log("An error occurred in Firebase Auth: $e");
     } catch (e) {
       // Handle general errors
       Get.snackbar("Error", "An error occurred: $e");
+      Get.log("An error occurred in catch: $e");
     } finally {
       // Reset the loading state
       isGoogleLoading.value = false;
@@ -173,7 +175,9 @@ class FirebaseAuthController extends GetxController {
           .set({
         fieldName: fieldValue,
         'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty ? birthday.value : 'Birthday not specified',
+        'dob': birthday.value.isNotEmpty
+            ? birthday.value
+            : 'Birthday not specified',
         'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
         'gender': selectedGender.value.isNotEmpty
             ? selectedGender.value
@@ -229,7 +233,7 @@ class FirebaseAuthController extends GetxController {
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
       await saveInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
-       
+
       // Fetch user role from Firestore
       final isParent = await _checkIfParent(email.value);
       if (isParent) {
@@ -238,9 +242,8 @@ class FirebaseAuthController extends GetxController {
       } else {
         // Navigate to KidMyMoney if user is a kid
         Get.off(() => KidBottomNavScreen());
-      
-    } 
-      
+      }
+
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
       isEmailLoading.value = false;
@@ -379,7 +382,8 @@ class FirebaseAuthController extends GetxController {
     isAppleLoading.value = false;
     Get.offAll(() => ParentLoginScreen());
   }
-     Future<bool> _checkIfParent(String email) async {
+
+  Future<bool> _checkIfParent(String email) async {
     try {
       final parentSnapshot = await FirebaseFirestore.instance
           .collection('parents')
@@ -405,5 +409,4 @@ class FirebaseAuthController extends GetxController {
 
     return false; // Default to kid if no matching document is found
   }
-
 }

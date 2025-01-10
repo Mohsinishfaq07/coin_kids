@@ -187,7 +187,7 @@ Stream<Map<String, dynamic>?> fetchKidData() {
         'Added new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
       Get.back();
-      Get.to(() => const ParentsHomeScreen());
+      Get.off(() => const ParentsHomeScreen());
 
       Get.snackbar("Success", "Child added and parent updated successfully");
     } catch (e) {

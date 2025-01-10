@@ -2,6 +2,7 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CustomTextField extends StatelessWidget {
   final String titleText; // Required title for the field
@@ -16,6 +17,8 @@ class CustomTextField extends StatelessWidget {
       obscureText; // Whether the text should be obscured (e.g., password)
   final TextInputType keyboardType; // Input type for the keyboard
   final String? Function(String?)? validator;
+  final Color? suffixIconColor; // Custom color for suffix icon
+  final String? suffixSvgPath;
 
   const CustomTextField({
     required this.titleText, // Title for the field is now required
@@ -29,6 +32,8 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.suffixIconColor,
+    this.suffixSvgPath,
     super.key,
   });
 
@@ -60,7 +65,6 @@ class CustomTextField extends StatelessWidget {
                   .fillColor, // Background color for the text field
               hintText: hintText,
 
-
               // hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -82,10 +86,11 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(
                   color: AppColors.textPrimary, // Border color when focused
-                  width: 1.5,
+                  width: 2,
                 ),
               ),
-              contentPadding: const EdgeInsets.only(left: 20, right: 12),              prefixIcon: prefixIcon != null
+              contentPadding: const EdgeInsets.only(left: 20, right: 12),
+              prefixIcon: prefixIcon != null
                   ? GestureDetector(
                       onTap: onPrefixTap,
                       child: Icon(prefixIcon, color: Colors.grey),
@@ -94,13 +99,28 @@ class CustomTextField extends StatelessWidget {
               suffixIcon: suffixIcon != null
                   ? GestureDetector(
                       onTap: onSuffixTap,
-                      child: Icon(suffixIcon, color: Colors.grey),
+                      child: Icon(
+                        suffixIcon,
+                        color: suffixIconColor ?? Colors.grey,
+                      ),
                     )
-                  : null, // Show suffix icon if provided
+                  : suffixSvgPath != null
+                      ? GestureDetector(
+                          onTap: onSuffixTap,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: SvgPicture.asset(
+                              suffixSvgPath!,
+                              color: suffixIconColor ?? Colors.grey,
+                            ),
+                          ),
+                        )
+                      : null,
             ),
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w800,
-                color: CustomThemeData().primaryTextColor,)),
+                  fontWeight: FontWeight.w800,
+                  color: CustomThemeData().primaryTextColor,
+                )),
       ],
     );
   }

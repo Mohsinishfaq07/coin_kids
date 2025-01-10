@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../../../../../theme/color_theme.dart';
@@ -62,8 +63,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                     width: 40.w, // Adjust the size of the border
                     height: 40.h, // Adjust the size of the border
 
-                    child: SvgPicture.asset(
-                        AppAssets.drawerIconSvg)),
+                    child: SvgPicture.asset(AppAssets.drawerIconSvg)),
               ),
               SizedBox(width: 7.5.w),
               Column(
@@ -108,7 +108,10 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                             top: 51.h,
                             bottom: 81.h,
                           ),
-                          child: SvgPicture.asset(AppAssets.appLogoSvg,height: 50.h,),
+                          child: SvgPicture.asset(
+                            AppAssets.appLogoSvg,
+                            height: 50.h,
+                          ),
                         ),
                         Container(
                           height: 177.h,
@@ -152,7 +155,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                               const SizedBox(height: 20),
                               CustomButton(
                                   width: 180,
-                                  text: 'Add Child',
+                                  text: 'Add Member',
                                   onPressed: () {
                                     Get.to(() => AddChildScreen());
                                   }
@@ -182,11 +185,13 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Family Profile",
+                          'Family Profiles ',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue.shade900,
-                              fontSize: 12),
+                            color: const Color(0xFF015486),
+                            fontSize: 14.sp,
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w700,
+                          ),
                         )),
                     SizedBox(
                       height: 150, // Set a fixed height for the horizontal list
@@ -203,8 +208,22 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                   const EdgeInsets.symmetric(horizontal: 10.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  Get.to(() => AddChildScreen());
-                                }, // Navigate to add child screen
+                                  if (parentHomeController
+                                      .kidsList.isNotEmpty) {
+                                    Fluttertoast.showToast(
+                                      msg: "You already have a child added.",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.redAccent,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  } else {
+                                    Get.to(() => AddChildScreen());
+                                  }
+                                },
+
+// Navigate to add child screen
                                 child: Column(
                                   children: [
                                     Container(
@@ -217,19 +236,23 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                         padding: EdgeInsets.all(14.0),
                                         child: Icon(
                                           Icons.add, // Add icon
-                                          color: Colors.deepPurple,
+                                          color: AppColors.buttonPrimary,
                                           size: 30,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
+                                    SizedBox(height: 10.h),
                                     Text(
-                                      "Add Child",
+                                      'Add Member\n(Coming soon)',
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.blue[900],
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                        color: AppColors.textPrimary,
+                                        fontSize: 13.sp,
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.38,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
@@ -270,13 +293,15 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                             )
                                           : null,
                                     ),
-                                    const SizedBox(height: 10),
+                                    SizedBox(height: 10.h),
                                     Text(
                                       kid['name'] ?? 'No Name',
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.blue[900],
-                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                        fontSize: 13.sp,
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.38,
                                       ),
                                     ),
                                   ],

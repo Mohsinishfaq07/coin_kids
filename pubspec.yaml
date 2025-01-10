@@ -54,6 +54,7 @@ dependencies:
   carousel_slider: ^5.0.0
   flutter_screenutil: ^5.9.3
   flutter_inner_shadow: 0.0.1
+  fluttertoast: ^8.2.10
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +88,7 @@ flutter:
     - assets/child_avatar_image_pngs/
     - assets/drawer_svgs/
     - assets/bottomSheetIcons/
+    - assets/shop/
 
   fonts:
     - family: OpenSans

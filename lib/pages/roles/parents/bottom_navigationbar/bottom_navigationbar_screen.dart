@@ -1,4 +1,5 @@
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -29,9 +30,16 @@ class ParentBottomNavigationBar extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        body: Obx(() => controller.screens[controller.currentIndex.value]),
+        body: Container(
+            decoration: const BoxDecoration(
+              gradient: AppColors.background,
+            ),
+            child:
+                Obx(() => controller.screens[controller.currentIndex.value])),
         bottomNavigationBar: Obx(() {
           return BottomNavigationBar(
+            backgroundColor: Colors.white,
+            elevation: 15,
             currentIndex: controller.currentIndex.value,
             onTap: (index) {
               if (index == 3) {
@@ -71,8 +79,8 @@ class ParentBottomNavigationBar extends StatelessWidget {
               ),
               _buildNavBarItem(
                 iconPath: 'assets/Coin.svg',
-                label: 'Kid Zone',
-                index: controller.currentIndex.value,
+                label: 'Kids Zone',
+                index: 3,
               ),
             ],
           );
