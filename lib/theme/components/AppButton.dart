@@ -8,10 +8,8 @@ class AppButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
   final Color backgroundColor;
-  final Color foregroundColor;
-
+  final Color foregroundColor;  
   final Size size;
-
   final Color innerShadowColor;
   final Offset innerShadowOffset;
   final double innerBlurRadius;
@@ -31,7 +29,12 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InnerShadow(
-      shadows: [Shadow(color: innerShadowColor, blurRadius: innerBlurRadius, offset: innerShadowOffset)],
+      shadows: [
+        Shadow(
+            color: innerShadowColor,
+            blurRadius: innerBlurRadius,
+            offset: innerShadowOffset)
+      ],
       child: Padding(
         padding: EdgeInsets.all(8.h),
         child: SizedBox(

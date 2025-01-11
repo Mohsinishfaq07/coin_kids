@@ -70,20 +70,32 @@ class ParentLoginScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
 
                     // PIN Input
-                    CustomTextField(
-                      hintText: 'Password',
-                      onChanged: (value) {
-                        firebaseAuthController.pin.value = value.trim();
-                        firebaseAuthController
-                            .checkFields(); // Check fields on change
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password is required";
-                        }
-                      },
-                      titleText: 'Password',
-                    ),
+                    Obx(() {
+                      return CustomTextField(
+                        hintText: 'Password',
+                        onChanged: (value) {
+                          firebaseAuthController.pin.value = value.trim();
+                          firebaseAuthController
+                              .checkFields(); // Check fields on change
+                        },
+                        obscureText: firebaseAuthController.showPassword.value,
+                        suffixIconColor: AppColors.textPrimary,
+                        suffixSvgPath:
+                            firebaseAuthController.showPassword.value
+                                ? "assets/eye.svg"
+                                : "assets/hide_eye.svg",  
+                        onSuffixTap: () {
+                          firebaseAuthController.showPassword.value =
+                              !firebaseAuthController.showPassword.value;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password is required";
+                          }
+                        },
+                        titleText: 'Password',
+                      );
+                    }),
                     SizedBox(height: 62.h),
 
                     // Forgot Credentials

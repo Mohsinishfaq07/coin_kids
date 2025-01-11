@@ -1,6 +1,7 @@
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
@@ -59,7 +60,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
               }
             },
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.purple,
+            selectedItemColor: AppColors.textHighlighted,
             unselectedItemColor: Colors.grey,
             items: [
               _buildNavBarItem(
@@ -97,8 +98,8 @@ class ParentBottomNavigationBar extends StatelessWidget {
     return BottomNavigationBarItem(
       icon: SvgPicture.asset(
         iconPath,
-        width: 24,
-        height: 24,
+        width: 24.w,
+        height: 24.h,
         color: index == 3 // Check if it's the Kid Zone index
             ? null // No color assigned for Kid Zone icon
             : (controller.currentIndex.value == index
@@ -115,21 +116,22 @@ class ParentBottomNavigationBar extends StatelessWidget {
           barrierDismissible: false,
           builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            title: const Row(
+            title: Row(
               children: [
-                Icon(Icons.exit_to_app, color: Colors.red, size: 28),
-                SizedBox(width: 8),
+                Icon(Icons.exit_to_app, color: Colors.red, size: 28.sp),
+                SizedBox(width: 8.w),
                 Text(
                   'Exit App',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            content: const Text(
+            content:   Text(
               'Are you sure you want to exit the application?',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16.sp),
             ),
             actions: [
               TextButton(
@@ -137,9 +139,9 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey,
                 ),
-                child: const Text(
+                child:  Text(
                   'Cancel',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16.sp),
                 ),
               ),
               ElevatedButton(
@@ -147,12 +149,12 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 ),
-                child: const Text(
+                child:  Text(
                   'Exit',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: Colors.white,
                   ),
                 ),

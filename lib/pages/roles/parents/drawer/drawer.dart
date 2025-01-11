@@ -29,7 +29,7 @@ class ParentDrawer extends StatelessWidget {
             padding: EdgeInsets.only(top: 46.h),
             child: SvgPicture.asset(
               AppAssets.cloudImageSvg,
-              height: 252.h,
+              // height: 252.h,
               width: 360.w,
             ),
           ),
@@ -70,7 +70,7 @@ class ParentDrawer extends StatelessWidget {
             // Header with profile information
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -109,7 +109,7 @@ class ParentDrawer extends StatelessWidget {
               Get.to(() => ParentUpdateProfileScreen(
                     parentData: parentData,
                   ));
-              Get.snackbar("Edit", "Edit profile clicked!");
+           //   Get.snackbar("Edit", "Edit profile clicked!");
             }),
             Container(
               width: 328.w,
@@ -161,7 +161,7 @@ class ParentDrawer extends StatelessWidget {
                 color: const Color(0xFFEDFAFF),
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 shadows: const [
                   BoxShadow(
@@ -234,14 +234,14 @@ class ParentDrawer extends StatelessWidget {
             _buildSectionHeader("Others"),
 
             Container(
-                width: 328,
-                height: 170,
+                width: 328.w,
+                height: 170.h,
                 decoration: ShapeDecoration(
                   color: const Color(0xFFEDFAFF),
                   shape: RoundedRectangleBorder(
                     side:
                         BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   shadows: const [
                     BoxShadow(
@@ -258,30 +258,30 @@ class ParentDrawer extends StatelessWidget {
                       children: [
                         _buildProfileRowWithArrow(
                             "Share app", "assets/drawer_svgs/share.svg",
-                            showArrow: false, iconSize: 24),
+                            showArrow: false, iconSize: 24.sp),
                         SizedBox(
                           height: 31.h,
                         ),
                         _buildProfileRowWithArrow(
                             "Feedback", "assets/drawer_svgs/rate_review.svg",
-                            showArrow: false, iconSize: 24),
+                            showArrow: false, iconSize: 24.sp),
                         SizedBox(
                           height: 31.h,
                         ),
                         _buildProfileRowWithArrow(
                             "Privacy Policy", "assets/drawer_svgs/lock.svg",
-                            showArrow: false, iconSize: 24),
+                            showArrow: false, iconSize: 24.sp),
                       ]),
                 )),
 
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
 
             // Version
-            const Text(
+            Text(
               "Version 1.0.1",
               style: TextStyle(
                 color: Colors.grey,
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -294,7 +294,7 @@ class ParentDrawer extends StatelessWidget {
   // Build section header
   Widget _buildSectionHeader(String title, {VoidCallback? onEdit}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -311,8 +311,8 @@ class ParentDrawer extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(AppAssets.pencilIconSvg),
-                  const SizedBox(
-                    width: 4,
+                  SizedBox(
+                    width: 4.w,
                   ),
                   Text(
                     "Edit",
@@ -347,7 +347,7 @@ class ParentDrawer extends StatelessWidget {
                 height: 20.h, // Adjust the size as needed
                 width: 20.w, // Adjust the size as needed
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: 12.w),
               Text(
                 title,
                 style: TextStyle(fontSize: 14.sp, color: Colors.black),
@@ -355,7 +355,7 @@ class ParentDrawer extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(right: 22.w),
+            padding: EdgeInsets.only(right: 10.w),
             child: Text(
               value,
               style: TextStyle(
@@ -377,7 +377,7 @@ class ParentDrawer extends StatelessWidget {
     double iconSize = 20.0, // New parameter for custom icon size
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -392,8 +392,8 @@ class ParentDrawer extends StatelessWidget {
               SizedBox(width: 16.w),
               Text(
                 title,
-                style: const TextStyle(
-                    fontSize: 14,
+                style: TextStyle(
+                    fontSize: 14.sp,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
@@ -453,6 +453,6 @@ class ParentDrawer extends StatelessWidget {
 
 class ToggleRowController extends GetxController {
   // Create an RxBool to manage the state of the Switch
-  var toggleValue = false.obs;
-  var toggleValue1 = false.obs;
+  var toggleValue = true.obs;
+  var toggleValue1 = true.obs;
 }

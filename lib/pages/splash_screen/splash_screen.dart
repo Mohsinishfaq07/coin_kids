@@ -26,8 +26,8 @@ class SplashScreen extends StatelessWidget {
                 padding: EdgeInsets.only(top: 46.h),
                 child: SvgPicture.asset(
                   AppAssets.cloudImageSvg,
-                  height: 252.h,
-                  width: 360.w,
+                  // height: 252.h,
+                  width: 399.w,
                 ),
               ),
             ),

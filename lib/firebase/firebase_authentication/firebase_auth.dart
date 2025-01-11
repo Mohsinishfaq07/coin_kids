@@ -12,10 +12,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirebaseAuthController extends GetxController {
   ParentHomeController parentHomeController = Get.put(ParentHomeController());
+  final ParentHomeController homeController = Get.put(ParentHomeController());
   final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
@@ -29,6 +31,8 @@ class FirebaseAuthController extends GetxController {
   final isNormalLoading = false.obs;
   // Reactive state for tracking if fields are filled
   final isButtonEnabled = false.obs;
+  final showPassword = true.obs;
+  final showConfirmPassword = true.obs;
 
   // Update button state whenever a field changes
   void checkFields() {
@@ -44,7 +48,9 @@ class FirebaseAuthController extends GetxController {
   }
 
   void setBirthday(DateTime date) {
-    birthday.value = "${date.year}-${date.month}-${date.day}";
+    final DateFormat formatter = DateFormat('d MMM, y');
+
+    birthday.value = formatter.format(date);
   }
 
   void selectGender(String gender) {
@@ -130,6 +136,10 @@ class FirebaseAuthController extends GetxController {
         // Navigate to the main screen
         Get.offAll(() => ParentBottomNavigationBar());
         Get.snackbar("Welcome", "Logged in as ${user.email}");
+
+        // comment out above two lines and add these instead of them
+        // Get.back(); // Stop loading
+        // Get.off(() => const RoleSelectionScreen());
       } else {
         // Handle null user case
         Get.snackbar("Sign-In Failed", "User data could not be retrieved.");
@@ -178,9 +188,7 @@ class FirebaseAuthController extends GetxController {
           .set({
         fieldName: fieldValue,
         'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty
-            ? birthday.value
-            : 'Birthday not specified',
+        'dob': birthday.value.isNotEmpty ? birthday.value : 'Dob',
         'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
         'gender': selectedGender.value.isNotEmpty
             ? selectedGender.value
@@ -240,7 +248,8 @@ class FirebaseAuthController extends GetxController {
       // Fetch user role from Firestore
       final isParent = await _checkIfParent(email.value);
       if (isParent) {
-        if (parentHomeController.kidsList.isNotEmpty) {
+        bool parentHasKids = await homeController.fetchKids();
+        if (parentHasKids) {
           Get.off(() => ParentBottomNavigationBar());
         } else {
           Get.off(() => const ParentsHomeScreen());
@@ -257,30 +266,30 @@ class FirebaseAuthController extends GetxController {
       if (e.code == 'user-not-found') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "No user found for that email.",
-              snackPosition: SnackPosition.BOTTOM);
+          // Get.snackbar("Error", "No user found for that email.",
+          //     snackPosition: SnackPosition.BOTTOM);
         });
       } else if (e.code == 'wrong-password') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "Incorrect password entered.",
-              snackPosition: SnackPosition.BOTTOM);
+          // Get.snackbar("Error", "Incorrect password entered.",
+          //     snackPosition: SnackPosition.BOTTOM);
         });
       } else {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
-              snackPosition: SnackPosition.BOTTOM);
+          // Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
+          //     snackPosition: SnackPosition.BOTTOM);
         });
       }
     } catch (e) {
       isEmailLoading.value = false;
       Get.back();
-      Get.snackbar(
-        "Error",
-        "Failed to login. Please try again later.",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // Get.snackbar(
+      //   "Error",
+      //   "Failed to login. Please try again later.",
+      //   snackPosition: SnackPosition.BOTTOM,
+    //  );
     }
   }
 
@@ -309,7 +318,23 @@ class FirebaseAuthController extends GetxController {
       if (user != null) {
         // saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
         isGoogleLoading.value = false; // Stop loading
-        Get.off(() => ParentBottomNavigationBar());
+        final isParent = await _checkIfParent(email.value);
+        if (isParent) {
+          bool parentHasKids = await homeController.fetchKids();
+          if (parentHasKids) {
+            Get.off(() => ParentBottomNavigationBar());
+          } else {
+            Get.off(() => const ParentsHomeScreen());
+          }
+          // Navigate to ParentBottomNavigationBar if user is a parent
+        } else {
+          // Navigate to KidMyMoney if user is a kid
+          Get.off(() => KidBottomNavScreen());
+        }
+
+        // comment out above  line and add these instead of them
+        // Get.back(); // Stop loading
+        // Get.off(() => const RoleSelectionScreen());
       }
     } catch (e) {
       isGoogleLoading.value = false;

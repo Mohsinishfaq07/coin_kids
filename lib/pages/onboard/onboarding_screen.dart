@@ -13,7 +13,8 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class OnboardingScreen extends StatelessWidget {
-  final CarouselSliderController _carouselController = CarouselSliderController();
+  final CarouselSliderController _carouselController =
+      CarouselSliderController();
   final OnboardingController _controller = Get.put(OnboardingController());
 
   OnboardingScreen({super.key});
@@ -51,8 +52,8 @@ class OnboardingScreen extends StatelessWidget {
                 padding: EdgeInsets.only(top: 46.h),
                 child: SvgPicture.asset(
                   AppAssets.cloudImageSvg,
-                   fit: BoxFit.fitWidth,
-
+                  width: 360.w,
+                  fit: BoxFit.fitWidth,
                 ),
               ),
             ),
@@ -100,27 +101,39 @@ class OnboardingScreen extends StatelessWidget {
                                   onPressed: () {
                                     _carouselController.animateToPage(
                                       pages.length - 1,
-                                      duration: const Duration(milliseconds: 500),
+                                      duration:
+                                          const Duration(milliseconds: 500),
                                       curve: Curves.ease,
                                     );
                                   },
                                   child: Text(
                                     "Skip",
-                                    style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
+                                    style: AppTextStyle.bodyLarge.copyWith(
+                                        color: AppColors.textSecondary),
                                   ),
                                 ),
                                 Obx(() {
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(pages.length, (index) {
+                                    children:
+                                        List.generate(pages.length, (index) {
                                       return AnimatedContainer(
-                                        duration: const Duration(milliseconds: 300),
-                                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                                        width: _controller.pageIndex.value == index ? 10 : 10,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        width:
+                                            _controller.pageIndex.value == index
+                                                ? 10
+                                                : 10,
                                         height: 10,
                                         decoration: BoxDecoration(
-                                          color: _controller.pageIndex.value == index ? AppColors.iconPrimary : AppColors.iconDisabled,
-                                          borderRadius: BorderRadius.circular(10),
+                                          color: _controller.pageIndex.value ==
+                                                  index
+                                              ? AppColors.iconPrimary
+                                              : AppColors.iconDisabled,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                       );
                                     }),
@@ -130,7 +143,8 @@ class OnboardingScreen extends StatelessWidget {
                                   onPressed: () {
                                     _carouselController.animateToPage(
                                       _controller.pageIndex.value + 1,
-                                      duration: const Duration(milliseconds: 500),
+                                      duration:
+                                          const Duration(milliseconds: 500),
                                       curve: Curves.ease,
                                     );
                                   },
@@ -175,13 +189,16 @@ class OnboardingPage extends StatelessWidget {
         SizedBox(height: 15.h),
         Text(
           title,
-          style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+          style: AppTextStyle.headingLarge.copyWith(
+              fontWeight: FontWeight.w800, color: AppColors.textPrimary),
         ),
         SizedBox(height: 11.h),
         Text(
           description,
           textAlign: TextAlign.center,
-          style: AppTextStyle.headingMedium.copyWith(fontWeight: MyFontWeight.Regular.fontWeight, color: AppColors.textSecondary),
+          style: AppTextStyle.headingMedium.copyWith(
+              fontWeight: MyFontWeight.Regular.fontWeight,
+              color: AppColors.textSecondary),
         ),
       ],
     );

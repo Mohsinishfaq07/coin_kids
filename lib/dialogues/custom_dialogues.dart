@@ -1,5 +1,9 @@
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class LoadingProgressDialogueWidget extends StatelessWidget {
   String title;
@@ -13,10 +17,10 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
         },
         child: Center(
           child: Container(
-            height: 200, // Square height
-            width: 200, // Square width
+            height: 160.h, // Square height
+            width: 160.w, // Square width
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(20.r),
               color: Colors.white,
             ),
             child: Center(
@@ -27,19 +31,20 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
                   // Icon
                   const Center(
                     child: CircularProgressIndicator(
-                      backgroundColor: Colors.purple,
+                      backgroundColor: AppColors.textHighlighted,
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: 20.h,
                   ),
                   Text(
                     title,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.black, // Ensure correct text color
                               fontWeight: FontWeight.bold,
+                              fontSize: 18.sp, // Adjust the font size as needed
                             ) ??
-                        TextStyle(
+                        const TextStyle(
                             color: Colors
                                 .black), // Fallback if no bodyText2 is defined
                     textAlign: TextAlign.center,
@@ -76,24 +81,24 @@ class KidsZoneDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
+    return Padding(
+      padding: EdgeInsets.only(bottom: 80.h, left: 20.w, right: 20.w),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           SvgPicture.asset(
             purpleBgPath,
             fit: BoxFit.fill,
-            width: 300,
-            height: 150,
+            width: 330.w,
           ),
           Positioned(
-            top: -30,
-            left: 110,
+            top: -28.h,
+            left: 0.w,
+            right: 0.w,
             child: SvgPicture.asset(
               coinIconPath,
-              width: 60,
-              height: 60,
+              width: 60.w,
+              height: 60.h,
             ),
           ),
           Positioned(
@@ -103,15 +108,15 @@ class KidsZoneDialog extends StatelessWidget {
               onTap: () => Navigator.pop(context),
               child: SvgPicture.asset(
                 closeIconPath,
-                width: 30,
-                height: 30,
+                width: 32.w,
+                height: 30.h,
               ),
             ),
           ),
           Positioned(
-            top: 40,
-            left: 40,
-            right: 40,
+            top: 50.h,
+            left: 0.w,
+            right: 0.w,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -120,25 +125,26 @@ class KidsZoneDialog extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 28.sp,
                       ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 Text(
                   subLabel,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 10),
+                      fontSize: 15.sp),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
           Positioned(
-            bottom: -20,
-            left: 100,
+            bottom: -20.w,
+            left: 0.w,
+            right: 0.w,
             child: GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -148,8 +154,8 @@ class KidsZoneDialog extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     greenButtonBgPath,
-                    width: 80,
-                    height: 40,
+                    width: 92.w,
+                    height: 42.h,
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -158,18 +164,20 @@ class KidsZoneDialog extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         tickIconPath,
-                        width: 25,
-                        height: 25,
+                        // width: 20.w,
+                        height: 22.h,
                       ),
-                      const SizedBox(width: 5),
-                      const Text(
+                      SizedBox(width: 2.w),
+                      Text(
                         'OK',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16,
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                          fontFamily: 'Open Sans',
+                          fontWeight: FontWeight.w800,
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],
@@ -193,9 +201,8 @@ void showKidsZoneDialog(
   required String label,
   required String subLabel,
 }) {
-  showDialog(
-    context: context,
-    builder: (context) => KidsZoneDialog(
+  Get.bottomSheet(
+    KidsZoneDialog(
       purpleBgPath: purpleBgPath,
       coinIconPath: coinIconPath,
       closeIconPath: closeIconPath,

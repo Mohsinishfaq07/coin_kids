@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
+import 'package:coin_kids/theme/components/App_small_button.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -142,7 +142,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                               .primaryButtonColor,
                                           fontSize: 18.sp)),
                               const SizedBox(height: 10),
-                              Text("Start by adding your first child.",
+                              Text("Starting by adding your first child.",
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
@@ -152,15 +152,22 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                               .primaryTextColor,
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14.sp)),
-                              const SizedBox(height: 20),
-                              CustomButton(
-                                  width: 180,
-                                  text: 'Add Member',
-                                  onPressed: () {
-                                    Get.to(() => AddChildScreen());
-                                  }
-                                  //controller.navigateToAddChild,
-                                  ),
+                              SizedBox(height: 26.h),
+                              AppSmallButton(
+                                onPressed: () {
+                                  Get.to(() => AddChildScreen());
+                                },
+                                text: 'Add child',
+                              )
+                              // CustomButton(
+
+                              //     width: 150.w,
+                              //     text: 'Add Child',
+                              //     onPressed: () {
+                              //       Get.to(() => AddChildScreen());
+                              //     }
+                              //     //controller.navigateToAddChild,
+                              //     ),
                             ],
                           ),
                         ),
@@ -214,7 +221,8 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                       msg: "You already have a child added.",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
-                                      backgroundColor: AppColors.textHighlighted,
+                                      backgroundColor:
+                                          AppColors.textHighlighted,
                                       textColor: Colors.white,
                                       fontSize: 16.sp,
                                     );
@@ -313,10 +321,10 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      padding: EdgeInsets.symmetric(horizontal: 2.w),
                       child: Center(
                         child: Container(
-                          height: 200,
+                          height: 200.h,
                           width: double.infinity,
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey.shade300),
@@ -325,20 +333,30 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CustomButton(
-                                width: 180,
-                                text: 'Quick Transfer',
+                              AppSmallButton(
                                 onPressed: () {
                                   Get.to(() => AllChildrenPage());
                                 },
-                                buttonStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(
-                                        color: CustomThemeData().whiteColorText,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
+                                size: Size(183.w, 50.h),
+                                text: "Quick Transfer",
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Roboto",
                               ),
+                              // CustomButton(
+                              //   width: 180,
+                              //   text: 'Quick Transfer',
+                              //   onPressed: () {
+                              //     Get.to(() => AllChildrenPage());
+                              //   },
+                              // buttonStyle: Theme.of(context)
+                              //     .textTheme
+                              //     .bodyMedium!
+                              //     .copyWith(
+                              //         color: CustomThemeData().whiteColorText,
+                              //         fontWeight: FontWeight.w600,
+                              //         fontSize: 15),
+                              //),
                               const SizedBox(height: 20),
                               Padding(
                                 padding: const EdgeInsets.symmetric(

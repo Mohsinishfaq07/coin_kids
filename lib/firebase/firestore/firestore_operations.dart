@@ -173,7 +173,7 @@ class ParentFirebaseFunctions {
         'avatar': avatarUrl,
         'age': addChildController.childAge.value,
         'savings': {
-          'amount': '15', // Default savings value
+          'amount': '0', // Default savings value
           'color': '#227799',
           'name': 'Savings',
         },
@@ -218,11 +218,11 @@ class ParentFirebaseFunctions {
     required int enteredAmount,
   }) async {
     try {
-      showDialog(
-          context: Get.context!,
-          builder: (context) => LoadingProgressDialogueWidget(
-                title: "saving..",
-              ));
+      // showDialog(
+      //     context: Get.context!,
+      //     builder: (context) => LoadingProgressDialogueWidget(
+      //           title: "saving..",
+      //         ));
       DocumentReference kidDocRef =
           FirebaseFirestore.instance.collection('kids').doc(childId);
 
@@ -253,13 +253,14 @@ class ParentFirebaseFunctions {
             ),
           );
         } else {
-          if (enteredAmount >= int.parse(currentSavings)) {
+          if (enteredAmount > int.parse(currentSavings)) {
             Get.back();
             parentController.amountValidation.value =
                 'Not Enough Funds, can not remove';
           } else {
-            Get.back();
+           
             updatedAmount = int.parse(currentSavings) - enteredAmount;
+             Get.back();
             Get.log("Current Savings Amount: $currentSavings");
 
             await kidDocRef.set({

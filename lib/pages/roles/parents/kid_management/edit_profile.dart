@@ -2,30 +2,43 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
+import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
-import 'package:coin_kids/features/custom_widgets/custom_dropdown.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 
 class EditProfileController extends GetxController {
-  RxString selectedAge = '1'.obs;
-  RxString selectedGrade = 'Grade 1'.obs;
-  RxString updatedName = ''.obs;
-  RxBool childUpdate = false.obs;
+  // RxString selectedGrade = 'Grade 1'.obs;
+  // RxString updatedName = ''.obs;
+  final String childAge;
+  final String childName;
 
+  EditProfileController({
+    required this.childAge,
+    required this.childName,
+  });
+  RxBool childUpdate = false.obs;
+  Rx<TextEditingController> childAgeController = TextEditingController().obs;
+  Rx<TextEditingController> childNameController = TextEditingController().obs;
   setValues({
     required String childAge,
-    required String childGrade,
+    required String childName,
   }) {
-    selectedAge.value = childAge;
-    selectedGrade.value = childGrade;
-    Get.log('values set: ${'${selectedAge.value} ${selectedGrade.value}'}');
+    childAgeController.value.text = childAge.trim();
+    childNameController.value.text = childName.trim();
+    Get.log('updating controllers');
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    setValues(childAge: childAge, childName: childName);
   }
 }
 
@@ -34,19 +47,21 @@ class EditProfile extends StatelessWidget {
   final String childAge;
   final String childGrade;
   final String childAvatar;
+  final String childName;
   const EditProfile(
       {super.key,
       required this.childId,
       required this.childAge,
       required this.childGrade,
-      required this.childAvatar});
+      required this.childAvatar,
+      required this.childName});
 
   @override
   Widget build(BuildContext context) {
     final AddChildController _controller = Get.put(AddChildController());
-    final EditProfileController editProfileController =
-        Get.put(EditProfileController());
-    editProfileController.setValues(childAge: childAge, childGrade: childGrade);
+    final EditProfileController editProfileController = Get.put(
+        EditProfileController(childAge: childAge, childName: childName));
+
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Update Child Profile",
@@ -57,11 +72,14 @@ class EditProfile extends StatelessWidget {
           gradient: AppColors.background,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: 20.h,
+                ),
                 Text(
                   'Child name',
                   style: TextStyle(
@@ -74,111 +92,49 @@ class EditProfile extends StatelessWidget {
                 SizedBox(
                   height: 12.h,
                 ),
-                CustomTextField(
-                    titleText: "Child name",
-                    hintText: "Enter your child name",
-                    onChanged: (val) {
-                      editProfileController.updatedName.value = val;
-                    }),
+                Obx(() {
+                  return CustomTextField(
+                      titleText: "Child name",
+                      hintText: "Enter your child name",
+                      controller:
+                          editProfileController.childNameController.value,
+                      onChanged: (val) {
+                        editProfileController.childNameController.value.text =
+                            val.trim();
+                      });
+                }),
                 SizedBox(height: 28.h),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Age',
-                            style: TextStyle(
-                              color: Color(0xFF015486),
-                              fontSize: 14.sp,
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          SizedBox(
-                              width: 320.w,
-                              child: Obx(() {
-                                return customDropdown(
-                                  context,
-                                  options: [
-                                    '1',
-                                    '2',
-                                    '3',
-                                    '4',
-                                    '5',
-                                    '6',
-                                    '7',
-                                    '8',
-                                    '9',
-                                    '10',
-                                    '11',
-                                    '12',
-                                    '13',
-                                    '14',
-                                    '15',
-                                    '16',
-                                    '17',
-                                    '18',
-                                    '19',
-                                    '20',
-                                    '21',
-                                    '22',
-                                    '23',
-                                    '24',
-                                    '25',
-                                    '26',
-                                    '27',
-                                    '28',
-                                    '29',
-                                    '30'
-                                  ],
-                                  onChanged: (value) {
-                                    Get.log('Selected: $value');
-                                    editProfileController.selectedAge.value =
-                                        value ?? '1';
-                                  },
-                                  selectedValue:
-                                      editProfileController.selectedAge.value,
-                                );
-                              })),
-                        ],
-                      ),
-                      //   Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     mainAxisSize: MainAxisSize.min,
-                      //     children: [
-                      //       const Text('Grade'),
-                      //       SizedBox(
-                      //         width: MediaQuery.sizeOf(context).width / 2.5,
-                      //         child: Obx(() {
-                      //           return customDropdown(
-                      //             context,
-                      //             options: [
-                      //               'Grade 1',
-                      //               'Grade 2',
-                      //               'Grade 3',
-                      //               'Grade 4'
-                      //             ],
-                      //             onChanged: (value) {
-                      //               Get.log('Selected: $value');
-                      //               editProfileController.selectedGrade.value =
-                      //                   value ?? 'Grade 1';
-                      //             },
-                      //             selectedValue:
-                      //                 editProfileController.selectedGrade.value,
-                      //           );
-                      //         }),
-                      //       ),
-                      //     ],
-                      //   )
-                      // ],
-                    ]),
-                const SizedBox(height: 10),
+                Text(
+                  'Age',
+                  style: TextStyle(
+                    color: Color(0xFF015486),
+                    fontSize: 14.sp,
+                    fontFamily: 'Open Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(
+                  height: 12.h,
+                ),
+                Obx(() {
+                  return CustomTextField(
+                    titleText: "Age",
+                    hintText: "Enter child's age",
+                    keyboardType: TextInputType.number,
+                    controller: editProfileController.childAgeController.value,
+                    onChanged: (value) {
+                      editProfileController.childAgeController.value.text =
+                          value.trim();
+                    },
+                  );
+                }),
+                // CustomTextField(
+                //     titleText: "Age",
+                //     hintText: "Your Age",
+                //     onChanged: (val) {
+                //       editProfileController.selectedAge.value = val.trim();
+                //     }),
+                SizedBox(height: 28.h),
                 Text(
                   "Select Avatar",
                   style: TextStyle(
@@ -266,6 +222,11 @@ class EditProfile extends StatelessWidget {
                             () => GestureDetector(
                               onTap: () async {
                                 await _controller.pickCustomAvatar();
+                                if (_controller
+                                    .customAvatarPath.value.isNotEmpty) {
+                                  Get.log(
+                                      "Custom Avatar Path: ${_controller.customAvatarPath.value}");
+                                }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(6.0),
@@ -298,6 +259,11 @@ class EditProfile extends StatelessWidget {
                             () => GestureDetector(
                               onTap: () {
                                 _controller.selectAvatar(avatarIndex);
+                                if (_controller
+                                    .customAvatarPath.value.isNotEmpty) {
+                                  Get.log(
+                                      "Custom Avatar Path: ${_controller.selectedAvatarPath.value}");
+                                }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
@@ -314,13 +280,14 @@ class EditProfile extends StatelessWidget {
                                               ? Colors.purple
                                               : Colors.transparent,
                                         ),
-                                        borderRadius: BorderRadius.circular(50),
+                                        borderRadius:
+                                            BorderRadius.circular(50.r),
                                       ),
                                       child: Image.asset(
                                         _controller.avatars[avatarIndex],
-                                        height:
-                                            70, // Adjust the size of the avatar
-                                        width: 70,
+                                        height: 70
+                                            .h, // Adjust the size of the avatar
+                                        width: 70.w,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -357,24 +324,28 @@ class EditProfile extends StatelessWidget {
                   child: Obx(() {
                     return editProfileController.childUpdate.value
                         ? const CircularProgressIndicator()
-                        : CustomButton(
-                            text: "Update Child",
+                        : AppButton(
                             onPressed: () async {
                               if (editProfileController
-                                  .updatedName.value.isEmpty) {
+                                  .childNameController.value.text.isEmpty) {
                                 Get.snackbar('Alert', 'name is required');
                               } else {
+                                final String avatarUrl =
+                                    _controller.selectedAvatarPath.value.isEmpty
+                                        ? _controller.customAvatarPath.value
+                                        : _controller.selectedAvatarPath.value;
+
                                 updateChildData(
                                     childId: childId,
-                                    name:
-                                        editProfileController.updatedName.value,
-                                    age:
-                                        editProfileController.selectedAge.value,
-                                    grade: editProfileController
-                                        .selectedGrade.value);
+                                    name: editProfileController
+                                        .childNameController.value.text,
+                                    age: editProfileController
+                                        .childAgeController.value.text,
+                                    grade: 'Grade 1',
+                                    avatarPath: avatarUrl);
                               }
                             },
-                            textColor: Colors.black,
+                            text: 'Update Child',
                           );
                   }),
                 ),
@@ -392,18 +363,21 @@ class EditProfile extends StatelessWidget {
     required String name,
     required String age,
     required String grade,
+    required String avatarPath,
   }) async {
     final EditProfileController editProfileController =
-        Get.put(EditProfileController());
+        Get.put(EditProfileController(childAge: age, childName: name));
     editProfileController.childUpdate.value = true;
+    Get.log('avatar path:$avatarPath');
     try {
       FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
       await firebaseFirestore.collection('kids').doc(childId).set(
-        {'grade': grade, 'name': name, 'age': age},
+        {'grade': grade, 'name': name, 'age': age, 'avatar': avatarPath},
         SetOptions(merge: true),
       );
       Get.snackbar('Alert', 'Child info updated');
       editProfileController.childUpdate.value = false;
+      Get.off(ParentBottomNavigationBar());
     } catch (e) {
       editProfileController.childUpdate.value = false;
       Get.log('kid update error:${e.toString()}');

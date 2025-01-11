@@ -2,6 +2,7 @@ import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/messages_screen/messages_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
+import 'package:coin_kids/theme/components/App_small_button.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,18 +16,19 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomAppBar(
+        appBar: const CustomAppBar(
           showBackButton: false,
           title: 'Messages',
         ),
         body: Container(
           decoration: const BoxDecoration(gradient: AppColors.background),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Column(
               children: [
                 CustomCard(
                   avatarImage: "assets/child_avatar_image_pngs/Frame 1.png",
+                  avatarImage1: "assets/image.png",
                   title: "Saving Goals Completed!",
                   subtitle: "Today at 9:42 AM",
                   icon: Icons.import_contacts,
@@ -41,7 +43,7 @@ class MessagesScreen extends StatelessWidget {
                 ),
                 Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   elevation: 4,
                   margin: const EdgeInsets.only(bottom: 12),
@@ -128,79 +130,99 @@ class MessagesScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Container(
-                                  width: 130.w,
-                                  height: 45.h,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 13),
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFA1A1A1)),
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Color(0x0F101828),
-                                        blurRadius: 3.59,
-                                        offset: Offset(0, 1.80),
-                                        spreadRadius: -1.80,
-                                      )
-                                    ],
+                                  child: AppSmallButton(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.buttonPrimary,
+                                onPressed: () {},
+                                text: "Decline",
+                                fontSize: 14.sp,
+                              )
+
+                                  // Container(
+                                  //   width: 130.w,
+                                  //   height: 36.h,
+                                  //   decoration: ShapeDecoration(
+                                  //     shape: RoundedRectangleBorder(
+                                  //       side: BorderSide(
+                                  //           width: 1.w, color: Color(0xFFA1A1A1)),
+                                  //       borderRadius: BorderRadius.circular(24),
+                                  //     ),
+                                  //     shadows: const [
+                                  //       BoxShadow(
+                                  //         color: Color(0x0F101828),
+                                  //         blurRadius: 3.59,
+                                  //         offset: Offset(0, 1.80),
+                                  //         spreadRadius: -1.80,
+                                  //       ),
+                                  //       BoxShadow(
+                                  //         color: Color(0x19101828),
+                                  //         blurRadius: 7.19,
+                                  //         offset: Offset(0, 3.59),
+                                  //         spreadRadius: -1.80,
+                                  //       ),
+                                  //     ],
+                                  //     color: Colors.white,
+                                  //   ),
+                                  //   child: Row(
+                                  //     mainAxisSize: MainAxisSize.min,
+                                  //     mainAxisAlignment: MainAxisAlignment.center,
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.center,
+                                  //     children: [
+                                  //       Text(
+                                  //         'Decline',
+                                  //         style: TextStyle(
+                                  //           color: const Color(0xFFA421D9),
+                                  //           fontSize: 14.sp,
+                                  //           fontFamily: 'Open Sans',
+                                  //           fontWeight: FontWeight.w700,
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Decline',
-                                        style: TextStyle(
-                                          color: Color(0xFFA421D9),
-                                          fontSize: 14,
-                                          fontFamily: 'Open Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
                               SizedBox(
                                 width: 18.w,
                               ),
                               Expanded(
-                                child: Container(
-                                  width: 130.w,
-                                  height: 45.h,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 18, vertical: 13),
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFFA421D9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Approve',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'Open Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  child: AppSmallButton(
+                                onPressed: () {},
+                                text: "Approve",
+                                fontSize: 14.sp,
                               )
+
+                                  // Container(
+                                  //   width: 130.w,
+                                  //   height: 45.h,
+                                  //   padding: const EdgeInsets.symmetric(
+                                  //       horizontal: 18, vertical: 13),
+                                  //   decoration: ShapeDecoration(
+                                  //     color: Color(0xFFA421D9),
+                                  //     shape: RoundedRectangleBorder(
+                                  //       borderRadius: BorderRadius.circular(24),
+                                  //     ),
+                                  //   ),
+                                  //   child: const Row(
+                                  //     mainAxisSize: MainAxisSize.min,
+                                  //     mainAxisAlignment: MainAxisAlignment.center,
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.center,
+                                  //     children: [
+                                  //       Text(
+                                  //         'Approve',
+                                  //         style: TextStyle(
+                                  //           color: Colors.white,
+                                  //           fontSize: 14,
+                                  //           fontFamily: 'Open Sans',
+                                  //           fontWeight: FontWeight.w700,
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                  )
                             ],
                           ),
                         ),
@@ -238,6 +260,7 @@ class MessagesScreen extends StatelessWidget {
 
 class CustomCard extends StatelessWidget {
   final String avatarImage;
+  final String? avatarImage1;
   final String title;
   final String subtitle;
   final IconData icon;
@@ -250,6 +273,7 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
     required this.avatarImage,
+    this.avatarImage1,
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -269,42 +293,46 @@ class CustomCard extends StatelessWidget {
       elevation: 4,
       margin: EdgeInsets.only(bottom: 12.h),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 20.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: 24.w,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22.r,
+                      backgroundColor: Colors.grey.shade200,
+                      child: Image.asset(
+                        avatarImage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 12.w,
+                    ),
+                    Text(title,
+                        style: AppTextStyle.bodySmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.sp,
+                            color: AppColors.textPrimary)),
+                  ],
                 ),
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey.shade200,
-                  child: Image.asset(
-                    avatarImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(
-                  width: 12.w,
-                ),
-                Text(title,
-                    style: AppTextStyle.bodySmall.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
-                        color: AppColors.textPrimary)),
-                SizedBox(
-                  width: 45.w,
-                ),
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey.shade200,
-                  child: Image.asset(
-                    avatarImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                if (avatarImage1 != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        0), // Set this to 0 for a square, or increase for rounded corners
+                    child: SizedBox(
+                      width: 30.w, // Specify the width of the square
+                      height: 30.h, // Specify the height of the square
+                      child: Image.asset(
+                        avatarImage1!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
               ],
             ),
             Text(subtitle,
@@ -312,16 +340,13 @@ class CustomCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
                     color: AppColors.textSecondary)),
-            Padding(
-              padding: EdgeInsets.only(right: 21.w),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(actionText,
-                    style: AppTextStyle.bodySmall.copyWith(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.sp,
-                        color: AppColors.textHighlighted)),
-              ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(actionText,
+                  style: AppTextStyle.bodySmall.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14.sp,
+                      color: AppColors.textHighlighted)),
             ),
             // Avatar Section
             // Column(

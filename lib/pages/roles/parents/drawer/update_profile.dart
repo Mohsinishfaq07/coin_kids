@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+import 'package:get/get.dart';
 import '../../../../theme/color_theme.dart';
 
 class ParentUpdateProfileScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 Text(
                   "Birthday",
                   style: TextStyle(
@@ -40,26 +41,28 @@ class ParentUpdateProfileScreen extends StatelessWidget {
 
                 SizedBox(height: 12.h), // Spacing between title and text field
                 // Email Input
-                CustomTextField(
-                  hintText: firebaseAuthController.birthday.value.isEmpty
-                      ? 'Date'
-                      : firebaseAuthController.birthday.value,
-                  titleText: 'Birthday',
-                  suffixIcon: Icons.calendar_month,
-                  onSuffixTap: () async {
-                    // Open DatePicker
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900), // Earliest selectable date
-                      lastDate: DateTime.now(), // Latest selectable date
-                    );
-                    if (pickedDate != null) {
-                      firebaseAuthController
-                          .setBirthday(pickedDate); // Update Birthday
-                    }
-                  },
-                ),
+                Obx(() {
+                  return CustomTextField(
+                    hintText: firebaseAuthController.birthday.value.isEmpty
+                        ? 'Date'
+                        : firebaseAuthController.birthday.value,
+                    titleText: 'Birthday',
+                    suffixIcon: Icons.calendar_month,
+                    onSuffixTap: () async {
+                      // Open DatePicker
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900), // Earliest selectable date
+                        lastDate: DateTime.now(), // Latest selectable date
+                      );
+                      if (pickedDate != null) {
+                        firebaseAuthController
+                            .setBirthday(pickedDate); // Update Birthday
+                      }
+                    },
+                  );
+                }),
                 const SizedBox(height: 25),
                 Text(
                   "Full Name",
@@ -108,9 +111,9 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                             decoration: ShapeDecoration(
                               color: Colors.white54,
                               shape: RoundedRectangleBorder(
-                                side: BorderSide(
+                                side: const BorderSide(
                                     width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
                             ),
                             child: SvgPicture.asset(
@@ -140,9 +143,9 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                             decoration: ShapeDecoration(
                               color: Colors.white54,
                               shape: RoundedRectangleBorder(
-                                side: BorderSide(
+                                side: const BorderSide(
                                     width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
                             ),
                             child: SvgPicture.asset(
@@ -170,7 +173,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                     }
                   },
                 )),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
 
                 // Signup Link
               ],

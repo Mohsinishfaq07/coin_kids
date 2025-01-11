@@ -8,7 +8,7 @@ class BottomNavigationbarController extends GetxController {
   var currentIndex = 0.obs; // Reactive index to track selected tab
 
   final List<Widget> screens = [
-    ParentsHomeScreen(),
+    const ParentsHomeScreen(),
     MessagesScreen(),
     ShopScreen(),
     //KidZoneScreen(),

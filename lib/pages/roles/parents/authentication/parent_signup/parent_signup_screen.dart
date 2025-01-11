@@ -24,8 +24,6 @@ class SignupParentScreen extends StatelessWidget {
 
     return PopScope(
       canPop: false,
-
-
       child: Scaffold(
         appBar: const CustomAppBar(
           backgroundColor: Color(0xFFCAF0FF),
@@ -38,7 +36,7 @@ class SignupParentScreen extends StatelessWidget {
             gradient: AppColors.background,
           ),
           child: Padding(
-            padding:   EdgeInsets.symmetric(horizontal: 19.w),
+            padding: EdgeInsets.symmetric(horizontal: 19.w),
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -64,9 +62,9 @@ class SignupParentScreen extends StatelessWidget {
                     ),
                     // email
 
-                     Padding(
-                       padding:  EdgeInsets.symmetric(vertical: 16.h),
-                       child: CustomTextField(
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      child: CustomTextField(
                         hintText: 'Email',
                         onChanged: (value) {
                           firebaseAuthController.email.value = value.trim();
@@ -86,93 +84,128 @@ class SignupParentScreen extends StatelessWidget {
                           }
                           return null;
                         },
-                                         ),
-                     ),
+                      ),
+                    ),
 
                     // PIN Input
-                    CustomTextField(
-                      hintText: 'Password',
-                      onChanged: (value) {
-                        firebaseAuthController.pin.value = value.trim();
-                        firebaseAuthController
-                            .signUpCheckField(); // Check fields on change
-                      },
-                      titleText: 'Password',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password is required";
-                        }
-                        return null;
-                      },
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.only(top: 16.h,bottom: 36.h),
-                      child: CustomTextField(
-                          hintText: 'Confirm Password',
-                          onChanged: (value) {
-                            firebaseAuthController.confirmPin.value = value.trim();
-                            firebaseAuthController
-                                .signUpCheckField(); // Check fields on change
-                          },
-                          titleText: 'Confirm Password',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Confirm Password is required";
-                            }
-                            if (value != firebaseAuthController.pin.value) {
-                              return "Passwords do not match";
-                            }
-                            if (value.length < 6) {
-                              return "Password must be at least 6 characters long";
-                            }
-                            return null;
-                          }),
-                    ),
-
-
-                  Center(
-                          child: AppButton(
-                            backgroundColor: AppColors.buttonPrimary,
-                            // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                            text: 'Signup',
-                            onPressed: () {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                // If the form is valid, proceed with the signup action
-                                try {
-                                  firebaseAuthController.signUpWithEmail();
-                                } catch (e) {
-                                  print("Error: $e");
-                                }
-                              } else {
-                                // If the form is not valid, show error messages
-                                print("Form validation failed");
-                              }
+                    Obx(() {
+                      return CustomTextField(
+                        hintText: 'Password',
+                        onChanged: (value) {
+                          firebaseAuthController.pin.value = value.trim();
+                          firebaseAuthController
+                              .signUpCheckField(); // Check fields on change
+                        },
+                        titleText: 'Password',
+                        obscureText: firebaseAuthController.showPassword.value,
+                        suffixIconColor: AppColors.textPrimary,
+                        suffixSvgPath: firebaseAuthController.showPassword.value
+                            ? "assets/eye.svg"
+                            : "assets/hide_eye.svg",
+                        onSuffixTap: () {
+                          firebaseAuthController.showPassword.value =
+                              !firebaseAuthController.showPassword.value;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password is required";
+                          }
+                          return null;
+                        },
+                      );
+                    }),
+                    Obx(() {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 16.h, bottom: 36.h),
+                        child: CustomTextField(
+                            hintText: 'Confirm Password',
+                            onChanged: (value) {
+                              firebaseAuthController.confirmPin.value =
+                                  value.trim();
+                              firebaseAuthController
+                                  .signUpCheckField(); // Check fields on change
                             },
-                          ),
-                        ),
-                     SizedBox(height: 12.h),
+                            titleText: 'Confirm Password',
+                            obscureText:
+                                firebaseAuthController.showConfirmPassword.value,
+                            suffixIconColor: AppColors.textPrimary,
+                            suffixSvgPath:
+                                firebaseAuthController.showConfirmPassword.value
+                                    ? "assets/eye.svg"
+                                    : "assets/hide_eye.svg",
+                            onSuffixTap: () {
+                              firebaseAuthController.showConfirmPassword.value =
+                                  !firebaseAuthController.showConfirmPassword.value;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Confirm Password is required";
+                              }
+                              if (value != firebaseAuthController.pin.value) {
+                                return "Passwords do not match";
+                              }
+                              if (value.length < 6) {
+                                return "Password must be at least 6 characters long";
+                              }
+                              return null;
+                            }),
+                      );
+                    }),
+
+                    Center(
+                      child: AppButton(
+                        backgroundColor: AppColors.buttonPrimary,
+                        // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                        text: 'Signup',
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            // If the form is valid, proceed with the signup action
+                            try {
+                              firebaseAuthController.signUpWithEmail();
+                            } catch (e) {
+                              print("Error: $e");
+                            }
+                          } else {
+                            // If the form is not valid, show error messages
+                            print("Form validation failed");
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Already have an account? ",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: CustomThemeData().primaryTextColor,fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor,
+                                  fontSize: 12.sp),
                         ),
                         GestureDetector(
                             onTap: () {
                               Get.off(() => ParentLoginScreen());
                             },
-                            child: Text("LOGIN",
-                                style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp,color: AppColors.buttonPrimary),)),
+                            child: Text(
+                              "LOGIN",
+                              style: AppTextStyle.labelLarge.copyWith(
+                                  fontSize: 14.sp,
+                                  color: AppColors.buttonPrimary),
+                            )),
                       ],
                     ),
                     Padding(
-                      padding:   EdgeInsets.only(top:16.h,bottom: 24.h),
+                      padding: EdgeInsets.only(top: 16.h, bottom: 24.h),
                       child: Text("OR",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w800)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w800)),
                     ),
 
                     // Google Login Button
@@ -200,30 +233,34 @@ class SignupParentScreen extends StatelessWidget {
                                 ),
                               )
                             : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
-                                    padding:  EdgeInsets.only(
+                                    padding: EdgeInsets.only(
                                         right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(AppAssets.googleIconSvg,
+                                    child: SvgPicture.asset(
+                                        AppAssets.googleIconSvg,
                                         height: 24),
                                   ),
                                   Text(
                                     "Sign in with Google",
-                                    style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                                    style: AppTextStyle.labelLarge
+                                        .copyWith(fontSize: 14.sp),
                                   ),
                                   Padding(
-                                    padding:   EdgeInsets.only(   right: 10.w, left: 10.w),
-                                    child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                    padding: EdgeInsets.only(
+                                        right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(
+                                        AppAssets.appleIconSvg,
                                         color: Colors.transparent,
-
                                         height: 10),
                                   ),
                                 ],
                               );
                       }),
                     ),
-                     SizedBox(height: 16.h),
+                    SizedBox(height: 16.h),
 
                     // Apple Login Button
                     ElevatedButton(
@@ -247,23 +284,26 @@ class SignupParentScreen extends StatelessWidget {
                                   ),
                                 )
                               : Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Padding(
-                                      padding:   EdgeInsets.only(right: 10.w),
-                                      child:  SvgPicture.asset(AppAssets.appleIconSvg,
-
+                                      padding: EdgeInsets.only(right: 10.w),
+                                      child: SvgPicture.asset(
+                                          AppAssets.appleIconSvg,
                                           height: 24),
                                     ),
                                     Text(
                                       "Sign in with Apple",
-                                      style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                                      style: AppTextStyle.labelLarge
+                                          .copyWith(fontSize: 14.sp),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 10.0),
-                                      child:  SvgPicture.asset(AppAssets.appleIconSvg,
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: SvgPicture.asset(
+                                          AppAssets.appleIconSvg,
                                           color: Colors.transparent,
-
                                           height: 10),
                                     ),
                                   ],
@@ -275,13 +315,15 @@ class SignupParentScreen extends StatelessWidget {
                     SizedBox(height: 80.h),
                     // Terms and Signup Button
                     Padding(
-                      padding:  EdgeInsets.only(left: 24.w,right:24.w,bottom:10.h),
+                      padding: EdgeInsets.only(
+                          left: 24.w, right: 24.w, bottom: 10.h),
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "By clicking Sign Up, you are agreeing to the ",
+                              text:
+                                  "By clicking Sign Up, you are agreeing to the ",
                               style: TextStyle(
                                 color: Colors.blue.shade900,
                                 fontWeight: FontWeight.normal,
@@ -301,8 +343,6 @@ class SignupParentScreen extends StatelessWidget {
                               text: " & ",
                               style: TextStyle(
                                 color: Colors.blue.shade900,
-
-
                                 fontSize: 12,
                               ),
                             ),
@@ -315,7 +355,6 @@ class SignupParentScreen extends StatelessWidget {
                                 fontSize: 12,
                               ),
                             ),
-
                           ],
                         ),
                       ),

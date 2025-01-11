@@ -34,22 +34,12 @@ class AllChildrenPage extends StatelessWidget {
         decoration: const BoxDecoration(
           gradient: AppColors.background,
         ),
-        child: Stack(
-
-          children:[
-
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: EdgeInsets.only(top: 46.h),
-                child: SvgPicture.asset(
-                  AppAssets.cloudImageSvg,
-                  fit: BoxFit.fitWidth,
-
-                ),
-              ),
-            ),
-            StreamBuilder<List<DocumentSnapshot>>(
+        child: Stack(children: [
+          SvgPicture.asset(
+            AppAssets.cloudImageSvg,
+            width: 400.w,
+          ),
+          StreamBuilder<List<DocumentSnapshot>>(
             stream: firestoreOperations.parentFirebaseFunctions
                 .fetchChildrenForParent(FirebaseAuth.instance.currentUser!.uid),
             builder: (context, snapshot) {
@@ -66,9 +56,18 @@ class AllChildrenPage extends StatelessWidget {
               }
 
               List<DocumentSnapshot> documents = snapshot.data!;
+              if (parentController
+                      .selectedChildIdForQuickTransfer.value.isEmpty &&
+                  documents.isNotEmpty) {
+                var firstKid = documents.first.data() as Map<String, dynamic>;
+                parentController.selectedChildIdForQuickTransfer.value =
+                    documents.first.id;
+                parentController.selectedChildNameForQuickTransfer.value =
+                    firstKid['name'];
+              }
 
               return Padding(
-                padding:  EdgeInsets.only(left: 10.w,right: 10.w,top: 10.h),
+                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -84,11 +83,12 @@ class AllChildrenPage extends StatelessWidget {
                                 false, // Enable/Disable infinite scrolling
                             enlargeCenterPage:
                                 true, // Makes the centered slide larger
-                            scrollDirection: Axis.horizontal, // Scroll direction
+                            scrollDirection:
+                                Axis.horizontal, // Scroll direction
                             onPageChanged: (index, reason) {
                               // Update the selected child index when the carousel slides
-                              var dataKid =
-                                  documents[index].data() as Map<String, dynamic>;
+                              var dataKid = documents[index].data()
+                                  as Map<String, dynamic>;
                               parentController.selectedChildIdForQuickTransfer
                                   .value = documents[index].id;
                               parentController.selectedChildNameForQuickTransfer
@@ -103,17 +103,19 @@ class AllChildrenPage extends StatelessWidget {
                               onTap: () {
                                 parentController.selectedChildIdForQuickTransfer
                                     .value = documents[index].id;
-                                parentController.selectedChildNameForQuickTransfer
+                                parentController
+                                    .selectedChildNameForQuickTransfer
                                     .value = dataKid['name'];
                               },
                               child: Container(
                                 height: 164.h,
                                 width: 126.w,
-                                padding:  EdgeInsets.symmetric(vertical: 12.h),
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
                                 decoration: ShapeDecoration(
                                   color: const Color(0xFFEDFAFF),
                                   shape: RoundedRectangleBorder(
-                                    side: BorderSide(width: 1.w, color: Color(0xFFCBE4F3)),
+                                    side: BorderSide(
+                                        width: 1.w, color: Color(0xFFCBE4F3)),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   shadows: const [
@@ -141,38 +143,46 @@ class AllChildrenPage extends StatelessWidget {
                                         textAlign: TextAlign.center,
                                       ),
                                       Padding(
-                                        padding:  EdgeInsets.only(top: 9.5.h,bottom: 8.h),
+                                        padding: EdgeInsets.only(
+                                            top: 9.5.h, bottom: 8.h),
                                         child: CircleAvatar(
                                           radius: 30,
-                                          backgroundImage:
-                                              dataKid['avatar'].startsWith('/')
-                                                  ? FileImage(File(dataKid['avatar']))
-                                                  : (dataKid['avatar']
-                                                              .startsWith('assets') &&
-                                                          !dataKid['avatar']
-                                                              .endsWith('.svg'))
-                                                      ? AssetImage(dataKid['avatar'])
-                                                      : dataKid['avatar']
-                                                              .startsWith('http')
-                                                          ? NetworkImage(
-                                                              dataKid['avatar'])
-                                                          : null,
-                                          child: dataKid['avatar'].endsWith('.svg')
-                                              ? SvgPicture.asset(
-                                                  dataKid['avatar'],
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : null,
+                                          backgroundImage: dataKid['avatar']
+                                                  .startsWith('/')
+                                              ? FileImage(
+                                                  File(dataKid['avatar']))
+                                              : (dataKid['avatar'].startsWith(
+                                                          'assets') &&
+                                                      !dataKid['avatar']
+                                                          .endsWith('.svg'))
+                                                  ? AssetImage(
+                                                      dataKid['avatar'])
+                                                  : dataKid['avatar']
+                                                          .startsWith('http')
+                                                      ? NetworkImage(
+                                                          dataKid['avatar'])
+                                                      : null,
+                                          child:
+                                              dataKid['avatar'].endsWith('.svg')
+                                                  ? SvgPicture.asset(
+                                                      dataKid['avatar'],
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : null,
                                         ),
                                       ),
-                                      SizedBox(height: 6.h,),
+                                      SizedBox(
+                                        height: 6.h,
+                                      ),
                                       Text(
                                         'Available Money',
                                         style: TextStyle(
-                                            fontSize: 12.sp, color: Colors.grey),
+                                            fontSize: 12.sp,
+                                            color: Colors.grey),
                                       ),
-                                      SizedBox(height: 6.h,),
-
+                                      SizedBox(
+                                        height: 6.h,
+                                      ),
                                       Text(
                                         '€ ${dataKid['savings']['amount']}',
                                         style: Theme.of(context)
@@ -209,7 +219,8 @@ class AllChildrenPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'or ',
                                     style: TextStyle(
-                                      color: Colors.black, // Default color for "or"
+                                      color: Colors
+                                          .black, // Default color for "or"
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
@@ -242,44 +253,49 @@ class AllChildrenPage extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .headlineMedium!
-                              .copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                              .copyWith(
+                                  fontSize: 14.sp, fontWeight: FontWeight.bold),
                         ),
                       ),
-                       SizedBox(height: 12.h),
-                          QuickTransferTextField(hintText: "0,00" ,keyboardType: TextInputType.number,
-                              onChanged: (val) {
-                                parentController.amount.value = val;
-                              },
-                        prefix: SvgPicture.asset("assets/currency_euro.svg")),
-
-                       SizedBox(height: 24.h),
-                        Align(
+                      SizedBox(height: 12.h),
+                      QuickTransferTextField(
+                          hintText: "0,00",
+                          keyboardType: TextInputType.number,
+                          onChanged: (val) {
+                            parentController.amount.value = val;
+                          },
+                          prefix: SvgPicture.asset("assets/currency_euro.svg")),
+                      SizedBox(height: 24.h),
+                      Align(
                         alignment: Alignment.topLeft,
                         child: Text.rich(
                           TextSpan(
                             text: 'Leave a Message ', // Default text
-                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                              fontSize: 14.h,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium!
+                                .copyWith(
+                                  fontSize: 14.h,
+                                  fontWeight: FontWeight.bold,
+                                ),
                             children: [
                               TextSpan(
                                 text: '(Optional)', // Optional in gray color
-                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                  fontSize: 14.h,
-                                  fontFamily: 'Open Sans',
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w100,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium!
+                                    .copyWith(
+                                      fontSize: 14.h,
+                                      fontFamily: 'Open Sans',
+                                      color: AppColors.textSecondary,
+                                      fontWeight: FontWeight.w100,
+                                    ),
                               ),
                             ],
                           ),
                         ),
                       ),
-
-
                       SizedBox(height: 12.h),
-
                       CustomTextField(
                         titleText: "Leave a Message",
                         hintText: "e.g Remember to save some money",
@@ -287,14 +303,12 @@ class AllChildrenPage extends StatelessWidget {
                         isOptional: true,
                         onChanged: (val) {},
                       ),
-                       SizedBox(height: 27.h),
+                      SizedBox(height: 27.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Obx(() {
-                            return
-
-                              CustomButton(
+                            return CustomButton(
                               color: parentController.amount.value.isNotEmpty
                                   ? AppColors.buttonPrimary
                                   : AppColors.buttonDisabled,
@@ -319,13 +333,10 @@ class AllChildrenPage extends StatelessWidget {
                                               parentController.amount.value),
                                           save: false);
                                   // parentController.amount.value = "";
-
                                 }
-
-                                },
+                              },
                               width: 150,
                             );
-
                           }),
                           Obx(() {
                             return CustomButton(
@@ -353,9 +364,8 @@ class AllChildrenPage extends StatelessWidget {
                                               parentController.amount.value),
                                           save: true);
                                   // parentController.amount.value = "";
-
                                 }
-                               },
+                              },
                               width: 150,
                             );
                           }),
@@ -367,7 +377,7 @@ class AllChildrenPage extends StatelessWidget {
               );
             },
           ),
-       ] ),
+        ]),
       ),
     );
   }
