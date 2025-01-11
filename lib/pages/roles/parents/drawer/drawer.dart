@@ -10,10 +10,9 @@ import '../../../../theme/color_theme.dart';
 import '../../../../theme/text_theme.dart';
 
 class ParentDrawer extends StatelessWidget {
-
-    ParentDrawer({super.key});
-  final ToggleRowController toggleRowController = Get.put(ToggleRowController());
-
+  ParentDrawer({super.key});
+  final ToggleRowController toggleRowController =
+      Get.put(ToggleRowController());
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class ParentDrawer extends StatelessWidget {
   originalWidget({required Map<String, dynamic> parentData}) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Column(
           children: [
             // Header with profile information
@@ -103,7 +102,7 @@ class ParentDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             // My Profile Section
             _buildSectionHeader("My Profile", onEdit: () {
@@ -112,35 +111,38 @@ class ParentDrawer extends StatelessWidget {
                   ));
               Get.snackbar("Edit", "Edit profile clicked!");
             }),
-          Container(
-            width: 328,
-            height: 156,
-            decoration: ShapeDecoration(
-              color: const Color(0xFFEDFAFF),
-              shape: RoundedRectangleBorder(
-                side:  BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
-                borderRadius: BorderRadius.circular(12),
+            Container(
+              width: 328.w,
+              height: 156.h,
+              decoration: ShapeDecoration(
+                color: const Color(0xFFEDFAFF),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x0F000000),
+                    blurRadius: 6.r,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
               ),
-              shadows: const [
-                BoxShadow(
-                  color: Color(0x0F000000),
-                  blurRadius: 6,
-                  offset: Offset(0, 0),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildProfileRow("Full name", "${parentData['name']}",
                         "assets/drawer_svgs/3p.svg"),
-                    SizedBox(height: 26.h,),
+                    SizedBox(
+                      height: 26.h,
+                    ),
                     _buildProfileRow("Date of birth", "${parentData['dob']}",
                         "assets/drawer_svgs/calendar_month.svg"),
-                    SizedBox(height: 26.h,),
+                    SizedBox(
+                      height: 26.h,
+                    ),
                     _buildProfileRow("Gender", "${parentData['gender']}",
                         "assets/drawer_svgs/wc.svg"),
                   ],
@@ -148,7 +150,7 @@ class ParentDrawer extends StatelessWidget {
               ),
             ),
 
-             SizedBox(height: 23.h),
+            SizedBox(height: 23.h),
 
             // Personalization Section
             _buildSectionHeader("Personalization"),
@@ -158,7 +160,7 @@ class ParentDrawer extends StatelessWidget {
               decoration: ShapeDecoration(
                 color: const Color(0xFFEDFAFF),
                 shape: RoundedRectangleBorder(
-                  side:  BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
+                  side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 shadows: const [
@@ -171,11 +173,14 @@ class ParentDrawer extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildProfileRowWithArrow(
                         "Change Language", "assets/drawer_svgs/language.svg"),
-                    SizedBox(height: 31.h,),
+                    SizedBox(
+                      height: 31.h,
+                    ),
                     _buildProfileRowWithArrow(
                         "Parent Zone Pin", "assets/drawer_svgs/password_2.svg"),
                   ],
@@ -193,7 +198,7 @@ class ParentDrawer extends StatelessWidget {
               decoration: ShapeDecoration(
                 color: const Color(0xFFEDFAFF),
                 shape: RoundedRectangleBorder(
-                  side:  BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
+                  side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 shadows: const [
@@ -217,7 +222,8 @@ class ParentDrawer extends StatelessWidget {
                       "Money Request",
                       "assets/drawer_svgs/euro.svg",
                       toggleRowController.toggleValue1, // Reactive state
-                    ), ],
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -227,38 +233,45 @@ class ParentDrawer extends StatelessWidget {
             // Others Section
             _buildSectionHeader("Others"),
 
-                Container(
-                  width: 328,
-                  height: 170,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFFEDFAFF),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    shadows: const [
-                      BoxShadow(
-                        color: Color(0x0F000000),
-                        blurRadius: 6,
-                        offset: Offset(0, 0),
-                        spreadRadius: 0,
-                      )
-                    ],
+            Container(
+                width: 328,
+                height: 170,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFEDFAFF),
+                  shape: RoundedRectangleBorder(
+                    side:
+                        BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x0F000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 0),
+                      spreadRadius: 0,
+                    )
+                  ],
+                ),
                 child: Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    _buildProfileRowWithArrow(
-                        "Share app", "assets/drawer_svgs/share.svg",showArrow: false,iconSize: 24),
-                    SizedBox(height: 31.h,),
-                    _buildProfileRowWithArrow(
-                        "Feedback", "assets/drawer_svgs/rate_review.svg",showArrow: false,iconSize: 24),
-                        SizedBox(height: 31.h,),
-                    _buildProfileRowWithArrow(
-                        "Privacy Policy", "assets/drawer_svgs/lock.svg",showArrow: false,iconSize: 24),
-
-                  ]),
+                        _buildProfileRowWithArrow(
+                            "Share app", "assets/drawer_svgs/share.svg",
+                            showArrow: false, iconSize: 24),
+                        SizedBox(
+                          height: 31.h,
+                        ),
+                        _buildProfileRowWithArrow(
+                            "Feedback", "assets/drawer_svgs/rate_review.svg",
+                            showArrow: false, iconSize: 24),
+                        SizedBox(
+                          height: 31.h,
+                        ),
+                        _buildProfileRowWithArrow(
+                            "Privacy Policy", "assets/drawer_svgs/lock.svg",
+                            showArrow: false, iconSize: 24),
+                      ]),
                 )),
 
             const SizedBox(height: 30),
@@ -281,12 +294,16 @@ class ParentDrawer extends StatelessWidget {
   // Build section header
   Widget _buildSectionHeader(String title, {VoidCallback? onEdit}) {
     return Padding(
-      padding:   EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            title,style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp,fontWeight: FontWeight.w700),
+            title,
+            style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700),
           ),
           if (onEdit != null)
             GestureDetector(
@@ -299,7 +316,11 @@ class ParentDrawer extends StatelessWidget {
                   ),
                   Text(
                     "Edit",
-                    style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp,fontWeight: FontWeight.w600,),
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   )
                 ],
               ),
@@ -312,7 +333,9 @@ class ParentDrawer extends StatelessWidget {
   // Build profile row (key-value pair)
   Widget _buildProfileRow(String title, String value, String iconPath) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14,),
+      padding: EdgeInsets.symmetric(
+        horizontal: 12.w,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -327,15 +350,15 @@ class ParentDrawer extends StatelessWidget {
               SizedBox(width: 16.w),
               Text(
                 title,
-                style:   TextStyle(fontSize: 14.sp, color: Colors.black),
+                style: TextStyle(fontSize: 14.sp, color: Colors.black),
               ),
             ],
           ),
           Padding(
-            padding:   EdgeInsets.only(right: 22.w),
+            padding: EdgeInsets.only(right: 22.w),
             child: Text(
               value,
-              style:   TextStyle(
+              style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
@@ -348,11 +371,11 @@ class ParentDrawer extends StatelessWidget {
 
   // Build profile row with arrow
   Widget _buildProfileRowWithArrow(
-      String title,
-      String iconPath, {
-        bool showArrow = true,
-        double iconSize = 20.0, // New parameter for custom icon size
-      }) {
+    String title,
+    String iconPath, {
+    bool showArrow = true,
+    double iconSize = 20.0, // New parameter for custom icon size
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Row(
@@ -387,46 +410,45 @@ class ParentDrawer extends StatelessWidget {
     );
   }
 
-
   // Build toggle row
-    Widget _buildToggleRow(String title, String iconPath, RxBool toggleValue) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                SvgPicture.asset(
-                  iconPath, // Path to your SVG asset
-                  color: Colors.purple,
-                  height: 24.h, // Adjust the size as needed
-                  width: 24.w, // Adjust the size as needed
+  Widget _buildToggleRow(String title, String iconPath, RxBool toggleValue) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                iconPath, // Path to your SVG asset
+                color: Colors.purple,
+                height: 24.h, // Adjust the size as needed
+                width: 24.w, // Adjust the size as needed
+              ),
+              SizedBox(width: 16.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(width: 16.w),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Obx(() => Switch(
-              value: toggleValue.value, // Use reactive value
-              onChanged: (newValue) {
-                toggleValue.value = newValue; // Update the value reactively
-              },
-              activeColor: Colors.white,
-              activeTrackColor: Colors.purple,
-              inactiveTrackColor: Colors.white,
-            )),
-          ],
-        ),
-      );
-    }
+              ),
+            ],
+          ),
+          Obx(() => Switch(
+                value: toggleValue.value, // Use reactive value
+                onChanged: (newValue) {
+                  toggleValue.value = newValue; // Update the value reactively
+                },
+                activeColor: Colors.white,
+                activeTrackColor: Colors.purple,
+                inactiveTrackColor: Colors.white,
+              )),
+        ],
+      ),
+    );
+  }
 }
 
 class ToggleRowController extends GetxController {
@@ -434,4 +456,3 @@ class ToggleRowController extends GetxController {
   var toggleValue = false.obs;
   var toggleValue1 = false.obs;
 }
-

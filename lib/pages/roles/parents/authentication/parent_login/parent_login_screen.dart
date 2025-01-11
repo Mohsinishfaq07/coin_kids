@@ -1,16 +1,12 @@
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/forgot_password.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
+
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 
 import '../../../../../app_assets.dart';
@@ -29,10 +25,9 @@ class ParentLoginScreen extends StatelessWidget {
 
     return PopScope(
       canPop: false,
-
       child: Scaffold(
-        appBar: CustomAppBar(
-          backgroundColor: const Color(0xFFCAF0FF),
+        appBar: const CustomAppBar(
+          backgroundColor: Color(0xFFCAF0FF),
           title: "Welcome Back!",
           showBackButton: false,
           centerTitle: false,
@@ -42,7 +37,7 @@ class ParentLoginScreen extends StatelessWidget {
             gradient: AppColors.background,
           ),
           child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 20.w ),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -72,7 +67,7 @@ class ParentLoginScreen extends StatelessWidget {
                         return null;
                       },
                     ),
-                     SizedBox(height: 16.h),
+                    SizedBox(height: 16.h),
 
                     // PIN Input
                     CustomTextField(
@@ -89,7 +84,7 @@ class ParentLoginScreen extends StatelessWidget {
                       },
                       titleText: 'Password',
                     ),
-                      SizedBox(height: 62.h),
+                    SizedBox(height: 62.h),
 
                     // Forgot Credentials
                     // Align(
@@ -109,28 +104,26 @@ class ParentLoginScreen extends StatelessWidget {
                     // const SizedBox(height: 40),
 
                     // Login Button
-                  AppButton(
-                    backgroundColor: AppColors.buttonPrimary,
-                    // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                    AppButton(
+                      backgroundColor: AppColors.buttonPrimary,
+                      // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
 
-                          // color: firebaseAuthController.isButtonEnabled.value
-                          //     ? CustomThemeData().primaryButtonColor
-                          //     : Colors.grey,
-                          text: 'Login',
-                          onPressed: () async {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              await firebaseAuthController.loginWithEmail();
+                      // color: firebaseAuthController.isButtonEnabled.value
+                      //     ? CustomThemeData().primaryButtonColor
+                      //     : Colors.grey,
+                      text: 'Login',
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          await firebaseAuthController.loginWithEmail();
 
-                              // Form is valid
-                            } else {
-                              Get.log("Form has errors");
-                            }
-                          },
+                          // Form is valid
+                        } else {
+                          Get.log("Form has errors");
+                        }
+                      },
+                    ),
 
-                        ),
-
-
-                     SizedBox(height: 22.h),
+                    SizedBox(height: 22.h),
 
                     // Signup Link
                     Row(
@@ -138,25 +131,34 @@ class ParentLoginScreen extends StatelessWidget {
                       children: [
                         Text(
                           "Don’t have account? ",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: CustomThemeData().primaryTextColor,fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor,
+                                  fontSize: 12.sp),
                         ),
                         GestureDetector(
                           onTap: () {
                             Get.off(() => SignupParentScreen());
                           },
-                          child: Text("SignUp",
-                            style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp,color: AppColors.buttonPrimary),),
+                          child: Text(
+                            "SignUp",
+                            style: AppTextStyle.labelLarge.copyWith(
+                                fontSize: 14.sp,
+                                color: AppColors.buttonPrimary),
+                          ),
                         ),
                       ],
                     ),
                     Padding(
-                      padding:  EdgeInsets.only(top: 31.h,bottom: 20.h),
+                      padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
                       child: Text("OR",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                color: CustomThemeData().disabledIconColor,
-                                fontWeight: FontWeight.w800,
-                              )),
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    color: CustomThemeData().disabledIconColor,
+                                    fontWeight: FontWeight.w800,
+                                  )),
                     ),
 
                     // Google Login Button
@@ -167,7 +169,7 @@ class ParentLoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         fixedSize:
-                        Size(screenWidth * 0.8, 50), // Responsive width
+                            Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () async {
                         try {
@@ -179,35 +181,39 @@ class ParentLoginScreen extends StatelessWidget {
                       child: Obx(() {
                         return firebaseAuthController.isGoogleLoading.value
                             ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        )
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
                             : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Padding(
-                              padding:  EdgeInsets.only(
-                                  right: 10.w, left: 10.w),
-                              child: SvgPicture.asset(AppAssets.googleIconSvg,
-                                  height: 24),
-                            ),
-                            Text(
-                              "Sign in with Google",
-                              style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                            ),
-                            Padding(
-                              padding:   EdgeInsets.only(   right: 10.w, left: 10.w),
-                              child:  SvgPicture.asset(AppAssets.appleIconSvg,
-                                  color: Colors.transparent,
-
-                                  height: 10),
-                            ),
-                          ],
-                        );
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(
+                                        AppAssets.googleIconSvg,
+                                        height: 24),
+                                  ),
+                                  Text(
+                                    "Sign in with Google",
+                                    style: AppTextStyle.labelLarge
+                                        .copyWith(fontSize: 14.sp),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(
+                                        AppAssets.appleIconSvg,
+                                        color: Colors.transparent,
+                                        height: 10),
+                                  ),
+                                ],
+                              );
                       }),
                     ),
-                     SizedBox(height: 16.h),
+                    SizedBox(height: 16.h),
 
                     // Apple Login Button
                     ElevatedButton(
@@ -217,41 +223,44 @@ class ParentLoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         fixedSize:
-                        Size(screenWidth * 0.8, 50), // Responsive width
+                            Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () {
                         firebaseAuthController.signinWithApple();
                       },
                       child: Obx(
-                            () {
+                        () {
                           return firebaseAuthController.isAppleLoading.value
                               ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
                               : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Padding(
-                                padding:   EdgeInsets.only(right: 10.w),
-                                child:  SvgPicture.asset(AppAssets.appleIconSvg,
-
-                                    height: 24),
-                              ),
-                              Text(
-                                "Sign in with Apple",
-                                style:  AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10.0),
-                                child:  SvgPicture.asset(AppAssets.appleIconSvg,
-                                    color: Colors.transparent,
-
-                                    height: 10),
-                              ),
-                            ],
-                          );
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 10.w),
+                                      child: SvgPicture.asset(
+                                          AppAssets.appleIconSvg,
+                                          height: 24),
+                                    ),
+                                    Text(
+                                      "Sign in with Apple",
+                                      style: AppTextStyle.labelLarge
+                                          .copyWith(fontSize: 14.sp),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: SvgPicture.asset(
+                                          AppAssets.appleIconSvg,
+                                          color: Colors.transparent,
+                                          height: 10),
+                                    ),
+                                  ],
+                                );
                         },
                       ),
                     ),

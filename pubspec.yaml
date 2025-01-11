@@ -55,6 +55,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_inner_shadow: 0.0.1
   fluttertoast: ^8.2.10
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

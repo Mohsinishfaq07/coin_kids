@@ -5,6 +5,8 @@ import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirebaseAuthController extends GetxController {
+  ParentHomeController parentHomeController = Get.put(ParentHomeController());
   final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
@@ -237,8 +240,12 @@ class FirebaseAuthController extends GetxController {
       // Fetch user role from Firestore
       final isParent = await _checkIfParent(email.value);
       if (isParent) {
+        if (parentHomeController.kidsList.isNotEmpty) {
+          Get.off(() => ParentBottomNavigationBar());
+        } else {
+          Get.off(() => const ParentsHomeScreen());
+        }
         // Navigate to ParentBottomNavigationBar if user is a parent
-        Get.off(() => ParentBottomNavigationBar());
       } else {
         // Navigate to KidMyMoney if user is a kid
         Get.off(() => KidBottomNavScreen());

@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
-import 'package:coin_kids/pages/roles/parents/kid_management/quick_transfer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+import '../../dialogues/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
@@ -15,6 +18,11 @@ class FirestoreOperations {
 }
 
 class ParentFirebaseFunctions {
+  String formatDate(DateTime date) {
+    var formatter = DateFormat('dd/MM/yy, hh:mm a');
+    return formatter.format(date);
+  }
+
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   AddChildController addChildController = Get.put(AddChildController());
   final ParentHomeController homeController = Get.put(ParentHomeController());
@@ -42,7 +50,8 @@ class ParentFirebaseFunctions {
       return Stream.value(null); // Return an empty stream on error
     }
   }
-Stream<Map<String, dynamic>?> fetchKidData() {
+
+  Stream<Map<String, dynamic>?> fetchKidData() {
     try {
       String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
@@ -82,8 +91,9 @@ Stream<Map<String, dynamic>?> fetchKidData() {
       firebaseAuthController.isNormalLoading.value = true;
       showDialog(
           context: Get.context!,
-          builder: (context) =>
-              LoadingProgressDialogueWidget(title: "updating..",));
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "updating..",
+              ));
 
       // Update Firebase Firestore
       final user = FirebaseAuth.instance.currentUser;
@@ -141,8 +151,9 @@ Stream<Map<String, dynamic>?> fetchKidData() {
     try {
       showDialog(
           context: Get.context!,
-          builder: (context) =>
-              LoadingProgressDialogueWidget(title: "adding..",));
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "adding..",
+              ));
       final String avatarUrl = addChildController
               .selectedAvatarPath.value.isEmpty
           ? addChildController.customAvatarPath.value
@@ -186,8 +197,7 @@ Stream<Map<String, dynamic>?> fetchKidData() {
       Get.log(
         'Added new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
-      Get.back();
-      Get.off(() => const ParentsHomeScreen());
+      Get.off(() => ParentBottomNavigationBar());
 
       Get.snackbar("Success", "Child added and parent updated successfully");
     } catch (e) {
@@ -210,7 +220,9 @@ Stream<Map<String, dynamic>?> fetchKidData() {
     try {
       showDialog(
           context: Get.context!,
-          builder: (context) => LoadingProgressDialogueWidget(title: "saving..",));
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "saving..",
+              ));
       DocumentReference kidDocRef =
           FirebaseFirestore.instance.collection('kids').doc(childId);
 
@@ -235,7 +247,7 @@ Stream<Map<String, dynamic>?> fetchKidData() {
             builder: (context) => TransferSuccessDialog(
               receiverName: snapshot['name'],
               amount: parentController.amount.toString(),
-              dateTime: '01/10/23, 11:00 AM',
+              dateTime: formatDate(DateTime.now().toLocal()),
               title: 'Transfer Successful',
               transferType: 'received',
             ),
@@ -260,7 +272,7 @@ Stream<Map<String, dynamic>?> fetchKidData() {
               builder: (context) => TransferSuccessDialog(
                   receiverName: snapshot['name'],
                   amount: parentController.amount.toString(),
-                  dateTime: '01/10/23, 11:00 AM',
+                  dateTime: formatDate(DateTime.now().toLocal()),
                   title: 'Deduction Successful',
                   transferType: 'deducted'),
             );

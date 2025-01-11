@@ -6,13 +6,17 @@ import 'package:coin_kids/controllers/parent_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
-import 'package:coin_kids/pages/roles/parents/kid_management/quick_transfer.dart';
+import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+
+import '../../../../app_assets.dart';
+import '../../../../theme/color_theme.dart';
 
 class AllChildrenPage extends StatelessWidget {
   final parentController = Get.find<ParentController>();
@@ -21,341 +25,349 @@ class AllChildrenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: "Quick transfer",
         centerTitle: true,
         showBackButton: true,
       ),
-      body: StreamBuilder<List<DocumentSnapshot>>(
-        stream: firestoreOperations.parentFirebaseFunctions
-            .fetchChildrenForParent(FirebaseAuth.instance.currentUser!.uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppColors.background,
+        ),
+        child: Stack(
 
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+          children:[
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Text('No documents found');
-          }
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.only(top: 46.h),
+                child: SvgPicture.asset(
+                  AppAssets.cloudImageSvg,
+                  fit: BoxFit.fitWidth,
 
-          List<DocumentSnapshot> documents = snapshot.data!;
+                ),
+              ),
+            ),
+            StreamBuilder<List<DocumentSnapshot>>(
+            stream: firestoreOperations.parentFirebaseFunctions
+                .fetchChildrenForParent(FirebaseAuth.instance.currentUser!.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 200,
-                    child: CarouselSlider.builder(
-                      options: CarouselOptions(
-                        height: 180,
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
 
-                        viewportFraction:
-                            0.5, // Controls the size of each slide
-                        enableInfiniteScroll:
-                            false, // Enable/Disable infinite scrolling
-                        enlargeCenterPage:
-                            true, // Makes the centered slide larger
-                        scrollDirection: Axis.horizontal, // Scroll direction
-                        onPageChanged: (index, reason) {
-                          // Update the selected child index when the carousel slides
-                          var dataKid =
-                              documents[index].data() as Map<String, dynamic>;
-                          parentController.selectedChildIdForQuickTransfer
-                              .value = documents[index].id;
-                          parentController.selectedChildNameForQuickTransfer
-                              .value = dataKid['name'];
-                        },
-                      ),
-                      itemCount: documents.length,
-                      itemBuilder: (context, index, realIndex) {
-                        var dataKid =
-                            documents[index].data() as Map<String, dynamic>;
-                        return GestureDetector(
-                          onTap: () {
-                            parentController.selectedChildIdForQuickTransfer
-                                .value = documents[index].id;
-                            parentController.selectedChildNameForQuickTransfer
-                                .value = dataKid['name'];
-                          },
-                          child: Container(
-                            height: 160,
-                            width: 140,
-                            decoration: BoxDecoration(
-                              color: Colors.white38,
-                              border:
-                                  Border.all(color: Colors.grey, width: 0.5),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${dataKid['name']}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                  textAlign: TextAlign.center,
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text('No documents found');
+              }
+
+              List<DocumentSnapshot> documents = snapshot.data!;
+
+              return Padding(
+                padding:  EdgeInsets.only(left: 10.w,right: 10.w,top: 10.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 200,
+                        child: CarouselSlider.builder(
+                          options: CarouselOptions(
+                            height: 180,
+
+                            viewportFraction:
+                                0.5, // Controls the size of each slide
+                            enableInfiniteScroll:
+                                false, // Enable/Disable infinite scrolling
+                            enlargeCenterPage:
+                                true, // Makes the centered slide larger
+                            scrollDirection: Axis.horizontal, // Scroll direction
+                            onPageChanged: (index, reason) {
+                              // Update the selected child index when the carousel slides
+                              var dataKid =
+                                  documents[index].data() as Map<String, dynamic>;
+                              parentController.selectedChildIdForQuickTransfer
+                                  .value = documents[index].id;
+                              parentController.selectedChildNameForQuickTransfer
+                                  .value = dataKid['name'];
+                            },
+                          ),
+                          itemCount: documents.length,
+                          itemBuilder: (context, index, realIndex) {
+                            var dataKid =
+                                documents[index].data() as Map<String, dynamic>;
+                            return GestureDetector(
+                              onTap: () {
+                                parentController.selectedChildIdForQuickTransfer
+                                    .value = documents[index].id;
+                                parentController.selectedChildNameForQuickTransfer
+                                    .value = dataKid['name'];
+                              },
+                              child: Container(
+                                height: 164.h,
+                                width: 126.w,
+                                padding:  EdgeInsets.symmetric(vertical: 12.h),
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFFEDFAFF),
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(width: 1.w, color: Color(0xFFCBE4F3)),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  shadows: const [
+                                    BoxShadow(
+                                      color: Color(0x0F000000),
+                                      blurRadius: 6,
+                                      offset: Offset(0, 0),
+                                      spreadRadius: 0,
+                                    )
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage:
-                                        dataKid['avatar'].startsWith('/')
-                                            ? FileImage(File(dataKid['avatar']))
-                                            : (dataKid['avatar']
-                                                        .startsWith('assets') &&
-                                                    !dataKid['avatar']
-                                                        .endsWith('.svg'))
-                                                ? AssetImage(dataKid['avatar'])
-                                                : dataKid['avatar']
-                                                        .startsWith('http')
-                                                    ? NetworkImage(
-                                                        dataKid['avatar'])
-                                                    : null,
-                                    child: dataKid['avatar'].endsWith('.svg')
-                                        ? SvgPicture.asset(
-                                            dataKid['avatar'],
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${dataKid['name']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Padding(
+                                        padding:  EdgeInsets.only(top: 9.5.h,bottom: 8.h),
+                                        child: CircleAvatar(
+                                          radius: 30,
+                                          backgroundImage:
+                                              dataKid['avatar'].startsWith('/')
+                                                  ? FileImage(File(dataKid['avatar']))
+                                                  : (dataKid['avatar']
+                                                              .startsWith('assets') &&
+                                                          !dataKid['avatar']
+                                                              .endsWith('.svg'))
+                                                      ? AssetImage(dataKid['avatar'])
+                                                      : dataKid['avatar']
+                                                              .startsWith('http')
+                                                          ? NetworkImage(
+                                                              dataKid['avatar'])
+                                                          : null,
+                                          child: dataKid['avatar'].endsWith('.svg')
+                                              ? SvgPicture.asset(
+                                                  dataKid['avatar'],
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : null,
+                                        ),
+                                      ),
+                                      SizedBox(height: 6.h,),
+                                      Text(
+                                        'Available Money',
+                                        style: TextStyle(
+                                            fontSize: 12.sp, color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 6.h,),
+
+                                      Text(
+                                        '€ ${dataKid['savings']['amount']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const Text(
-                                  'Available Money',
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey),
-                                ),
-                                Text(
-                                  '€ ${dataKid['savings']['amount']}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Center(
-                      child: Obx(() {
-                        return RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: 'Send ',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors
-                                  .purple, // Default color for non-bold text
-                            ),
-                            children: [
-                              const TextSpan(
-                                text: 'or ',
-                                style: TextStyle(
-                                  color: Colors.black, // Default color for "or"
-                                  fontWeight: FontWeight.normal,
-                                ),
                               ),
-                              const TextSpan(
-                                text: 'remove ',
-                                style: TextStyle(
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Center(
+                          child: Obx(() {
+                            return RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: 'Send ',
+                                style: const TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: Colors
-                                      .purple, // Purple color for "remove"
+                                      .purple, // Default color for non-bold text
                                 ),
+                                children: [
+                                  const TextSpan(
+                                    text: 'or ',
+                                    style: TextStyle(
+                                      color: Colors.black, // Default color for "or"
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  const TextSpan(
+                                    text: 'remove ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors
+                                          .purple, // Purple color for "remove"
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        'money\nfrom ${parentController.selectedChildNameForQuickTransfer.value}\'s account',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
                               ),
+                            );
+                          }),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Enter amount',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                       SizedBox(height: 12.h),
+                          QuickTransferTextField(hintText: "0,00" ,keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                parentController.amount.value = val;
+                              },
+                        prefix: SvgPicture.asset("assets/currency_euro.svg")),
+
+                       SizedBox(height: 24.h),
+                        Align(
+                        alignment: Alignment.topLeft,
+                        child: Text.rich(
+                          TextSpan(
+                            text: 'Leave a Message ', // Default text
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              fontSize: 14.h,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            children: [
                               TextSpan(
-                                text:
-                                    'money\nfrom ${parentController.selectedChildNameForQuickTransfer.value}\'s account',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal,
+                                text: '(Optional)', // Optional in gray color
+                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                  fontSize: 14.h,
+                                  fontFamily: 'Open Sans',
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w100,
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      }),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Enter amount',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    titleText: "Enter Amount",
-                    hintText: "Enter Amount",
-                    prefixIcon: Icons.euro,
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {
-                      parentController.amount.value = val;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  // quickTransferFields(
-                  //     onChanged: (val) {
-                  //       parentController.amount.value = val;
-                  //     },
-                  //     keyboardType: const TextInputType.numberWithOptions(),
-                  //     hintText: 'Enter Amount',
-                  //     onTap: () {
-                  //       parentController.amountValidation.value = '';
-                  //     },
-                  //     showPrefix: true),
-                  // Align(
-                  //   alignment: Alignment.topLeft,
-                  //   child: Text(
-                  //     'Enter amount',
-                  //     style: Theme.of(context)
-                  //         .textTheme
-                  //         .headlineMedium!
-                  //         .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 8),
+                        ),
+                      ),
 
-                  // Obx(() {
-                  //   return parentController.amountValidation.value.isEmpty
-                  //       ? const SizedBox.shrink()
-                  //       : Text(parentController.amountValidation.value,
-                  //           style: const TextStyle(
-                  //             fontWeight: FontWeight.bold,
-                  //             color: Colors.red,
-                  //           ));
-                  // }),
-                  //  const SizedBox(height: 8),
-                  // Align(
-                  //   alignment: Alignment.topLeft,
-                  //   child: Text(
-                  //     'Leave a Message (Optional)',
-                  //     style: Theme.of(context)
-                  //         .textTheme
-                  //         .headlineMedium!
-                  //         .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                  //   ),
-                  // ),
-                  //const SizedBox(height: 8),
-                  // quickTransferFields(
-                  //     onChanged: (val) {},
-                  //     keyboardType: TextInputType.emailAddress,
-                  //     hintText: 'Remember to save money.',
-                  //     onTap: () {},
-                  //     showPrefix: false),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Leave a Message (Optional)',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
 
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    titleText: "Leave a Message",
-                    hintText: "Remember to save money",
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {},
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Obx(() {
-                        return CustomButton(
-                          color: parentController.amount.value.isNotEmpty
-                              ? Colors.purple
-                              : Colors.grey,
-                          text: '- Remove',
-                          onPressed: () async {
-                            if (parentController.amount.value.isEmpty) {
-                              parentController.amountValidation.value =
-                                  'Enter valid amount';
-                            } else if (parentController
-                                .selectedChildIdForQuickTransfer
-                                .value
-                                .isEmpty) {
-                              Get.snackbar('Alert',
-                                  'Please add child first by taping on it ');
-                            } else {
-                              firestoreOperations.parentFirebaseFunctions
-                                  .updateSavings(
-                                      childId: parentController
-                                          .selectedChildIdForQuickTransfer
-                                          .value,
-                                      enteredAmount: int.parse(
-                                          parentController.amount.value),
-                                      save: false);
-                            }
-                          },
-                          width: 150,
-                        );
-                      }),
-                      Obx(() {
-                        return CustomButton(
-                          color: parentController.amount.value.isNotEmpty
-                              ? Colors.purple
-                              : Colors.grey,
-                          text: '+ Send',
-                          onPressed: () async {
-                            if (parentController.amount.value.isEmpty) {
-                              parentController.amountValidation.value =
-                                  'Enter valid amount';
-                            } else if (parentController
-                                .selectedChildIdForQuickTransfer
-                                .value
-                                .isEmpty) {
-                              Get.snackbar('Alert',
-                                  'Please add child first by taping on it ');
-                            } else {
-                              firestoreOperations.parentFirebaseFunctions
-                                  .updateSavings(
-                                      childId: parentController
-                                          .selectedChildIdForQuickTransfer
-                                          .value,
-                                      enteredAmount: int.parse(
-                                          parentController.amount.value),
-                                      save: true);
-                            }
-                          },
-                          width: 150,
-                        );
-                      }),
+                      SizedBox(height: 12.h),
+
+                      CustomTextField(
+                        titleText: "Leave a Message",
+                        hintText: "e.g Remember to save some money",
+                        keyboardType: TextInputType.name,
+                        isOptional: true,
+                        onChanged: (val) {},
+                      ),
+                       SizedBox(height: 27.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Obx(() {
+                            return
+
+                              CustomButton(
+                              color: parentController.amount.value.isNotEmpty
+                                  ? AppColors.buttonPrimary
+                                  : AppColors.buttonDisabled,
+                              text: '- Remove',
+                              onPressed: () async {
+                                if (parentController.amount.value.isEmpty) {
+                                  parentController.amountValidation.value =
+                                      'Enter valid amount';
+                                } else if (parentController
+                                    .selectedChildIdForQuickTransfer
+                                    .value
+                                    .isEmpty) {
+                                  Get.snackbar('Alert',
+                                      'Please add child first by taping on it ');
+                                } else {
+                                  firestoreOperations.parentFirebaseFunctions
+                                      .updateSavings(
+                                          childId: parentController
+                                              .selectedChildIdForQuickTransfer
+                                              .value,
+                                          enteredAmount: int.parse(
+                                              parentController.amount.value),
+                                          save: false);
+                                  // parentController.amount.value = "";
+
+                                }
+
+                                },
+                              width: 150,
+                            );
+
+                          }),
+                          Obx(() {
+                            return CustomButton(
+                              color: parentController.amount.value.isNotEmpty
+                                  ? AppColors.buttonPrimary
+                                  : AppColors.buttonDisabled,
+                              text: '+ Send',
+                              onPressed: () async {
+                                if (parentController.amount.value.isEmpty) {
+                                  parentController.amountValidation.value =
+                                      'Enter valid amount';
+                                } else if (parentController
+                                    .selectedChildIdForQuickTransfer
+                                    .value
+                                    .isEmpty) {
+                                  Get.snackbar('Alert',
+                                      'Please add child first by taping on it ');
+                                } else {
+                                  firestoreOperations.parentFirebaseFunctions
+                                      .updateSavings(
+                                          childId: parentController
+                                              .selectedChildIdForQuickTransfer
+                                              .value,
+                                          enteredAmount: int.parse(
+                                              parentController.amount.value),
+                                          save: true);
+                                  // parentController.amount.value = "";
+
+                                }
+                               },
+                              width: 150,
+                            );
+                          }),
+                        ],
+                      )
                     ],
-                  )
-                ],
-              ),
-            ),
-          );
-        },
+                  ),
+                ),
+              );
+            },
+          ),
+       ] ),
       ),
     );
   }

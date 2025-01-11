@@ -15,7 +15,7 @@ class ParentHomeController extends GetxController {
 
   // Add any controller logic if needed (e.g., API calls, navigation)
 
-  void fetchKids() {
+  Future <void> fetchKids()async  {
     try {
       isLoading.value = true; // Start loading
       _firestore

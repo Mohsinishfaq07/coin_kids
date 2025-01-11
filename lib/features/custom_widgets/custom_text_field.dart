@@ -19,8 +19,12 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Color? suffixIconColor; // Custom color for suffix icon
   final String? suffixSvgPath;
+  final bool isOptional; // Flag for optional label
+
 
   const CustomTextField({
+    this.isOptional = false,
+
     required this.titleText, // Title for the field is now required
     required this.hintText,
     this.prefixIcon,
@@ -64,6 +68,10 @@ class CustomTextField extends StatelessWidget {
                   .inputDecorationTheme
                   .fillColor, // Background color for the text field
               hintText: hintText,
+              hintStyle: isOptional ? TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.normal): null,
 
               // hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
               border: OutlineInputBorder(

@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/edit_profile.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/quick_transfer.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class KidProfileManagementPageController extends GetxController {
@@ -29,169 +32,188 @@ class KidProfileManagementPage extends StatelessWidget {
         FirebaseFirestore.instance.collection('kids').doc(childId);
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: "Quick Transfer",
         centerTitle: true,
         showBackButton: true,
       ),
       body: SafeArea(
-        child: StreamBuilder<DocumentSnapshot>(
-          stream: kidDocRef.snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || !snapshot.data!.exists) {
-              return const Center(child: Text('No data found'));
-            } else {
-              var docData = snapshot.data!.data() as Map<String, dynamic>;
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: kidDocRef.snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Center(child: Text('No data found'));
+              } else {
+                var docData = snapshot.data!.data() as Map<String, dynamic>;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  childGeneralDetailWidget(docData: docData, context: context),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0, bottom: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        kidMainButtons(
-                            title: 'Quick\nTransfer',
-                            assetPath:
-                                'assets/kidManageIcons/quickTransfer.svg',
-                            onTap: () {
-                              Get.to(() => QuickTransferPage(
-                                    docData: docData,
-                                    childId: childId,
-                                  ));
-                            }),
-                        kidMainButtons(
-                            title: 'Schedule\nAllowance',
-                            assetPath:
-                                'assets/kidManageIcons/scheduleAllowance.svg',
-                            onTap: () {}),
-                        kidMainButtons(
-                            title: 'Edit\nProfile',
-                            assetPath: 'assets/kidManageIcons/editProfile.svg',
-                            onTap: () {
-                              Get.to(() => EditProfile(
-                                    childId: childId,
-                                    childAge: docData['age'] ?? '1',
-                                    childGrade: docData['grade'],
-                                    childAvatar: docData['avatar'],
-                                  ));
-                            }),
-                      ],
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    childGeneralDetailWidget(
+                        docData: docData, context: context),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30.0, bottom: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          kidMainButtons(
+                              title: 'Quick\nTransfer',
+                              assetPath:
+                                  'assets/kidManageIcons/quickTransfer.svg',
+                              onTap: () {
+                                Get.to(() => QuickTransferPage(
+                                      docData: docData,
+                                      childId: childId,
+                                    ));
+                              }),
+                          kidMainButtons(
+                              title: 'Schedule\nAllowance',
+                              assetPath:
+                                  'assets/kidManageIcons/scheduleAllowance.svg',
+                              onTap: () {
+// show toast
+                                Fluttertoast.showToast(
+                                  msg: "Coming soon...",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.black,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0,
+                                );
+                              }),
+                          kidMainButtons(
+                              title: 'Edit\nProfile',
+                              assetPath:
+                                  'assets/kidManageIcons/editProfile.svg',
+                              onTap: () {
+                                Get.to(() => EditProfile(
+                                      childId: childId,
+                                      childAge: docData['age'] ?? '1',
+                                      childGrade: docData['grade'],
+                                      childAvatar: docData['avatar'],
+                                    ));
+                              }),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0, right: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() {
-                          return typeSwitcherContainer(
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0, right: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Obx(() {
+                            return typeSwitcherContainer(
+                                containerColor:
+                                    kidProfileManagementPageController
+                                                .currentType.value ==
+                                            'jarType'
+                                        ? Colors.purple
+                                        : Color(0xFFEDFAFF),
+                                assetPath: 'assets/kidManageIcons/coin.svg',
+                                onTap: () {
+                                  kidProfileManagementPageController
+                                      .currentType.value = 'jarType';
+                                  Get.log(kidProfileManagementPageController
+                                      .currentType.value);
+                                },
+                                topRight: 0.0,
+                                bottomRight: 0.0,
+                                topLeft: 10.0,
+                                bottomLeft: 10.0);
+                          }),
+                          Obx(() {
+                            return typeSwitcherContainer(
                               containerColor: kidProfileManagementPageController
                                           .currentType.value ==
-                                      'jarType'
+                                      'notificationType'
                                   ? Colors.purple
-                                  : Colors.transparent,
-                              assetPath: 'assets/kidManageIcons/coin.svg',
+                                  : Color(0xFFEDFAFF),
+                              assetPath: 'assets/kidManageIcons/bellIcon.svg',
                               onTap: () {
                                 kidProfileManagementPageController
-                                    .currentType.value = 'jarType';
+                                    .currentType.value = 'notificationType';
                                 Get.log(kidProfileManagementPageController
                                     .currentType.value);
                               },
                               topRight: 0.0,
                               bottomRight: 0.0,
-                              topLeft: 10.0,
-                              bottomLeft: 10.0);
-                        }),
-                        Obx(() {
-                          return typeSwitcherContainer(
-                            containerColor: kidProfileManagementPageController
-                                        .currentType.value ==
-                                    'notificationType'
-                                ? Colors.purple
-                                : Colors.transparent,
-                            assetPath: 'assets/kidManageIcons/bellIcon.svg',
-                            onTap: () {
-                              kidProfileManagementPageController
-                                  .currentType.value = 'notificationType';
-                              Get.log(kidProfileManagementPageController
-                                  .currentType.value);
-                            },
-                            topRight: 0.0,
-                            bottomRight: 0.0,
-                            topLeft: 0.0,
-                            bottomLeft: 0.0,
-                          );
-                        }),
-                        Obx(() {
-                          return typeSwitcherContainer(
-                            containerColor: kidProfileManagementPageController
-                                        .currentType.value ==
-                                    'goalType'
-                                ? Colors.purple
-                                : Colors.transparent,
-                            assetPath: 'assets/kidManageIcons/goalIcon.svg',
-                            onTap: () {
-                              kidProfileManagementPageController
-                                  .currentType.value = 'goalType';
-                              Get.log(kidProfileManagementPageController
-                                  .currentType.value);
-                            },
-                            topRight: 10.0,
-                            bottomRight: 10.0,
-                            topLeft: 0.0,
-                            bottomLeft: 0.0,
-                          );
-                        })
-                      ],
+                              topLeft: 0.0,
+                              bottomLeft: 0.0,
+                            );
+                          }),
+                          Obx(() {
+                            return typeSwitcherContainer(
+                              containerColor: kidProfileManagementPageController
+                                          .currentType.value ==
+                                      'goalType'
+                                  ? Colors.purple
+                                  : Color(0xFFEDFAFF),
+                              assetPath: 'assets/kidManageIcons/goalIcon.svg',
+                              onTap: () {
+                                kidProfileManagementPageController
+                                    .currentType.value = 'goalType';
+                                Get.log(kidProfileManagementPageController
+                                    .currentType.value);
+                              },
+                              topRight: 10.0,
+                              bottomRight: 10.0,
+                              topLeft: 0.0,
+                              bottomLeft: 0.0,
+                            );
+                          })
+                        ],
+                      ),
                     ),
-                  ),
 
-                  // if relevant type is empty  data
-                  // Obx(() {
-                  //   return emptyTypeData(
-                  //     assetPath: kidProfileManagementPageController
-                  //                 .currentType.value ==
-                  //             'jarType'
-                  //         ? 'assets/kidManageIcons/jarIcon.svg'
-                  //         : kidProfileManagementPageController
-                  //                     .currentType.value ==
-                  //                 'notificationType'
-                  //             ? 'assets/kidManageIcons/bellLargeIcon.svg'
-                  //             : 'assets/kidManageIcons/goalLargeIcon.svg',
-                  //     line: kidProfileManagementPageController
-                  //                 .currentType.value ==
-                  //             'jarType'
-                  //         ? 'Your child has not set any jars yet'
-                  // : kidProfileManagementPageController
-                  //             .currentType.value ==
-                  //         'notificationType'
-                  //             ? 'No Notifications'
-                  //             : 'Your child has not set any goals yet',
-                  //   );
-                  // })
-                  Obx(() {
-                    return kidProfileManagementPageController
-                                .currentType.value ==
-                            'jarType'
-                        ? jarData(childId: childId)
-                        : kidProfileManagementPageController
-                                    .currentType.value ==
-                                'notificationType'
-                            ? notificationData(childId: childId)
-                            : goalsData(childId: childId);
-                  }),
-                ],
-              );
-            }
-          },
+                    // if relevant type is empty  data
+                    // Obx(() {
+                    //   return emptyTypeData(
+                    //     assetPath: kidProfileManagementPageController
+                    //                 .currentType.value ==
+                    //             'jarType'
+                    //         ? 'assets/kidManageIcons/jarIcon.svg'
+                    //         : kidProfileManagementPageController
+                    //                     .currentType.value ==
+                    //                 'notificationType'
+                    //             ? 'assets/kidManageIcons/bellLargeIcon.svg'
+                    //             : 'assets/kidManageIcons/goalLargeIcon.svg',
+                    //     line: kidProfileManagementPageController
+                    //                 .currentType.value ==
+                    //             'jarType'
+                    //         ? 'Your child has not set any jars yet'
+                    // : kidProfileManagementPageController
+                    //             .currentType.value ==
+                    //         'notificationType'
+                    //             ? 'No Notifications'
+                    //             : 'Your child has not set any goals yet',
+                    //   );
+                    // })
+                    Obx(() {
+                      return kidProfileManagementPageController
+                                  .currentType.value ==
+                              'jarType'
+                          ? jarData(childId: childId)
+                          : kidProfileManagementPageController
+                                      .currentType.value ==
+                                  'notificationType'
+                              ? notificationData(childId: childId)
+                              : goalsData(childId: childId);
+                    }),
+                  ],
+                );
+              }
+            },
+          ),
         ),
       ),
     );
@@ -204,63 +226,74 @@ childGeneralDetailWidget(
     padding: const EdgeInsets.only(top: 30.0),
     child: Center(
       child: Container(
-        height: 160,
-        width: 140,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(color: Colors.grey, width: 0.5),
+        height: 164.h,
+        width: 126.w,
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        decoration: ShapeDecoration(
+          color: const Color(0xFFEDFAFF),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1.w, color: Color(0xFFCBE4F3)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          shadows: const [
+            BoxShadow(
+              color: Color(0x0F000000),
+              blurRadius: 6,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
+            )
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // name
-                Text(docData['name'],
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontSize: 14)),
-
-                // avatar
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: docData['avatar'].startsWith('/')
-                        ? FileImage(File(docData['avatar']))
-                        : (docData['avatar'].startsWith('assets') &&
-                                !docData['avatar'].endsWith('.svg'))
-                            ? AssetImage(docData['avatar'])
-                            : docData['avatar'].startsWith('http')
-                                ? NetworkImage(docData['avatar'])
-                                : null,
-                    child: docData['avatar'].endsWith('.svg')
-                        ? SvgPicture.asset(
-                            docData['avatar'],
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                ),
-                // available money
-                const Text(
-                  'Available Money',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 11,
-                  ),
-                ),
-                Text(
-                  "€${docData['savings']['amount']}",
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // name
+              Text(docData['name'],
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
-                      .copyWith(fontSize: 14),
+                      .copyWith(fontSize: 14.sp)),
+
+              // avatar
+              Padding(
+                padding: EdgeInsets.all(8.w),
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundImage: docData['avatar'].startsWith('/')
+                      ? FileImage(File(docData['avatar']))
+                      : (docData['avatar'].startsWith('assets') &&
+                              !docData['avatar'].endsWith('.svg'))
+                          ? AssetImage(docData['avatar'])
+                          : docData['avatar'].startsWith('http')
+                              ? NetworkImage(docData['avatar'])
+                              : null,
+                  child: docData['avatar'].endsWith('.svg')
+                      ? SvgPicture.asset(
+                          docData['avatar'],
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-              ]),
-        ),
+              ),
+              // available money
+              Text(
+                'Available Money',
+                style: TextStyle(
+                  color: const Color(0xFF666666),
+                  fontSize: 12.sp,
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Text(
+                "€${docData['savings']['amount']}",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontSize: 14.sp),
+              ),
+            ]),
       ),
     ),
   );
@@ -280,8 +313,10 @@ kidMainButtons(
         ),
         const SizedBox(height: 3),
         Text(title,
-            style: const TextStyle(
-              fontSize: 12,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center),
       ],
@@ -303,7 +338,7 @@ typeSwitcherContainer({
     width: MediaQuery.sizeOf(Get.context!).width / 3.5,
     decoration: BoxDecoration(
       color: containerColor,
-      border: Border.all(color: Colors.black),
+      border: Border.all(color: Colors.grey, width: 0.5.w),
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(topLeft),
         topRight: Radius.circular(topRight),
@@ -314,11 +349,11 @@ typeSwitcherContainer({
     child: GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(12.h),
         child: SvgPicture.asset(
           assetPath,
-          height: 25,
-          width: 25,
+          height: 22.h,
+          width: 22.w,
         ),
       ),
     ),

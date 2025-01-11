@@ -214,9 +214,9 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                       msg: "You already have a child added.",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
-                                      backgroundColor: Colors.redAccent,
+                                      backgroundColor: AppColors.textHighlighted,
                                       textColor: Colors.white,
-                                      fontSize: 16.0,
+                                      fontSize: 16.sp,
                                     );
                                   } else {
                                     Get.to(() => AddChildScreen());

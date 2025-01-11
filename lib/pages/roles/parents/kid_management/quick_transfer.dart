@@ -4,9 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
+import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
+import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../../../theme/color_theme.dart';
 
 class QuickTransferPage extends StatelessWidget {
   final dynamic docData;
@@ -17,151 +22,192 @@ class QuickTransferPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "Quick Transfer",
+      appBar: const CustomAppBar(
+        title: "Quick Transferr",
         showBackButton: true,
         centerTitle: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                quickTransferChildGeneralDetailWidget(childId: childId),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Center(
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: 'Send ',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Colors.purple, // Default color for non-bold text
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: AppColors.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.h),
+                  quickTransferChildGeneralDetailWidget(childId: childId),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: 'Send ',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors
+                                .purple, // Default color for non-bold text
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'or ',
+                              style: TextStyle(
+                                color: Colors.black, // Default color for "or"
+                              ),
+                            ),
+                            const TextSpan(
+                              text: 'remove ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    Colors.purple, // Purple color for "remove"
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  'money\nfrom your ${docData['name']}\'s account',
+                              style: const TextStyle(
+                                color: Colors
+                                    .black, // Default color for the remaining text
+                              ),
+                            ),
+                          ],
                         ),
-                        children: [
-                          const TextSpan(
-                            text: 'or ',
-                            style: TextStyle(
-                              color: Colors.black, // Default color for "or"
-                            ),
-                          ),
-                          const TextSpan(
-                            text: 'remove ',
-                            style: TextStyle(
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Enter amount',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(
+                              fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  QuickTransferTextField(
+                      hintText: "0,00",
+                      keyboardType: TextInputType.number,
+                      onChanged: (val) {
+                        parentController.amount.value = val;
+                      },
+                      prefix: SvgPicture.asset("assets/currency_euro.svg")),
+                  SizedBox(height: 24.h),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Leave a Message ', // Default text
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                              fontSize: 14.h,
                               fontWeight: FontWeight.bold,
-                              color: Colors.purple, // Purple color for "remove"
                             ),
-                          ),
+                        children: [
                           TextSpan(
-                            text:
-                                'money\nfrom your ${docData['name']}\'s account',
-                            style: const TextStyle(
-                              color: Colors
-                                  .black, // Default color for the remaining text
-                            ),
+                            text: '(Optional)', // Optional in gray color
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium!
+                                .copyWith(
+                                  fontSize: 14.h,
+                                  fontFamily: 'Open Sans',
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w100,
+                                ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                const Text(
-                  'Enter amount',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                quickTransferFields(
-                    onChanged: (val) {
-                      parentController.amount.value = val;
-                    },
-                    keyboardType: const TextInputType.numberWithOptions(),
-                    hintText: 'Enter Amount',
-                    onTap: () {
-                      parentController.amountValidation.value = '';
-                    },
-                    showPrefix: true),
-                Obx(() {
-                  return parentController.amountValidation.value.isEmpty
-                      ? const SizedBox.shrink()
-                      : Text(parentController.amountValidation.value,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ));
-                }),
-                const SizedBox(height: 8),
-                const Text(
-                  'Leave a Message (Optional)',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                quickTransferFields(
+                  SizedBox(height: 12.h),
+                  CustomTextField(
+                    titleText: "Leave a Message",
+                    hintText: "e.g Remember to save some money",
+                    keyboardType: TextInputType.name,
+                    isOptional: true,
                     onChanged: (val) {},
-                    keyboardType: TextInputType.emailAddress,
-                    hintText: 'Remember to save money.',
-                    onTap: () {},
-                    showPrefix: false),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Obx(() {
-                      return CustomButton(
-                        color: parentController.amount.value.isNotEmpty
-                            ? Colors.purple
-                            : Colors.grey,
-                        text: '- Remove',
-                        onPressed: () async {
-                          if (parentController.amount.value.isEmpty) {
-                            parentController.amountValidation.value =
-                                'Enter valid amount';
-                          } else {
-                            firestoreOperations.parentFirebaseFunctions
-                                .updateSavings(
-                                    childId: childId,
-                                    enteredAmount: int.parse(
-                                        parentController.amount.value),
-                                    save: false);
-                          }
-                        },
-                        width: 150,
-                      );
-                    }),
-                    Obx(() {
-                      return CustomButton(
-                        color: parentController.amount.value.isNotEmpty
-                            ? Colors.purple
-                            : Colors.grey,
-                        text: '+ Send',
-                        onPressed: () async {
-                          if (parentController.amount.value.isEmpty) {
-                            parentController.amountValidation.value =
-                                'Enter valid amount';
-                          } else {
-                            firestoreOperations.parentFirebaseFunctions
-                                .updateSavings(
-                                    childId: childId,
-                                    enteredAmount: int.parse(
-                                        parentController.amount.value),
-                                    save: true);
-                          }
-                        },
-                        width: 150,
-                      );
-                    }),
-                  ],
-                )
-              ],
+                  ),
+                  SizedBox(height: 27.h),
+                  SizedBox(height: 12.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Obx(() {
+                        return CustomButton(
+                          color: parentController.amount.value.isNotEmpty
+                              ? AppColors.buttonPrimary
+                              : AppColors.buttonDisabled,
+                          text: '- Remove',
+                          onPressed: () async {
+                            if (parentController.amount.value.isEmpty) {
+                              parentController.amountValidation.value =
+                                  'Enter valid amount';
+                            } else if (parentController
+                                .selectedChildIdForQuickTransfer
+                                .value
+                                .isEmpty) {
+                              Get.snackbar('Alert',
+                                  'Please add child first by taping on it ');
+                            } else {
+                              firestoreOperations.parentFirebaseFunctions
+                                  .updateSavings(
+                                      childId: parentController
+                                          .selectedChildIdForQuickTransfer
+                                          .value,
+                                      enteredAmount: int.parse(
+                                          parentController.amount.value),
+                                      save: false);
+                              // parentController.amount.value = "";
+                            }
+                          },
+                          width: 150,
+                        );
+                      }),
+                      Obx(() {
+                        return CustomButton(
+                          color: parentController.amount.value.isNotEmpty
+                              ? AppColors.buttonPrimary
+                              : AppColors.buttonDisabled,
+                          text: '+ Send',
+                          onPressed: () async {
+                            if (parentController.amount.value.isEmpty) {
+                              parentController.amountValidation.value =
+                                  'Enter valid amount';
+                            } else if (parentController
+                                .selectedChildIdForQuickTransfer
+                                .value
+                                .isEmpty) {
+                              Get.snackbar('Alert',
+                                  'Please add child first by taping on it ');
+                            } else {
+                              firestoreOperations.parentFirebaseFunctions
+                                  .updateSavings(
+                                      childId: parentController
+                                          .selectedChildIdForQuickTransfer
+                                          .value,
+                                      enteredAmount: int.parse(
+                                          parentController.amount.value),
+                                      save: true);
+                              // parentController.amount.value = "";
+                            }
+                          },
+                          width: 150,
+                        );
+                      }),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -255,193 +301,68 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
 
       return Center(
         child: Container(
+          width: 126.w,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Child Name
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            padding: EdgeInsets.symmetric(vertical: 12.w),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Child Name
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: const Color(0xFF015486),
+                      fontSize: 14.sp,
+                      fontFamily: 'Open Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
+                  SizedBox(height: 8.h),
 
-                // Child Avatar
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: docData['avatar'].startsWith('/')
-                      ? FileImage(File(docData['avatar']))
-                      : (docData['avatar'].startsWith('assets') &&
-                              !docData['avatar'].endsWith('.svg'))
-                          ? AssetImage(docData['avatar'])
-                          : docData['avatar'].startsWith('http')
-                              ? NetworkImage(docData['avatar'])
-                              : null,
-                  child: docData['avatar'].endsWith('.svg')
-                      ? SvgPicture.asset(
-                          docData['avatar'],
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                const SizedBox(height: 10),
+                  // Child Avatar
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: docData['avatar'].startsWith('/')
+                        ? FileImage(File(docData['avatar']))
+                        : (docData['avatar'].startsWith('assets') &&
+                                !docData['avatar'].endsWith('.svg'))
+                            ? AssetImage(docData['avatar'])
+                            : docData['avatar'].startsWith('http')
+                                ? NetworkImage(docData['avatar'])
+                                : null,
+                    child: docData['avatar'].endsWith('.svg')
+                        ? SvgPicture.asset(
+                            docData['avatar'],
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  SizedBox(height: 8.h),
 
-                // Available Money
-                const Text(
-                  'Available Money',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '\$ $savings',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ],
+                  // Available Money
+                  Text(
+                    'Available Money',
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    '\$ $savings',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium!
+                        .copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       );
     },
   );
-}
-
-class TransferSuccessDialog extends StatelessWidget {
-  final String receiverName;
-  final String amount;
-  final String dateTime;
-  final String title;
-  final String transferType;
-
-  const TransferSuccessDialog({
-    super.key,
-    required this.receiverName,
-    required this.amount,
-    required this.dateTime,
-    required this.title,
-    required this.transferType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      elevation: 10,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Icon
-            Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFFB47CF7), // Purple background
-              ),
-              padding: const EdgeInsets.all(16),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 60,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Transfer successful title
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.purple,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Receiver information
-            RichText(
-              text: TextSpan(
-                text: '$receiverName $transferType ',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-                children: [
-                  TextSpan(
-                    text: '€ $amount',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Date & Time
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Time & date: ',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                Text(
-                  dateTime,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Close Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Close',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

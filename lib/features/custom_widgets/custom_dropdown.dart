@@ -9,8 +9,8 @@ Widget customDropdown(
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 10),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey),
-      color: Colors.white,
+      border: Border.all(color: Color(0xFFCBE4F3)),
+      color: Color(0xFFEDFAFF),
       borderRadius: BorderRadius.circular(10.0),
     ),
     child: DropdownButton<String>(
