@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
+import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +24,7 @@ class QuickTransferPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(
-        title: "Quick Transferr",
+        title: "Quick Transfer",
         showBackButton: true,
         centerTitle: false,
       ),
@@ -33,182 +34,225 @@ class QuickTransferPage extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: AppColors.background,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20.h),
-                  quickTransferChildGeneralDetailWidget(childId: childId),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Center(
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: 'Send ',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors
-                                .purple, // Default color for non-bold text
+            child: Stack(children: [
+              SvgPicture.asset(
+                AppAssets.cloudImageSvg,
+                width: 400.w,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20.h),
+                    quickTransferChildGeneralDetailWidget(childId: childId),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: Center(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: 'Send ',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+
+                              color: AppColors
+                                  .textHighlighted, // Default color for non-bold text
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'or ',
+                                style: TextStyle(
+                                  color: Colors.black, // Default color for "or"
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'remove ',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+
+                                  color: AppColors
+                                      .textHighlighted, // Purple color for "remove"
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'money\nfrom your ${docData['name']}\'s account',
+                                style: const TextStyle(
+                                  color: Colors
+                                      .black, // Default color for the remaining text
+                                ),
+                              ),
+                            ],
                           ),
-                          children: [
-                            const TextSpan(
-                              text: 'or ',
-                              style: TextStyle(
-                                color: Colors.black, // Default color for "or"
-                              ),
-                            ),
-                            const TextSpan(
-                              text: 'remove ',
-                              style: TextStyle(
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Enter amount',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                                fontSize: 14.sp, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    QuickTransferTextField(
+                        hintText: "0,00",
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) {
+                          parentController.amount.value = val;
+                        },
+                        prefix: SvgPicture.asset("assets/currency_euro.svg")),
+                    SizedBox(height: 24.h),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'Leave a Message ', // Default text
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(
+                                fontSize: 14.h,
                                 fontWeight: FontWeight.bold,
-                                color:
-                                    Colors.purple, // Purple color for "remove"
                               ),
-                            ),
+                          children: [
                             TextSpan(
-                              text:
-                                  'money\nfrom your ${docData['name']}\'s account',
-                              style: const TextStyle(
-                                color: Colors
-                                    .black, // Default color for the remaining text
-                              ),
+                              text: '(Optional)', // Optional in gray color
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(
+                                    fontSize: 14.h,
+                                    fontFamily: 'Open Sans',
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w100,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      'Enter amount',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    SizedBox(height: 12.h),
+                    CustomTextField(
+                      titleText: "Leave a Message",
+                      hintText: "e.g Remember to save some money",
+                      keyboardType: TextInputType.name,
+                      isOptional: true,
+                      onChanged: (val) {},
                     ),
-                  ),
-                  SizedBox(height: 12.h),
-                  QuickTransferTextField(
-                      hintText: "0,00",
-                      keyboardType: TextInputType.number,
-                      onChanged: (val) {
-                        parentController.amount.value = val;
-                      },
-                      prefix: SvgPicture.asset("assets/currency_euro.svg")),
-                  SizedBox(height: 24.h),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'Leave a Message ', // Default text
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              fontSize: 14.h,
-                              fontWeight: FontWeight.bold,
-                            ),
-                        children: [
-                          TextSpan(
-                            text: '(Optional)', // Optional in gray color
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium!
-                                .copyWith(
-                                  fontSize: 14.h,
-                                  fontFamily: 'Open Sans',
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w100,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  CustomTextField(
-                    titleText: "Leave a Message",
-                    hintText: "e.g Remember to save some money",
-                    keyboardType: TextInputType.name,
-                    isOptional: true,
-                    onChanged: (val) {},
-                  ),
-                  SizedBox(height: 27.h),
-                  SizedBox(height: 12.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Obx(() {
-                        return CustomButton(
-                          color: parentController.amount.value.isNotEmpty
-                              ? AppColors.buttonPrimary
-                              : AppColors.buttonDisabled,
-                          text: '- Remove',
-                          onPressed: () async {
-                            if (parentController.amount.value.isEmpty) {
-                              parentController.amountValidation.value =
-                                  'Enter valid amount';
-                            } else if (parentController
-                                .selectedChildIdForQuickTransfer
-                                .value
-                                .isEmpty) {
-                              Get.snackbar('Alert',
-                                  'Please add child first by taping on it ');
-                            } else {
-                              firestoreOperations.parentFirebaseFunctions
-                                  .updateSavings(
-                                      childId: parentController
-                                          .selectedChildIdForQuickTransfer
-                                          .value,
-                                      enteredAmount: int.parse(
-                                          parentController.amount.value),
-                                      save: false);
-                              // parentController.amount.value = "";
-                            }
-                          },
-                          width: 150,
-                        );
-                      }),
-                      Obx(() {
-                        return CustomButton(
-                          color: parentController.amount.value.isNotEmpty
-                              ? AppColors.buttonPrimary
-                              : AppColors.buttonDisabled,
-                          text: '+ Send',
-                          onPressed: () async {
-                            if (parentController.amount.value.isEmpty) {
-                              parentController.amountValidation.value =
-                                  'Enter valid amount';
-                            } else if (parentController
-                                .selectedChildIdForQuickTransfer
-                                .value
-                                .isEmpty) {
-                              Get.snackbar('Alert',
-                                  'Please add child first by taping on it ');
-                            } else {
-                              firestoreOperations.parentFirebaseFunctions
-                                  .updateSavings(
-                                      childId: parentController
-                                          .selectedChildIdForQuickTransfer
-                                          .value,
-                                      enteredAmount: int.parse(
-                                          parentController.amount.value),
-                                      save: true);
-                              // parentController.amount.value = "";
-                            }
-                          },
-                          width: 150,
-                        );
-                      }),
-                    ],
-                  )
-                ],
+                    SizedBox(height: 27.h),
+                    SizedBox(height: 12.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Obx(() {
+                          return AppButton(
+                            size: Size(125.w, 50.h),
+                            text: '- Remove',
+                            backgroundColor:
+                                parentController.amount.value.isNotEmpty
+                                    ? AppColors.buttonPrimary
+                                    : AppColors.buttonDisabled,
+                            onPressed: () async {
+                              if (parentController.amount.value.isEmpty) {
+                                parentController.amountValidation.value =
+                                    'Enter valid amount';
+                              } else {
+                                firestoreOperations.parentFirebaseFunctions
+                                    .updateSavings(
+                                        childId: childId,
+                                        enteredAmount: int.parse(
+                                            parentController.amount.value),
+                                        save: false);
+                                // parentController.amount.value = "";
+                              }
+                            },
+                          );
+                        }),
+                        // Obx(() {
+                        //   return CustomButton(
+                        //     color: parentController.amount.value.isNotEmpty
+                        //         ? AppColors.buttonPrimary
+                        //         : AppColors.buttonDisabled,
+                        //     text: '- Remove',
+                        //     onPressed: () async {
+                        //       if (parentController.amount.value.isEmpty) {
+                        //         parentController.amountValidation.value =
+                        //             'Enter valid amount';
+                        //       } else {
+                        //         firestoreOperations.parentFirebaseFunctions
+                        //             .updateSavings(
+                        //                 childId: childId,
+                        //                 // childId: parentController
+                        //                 //     .selectedChildIdForQuickTransfer
+                        //                 //     .value,
+                        //                 enteredAmount: int.parse(
+                        //                     parentController.amount.value),
+                        //                 save: false);
+                        //         // parentController.amount.value = "";
+                        //       }
+                        //     },
+                        //     width: 150,
+                        //   );
+                        // }),
+                        Obx(() {
+                          return AppButton(
+                            size: Size(125.w, 50.h),
+                            text: '+ Send',
+                            backgroundColor:
+                                parentController.amount.value.isNotEmpty
+                                    ? AppColors.buttonPrimary
+                                    : AppColors.buttonDisabled,
+                            onPressed: () async {
+                              if (parentController.amount.value.isEmpty) {
+                                parentController.amountValidation.value =
+                                    'Enter valid amount';
+                              } else {
+                                firestoreOperations.parentFirebaseFunctions
+                                    .updateSavings(
+                                        childId: childId,
+                                        enteredAmount: int.parse(
+                                            parentController.amount.value),
+                                        save: true);
+                                // parentController.amount.value = "";
+                              }
+                            },
+                          );
+                          //  CustomButton(
+                          //   color: parentController.amount.value.isNotEmpty
+                          //       ? AppColors.buttonPrimary
+                          //       : AppColors.buttonDisabled,
+                          //   text: '+ Send',
+                          //   onPressed: () async {
+                          //     if (parentController.amount.value.isEmpty) {
+                          //       parentController.amountValidation.value =
+                          //           'Enter valid amount';
+                          //     } else {
+                          //       firestoreOperations.parentFirebaseFunctions
+                          //           .updateSavings(
+                          //               childId: childId,
+                          //               enteredAmount: int.parse(
+                          //                   parentController.amount.value),
+                          //               save: true);
+                          //       // parentController.amount.value = "";
+                          //     }
+                          //   },
+                          //   width: 150,
+                          // );
+                        }),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
+            ]),
           ),
         ),
       ),
@@ -304,7 +348,7 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
           width: 126.w,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 12.w),
@@ -316,7 +360,7 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
                   Text(
                     name,
                     style: TextStyle(
-                      color: const Color(0xFF015486),
+                      color: AppColors.textPrimary,
                       fontSize: 14.sp,
                       fontFamily: 'Open Sans',
                       fontWeight: FontWeight.w700,

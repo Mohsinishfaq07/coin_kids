@@ -1,6 +1,7 @@
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,20 +16,22 @@ class ParentBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.currentIndex.value != 0) {
+        controller.currentIndex.value = 0;
+      }
+    });
+
     return WillPopScope(
       onWillPop: () async {
         if (controller.currentIndex.value != 0) {
           controller.currentIndex.value = 0;
-          _isOnHomeScreen = true;
+
           return false;
         }
 
-        if (_isOnHomeScreen) {
-          bool shouldExit = await _showExitConfirmation(context);
-          return shouldExit;
-        }
-
-        return false;
+        bool shouldExit = await _showExitConfirmation(context);
+        return shouldExit;
       },
       child: Scaffold(
         body: Container(
@@ -120,7 +123,8 @@ class ParentBottomNavigationBar extends StatelessWidget {
             ),
             title: Row(
               children: [
-                Icon(Icons.exit_to_app, color: Colors.red, size: 28.sp),
+                Icon(Icons.exit_to_app,
+                    color: AppColors.textPrimary, size: 28.sp),
                 SizedBox(width: 8.w),
                 Text(
                   'Exit App',
@@ -129,7 +133,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 ),
               ],
             ),
-            content:   Text(
+            content: Text(
               'Are you sure you want to exit the application?',
               style: TextStyle(fontSize: 16.sp),
             ),
@@ -139,19 +143,21 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey,
                 ),
-                child:  Text(
+                child: Text(
                   'Cancel',
                   style: TextStyle(fontSize: 16.sp),
                 ),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () {
+                  SystemNavigator.pop();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding:
-                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 ),
-                child:  Text(
+                child: Text(
                   'Exit',
                   style: TextStyle(
                     fontSize: 16.sp,

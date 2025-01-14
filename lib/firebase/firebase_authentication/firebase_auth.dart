@@ -8,8 +8,11 @@ import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
@@ -79,8 +82,15 @@ class FirebaseAuthController extends GetxController {
     } on FirebaseAuthException catch (e) {
       Get.back();
       isEmailLoading.value = false;
-      Get.snackbar("Error", "Failed to create account: $e",
-          snackPosition: SnackPosition.BOTTOM);
+
+      Fluttertoast.showToast(
+        msg: "$e", // Message to display
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: AppColors.textHighlighted,
+        textColor: Colors.white,
+        fontSize: 16.sp,
+      );
     } catch (e) {
       Get.back();
       isEmailLoading.value = false;
@@ -188,7 +198,7 @@ class FirebaseAuthController extends GetxController {
           .set({
         fieldName: fieldValue,
         'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty ? birthday.value : 'Dob',
+        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
         'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
         'gender': selectedGender.value.isNotEmpty
             ? selectedGender.value
@@ -266,30 +276,30 @@ class FirebaseAuthController extends GetxController {
       if (e.code == 'user-not-found') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          // Get.snackbar("Error", "No user found for that email.",
-          //     snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar("Error", "No user found for that email.",
+              snackPosition: SnackPosition.BOTTOM);
         });
       } else if (e.code == 'wrong-password') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          // Get.snackbar("Error", "Incorrect password entered.",
-          //     snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar("Error", "Incorrect password entered.",
+              snackPosition: SnackPosition.BOTTOM);
         });
       } else {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          // Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
-          //     snackPosition: SnackPosition.BOTTOM);
+          Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
+              snackPosition: SnackPosition.BOTTOM);
         });
       }
     } catch (e) {
       isEmailLoading.value = false;
       Get.back();
-      // Get.snackbar(
-      //   "Error",
-      //   "Failed to login. Please try again later.",
-      //   snackPosition: SnackPosition.BOTTOM,
-    //  );
+      Get.snackbar(
+        "Error",
+        "Failed to login. Please try again later.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 

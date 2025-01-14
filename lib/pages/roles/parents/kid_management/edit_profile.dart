@@ -376,8 +376,8 @@ class EditProfile extends StatelessWidget {
         SetOptions(merge: true),
       );
       Get.snackbar('Alert', 'Child info updated');
-      editProfileController.childUpdate.value = false;
       Get.off(ParentBottomNavigationBar());
+      editProfileController.childUpdate.value = false;
     } catch (e) {
       editProfileController.childUpdate.value = false;
       Get.log('kid update error:${e.toString()}');

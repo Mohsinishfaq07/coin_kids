@@ -1,4 +1,5 @@
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_nav_controller.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -89,7 +90,8 @@ class KidBottomNavScreen extends StatelessWidget {
             ),
             title: const Row(
               children: [
-                Icon(Icons.exit_to_app, color: Colors.red, size: 28),
+                Icon(Icons.exit_to_app,
+                    color: AppColors.buttonPrimary, size: 28),
                 SizedBox(width: 8),
                 Text(
                   'Exit App',
@@ -115,7 +117,7 @@ class KidBottomNavScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.buttonPrimary,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),

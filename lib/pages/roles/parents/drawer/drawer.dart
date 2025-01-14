@@ -1,18 +1,40 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../app_assets.dart';
 import '../../../../theme/color_theme.dart';
 import '../../../../theme/text_theme.dart';
 
-class ParentDrawer extends StatelessWidget {
-  ParentDrawer({super.key});
+class ParentDrawer extends StatefulWidget {
+  ParentDrawer();
+
+  @override
+  State<ParentDrawer> createState() => _ParentDrawerState();
+}
+
+class _ParentDrawerState extends State<ParentDrawer> {
+  @override
+  void initState() {
+    super.initState();
+   bottomNavigationBarContrller. loadAvatarFromPreferences();
+  }
+
   final ToggleRowController toggleRowController =
       Get.put(ToggleRowController());
+  final bottomNavigationBarContrller =
+      Get.put(BottomNavigationbarController());
 
   @override
   Widget build(BuildContext context) {
@@ -77,20 +99,67 @@ class ParentDrawer extends StatelessWidget {
                   SizedBox(
                     height: 54.h,
                   ),
+                  // Stack(
+                  //   alignment: Alignment.bottomRight,
+                  //   children: [
+                  //     GestureDetector(
+                  //       onTap: () async {
+                  //         await pickCustomAvatar();
+                  //       },
+                  //       child: SizedBox(
+                  //         height: 100.h,
+                  //         width: 100.w,
+                  //         child: SvgPicture.asset(AppAssets.drawerIconSvg),
+                  //       ),
+                  //     ),
+                  //     CircleAvatar(
+                  //         radius: 15.r,
+                  //         backgroundColor: const Color(0xFFFEC84B),
+                  //         child: SvgPicture.asset(AppAssets.pencilIconSvg)),
+                  //   ],
+                  // ),
+
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      SizedBox(
-                        height: 100.h,
-                        width: 100.w,
-                        child: SvgPicture.asset(AppAssets.drawerIconSvg),
+                      GestureDetector(
+                        onTap: () async {
+                          // Pick an image and update the avatar
+                          await bottomNavigationBarContrller. pickCustomAvatar();
+                        },
+                        child: Obx(() {
+                          if (bottomNavigationBarContrller.customAvatarPath.value.isNotEmpty) {
+                            // Show the selected image
+                            return Container(
+                              height: 100.h,
+                              width: 100.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image:
+                                      FileImage(File(bottomNavigationBarContrller.customAvatarPath.value)),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Show the default SVG
+                            return SvgPicture.asset(
+                              AppAssets.drawerIconSvg,
+                              height: 100.h,
+                              width: 100.w,
+                            );
+                          }
+                        }),
                       ),
                       CircleAvatar(
-                          radius: 15.r,
-                          backgroundColor: const Color(0xFFFEC84B),
-                          child: SvgPicture.asset(AppAssets.pencilIconSvg)),
+                        radius: 15.r,
+                        backgroundColor: const Color(0xFFFEC84B),
+                        child: SvgPicture.asset(AppAssets.pencilIconSvg),
+                      ),
                     ],
                   ),
+
                   SizedBox(height: 12.h),
                   Text(
                     "${parentData['name']}",
@@ -109,7 +178,6 @@ class ParentDrawer extends StatelessWidget {
               Get.to(() => ParentUpdateProfileScreen(
                     parentData: parentData,
                   ));
-           //   Get.snackbar("Edit", "Edit profile clicked!");
             }),
             Container(
               width: 328.w,
@@ -212,6 +280,7 @@ class ParentDrawer extends StatelessWidget {
               ),
               child: Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildToggleRow(
                       "Goal Achievement",
@@ -285,6 +354,7 @@ class ParentDrawer extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+            SizedBox(height: 8.h),
           ],
         ),
       ),
@@ -374,78 +444,84 @@ class ParentDrawer extends StatelessWidget {
     String title,
     String iconPath, {
     bool showArrow = true,
-    double iconSize = 20.0, // New parameter for custom icon size
-  }) {
+    double iconSize = 20.0, 
+    VoidCallback? onTap, // New parameter for onTap callback
+   }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 14.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              SvgPicture.asset(
-                iconPath, // Path to your SVG asset
-                color: Colors.purple,
-                height: iconSize.h, // Use the passed size or default size
-                width: iconSize.w, // Use the passed size or default size
-              ),
-              SizedBox(width: 16.w),
-              Text(
-                title,
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          if (showArrow)
-            Icon(
-              Icons.arrow_forward_ios,
-              size: iconSize.sp, // Use the passed size or default size
-              color: Colors.black,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SvgPicture.asset(
+                  iconPath, // Path to your SVG asset
+                  color: Colors.purple,
+                  height: iconSize.h, // Use the passed size or default size
+                  width: iconSize.w, // Use the passed size or default size
+                ),
+                SizedBox(width: 16.w),
+                Text(
+                  title,
+                  style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-        ],
+            if (showArrow)
+              Icon(
+                Icons.arrow_forward_ios,
+                size: iconSize.sp, // Use the passed size or default size
+                color: Colors.black,
+              ),
+          ],
+        ),
       ),
     );
   }
 
   // Build toggle row
   Widget _buildToggleRow(String title, String iconPath, RxBool toggleValue) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              SvgPicture.asset(
-                iconPath, // Path to your SVG asset
-                color: Colors.purple,
-                height: 24.h, // Adjust the size as needed
-                width: 24.w, // Adjust the size as needed
-              ),
-              SizedBox(width: 16.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SvgPicture.asset(
+                  iconPath, // Path to your SVG asset
+                  color: Colors.purple,
+                  height: 24.h, // Adjust the size as needed
+                  width: 24.w, // Adjust the size as needed
                 ),
-              ),
-            ],
-          ),
-          Obx(() => Switch(
-                value: toggleValue.value, // Use reactive value
-                onChanged: (newValue) {
-                  toggleValue.value = newValue; // Update the value reactively
-                },
-                activeColor: Colors.white,
-                activeTrackColor: Colors.purple,
-                inactiveTrackColor: Colors.white,
-              )),
-        ],
+                SizedBox(width: 16.w),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Obx(() => Switch(
+                  value: toggleValue.value, // Use reactive value
+                  onChanged: (newValue) {
+                    toggleValue.value = newValue; // Update the value reactively
+                  },
+                  activeColor: Colors.white,
+                  activeTrackColor: Colors.purple,
+                  inactiveTrackColor: Colors.white,
+                )),
+          ],
+        ),
       ),
     );
   }

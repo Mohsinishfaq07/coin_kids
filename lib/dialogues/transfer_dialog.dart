@@ -39,11 +39,11 @@ class TransferSuccessDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20,),
+            SizedBox(height: 20.h,),
 
             Container(
 
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.buttonPrimary, // Purple background
               ),
@@ -59,7 +59,7 @@ class TransferSuccessDialog extends StatelessWidget {
               ),
             ),
             //Icon
-            SizedBox(height: 20,),
+            SizedBox(height: 20.h,),
             // Transfer successful title
             Text(
               title,

@@ -109,7 +109,7 @@ class KidDrawer extends StatelessWidget {
               Get.to(() => ParentUpdateProfileScreen(
                     parentData: parentData,
                   ));
-             // Get.snackbar("Edit", "Edit profile clicked!");
+              Get.snackbar("Edit", "Edit profile clicked!");
             }),
             Container(
               decoration: BoxDecoration(

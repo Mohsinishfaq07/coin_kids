@@ -1,5 +1,4 @@
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/messages_screen/messages_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/App_small_button.dart';
@@ -32,8 +31,8 @@ class MessagesScreen extends StatelessWidget {
                   title: "Saving Goals Completed!",
                   subtitle: "Today at 9:42 AM",
                   icon: Icons.import_contacts,
-                  iconBgColor: Colors.pink,
-                  titleColor: Color(0xFF015486),
+                  iconBgColor: Colors.white,
+                  titleColor: AppColors.textPrimary,
                   subtitleColor: Colors.grey,
                   actionText: "See details",
                   onActionTap: () {
@@ -42,11 +41,12 @@ class MessagesScreen extends StatelessWidget {
                   },
                 ),
                 Card(
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   elevation: 4,
-                  margin: const EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(bottom: 12.h),
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 18.h, horizontal: 24.w),
@@ -55,7 +55,7 @@ class MessagesScreen extends StatelessWidget {
                         Row(
                           children: [
                             CircleAvatar(
-                              radius: 20,
+                              radius: 20.r,
                               backgroundColor: Colors.grey.shade200,
                               child: Image.asset(
                                 "assets/child_avatar_image_pngs/Frame 1.png",
@@ -71,7 +71,7 @@ class MessagesScreen extends StatelessWidget {
                                   TextSpan(
                                     text: 'Tairoh',
                                     style: TextStyle(
-                                      color: Color(0xFF015486),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14.sp,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
@@ -80,7 +80,7 @@ class MessagesScreen extends StatelessWidget {
                                   TextSpan(
                                     text: ' ',
                                     style: TextStyle(
-                                      color: Color(0xFF015486),
+                                      color: AppColors.textPrimary,
                                       fontSize: 13.sp,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
@@ -90,7 +90,7 @@ class MessagesScreen extends StatelessWidget {
                                   TextSpan(
                                     text: 'requested',
                                     style: TextStyle(
-                                      color: Color(0xFF015486),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14.sp,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w600,
@@ -99,7 +99,7 @@ class MessagesScreen extends StatelessWidget {
                                   TextSpan(
                                     text: ' ',
                                     style: TextStyle(
-                                      color: Color(0xFF015486),
+                                      color: AppColors.textPrimary,
                                       fontSize: 13.sp,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
@@ -109,7 +109,7 @@ class MessagesScreen extends StatelessWidget {
                                   TextSpan(
                                     text: '5 euros ',
                                     style: TextStyle(
-                                      color: Color(0xFF015486),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14.sp,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
@@ -126,7 +126,7 @@ class MessagesScreen extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 13.h),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -226,12 +226,16 @@ class MessagesScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Center(
-                          child: Text("Today at 9:42 AM",
-                              style: AppTextStyle.bodySmall.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14.sp,
-                                  color: AppColors.textSecondary)),
+                        Padding(
+                          padding: EdgeInsets.only(left: 52.w),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Today at 9:42 AM",
+                                style: AppTextStyle.bodySmall.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14.sp,
+                                    color: AppColors.textSecondary)),
+                          ),
                         )
                       ],
                     ),
@@ -287,6 +291,7 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
       ),
@@ -296,6 +301,7 @@ class CustomCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 20.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -335,19 +341,23 @@ class CustomCard extends StatelessWidget {
                   )
               ],
             ),
-            Text(subtitle,
-                style: AppTextStyle.bodySmall.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14.sp,
-                    color: AppColors.textSecondary)),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(actionText,
+            Padding(
+              padding: EdgeInsets.only(left: 52.w),
+              child: Text(subtitle,
                   style: AppTextStyle.bodySmall.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,
-                      color: AppColors.textHighlighted)),
+                      color: AppColors.textSecondary)),
             ),
+            if (actionText.isNotEmpty)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(actionText,
+                    style: AppTextStyle.bodySmall.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.sp,
+                        color: AppColors.textHighlighted)),
+              ),
             // Avatar Section
             // Column(
             //   children: [

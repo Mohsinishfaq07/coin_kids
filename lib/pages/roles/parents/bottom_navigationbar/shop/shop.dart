@@ -1,3 +1,5 @@
+import 'package:coin_kids/controllers/favorite_controller.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,6 +14,7 @@ class ShopScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize the controller
+    final favoriteController = Get.put(FavoriteController());
     final containerController = Get.put(ContainerController());
     final List<String> svgPaths = [
       "assets/shop/all.svg",
@@ -121,6 +124,11 @@ class ShopScreen extends StatelessWidget {
                       ),
                       itemCount: 8, // Total items
                       itemBuilder: (context, index) {
+                        Map<String, dynamic> productDetails = {
+                          "imagePath": "assets/image-2.png",
+                          "productName": "Mini Fan",
+                          "productPrice": "€ 21,99"
+                        };
                         return Container(
                           clipBehavior: Clip.antiAlias,
                           decoration: ShapeDecoration(
@@ -148,8 +156,9 @@ class ShopScreen extends StatelessWidget {
                                   width: 139.w,
                                   height: 142.h,
                                   decoration: ShapeDecoration(
-                                    image: const DecorationImage(
-                                      image: AssetImage("assets/image-2.png"),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          productDetails['imagePath']),
                                       fit: BoxFit.fill,
                                     ),
                                     shape: RoundedRectangleBorder(
@@ -162,7 +171,7 @@ class ShopScreen extends StatelessWidget {
                                 left: 13.w,
                                 top: 183.h,
                                 child: Text(
-                                  '€ 21,99',
+                                  "${productDetails['productPrice']}",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Color(0xFF666666),
@@ -176,7 +185,7 @@ class ShopScreen extends StatelessWidget {
                                 left: 13.w,
                                 top: 163.h,
                                 child: Text(
-                                  'Mini Fan',
+                                  "${productDetails['productName']}",
                                   style: TextStyle(
                                     color: Color(0xFF666666),
                                     fontSize: 14.sp,
@@ -189,7 +198,16 @@ class ShopScreen extends StatelessWidget {
                                 left: 108.w,
                                 top: 129.h,
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    if (favoriteController
+                                        .isFavorite(productDetails)) {
+                                      favoriteController
+                                          .removeFavorite(productDetails);
+                                    } else {
+                                      favoriteController
+                                          .addFavorite(productDetails);
+                                    }
+                                  },
                                   child: SizedBox(
                                     width: 43.80.w,
                                     height: 43.80.h,
@@ -220,12 +238,21 @@ class ShopScreen extends StatelessWidget {
                                         Positioned(
                                           left: 12.w,
                                           top: 13.h,
-                                          child: Container(
-                                            width: 20.13.w,
-                                            height: 20.13.h,
-                                            child: SvgPicture.asset(
-                                                "assets/shop/favorite.svg"),
-                                          ),
+                                          child: Obx(() {
+                                            return SizedBox(
+                                              width: 20.13.w,
+                                              height: 20.13.h,
+                                              child: favoriteController
+                                                      .isFavorite(
+                                                          productDetails)
+                                                  ? const Icon(
+                                                      Icons.favorite,
+                                                      color: Colors.red,
+                                                    )
+                                                  : SvgPicture.asset(
+                                                      "assets/shop/favorite.svg"),
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),
@@ -271,26 +298,32 @@ class ShopScreen extends StatelessWidget {
                 }
               }),
             ),
-            Container(
-              width: 360.w,
-              height: 47.h,
-              decoration: const ShapeDecoration(
-                color: Color(0xFF015486),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+            GestureDetector(
+              onTap: () {
+                Get.to(() => Wishlist());
+                Get.delete<FavoriteController>();
+              },
+              child: Container(
+                width: 360.w,
+                height: 47.h,
+                decoration: const ShapeDecoration(
+                  color: Color(0xFF015486),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
                   ),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  'My Wishlist',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontFamily: 'Open Sans',
-                    fontWeight: FontWeight.w800,
+                child: Center(
+                  child: Text(
+                    'My Wishlist',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'Open Sans',
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ),

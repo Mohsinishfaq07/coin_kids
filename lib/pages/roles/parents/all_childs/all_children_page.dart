@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/controllers/parent_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
+import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -75,7 +75,7 @@ class AllChildrenPage extends StatelessWidget {
                         height: 200,
                         child: CarouselSlider.builder(
                           options: CarouselOptions(
-                            height: 180,
+                            height: 180.h,
 
                             viewportFraction:
                                 0.5, // Controls the size of each slide
@@ -146,7 +146,7 @@ class AllChildrenPage extends StatelessWidget {
                                         padding: EdgeInsets.only(
                                             top: 9.5.h, bottom: 8.h),
                                         child: CircleAvatar(
-                                          radius: 30,
+                                          radius: 30.r,
                                           backgroundImage: dataKid['avatar']
                                                   .startsWith('/')
                                               ? FileImage(
@@ -189,7 +189,7 @@ class AllChildrenPage extends StatelessWidget {
                                             .textTheme
                                             .headlineMedium!
                                             .copyWith(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               fontWeight: FontWeight.bold,
                                             ),
                                       ),
@@ -202,15 +202,15 @@ class AllChildrenPage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        padding: EdgeInsets.symmetric(vertical: 20.h),
                         child: Center(
                           child: Obx(() {
                             return RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
                                 text: 'Send ',
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
                                   color: Colors
                                       .purple, // Default color for non-bold text
@@ -308,21 +308,17 @@ class AllChildrenPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Obx(() {
-                            return CustomButton(
-                              color: parentController.amount.value.isNotEmpty
-                                  ? AppColors.buttonPrimary
-                                  : AppColors.buttonDisabled,
+                            return AppButton(
+                              size: Size(125.w, 50.h),
                               text: '- Remove',
+                              backgroundColor:
+                                  parentController.amount.value.isNotEmpty
+                                      ? AppColors.buttonPrimary
+                                      : AppColors.buttonDisabled,
                               onPressed: () async {
                                 if (parentController.amount.value.isEmpty) {
                                   parentController.amountValidation.value =
                                       'Enter valid amount';
-                                } else if (parentController
-                                    .selectedChildIdForQuickTransfer
-                                    .value
-                                    .isEmpty) {
-                                  Get.snackbar('Alert',
-                                      'Please add child first by taping on it ');
                                 } else {
                                   firestoreOperations.parentFirebaseFunctions
                                       .updateSavings(
@@ -335,27 +331,87 @@ class AllChildrenPage extends StatelessWidget {
                                   // parentController.amount.value = "";
                                 }
                               },
-                              width: 150,
                             );
                           }),
+                          // Obx(() {
+                          //   return CustomButton(
+                          //     color: parentController.amount.value.isNotEmpty
+                          //         ? AppColors.buttonPrimary
+                          //         : AppColors.buttonDisabled,
+                          //     text: '- Remove',
+                          //     onPressed: () async {
+                          //       if (parentController.amount.value.isEmpty) {
+                          //         parentController.amountValidation.value =
+                          //             'Enter valid amount';
+                          //       } else if (parentController
+                          //           .selectedChildIdForQuickTransfer
+                          //           .value
+                          //           .isEmpty) {
+                          //         Get.snackbar('Alert',
+                          //             'Please add child first by taping on it ');
+                          //       } else {
+                          //         firestoreOperations.parentFirebaseFunctions
+                          //             .updateSavings(
+                          //                 childId: parentController
+                          //                     .selectedChildIdForQuickTransfer
+                          //                     .value,
+                          //                 enteredAmount: int.parse(
+                          //                     parentController.amount.value),
+                          //                 save: false);
+                          //         // parentController.amount.value = "";
+                          //       }
+                          //     },
+                          //     width: 150,
+                          //   );
+                          // }),
+
+                          // Obx(() {
+                          //   return CustomButton(
+                          //     color: parentController.amount.value.isNotEmpty
+                          //         ? AppColors.buttonPrimary
+                          //         : AppColors.buttonDisabled,
+                          //     text: '+ Send',
+                          //     onPressed: () async {
+                          //       if (parentController.amount.value.isEmpty) {
+                          //         parentController.amountValidation.value =
+                          //             'Enter valid amount';
+                          //       } else if (parentController
+                          //           .selectedChildIdForQuickTransfer
+                          //           .value
+                          //           .isEmpty) {
+                          //         Get.snackbar('Alert',
+                          //             'Please add child first by taping on it ');
+                          //       } else {
+                          //         firestoreOperations.parentFirebaseFunctions
+                          //             .updateSavings(
+                          //                 childId: parentController
+                          //                     .selectedChildIdForQuickTransfer
+                          //                     .value,
+                          //                 enteredAmount: int.parse(
+                          //                     parentController.amount.value),
+                          //                 save: true);
+                          //         // parentController.amount.value = "";
+                          //       }
+                          //     },
+                          //     width: 150,
+                          //   );
+                          // }),
+
                           Obx(() {
-                            return CustomButton(
-                              color: parentController.amount.value.isNotEmpty
-                                  ? AppColors.buttonPrimary
-                                  : AppColors.buttonDisabled,
+                            return AppButton(
+                              size: Size(125.w, 50.h),
                               text: '+ Send',
+                              backgroundColor:
+                                  parentController.amount.value.isNotEmpty
+                                      ? AppColors.buttonPrimary
+                                      : AppColors.buttonDisabled,
                               onPressed: () async {
                                 if (parentController.amount.value.isEmpty) {
                                   parentController.amountValidation.value =
                                       'Enter valid amount';
-                                } else if (parentController
-                                    .selectedChildIdForQuickTransfer
-                                    .value
-                                    .isEmpty) {
-                                  Get.snackbar('Alert',
-                                      'Please add child first by taping on it ');
                                 } else {
-                                  firestoreOperations.parentFirebaseFunctions
+                                  await firestoreOperations
+                                      .parentFirebaseFunctions
                                       .updateSavings(
                                           childId: parentController
                                               .selectedChildIdForQuickTransfer
@@ -366,7 +422,6 @@ class AllChildrenPage extends StatelessWidget {
                                   // parentController.amount.value = "";
                                 }
                               },
-                              width: 150,
                             );
                           }),
                         ],

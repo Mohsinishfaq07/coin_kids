@@ -25,7 +25,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
           gradient: AppColors.background,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                     },
                   );
                 }),
-                const SizedBox(height: 25),
+                SizedBox(height: 25.h),
                 Text(
                   "Full Name",
                   style: TextStyle(
@@ -85,9 +85,9 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                 SizedBox(height: 23.h),
                 // Gender Selection
 
-                const Text("Gender (Optional)",
+                Text("Gender (Optional)",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     )),
@@ -95,65 +95,87 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                          onTap: () {
-                            firebaseAuthController.selectGender("Male");
-                          },
-                          child: Container(
-                            height: 48.h,
-                            width: 154.w,
-                            padding: const EdgeInsets.only(
-                              top: 12.33,
-                              left: 20,
-                              right: 20,
-                              bottom: 13.33,
-                            ),
-                            decoration: ShapeDecoration(
-                              color: Colors.white54,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12.r),
+                      child: Obx(
+                        () => GestureDetector(
+                            onTap: () {
+                              firebaseAuthController.selectGender("Male");
+                            },
+                            child: Container(
+                              height: 48.h,
+                              width: 154.w,
+                              padding: const EdgeInsets.only(
+                                top: 12.33,
+                                left: 20,
+                                right: 20,
+                                bottom: 13.33,
                               ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/man_3.svg",
-                              height: 24.h,
-                              width: 24.w,
-                            ),
-                          )),
+                              decoration: ShapeDecoration(
+                                color: firebaseAuthController
+                                            .selectedGender.value ==
+                                        "Male"
+                                    ? AppColors.buttonPrimary
+                                    : Colors.white54,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      width: 1, color: Color(0xFFD9D9D9)),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/man_3.svg",
+                                height: 24.h,
+                                width: 24.w,
+                                color: firebaseAuthController
+                                            .selectedGender.value ==
+                                        "Male"
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
+                              ),
+                            )),
+                      ),
                     ),
                     SizedBox(
                       width: 14.w,
                     ),
                     Expanded(
-                      child: GestureDetector(
-                          onTap: () {
-                            firebaseAuthController.selectGender("Female");
-                          },
-                          child: Container(
-                            height: 48.h,
-                            width: 154.w,
-                            padding: const EdgeInsets.only(
-                              top: 12.33,
-                              left: 20,
-                              right: 20,
-                              bottom: 13.33,
-                            ),
-                            decoration: ShapeDecoration(
-                              color: Colors.white54,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12.r),
+                      child: Obx(
+                        () => GestureDetector(
+                            onTap: () {
+                              firebaseAuthController.selectGender("Female");
+                            },
+                            child: Container(
+                              height: 48.h,
+                              width: 154.w,
+                              padding: const EdgeInsets.only(
+                                top: 12.33,
+                                left: 20,
+                                right: 20,
+                                bottom: 13.33,
                               ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/woman.svg",
-                              height: 24.h,
-                              width: 24.w,
-                            ),
-                          )),
+                              decoration: ShapeDecoration(
+                                color: firebaseAuthController
+                                            .selectedGender.value ==
+                                        "Female"
+                                    ? AppColors.buttonPrimary
+                                    : Colors.white54,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      width: 1, color: Color(0xFFD9D9D9)),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/woman.svg",
+                                height: 24.h,
+                                width: 24.w,
+                                color: firebaseAuthController
+                                            .selectedGender.value ==
+                                        "Female"
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
+                              ),
+                            )),
+                      ),
                     ),
                   ],
                 ),
@@ -173,7 +195,7 @@ class ParentUpdateProfileScreen extends StatelessWidget {
                     }
                   },
                 )),
-                SizedBox(height: 40.h),
+                // SizedBox(height: 40.h),
 
                 // Signup Link
               ],

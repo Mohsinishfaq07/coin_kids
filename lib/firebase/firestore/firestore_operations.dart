@@ -4,9 +4,11 @@ import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -218,11 +220,11 @@ class ParentFirebaseFunctions {
     required int enteredAmount,
   }) async {
     try {
-      // showDialog(
-      //     context: Get.context!,
-      //     builder: (context) => LoadingProgressDialogueWidget(
-      //           title: "saving..",
-      //         ));
+      showDialog(
+          context: Get.context!,
+          builder: (context) => LoadingProgressDialogueWidget(
+                title: "saving..",
+              ));
       DocumentReference kidDocRef =
           FirebaseFirestore.instance.collection('kids').doc(childId);
 
@@ -246,7 +248,7 @@ class ParentFirebaseFunctions {
             context: Get.context!,
             builder: (context) => TransferSuccessDialog(
               receiverName: snapshot['name'],
-              amount: parentController.amount.toString(),
+              amount: parentController.amount.value,
               dateTime: formatDate(DateTime.now().toLocal()),
               title: 'Transfer Successful',
               transferType: 'received',
@@ -254,28 +256,37 @@ class ParentFirebaseFunctions {
           );
         } else {
           if (enteredAmount > int.parse(currentSavings)) {
-            Get.back();
-            parentController.amountValidation.value =
-                'Not Enough Funds, can not remove';
+            parentController.amountValidation.value = 'Not Enough Funds,';
+                      Get.back();
+
+
+            Fluttertoast.showToast(
+              msg: 'Not Enough Funds', // Message to display
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: AppColors.textHighlighted,
+              textColor: Colors.white,
+              fontSize: 16.sp,
+            );
           } else {
-           
             updatedAmount = int.parse(currentSavings) - enteredAmount;
-             Get.back();
             Get.log("Current Savings Amount: $currentSavings");
 
             await kidDocRef.set({
               'savings': {'amount': updatedAmount.toString()},
             }, SetOptions(merge: true));
-
+            Get.back();
             Get.log("Savings updated successfully to: $updatedAmount");
+
             showDialog(
               context: Get.context!,
               builder: (context) => TransferSuccessDialog(
-                  receiverName: snapshot['name'],
-                  amount: parentController.amount.toString(),
-                  dateTime: formatDate(DateTime.now().toLocal()),
-                  title: 'Deduction Successful',
-                  transferType: 'deducted'),
+                receiverName: snapshot['name'] ?? 'Unknown',
+                amount: parentController.amount.value,
+                dateTime: formatDate(DateTime.now().toLocal()),
+                title: 'Deduction Successful',
+                transferType: 'deducted',
+              ),
             );
           }
         }
@@ -288,6 +299,7 @@ class ParentFirebaseFunctions {
       Get.log("Error updating savings: $e");
     }
   }
+
 }
 
 class ChildFirebaseFunctions {}

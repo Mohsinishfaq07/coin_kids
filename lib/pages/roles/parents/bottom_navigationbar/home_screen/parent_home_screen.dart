@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
@@ -26,12 +27,14 @@ class ParentsHomeScreen extends StatefulWidget {
 class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   final ParentHomeController parentHomeController =
       Get.find<ParentHomeController>();
+  final bottomNavigationBarContrller = Get.put(BottomNavigationbarController());
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       parentHomeController.fetchParentDetails();
       parentHomeController.fetchKids();
+      bottomNavigationBarContrller.loadAvatarFromPreferences();
     });
   }
 
@@ -39,6 +42,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          toolbarHeight: 60.h,
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor:
                 Colors.transparent, // Make the status bar transparent
@@ -59,11 +63,31 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                         const Duration(milliseconds: 300), // Animation duration
                   );
                 },
-                child: SizedBox(
-                    width: 40.w, // Adjust the size of the border
-                    height: 40.h, // Adjust the size of the border
-
-                    child: SvgPicture.asset(AppAssets.drawerIconSvg)),
+                child: Obx(() {
+                  if (bottomNavigationBarContrller
+                      .customAvatarPath.value.isNotEmpty) {
+                    // Show the selected image
+                    return Container(
+                      height: 40.h,
+                      width: 40.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: FileImage(File(bottomNavigationBarContrller
+                              .customAvatarPath.value)),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Show the default SVG
+                    return SvgPicture.asset(
+                      AppAssets.drawerIconSvg,
+                      height: 40.h,
+                      width: 40.w,
+                    );
+                  }
+                }),
               ),
               SizedBox(width: 7.5.w),
               Column(
@@ -327,8 +351,10 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                           height: 200.h,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              color: Colors.white38,
+                              border: Border.all(
+                                color: const Color(0xFFCBE5F4),
+                              ),
+                              color: const Color(0xFFEDFAFF),
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
