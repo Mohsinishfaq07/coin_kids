@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
-import 'package:coin_kids/pages/onboard/onboarding_screen.dart';
+import 'package:coin_kids/pages/onboard/parent_onboarding_screen.dart';
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_onboarding.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
@@ -43,7 +43,7 @@ class SplashController extends GetxController {
         // Navigate to ParentBottomNavigationBar if user is a parent
       } else {
         // Navigate to KidMyMoney if user is a kid
-        Get.off(() => KidSectionOnboarding());
+        Get.off(() => const KidHomePage());
       }
     } else {
       // User is not logged in, attempt auto-login using local credentials
@@ -65,16 +65,16 @@ class SplashController extends GetxController {
               Get.off(() => const ParentsHomeScreen());
             }
           } else {
-            Get.off(() => KidHomePage());
+            Get.off(() => const KidHomePage());
           }
         } catch (e) {
           Get.log("Auto-login failed: $e");
           // Navigate to the Login Screen if auto-login fails
-          Get.off(() => OnboardingScreen());
+          Get.off(() => ParentOnboardingScreen());
         }
       } else {
         // Navigate to the Login Screen if no saved credentials
-        Get.off(() => OnboardingScreen());
+        Get.off(() => ParentOnboardingScreen());
       }
     }
   }

@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/vertical_navigation_bar.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/select_jar_color.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class KidHomePage extends StatelessWidget {
   const KidHomePage({super.key});
@@ -62,10 +66,15 @@ class KidHomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SvgPicture.asset(
-                          AppAssets.kidEmptyJarIcon,
-                          height: 100.h,
-                          width: 132.w,
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() =>   SelectJarColorScreen());
+                          },
+                          child: SvgPicture.asset(
+                            AppAssets.kidEmptyJarIcon,
+                            height: 100.h,
+                            width: 132.w,
+                          ),
                         ),
                         Align(
                           alignment: Alignment.bottomRight,
@@ -110,7 +119,7 @@ class KidHomePage extends StatelessWidget {
     );
   }
 
-  kidAvatarContainer() {
+  Widget kidAvatarContainer() {
     return Container(
       height: 27.h,
       width: 120.w,
@@ -134,10 +143,47 @@ class KidHomePage extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.only(right: 10.w),
-                child: Text(
-                  "Nina",
-                  style: AppTextStyle.headingMedium
-                      .copyWith(color: AppColors.textOnPrimary),
+                child: FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('kids') // Replace with your collection name
+                      .doc('kids') // Fetch the document by the kid's ID
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text(
+                        "Loading...",
+                        style: AppTextStyle.headingMedium
+                            .copyWith(color: AppColors.textOnPrimary),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Text(
+                        "Error",
+                        style: AppTextStyle.headingMedium
+                            .copyWith(color: AppColors.textOnPrimary),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data?.data() == null) {
+                      return Text(
+                        "No Data",
+                        style: AppTextStyle.headingMedium
+                            .copyWith(color: AppColors.textOnPrimary),
+                      );
+                    }
+
+                    // Retrieve the name of the kid
+                    final kidName =
+                        snapshot.data!['name'] as String? ?? "Unknown";
+
+                    return Padding(
+                      padding: EdgeInsets.only(left: 8.w),
+                      child: Text(
+                        kidName,
+                        style: AppTextStyle.headingMedium
+                            .copyWith(color: AppColors.textOnPrimary),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

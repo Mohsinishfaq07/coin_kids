@@ -72,43 +72,7 @@ Future<bool> fetchKids() async {
 
 
 
-  // Future<bool> fetchKids() async {
-  //   Get.log(
-  //       'kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
-  //   try {
-  //     isLoading.value = true; // Start loading
-  //     final completer =
-  //         Completer<bool>(); // Create a Completer to return the result
-  //     _firestore
-  //         .collection('kids')
-  //         .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-  //         .snapshots()
-  //         .listen((QuerySnapshot snapshot) {
-  //       kidsList.value = snapshot.docs.map((doc) {
-  //         var docData = doc.data() as Map<String, dynamic>?;
-  //         if (docData != null) {
-  //           docData['id'] = doc.id;
-  //           Get.log('kids app doc id: ${doc.id}');
-  //         }
-  //         return docData ?? {};
-  //       }).toList();
-
-  //       isLoading.value = false;
-
-  //       // Complete the completer based on whether kidsList has any items
-  //       completer.complete(kidsList.isNotEmpty);
-  //       Get.log('kids app kid list status: ${kidsList.isNotEmpty}');
-  //     });
-
-  //     Get.log('kids app parent id:${FirebaseAuth.instance.currentUser!.uid}');
-  //     return completer.future; // Return the future
-  //   } catch (e) {
-  //     isLoading.value = false; // Ensure loading is stopped on error
-  //     Get.snackbar("Error", "Failed to fetch kids: $e");
-  //     return false; // Return false in case of an error
-  //   }
-  // }
-
+ 
   void fetchParentDetails() async {
     try {
       isLoading.value = true; // Start loading

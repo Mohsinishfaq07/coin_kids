@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -269,7 +270,7 @@ class FirebaseAuthController extends GetxController {
         // Navigate to ParentBottomNavigationBar if user is a parent
       } else {
         // Navigate to KidMyMoney if user is a kid
-        Get.off(() => const KidSectionOnboarding());
+        Get.off(() => const KidHomePage());
       }
 
       // Navigate to Home Screen
@@ -452,5 +453,28 @@ class FirebaseAuthController extends GetxController {
     }
 
     return false; // Default to kid if no matching document is found
+  }
+
+// update kid name
+  Future<void> updateKidName(String kidId, String newName) async {
+    try {
+      // Update the name field in the kid's document
+      await FirebaseFirestore.instance.collection('kids').doc(kidId).update({
+        'name': newName,
+      });
+      Get.snackbar(
+        "Success",
+        "Kid's name updated successfully!",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      // Log the error and show a message
+      Get.log("Error updating kid's name: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to update the kid's name.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }
