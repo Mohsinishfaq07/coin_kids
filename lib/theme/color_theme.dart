@@ -42,4 +42,5 @@ class AppColors {
   static const Color inputFieldBG = const Color(0xfff6f6f6);
   static const Color currencyStroke = const Color(0xff4caf50);
   static const Color critical = const Color(0xffff6757);
+  static const Color KidZoneParent = const  Color(0xff38BEBE);
 }

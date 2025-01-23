@@ -6,11 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'firebase_options.dart';
 import 'pages/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // Automatically generated options
+
+  );
   controllerAndClassInitialization();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -33,16 +37,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 800),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: GetMaterialApp(
-        theme: CustomThemeData.getThemeData(),
-        debugShowCheckedModeBanner: false,
-        initialBinding: ControllerBindings(),
-        home: const SplashScreen(),
-      ),
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return ScreenUtilInit(
+          designSize:  orientation == Orientation.portrait ? const Size(360, 800) : const Size(800, 360),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          child: GetMaterialApp(
+            theme: CustomThemeData.getThemeData(),
+            debugShowCheckedModeBanner: false,
+            initialBinding: ControllerBindings(),
+            home: const SplashScreen(),
+          ),
+        );
+      }
     );
   }
 }

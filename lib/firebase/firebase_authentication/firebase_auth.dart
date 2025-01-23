@@ -18,6 +18,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../../pages/roles/kid_landscape_section/kid_onboarding.dart';
+
 class FirebaseAuthController extends GetxController {
   ParentHomeController parentHomeController = Get.put(ParentHomeController());
   final ParentHomeController homeController = Get.put(ParentHomeController());
@@ -267,7 +269,7 @@ class FirebaseAuthController extends GetxController {
         // Navigate to ParentBottomNavigationBar if user is a parent
       } else {
         // Navigate to KidMyMoney if user is a kid
-        Get.off(() => KidBottomNavScreen());
+        Get.off(() => const KidSectionOnboarding());
       }
 
       // Navigate to Home Screen

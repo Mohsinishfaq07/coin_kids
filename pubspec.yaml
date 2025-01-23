@@ -82,15 +82,19 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-    - assets/kidManageIcons/
-    - assets/role_selection_icons/
-    - assets/background_image/
-    - assets/on_board/
-    - assets/kid_section_icons/
-    - assets/child_avatar_image_pngs/
-    - assets/drawer_svgs/
-    - assets/bottomSheetIcons/
     - assets/shop/
+    - assets/fonts/
+    - assets/on_board/
+    - assets/drawer_svgs/
+    - assets/kidManageIcons/
+    - assets/background_image/
+    - assets/bottomSheetIcons/
+    - assets/bottomSheet_icons/
+    - assets/kid_section_icons/
+    - assets/role_selection_icons/
+    - assets/child_avatar_image_pngs/
+    - assets/kidRoleIcons/
+
 
   fonts:
     - family: OpenSans

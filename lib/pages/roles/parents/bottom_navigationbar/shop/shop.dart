@@ -1,5 +1,3 @@
-import 'package:coin_kids/controllers/favorite_controller.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/wishlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,7 +6,9 @@ import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+
+import '../../../../../controllers/favorite_controller.dart';
+import '../wishlist.dart';
 
 class ShopScreen extends StatelessWidget {
   @override

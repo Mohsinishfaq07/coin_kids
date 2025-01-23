@@ -178,29 +178,31 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Lottie.asset(
-          imagePath,
-          height: 190.h,
-          width: 190.h,
-          fit: BoxFit.contain,
-        ),
-        SizedBox(height: 15.h),
-        Text(
-          title,
-          style: AppTextStyle.headingLarge.copyWith(
-              fontWeight: FontWeight.w800, color: AppColors.textPrimary),
-        ),
-        SizedBox(height: 11.h),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          style: AppTextStyle.headingMedium.copyWith(
-              fontWeight: MyFontWeight.Regular.fontWeight,
-              color: AppColors.textSecondary),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Lottie.asset(
+            imagePath,
+            height: 190.h,
+            width: 190.h,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 15.h),
+          Text(
+            title,
+            style: AppTextStyle.headingLarge.copyWith(
+                fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+          ),
+          SizedBox(height: 11.h),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: AppTextStyle.headingMedium.copyWith(
+                fontWeight: MyFontWeight.Regular.fontWeight,
+                color: AppColors.textSecondary),
+          ),
+        ],
+      ),
     );
   }
 }

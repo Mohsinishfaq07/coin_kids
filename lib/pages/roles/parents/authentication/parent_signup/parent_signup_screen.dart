@@ -248,14 +248,15 @@ class SignupParentScreen extends StatelessWidget {
                                     style: AppTextStyle.labelLarge
                                         .copyWith(fontSize: 14.sp),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(
-                                        AppAssets.appleIconSvg,
-                                        color: Colors.transparent,
-                                        height: 10),
-                                  ),
+                                  SizedBox.shrink()
+                                  // Padding(
+                                  //   padding: EdgeInsets.only(
+                                  //       right: 10.w, left: 10.w),
+                                  //   child: SvgPicture.asset(
+                                  //       AppAssets.appleIconSvg,
+                                  //       color: Colors.transparent,
+                                  //       height: 10),
+                                  // ),
                                 ],
                               );
                       }),
@@ -298,14 +299,15 @@ class SignupParentScreen extends StatelessWidget {
                                       style: AppTextStyle.labelLarge
                                           .copyWith(fontSize: 14.sp),
                                     ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 10.0),
-                                      child: SvgPicture.asset(
-                                          AppAssets.appleIconSvg,
-                                          color: Colors.transparent,
-                                          height: 10),
-                                    ),
+                                    SizedBox.shrink()
+                                    // Padding(
+                                    //   padding:
+                                    //       const EdgeInsets.only(right: 10.0),
+                                    //   child: SvgPicture.asset(
+                                    //       AppAssets.appleIconSvg,
+                                    //       color: Colors.transparent,
+                                    //       height: 10),
+                                    // ),
                                   ],
                                 );
                         },
