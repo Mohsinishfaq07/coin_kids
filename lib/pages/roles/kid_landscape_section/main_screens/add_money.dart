@@ -54,19 +54,44 @@ class AddMoneyScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          buttonController.clickedIndex.value == 0;
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 35.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            buttonController.clickedIndex.value = 0;
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: AvatarGlow(
+                              // curve: Curves.fastOutSlowIn,
+                              startDelay: const Duration(seconds: 1),
+                              repeat: true,
+                              glowCount: 2,
+                              glowShape: BoxShape.circle,
+                              animate: true,
+                              duration: Duration(seconds: 1),
+                              glowColor:
+                                  buttonController.clickedIndex.value == 0
+                                      ? Colors.red // Selected color
+                                      : Colors.transparent,
+                              child: SvgPicture.asset(
+                                "assets/notes.svg",
+                                height: 30.h,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        GestureDetector(
+                          onTap: () {
+                            buttonController.clickedIndex.value = 1;
+                          },
                           child: AvatarGlow(
-                            // curve: Curves.fastOutSlowIn,
                             startDelay: const Duration(seconds: 1),
                             repeat: true,
                             glowCount: 2,
@@ -75,144 +100,141 @@ class AddMoneyScreen extends StatelessWidget {
                             duration: Duration(seconds: 1),
                             glowColor: Colors.purple,
                             child: SvgPicture.asset(
-                              "assets/notes.svg",
+                              "assets/Coin.svg",
                               height: 30.h,
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 16.h),
-                      GestureDetector(
-                        onTap: () {
-                          buttonController.clickedIndex.value == 1;
-                        },
-                        child: AvatarGlow(
-                          startDelay: const Duration(seconds: 1),
-                          repeat: true,
-                          glowCount: 2,
-                          glowShape: BoxShape.circle,
-                          animate: true,
-                          duration: Duration(seconds: 1),
-                          glowColor: Colors.purple,
-                          child: SvgPicture.asset(
-                            "assets/Coin.svg",
-                            height: 30.h,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Obx(() {
-                    // Dynamically display widget based on button click
-                    if (buttonController.clickedIndex.value == 0) {
-                      return Expanded(
-                        child: GridView.builder(
-                          // padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Number of columns
-                            childAspectRatio: 5,
-                            crossAxisSpacing: 8.0, // Space between columns
-                            mainAxisSpacing: 8.0, // Space between rows
-                          ),
-                          itemCount: buttonController.notesList.length,
-                          itemBuilder: (context, index) {
-                            return Image.asset(
-                              buttonController.notesList[index],
-                              width: 50.w,
-                              height: 50.h,
-                            );
-                          },
-                        ),
-                      );
-                    } else if (buttonController.clickedIndex.value == 1) {
-                      return Container(
-                        color: Colors.blue,
-                        padding: EdgeInsets.all(20.r),
-                        child: const Text(
-                          "Coin Widget",
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
-                      );
-                    } else {
-                      return const Text(
-                        "Click a button",
-                        style: TextStyle(fontSize: 24, color: Colors.black),
-                      );
-                    }
-                  }),
-                  Column(
-                    children: [
-                      GestureDetector(
-                          onTap: () {},
+                      ],
+                    ),
+                    SizedBox(
+                      width: 68.w,
+                    ),
+                    Obx(() {
+                      // Dynamically display widget based on button click
+                      if (buttonController.clickedIndex.value == 0) {
+                        return Center(
                           child: Container(
-                            width: 40,
-                            height: 40,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF9E29),
-                              borderRadius: BorderRadius.circular(
-                                  30.r), // Rounded corners
-                              border: Border.all(
-                                width: 2.22.w,
-                                color: const Color(0xFFD67513),
+                            color: Colors.green,
+                            width: 260.w,
+                            child: GridView.builder(
+                              // padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2, // Number of columns
+                                childAspectRatio: 2,
+                                crossAxisSpacing: 6.h, // Space between columns
+                                mainAxisSpacing: 6.w, // Space between rows
                               ),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  left: 12.w,
-                                  right: 12.w,
-                                  top: 4.h,
-                                  bottom: 4.h,
+                              itemCount: buttonController.notesList.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  color: Colors.red,
                                   child: Center(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors
-                                            .transparent, // Background color (optional)
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                                0.2), // Shadow color
-                                            blurRadius:
-                                                10, // Blur radius for the shadow
-                                            offset: const Offset(
-                                                2, 4), // Shadow position (x, y)
-                                          ),
-                                        ],
-                                        shape: BoxShape
-                                            .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/undo.svg",
-                                        height: 20.h,
-                                        width: 20.w,
+                                    child: Image.asset(
+                                      buttonController.notesList[index],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      } else if (buttonController.clickedIndex.value == 1) {
+                        return Container(
+                          color: Colors.blue,
+                          padding: EdgeInsets.all(20.r),
+                          child: const Text(
+                            "Coin Widget",
+                            style: TextStyle(fontSize: 24, color: Colors.white),
+                          ),
+                        );
+                      } else {
+                        return const Text(
+                          "Click a button",
+                          style: TextStyle(fontSize: 24, color: Colors.black),
+                        );
+                      }
+                    }),
+                    SizedBox(
+                      width: 58.w,
+                    ),
+                    Column(
+                      children: [
+                        GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF9E29),
+                                borderRadius: BorderRadius.circular(
+                                    30.r), // Rounded corners
+                                border: Border.all(
+                                  width: 2.22.w,
+                                  color: const Color(0xFFD67513),
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    left: 12.w,
+                                    right: 12.w,
+                                    top: 4.h,
+                                    bottom: 4.h,
+                                    child: Center(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .transparent, // Background color (optional)
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                  0.2), // Shadow color
+                                              blurRadius:
+                                                  10, // Blur radius for the shadow
+                                              offset: const Offset(2,
+                                                  4), // Shadow position (x, y)
+                                            ),
+                                          ],
+                                          shape: BoxShape
+                                              .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
+                                        ),
+                                        child: SvgPicture.asset(
+                                          "assets/undo.svg",
+                                          height: 20.h,
+                                          width: 20.w,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                    left: 0.5,
-                                    top: 0.29,
-                                    child: Image.asset(
-                                      "assets/Button_shadow.png",
-                                      height: 8.h,
-                                    )),
-                              ],
-                            ),
-                          )),
-                      SizedBox(
-                        height: 2.h,
-                      ),
-                      Text(
-                        "undo",
-                        style: AppTextStyle.bodyLarge,
-                      )
-                    ],
-                  ),
-                  Text("E 💸💰", style: AppTextStyle.headingLarge),
-                ],
+                                  Positioned(
+                                      left: 0.5,
+                                      top: 0.29,
+                                      child: Image.asset(
+                                        "assets/Button_shadow.png",
+                                        height: 8.h,
+                                      )),
+                                ],
+                              ),
+                            )),
+                        SizedBox(
+                          height: 2.h,
+                        ),
+                        Text(
+                          "undo",
+                          style: AppTextStyle.bodyLarge,
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 50.w,
+                    ),
+                    Text("E 💸💰", style: AppTextStyle.headingLarge),
+                  ],
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(right: 20.w, top: 16.h),
@@ -332,12 +354,12 @@ class ButtonController extends GetxController {
   var clickedIndex = 0.obs; // Observable for the text
 
   final List<String> notesList = [
-    "assets/note5.png",
-    "assets/note10.png",
-    "assets/note20.png",
-    "assets/note50.png",
-    "assets/note100.png",
-    "assets/note200.png"
+    "assets/5.png",
+    "assets/10.png",
+    "assets/20.png",
+    "assets/50.png",
+    "assets/100.png",
+    "assets/200.png"
   ];
   final List<String> coinList = [
     "assets/1euro.png",
