@@ -319,7 +319,7 @@ class KidProfileManagementPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "€${docData['savings']['amount']}",
+                  "€${docData['spendings']['amount']}",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

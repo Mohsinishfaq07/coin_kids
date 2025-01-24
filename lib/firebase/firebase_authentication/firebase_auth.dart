@@ -5,7 +5,7 @@ import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
@@ -19,12 +19,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../pages/roles/kid_landscape_section/kid_onboarding.dart';
 
 class FirebaseAuthController extends GetxController {
-  ParentHomeController parentHomeController = Get.put(ParentHomeController());
-  final ParentHomeController homeController = Get.put(ParentHomeController());
-  final email = ''.obs;
+final ParentHomeController homeController = Get.put(ParentHomeController());  final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
   final username = ''.obs;
@@ -77,10 +74,17 @@ class FirebaseAuthController extends GetxController {
         email: email.value,
         password: pin.value,
       );
+      
+   await    saveParentInfo(
+          fieldName: 'email',
+          fieldValue: email.value);
+      saveInfoLocally(
+          email.value,
+          pin.value);
       // saveUserInfo(fieldName: 'email', fieldValue: email.value);
       // await saveParentInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
-      Get.off(() => const RoleSelectionScreen());
+      Get.off(() =>   RoleSelectionScreen());
       // Get.offAll(() => BottomNavigationBarScreen());
     } on FirebaseAuthException catch (e) {
       Get.back();
@@ -100,6 +104,31 @@ class FirebaseAuthController extends GetxController {
       Get.log(e.toString());
     }
   }
+ // save user info
+ Future<void> saveParentInfo(
+      {required String fieldName, required String fieldValue}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('parents')
+          .doc(fieldValue)
+          .set({
+        fieldName: fieldValue,
+        'name': username.value.isNotEmpty ? username.value : 'Not specified',
+        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
+        'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
+        'gender': selectedGender.value.isNotEmpty
+            ? selectedGender.value
+            : 'Not specified',
+        'created_at': DateTime.now().toIso8601String(),
+      }, SetOptions(merge: true));
+      Get.snackbar("Success", "Account created",
+          snackPosition: SnackPosition.BOTTOM);
+      // Get.off(() => ParentLoginScreen());
+    } catch (e) {
+      Get.log(e.toString());
+    }
+  }
+
 
   Future<void> saveInfoLocally(String email, String password) async {
     try {
@@ -191,31 +220,7 @@ class FirebaseAuthController extends GetxController {
     }
   }
 
-  // save user info
-  saveParentInfo(
-      {required String fieldName, required String fieldValue}) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('parents')
-          .doc(fieldValue)
-          .set({
-        fieldName: fieldValue,
-        'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
-        'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
-        'gender': selectedGender.value.isNotEmpty
-            ? selectedGender.value
-            : 'Not specified',
-        'created_at': DateTime.now().toIso8601String(),
-      }, SetOptions(merge: true));
-      Get.snackbar("Success", "Account created",
-          snackPosition: SnackPosition.BOTTOM);
-      // Get.off(() => ParentLoginScreen());
-    } catch (e) {
-      Get.log(e.toString());
-    }
-  }
-
+ 
   saveKidInfo({required String fieldName, required String fieldValue}) async {
     try {
       await FirebaseFirestore.instance.collection('kids').doc(fieldValue).set({
@@ -236,14 +241,6 @@ class FirebaseAuthController extends GetxController {
   }
 
   Future<void> loginWithEmail() async {
-    // if (email.value.isEmpty || pin.value.isEmpty) {
-    //   Get.snackbar(
-    //     "Error",
-    //     "Email and password fields cannot be empty!",
-    //     snackPosition: SnackPosition.BOTTOM,
-    //   );
-    //   return;
-    // }
 
     try {
       isEmailLoading.value = true; // Start loading
@@ -255,23 +252,14 @@ class FirebaseAuthController extends GetxController {
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
-      await saveInfoLocally(email.value, pin.value);
-      Get.back(); // Stop loading
-
+      //       saveParentInfo(
+      //     fieldName: 'email',
+      //     fieldValue: email.value);
+      // await saveInfoLocally(email.value, pin.value);
+      // Get.back(); // Stop loading
+      Get.offAll(  RoleSelectionScreen());
       // Fetch user role from Firestore
-      final isParent = await _checkIfParent(email.value);
-      if (isParent) {
-        bool parentHasKids = await homeController.fetchKids();
-        if (parentHasKids) {
-          Get.off(() => ParentBottomNavigationBar());
-        } else {
-          Get.off(() => const ParentsHomeScreen());
-        }
-        // Navigate to ParentBottomNavigationBar if user is a parent
-      } else {
-        // Navigate to KidMyMoney if user is a kid
-        Get.off(() => const KidHomePage());
-      }
+
 
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
@@ -331,7 +319,7 @@ class FirebaseAuthController extends GetxController {
       if (user != null) {
         // saveUserInfo(fieldName: 'gmail', fieldValue: user.email!);
         isGoogleLoading.value = false; // Stop loading
-        final isParent = await _checkIfParent(email.value);
+        final isParent = await checkIfParent(email.value);
         if (isParent) {
           bool parentHasKids = await homeController.fetchKids();
           if (parentHasKids) {
@@ -425,10 +413,10 @@ class FirebaseAuthController extends GetxController {
     isEmailLoading.value = false;
     isGoogleLoading.value = false;
     isAppleLoading.value = false;
-    Get.offAll(() => ParentLoginScreen());
+    Get.offAll(() =>LoginScreen());
   }
 
-  Future<bool> _checkIfParent(String email) async {
+  Future<bool> checkIfParent(String email) async {
     try {
       final parentSnapshot = await FirebaseFirestore.instance
           .collection('parents')

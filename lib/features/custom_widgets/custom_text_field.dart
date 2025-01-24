@@ -20,6 +20,7 @@ class CustomTextField extends StatelessWidget {
   final Color? suffixIconColor; // Custom color for suffix icon
   final String? suffixSvgPath;
   final bool isOptional; // Flag for optional label
+  final FocusNode? nextFocusNode;
 
   const CustomTextField({
     this.isOptional = false,
@@ -36,6 +37,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.suffixIconColor,
     this.suffixSvgPath,
+    this.nextFocusNode,
     super.key,
   });
 
@@ -55,6 +57,9 @@ class CustomTextField extends StatelessWidget {
         // ),
         // const SizedBox(height: 8), // Spacing between title and text field
         TextFormField(
+            textInputAction: nextFocusNode != null
+                ? TextInputAction.next
+                : TextInputAction.done,
             controller: controller,
             onChanged: onChanged,
             obscureText: obscureText,

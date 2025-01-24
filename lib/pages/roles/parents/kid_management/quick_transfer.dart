@@ -6,7 +6,8 @@ import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
-import 'package:coin_kids/theme/components/AppButton.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
+ import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,6 +23,8 @@ class QuickTransferPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final homeController = Get.put(ParentHomeController());
+
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Quick Transfer",
@@ -106,7 +109,7 @@ class QuickTransferPage extends StatelessWidget {
                         hintText: "0,00",
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
-                          parentController.amount.value = val;
+                          homeController.amount.value = val;
                         },
                         prefix: SvgPicture.asset("assets/currency_euro.svg")),
                     SizedBox(height: 24.h),
@@ -157,95 +160,57 @@ class QuickTransferPage extends StatelessWidget {
                             size: Size(125.w, 50.h),
                             text: '- Remove',
                             backgroundColor:
-                                parentController.amount.value.isNotEmpty
+                                homeController.amount.value.isNotEmpty
                                     ? AppColors.buttonPrimary
                                     : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value =
+                              if (homeController.amount.value.isEmpty) {
+                                homeController.amountValidation.value =
                                     'Enter valid amount';
                               } else {
-                                firestoreOperations.parentFirebaseFunctions
-                                    .updateSavings(
+                                double enteredAmount =
+                                    double.parse(homeController.amount.value);
+
+                                await firestoreOperations
+                                    .parentFirebaseFunctions
+                                    .updateKidSpending(
                                         childId: childId,
-                                        enteredAmount: int.parse(
-                                            parentController.amount.value),
+                                        enteredAmount: enteredAmount,
                                         save: false);
                                 // parentController.amount.value = "";
                               }
                             },
                           );
                         }),
-                        // Obx(() {
-                        //   return CustomButton(
-                        //     color: parentController.amount.value.isNotEmpty
-                        //         ? AppColors.buttonPrimary
-                        //         : AppColors.buttonDisabled,
-                        //     text: '- Remove',
-                        //     onPressed: () async {
-                        //       if (parentController.amount.value.isEmpty) {
-                        //         parentController.amountValidation.value =
-                        //             'Enter valid amount';
-                        //       } else {
-                        //         firestoreOperations.parentFirebaseFunctions
-                        //             .updateSavings(
-                        //                 childId: childId,
-                        //                 // childId: parentController
-                        //                 //     .selectedChildIdForQuickTransfer
-                        //                 //     .value,
-                        //                 enteredAmount: int.parse(
-                        //                     parentController.amount.value),
-                        //                 save: false);
-                        //         // parentController.amount.value = "";
-                        //       }
-                        //     },
-                        //     width: 150,
-                        //   );
-                        // }),
                         Obx(() {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '+ Send',
                             backgroundColor:
-                                parentController.amount.value.isNotEmpty
+                                homeController.amount.value.isNotEmpty
                                     ? AppColors.buttonPrimary
                                     : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value =
+                              if (homeController.amount.value.isEmpty) {
+                                homeController.amountValidation.value =
                                     'Enter valid amount';
                               } else {
-                                firestoreOperations.parentFirebaseFunctions
-                                    .updateSavings(
-                                        childId: childId,
-                                        enteredAmount: int.parse(
-                                            parentController.amount.value),
-                                        save: true);
-                                // parentController.amount.value = "";
+                                try {
+                                  double enteredAmount = double.parse(
+                                      homeController.amount.value);
+
+                                  await firestoreOperations
+                                      .parentFirebaseFunctions
+                                      .updateKidSpending(
+                                          childId: childId,
+                                          enteredAmount: enteredAmount,
+                                          save: true);
+                                } on Exception catch (e) {
+                                  print("Exception $e");
+                                }
                               }
                             },
                           );
-                          //  CustomButton(
-                          //   color: parentController.amount.value.isNotEmpty
-                          //       ? AppColors.buttonPrimary
-                          //       : AppColors.buttonDisabled,
-                          //   text: '+ Send',
-                          //   onPressed: () async {
-                          //     if (parentController.amount.value.isEmpty) {
-                          //       parentController.amountValidation.value =
-                          //           'Enter valid amount';
-                          //     } else {
-                          //       firestoreOperations.parentFirebaseFunctions
-                          //           .updateSavings(
-                          //               childId: childId,
-                          //               enteredAmount: int.parse(
-                          //                   parentController.amount.value),
-                          //               save: true);
-                          //       // parentController.amount.value = "";
-                          //     }
-                          //   },
-                          //   width: 150,
-                          // );
                         }),
                       ],
                     )
@@ -341,7 +306,7 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
 
       // Default values if fields are null
       final name = docData['name'] ?? 'Unknown Name';
-      final savings = docData['savings']?['amount']?.toString() ?? '0';
+      final savings = docData['spendings']?['amount']?.toString() ?? '0';
 
       return Center(
         child: Container(

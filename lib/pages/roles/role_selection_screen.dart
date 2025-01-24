@@ -1,5 +1,9 @@
-import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
+import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_onboarding.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +14,10 @@ import '../../app_assets.dart';
 import '../../theme/color_theme.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key});
+  RoleSelectionScreen({super.key});
+  // final splashCOntroller = Get.put(SplashController());
+  final firebaseAuthController = Get.put(FirebaseAuthController());
+  final homeController = Get.put(ParentHomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -20,54 +27,75 @@ class RoleSelectionScreen extends StatelessWidget {
           gradient: AppColors.background,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20.h),
-                Text(
-                  "Are you a parent or a child?",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 24.sp, // Adjust the font size as needed
-                      ),
-                ),
-                SizedBox(height: 57.h),
-                OptionCard(
-                  imagePath: "assets/role_selection_icons/im_parent_icon.svg",
-                  title: "I’m a Parent",
-                  description: "Give allowances",
-                  onTap: () {
-                    firebaseAuthController.saveParentInfo(
-                        fieldName: 'email',
-                        fieldValue: firebaseAuthController.email.value);
-                    firebaseAuthController.saveInfoLocally(
-                        firebaseAuthController.email.value,
-                        firebaseAuthController.pin.value);
-                    Get.offAll(const ParentsHomeScreen());
-                  },
-                  description1: "Support your child's",
-                  description2: "Financial journey  ",
-                ),
-                SizedBox(height: 14.h),
-                OptionCard(
-                  imagePath: "assets/role_selection_icons/Group.svg",
-                  title: "I’m a Child",
-                  description: "Receive Allowance",
-                  onTap: () {
-                    firebaseAuthController.saveKidInfo(
-                        fieldName: 'email',
-                        fieldValue: firebaseAuthController.email.value);
-                    firebaseAuthController.saveInfoLocally(
-                        firebaseAuthController.email.value,
-                        firebaseAuthController.pin.value);
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.h),
+                  Text(
+                    "Are you a parent or a child?",
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 24.sp, // Adjust the font size as needed
+                        ),
+                  ),
+                  SizedBox(height: 57.h),
+                  OptionCard(
+                    imagePath: "assets/role_selection_icons/im_parent_icon.svg",
+                    title: "I’m a Parent",
+                    description: "Give allowances",
+                    onTap: () async {
+                      final isParent = await firebaseAuthController
+                          .checkIfParent(firebaseAuthController.email.value);
+                      if (isParent) {
+                        bool parentHasKids = await homeController.fetchKids();
+                        if (parentHasKids) {
+                          Get.off(() => ParentBottomNavigationBar());
+                        } else {
+                          Get.off(() => const ParentsHomeScreen());
+                        }
+                        // Navigate to ParentBottomNavigationBar if user is a parent
+                      } else {
+                        Get.off(() => LoginScreen());
+                        // Navigate to KidMyMoney if user is a kid
+                        //  Get.off(() => const KidHomePage());
+                      }
 
-                    Get.to(() => KidBottomNavScreen());
-                  },
-                  description1: 'Set up saving goals',
-                  description2: '',
-                ),
-              ],
+                      // Get.offAll(const ParentsHomeScreen());
+                    },
+                    description1: "Support your child's",
+                    description2: "Financial journey  ",
+                  ),
+                  SizedBox(height: 14.h),
+                  OptionCard(
+                    imagePath: "assets/role_selection_icons/Group.svg",
+                    title: "I’m a Child",
+                    description: "Receive Allowance",
+                    onTap: () async {
+                      final isParent = await firebaseAuthController
+                          .checkIfParent(firebaseAuthController.email.value);
+                      if (isParent) {
+                        bool parentHasKids = await homeController.fetchKids();
+                        if (parentHasKids) {
+                          Get.off(() => KidHomePage());
+                        } else {
+                          Get.off(() => const KidSectionOnboarding());
+                        }
+                        // Navigate to ParentBottomNavigationBar if user is a parent
+                      } else {
+                        Get.off(() => LoginScreen());
+                        // Navigate to KidMyMoney if user is a kid
+                        //  Get.off(() => const KidHomePage());
+                      }
+
+                      //
+                    },
+                    description1: 'Set up saving goals',
+                    description2: '',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -144,7 +172,7 @@ class OptionCard extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                         AppAssets.coinSvg,
+                        AppAssets.coinSvg,
                         height: 20.w,
                         width: 20.w,
                       ),
@@ -162,8 +190,7 @@ class OptionCard extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                         AppAssets.supportSvg,
-
+                        AppAssets.supportSvg,
                         height: 20.w,
                         width: 20.w,
                       ),

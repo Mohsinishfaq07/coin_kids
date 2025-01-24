@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/pages/onboard/parent_onboarding_screen.dart';
-import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/kid_onboarding.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -25,7 +23,7 @@ class SplashController extends GetxController {
   /// Check if the user is logged in and navigate accordingly
   void _checkLoginStatus() async {
     // Simulate a splash screen delay (3 seconds)
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Check if user is already logged in with Firebase
     final user = FirebaseAuth.instance.currentUser;
@@ -105,4 +103,5 @@ class SplashController extends GetxController {
 
     return false; // Default to kid if no matching document is found
   }
+
 }

@@ -16,7 +16,7 @@ import '../../dialogues/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
-  ChildFirebaseFunctions childFirebaseFunctions = ChildFirebaseFunctions();
+  // ChildFirebaseFunctions childFirebaseFunctions = ChildFirebaseFunctions();
 }
 
 class ParentFirebaseFunctions {
@@ -180,7 +180,7 @@ class ParentFirebaseFunctions {
           'name': 'Savings',
         },
         'spendings': {
-          'amount': 45, // Default spendings value
+          'amount': 0, // Default spendings value
           'color': '#F54422',
           'name': 'Spendings',
         },
@@ -214,10 +214,10 @@ class ParentFirebaseFunctions {
   }
 
   // update savings of child
-  Future<void> updateSavings({
+  Future<void> updateKidSpending({
     required bool save,
     required String childId,
-    required int enteredAmount,
+    required double enteredAmount,
   }) async {
     try {
       showDialog(
@@ -231,34 +231,37 @@ class ParentFirebaseFunctions {
       DocumentSnapshot snapshot = await kidDocRef.get();
 
       if (snapshot.exists) {
-        final currentSavings =
-            (snapshot.data() as Map<String, dynamic>?)?['savings']?['amount'] ??
-                0;
-        int updatedAmount = 0;
-        if (save) {
-          updatedAmount = int.parse(currentSavings) + enteredAmount;
-          Get.log("Current Savings Amount: $currentSavings");
+        // Access current spendings as a numeric type (int or double)
+        final currentSpending = (snapshot.data()
+                as Map<String, dynamic>?)?['spendings']?['amount'] ??
+            0.0;
+        double updatedAmount = 0.0;
 
+        if (save) {
+          updatedAmount = currentSpending + enteredAmount;
+          Get.log("Current Spending Amount: $currentSpending");
+
+          // Save the updated spending amount as a numeric value (double or int)
           await kidDocRef.set({
-            'savings': {'amount': updatedAmount.toString()},
+            'spendings': {'amount': updatedAmount}, // Save as a numeric type
           }, SetOptions(merge: true));
           Get.back();
-          Get.log("Savings updated successfully to: $updatedAmount");
+          Get.log("Spending updated successfully to: $updatedAmount");
+
           showDialog(
             context: Get.context!,
             builder: (context) => TransferSuccessDialog(
               receiverName: snapshot['name'],
-              amount: parentController.amount.value,
+              amount: homeController.amount.value,
               dateTime: formatDate(DateTime.now().toLocal()),
               title: 'Transfer Successful',
               transferType: 'received',
             ),
           );
         } else {
-          if (enteredAmount > int.parse(currentSavings)) {
-            parentController.amountValidation.value = 'Not Enough Funds,';
-                      Get.back();
-
+          if (enteredAmount > currentSpending) {
+            homeController.amountValidation.value = 'Not Enough Funds,';
+            Get.back();
 
             Fluttertoast.showToast(
               msg: 'Not Enough Funds', // Message to display
@@ -269,20 +272,21 @@ class ParentFirebaseFunctions {
               fontSize: 16.sp,
             );
           } else {
-            updatedAmount = int.parse(currentSavings) - enteredAmount;
-            Get.log("Current Savings Amount: $currentSavings");
+            updatedAmount = currentSpending - enteredAmount;
+            Get.log("Current Spending Amount: $currentSpending");
 
+            // Save the updated spending amount as a numeric value (double or int)
             await kidDocRef.set({
-              'savings': {'amount': updatedAmount.toString()},
+              'spendings': {'amount': updatedAmount}, // Save as a numeric type
             }, SetOptions(merge: true));
             Get.back();
-            Get.log("Savings updated successfully to: $updatedAmount");
+            Get.log("Spending updated successfully to: $updatedAmount");
 
             showDialog(
               context: Get.context!,
               builder: (context) => TransferSuccessDialog(
                 receiverName: snapshot['name'] ?? 'Unknown',
-                amount: parentController.amount.value,
+                amount: homeController.amount.value,
                 dateTime: formatDate(DateTime.now().toLocal()),
                 title: 'Deduction Successful',
                 transferType: 'deducted',
@@ -296,10 +300,84 @@ class ParentFirebaseFunctions {
       }
     } catch (e) {
       Get.back();
-      Get.log("Error updating savings: $e");
+      Get.log("Error updating spendings: $e");
     }
   }
+  // update savings of child
 
+  Future<void> kidSpendingToSavings({
+    required bool save,
+    required String childId,
+    required double enteredAmount,
+  }) async {
+    try {
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(childId);
+
+      DocumentSnapshot snapshot = await kidDocRef.get();
+
+      if (snapshot.exists) {
+        // Get current spending and savings
+        final data = snapshot.data() as Map<String, dynamic>;
+
+        // Safely parse spendings amount
+        final currentSpending =
+            (data['spendings']?['amount'] ?? 0.0).toDouble();
+
+        // Safely parse savings amount (convert from String if necessary)
+        final savingsAmount = data['savings']?['amount'];
+        final currentSavings = savingsAmount is String
+            ? double.tryParse(savingsAmount) ?? 0.0
+            : (savingsAmount ?? 0.0).toDouble();
+
+        if (enteredAmount > currentSpending) {
+          // Not enough funds
+          Get.back();
+          Fluttertoast.showToast(
+            msg: 'Not Enough Funds',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: AppColors.textHighlighted,
+            textColor: Colors.white,
+            fontSize: 16.sp,
+          );
+          return;
+        }
+
+        // Deduct from spending and add to savings
+        double updatedSpending = currentSpending - enteredAmount;
+        double updatedSavings = currentSavings + enteredAmount;
+
+        // Update Firestore document
+        await kidDocRef.update({
+          'spendings.amount': updatedSpending,
+          'savings.amount': updatedSavings.toString(), // Save as string
+        });
+
+        // Get.back();
+        Get.log("Spending and savings updated successfully.");
+
+        // Show success dialog
+        // showDialog(
+        //   context: Get.context!,
+        //   builder: (context) => TransferSuccessDialog(
+        //     receiverName: data['name'] ?? 'Unknown',
+        //     amount: enteredAmount.toString(),
+        //     dateTime: formatDate(DateTime.now().toLocal()),
+        //     title: 'Transfer Successful',
+        //     transferType: 'Transferred to Savings',
+        //   ),
+        // );
+      } else {
+        // Child document does not exist
+        Get.back();
+        Get.log("Document does not exist for childId: $childId");
+      }
+    } catch (e) {
+      Get.back();
+      Get.log("Error transfer spendings and savings: $e");
+    }
+  }
 }
 
-class ChildFirebaseFunctions {}
+// class ChildFirebaseFunctions {}

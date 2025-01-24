@@ -26,7 +26,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
   final ToggleRowController toggleRowController =
       Get.put(ToggleRowController());
   final bottomNavigationBarController =
-      Get.put(BottomNavigationbarController());
+      Get.put(ParentNavigationBarController());
 
   @override
   Widget build(BuildContext context) {

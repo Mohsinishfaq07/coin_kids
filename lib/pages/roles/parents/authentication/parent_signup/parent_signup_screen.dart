@@ -2,7 +2,7 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_login/parent_login_screen.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:coin_kids/theme/light_theme.dart';
@@ -59,6 +59,8 @@ class SignupParentScreen extends StatelessWidget {
                         }
                         return null;
                       },
+
+                      
                     ),
                     // email
 
@@ -66,6 +68,7 @@ class SignupParentScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 16.h),
                       child: CustomTextField(
                         hintText: 'Email',
+                        keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
                           firebaseAuthController.email.value = value.trim();
                           firebaseAuthController
@@ -187,7 +190,7 @@ class SignupParentScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                             onTap: () {
-                              Get.off(() => ParentLoginScreen());
+                              Get.off(() => LoginScreen());
                             },
                             child: Text(
                               "LOGIN",

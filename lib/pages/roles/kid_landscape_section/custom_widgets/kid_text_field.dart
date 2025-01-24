@@ -6,11 +6,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class KidCustomTextField extends StatefulWidget {
   final String hintText;
   final Function(String) onChange;
+  final TextInputAction textInputAction;
+  final TextInputType keyboardType;
 
   const KidCustomTextField({
     Key? key,
     required this.hintText,
     required this.onChange,
+    this.keyboardType = TextInputType.text,
+    this.textInputAction = TextInputAction.done,
   }) : super(key: key);
 
   @override
@@ -46,6 +50,8 @@ class _KidCustomTextFieldState extends State<KidCustomTextField> {
       width: 444.w,
       // height: 65.h,
       child: TextField(
+        keyboardType: widget.keyboardType,
+        textInputAction: widget.textInputAction,
         controller: _controller,
         focusNode: _focusNode,
         onChanged: (value) {

@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/vertical_navigation_bar.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/select_jar_color.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class KidHomePage extends StatelessWidget {
   const KidHomePage({super.key});
@@ -20,7 +21,6 @@ class KidHomePage extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: false,
-      // appBar: kidsAppBar(leadingWidget: appBarWidget()),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -38,6 +38,11 @@ class KidHomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   kidAvatarContainer(),
+                  GestureDetector(
+                      onTap: () async {
+                        await firebaseAuthController.logout();
+                      },
+                      child: Icon(Icons.logout)),
                   Row(
                     children: [
                       cardContainerIcon(),
@@ -68,7 +73,7 @@ class KidHomePage extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Get.to(() =>   SelectJarColorScreen());
+                            Get.to(() => SelectJarColorScreen());
                           },
                           child: SvgPicture.asset(
                             AppAssets.kidEmptyJarIcon,
@@ -143,10 +148,11 @@ class KidHomePage extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.only(right: 10.w),
-                child: FutureBuilder<DocumentSnapshot>(
+                child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   future: FirebaseFirestore.instance
                       .collection('kids') // Replace with your collection name
-                      .doc('kids') // Fetch the document by the kid's ID
+                      .where('parentId',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .get(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -163,7 +169,7 @@ class KidHomePage extends StatelessWidget {
                             .copyWith(color: AppColors.textOnPrimary),
                       );
                     }
-                    if (!snapshot.hasData || snapshot.data?.data() == null) {
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Text(
                         "No Data",
                         style: AppTextStyle.headingMedium
@@ -171,9 +177,9 @@ class KidHomePage extends StatelessWidget {
                       );
                     }
 
-                    // Retrieve the name of the kid
-                    final kidName =
-                        snapshot.data!['name'] as String? ?? "Unknown";
+                    // Retrieve the name and avatar of the first kid in the list
+                    final kidData = snapshot.data!.docs.first.data();
+                    final kidName = kidData['name'] as String? ?? "Unknown";
 
                     return Padding(
                       padding: EdgeInsets.only(left: 8.w),
@@ -191,18 +197,47 @@ class KidHomePage extends StatelessWidget {
           Positioned(
             top: -12.h,
             left: 0.w,
-            child: Container(
-              height: 45.h,
-              width: 45.w,
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                    image: AssetImage(
-                        "assets/child_avatar_image_pngs/Frame 1.png")),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.textOnPrimary,
-                ),
-              ),
+            child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              future: FirebaseFirestore.instance
+                  .collection('kids')
+                  .where('parentId',
+                      isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator(); // Placeholder while loading
+                }
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    snapshot.data!.docs.isEmpty) {
+                  return CircleAvatar(
+                    radius: 22.h,
+                    backgroundImage: AssetImage(
+                        "assets/child_avatar_image_pngs/Frame 1.png"),
+                  );
+                }
+
+                // Retrieve avatar URL
+                final kidData = snapshot.data!.docs.first.data();
+                final kidAvatar = kidData['avatar'] as String? ?? "";
+
+                return Container(
+                  height: 45.h,
+                  width: 45.w,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: kidAvatar.startsWith('http')
+                          ? NetworkImage(kidAvatar) as ImageProvider
+                          : AssetImage(kidAvatar),
+                      // fit: BoxFit.cover,
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.textOnPrimary,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -211,7 +246,7 @@ class KidHomePage extends StatelessWidget {
   }
 
   // card container icon
-  cardContainerIcon() {
+  Widget cardContainerIcon() {
     return SizedBox(
       height: 27.h,
       width: 120.w,
@@ -234,13 +269,38 @@ class KidHomePage extends StatelessWidget {
                 border: Border.all(color: AppColors.textPrimary, width: 2.w),
               ),
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: 10.w,
-                ),
-                child: Text(
-                  "€00",
-                  style: AppTextStyle.headingMedium
-                      .copyWith(color: AppColors.textOnPrimary),
+                padding: EdgeInsets.only(left: 10.w),
+                child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  future: FirebaseFirestore.instance
+                      .collection('kids')
+                      .where('parentId',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Placeholder while loading
+                    }
+                    if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        snapshot.data!.docs.isEmpty) {
+                      return CircleAvatar(
+                        radius: 22.h,
+                        backgroundImage: AssetImage(
+                            "assets/child_avatar_image_pngs/Frame 1.png"),
+                      );
+                    }
+
+                    // Access spendings.amount
+                    final data = snapshot.data!.docs.first.data();
+                    final spendingsAmount =
+                        data['spendings']['amount']?.toString() ?? "€00";
+
+                    return Text(
+                      "€$spendingsAmount",
+                      style: AppTextStyle.headingMedium
+                          .copyWith(color: AppColors.textOnPrimary),
+                    );
+                  },
                 ),
               ),
             ),
@@ -250,7 +310,6 @@ class KidHomePage extends StatelessWidget {
             child: Container(
               color: Colors.transparent,
               height: 25.h,
-              // width: 80.w,
               child: SvgPicture.asset(AppAssets.kidCardICon, height: 25.h),
             ),
           ),
@@ -352,10 +411,41 @@ class KidHomePage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Padding(
                   padding: EdgeInsets.only(right: 8.w, left: 8.w),
-                  child: Text(
-                    '€00',
-                    style: AppTextStyle.headingMedium
-                        .copyWith(color: AppColors.textOnPrimary),
+                  child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    future: FirebaseFirestore.instance
+                        .collection('kids')
+                        .where('parentId',
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Placeholder while loading
+                      }
+                      if (snapshot.hasError ||
+                          !snapshot.hasData ||
+                          snapshot.data!.docs.isEmpty) {
+                        return CircleAvatar(
+                          radius: 22.h,
+                          backgroundImage: AssetImage(
+                              "assets/child_avatar_image_pngs/Frame 1.png"),
+                        );
+                      }
+
+                      final data = snapshot.data!.docs.first.data();
+                      final spendingAmount = double.tryParse(
+                              data['spendings']['amount']?.toString() ?? "0") ??
+                          0.0;
+                      final savingsAmount = double.tryParse(
+                              data['savings']['amount']?.toString() ?? "0") ??
+                          0.0;
+                      final totalBalance = spendingAmount + savingsAmount;
+
+                      return Text(
+                        "€$totalBalance",
+                        style: AppTextStyle.headingMedium
+                            .copyWith(color: AppColors.textOnPrimary),
+                      );
+                    },
                   ),
                 ),
               ),

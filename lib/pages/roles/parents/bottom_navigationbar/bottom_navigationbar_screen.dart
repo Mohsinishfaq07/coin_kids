@@ -9,8 +9,8 @@ import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class ParentBottomNavigationBar extends StatelessWidget {
   ParentBottomNavigationBar({super.key});
-  final BottomNavigationbarController controller =
-      Get.put(BottomNavigationbarController());
+  final  controller =
+      Get.put(ParentNavigationBarController());
 
   bool _isOnHomeScreen = false;
 

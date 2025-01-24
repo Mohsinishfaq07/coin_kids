@@ -3,15 +3,32 @@ import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class AmountScreen extends StatelessWidget {
+class AmountScreen extends StatefulWidget {
   AmountScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AmountScreen> createState() => _AmountScreenState();
+}
+
+class _AmountScreenState extends State<AmountScreen> {
+  final parentController = Get.find<ParentHomeController>();
+  @override
+  void initState() {
+    super.initState();
+    homeController.fetchParentDetails();
+    homeController.fetchKids();
+  }
+
+  final ParentHomeController homeController = Get.put(ParentHomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,66 +61,91 @@ class AmountScreen extends StatelessWidget {
               SizedBox(height: 16.h),
               Text("Enter the amount 💸💰", style: AppTextStyle.headingLarge),
               SizedBox(height: 20.h),
-              KidCustomTextField(hintText: "e.g 10.50 €", onChange: (val) {}),
+              KidCustomTextField(
+                  keyboardType: TextInputType.number,
+                  hintText: "e.g 10.50 €",
+                  onChange: (val) {
+                    parentController.amount.value = val;
+                  }),
               Padding(
-                padding: EdgeInsets.only(right: 20.w, top: 16.h),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.to(() => AddMoneyScreen());
-                    },
-                    child: Container(
-                      width: 120.w,
-                      height: 32.h,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF19B859),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 2.22.w, color: const Color(0xFF0E9454)),
-                          borderRadius: BorderRadius.circular(20.r),
+                  padding: EdgeInsets.only(right: 20.w, top: 16.h),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (parentController.amount.value.isEmpty) {
+                          Fluttertoast.showToast(
+                            msg: "Please Enter amount ",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: AppColors.textHighlighted,
+                            textColor: AppColors.textOnPrimary,
+                            fontSize: 16.0.sp,
+                          );
+                        }
+                        double enteredAmount =
+                            double.parse(parentController.amount.value);
+
+                        await firestoreOperations.parentFirebaseFunctions
+                            .kidSpendingToSavings(
+                                save: false,
+                                childId: homeController.kidsList[0]['id'],
+                                enteredAmount: enteredAmount);
+                        Get.to(() => AddMoneyScreen());
+                      },
+                      child: Container(
+                        width: 120.w,
+                        height: 32.h,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFF19B859),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                width: 2.22.w, color: const Color(0xFF0E9454)),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 20.w,
+                              right: 12.w,
+                              top: 4.h,
+                              bottom: 4.h,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Next",
+                                      style: AppTextStyle.headingMedium.copyWith(
+                                          color: AppColors.textOnPrimary,
+                                          fontSize: 22.sp),
+                                    ),
+                                    SizedBox(width: 10.w),
+                                    Center(
+                                      child: SvgPicture.asset(
+                                        "assets/arrorDirectionNoShadow.svg",
+                                        height: 12.h,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 1,
+                              top: 1.29,
+                              child: Image.asset(
+                                "assets/Button_shadow.png",
+                                height: 10.h,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 20.w,
-                            right: 12.w,
-                            top: 4.h,
-                            bottom: 4.h,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Next",
-                                  style: AppTextStyle.headingMedium.copyWith(
-                                      color: AppColors.textOnPrimary,
-                                      fontSize: 22.sp),
-                                ),
-                                SizedBox(width: 12.w),
-                                Center(
-                                  child: SvgPicture.asset(
-                                    "assets/arrorDirectionNoShadow.svg",
-                                    height: 12.h,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            left: 1,
-                            top: 1.29,
-                            child: Image.asset(
-                              "assets/Button_shadow.png",
-                              height: 10.h,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                ),
-              ),
+                  )),
             ],
           ),
         ),

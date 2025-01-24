@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 
 late FirebaseAuthController firebaseAuthController;
 late FirestoreOperations firestoreOperations;
-late ParentController parentController;
+// late ParentController parentController;
 controllerAndClassInitialization() async {
   firebaseAuthController = Get.put(FirebaseAuthController());
   firestoreOperations = Get.put(FirestoreOperations());
-  parentController = Get.put(ParentController());
+  // parentController = Get.put(ParentController());
 }

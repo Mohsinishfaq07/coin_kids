@@ -26,15 +26,17 @@ class ParentsHomeScreen extends StatefulWidget {
 
 class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   final ParentHomeController parentHomeController =
-      Get.find<ParentHomeController>();
-  final bottomNavigationBarContrller = Get.put(BottomNavigationbarController());
+      Get.put(ParentHomeController());
+
+  final bottomNavigationBarController =
+      Get.put(ParentNavigationBarController());
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       parentHomeController.fetchParentDetails();
       parentHomeController.fetchKids();
-      bottomNavigationBarContrller.loadAvatarFromPreferences();
+      bottomNavigationBarController.loadAvatarFromPreferences();
     });
   }
 
@@ -64,7 +66,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                   );
                 },
                 child: Obx(() {
-                  if (bottomNavigationBarContrller
+                  if (bottomNavigationBarController
                       .customAvatarPath.value.isNotEmpty) {
                     // Show the selected image
                     return Container(
@@ -73,7 +75,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: FileImage(File(bottomNavigationBarContrller
+                          image: FileImage(File(bottomNavigationBarController
                               .customAvatarPath.value)),
                           fit: BoxFit.cover,
                         ),

@@ -14,39 +14,36 @@ class ParentHomeController extends GetxController {
   var parentName = ''.obs; // Observable to hold the parent's name
   var kidName = ''.obs; //
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  RxString selectedChildIdForQuickTransfer = ''.obs;
+  RxString selectedChildNameForQuickTransfer = ''.obs;
+
+  // controller values  for parent quick transfer
+  RxString amount = ''.obs;
+  RxString message = ''.obs;
+  RxString amountValidation = ''.obs;
 
   // Add any controller logic if needed (e.g., API calls, navigation)
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchParentDetails();
+    // fetchKids();
+  }
 
+  Future<bool> fetchKids() async {
+    // Get.log('kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
+    try {
+      isLoading.value = true; // Start loading
 
-Future<bool> fetchKids() async {
-  Get.log('kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
-  try {
-    isLoading.value = true; // Start loading
+      // Fetch the initial snapshot
+      final QuerySnapshot initialSnapshot = await _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
-    // Fetch the initial snapshot
-    final QuerySnapshot initialSnapshot = await _firestore
-        .collection('kids')
-        .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .get();
-
-    // Process the initial data
-    kidsList.value = initialSnapshot.docs.map((doc) {
-      var docData = doc.data() as Map<String, dynamic>?;
-      if (docData != null) {
-        docData['id'] = doc.id;
-        Get.log('kids app doc id: ${doc.id}');
-      }
-      return docData ?? {};
-    }).toList();
-
-    // Listen to updates for real-time changes
-    _firestore
-        .collection('kids')
-        .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .snapshots()
-        .listen((QuerySnapshot snapshot) {
-      kidsList.value = snapshot.docs.map((doc) {
+      // Process the initial data
+      kidsList.value = initialSnapshot.docs.map((doc) {
         var docData = doc.data() as Map<String, dynamic>?;
         if (docData != null) {
           docData['id'] = doc.id;
@@ -55,24 +52,34 @@ Future<bool> fetchKids() async {
         return docData ?? {};
       }).toList();
 
-      isLoading.value = false;
-      Get.log('kids app kid list status: ${kidsList.isNotEmpty}');
-    });
+      // Listen to updates for real-time changes
+      _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((QuerySnapshot snapshot) {
+        kidsList.value = snapshot.docs.map((doc) {
+          var docData = doc.data() as Map<String, dynamic>?;
+          if (docData != null) {
+            docData['id'] = doc.id;
+            Get.log('kids app doc id: ${doc.id}');
+          }
+          return docData ?? {};
+        }).toList();
 
-    isLoading.value = false; // Stop loading
-    return kidsList.isNotEmpty; // Return whether kidsList has data
-  } catch (e) {
-    isLoading.value = false; // Ensure loading is stopped on error
-    Get.snackbar("Error", "Failed to fetch kids: $e");
-    return false; // Return false in case of an error
+        isLoading.value = false;
+        Get.log('kids app kid list status: ${kidsList.isNotEmpty}');
+      });
+
+      isLoading.value = false; // Stop loading
+      return kidsList.isNotEmpty; // Return whether kidsList has data
+    } catch (e) {
+      isLoading.value = false; // Ensure loading is stopped on error
+      Get.snackbar("Error", "Failed to fetch kids: $e");
+      return false; // Return false in case of an error
+    }
   }
-}
 
-
-
-
-
- 
   void fetchParentDetails() async {
     try {
       isLoading.value = true; // Start loading
