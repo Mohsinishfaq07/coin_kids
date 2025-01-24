@@ -12,6 +12,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
+import '../roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
+
 class ParentOnboardingScreen extends StatelessWidget {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
@@ -21,6 +23,8 @@ class ParentOnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    PortraitOrientation();
     const List<Widget> pages = [
       OnboardingPage(
         title: "Earn",

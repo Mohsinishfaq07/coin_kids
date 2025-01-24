@@ -17,7 +17,7 @@ class KidHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    setOrientationAndStatusBar();
+    landScapeOrientation();
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: false,

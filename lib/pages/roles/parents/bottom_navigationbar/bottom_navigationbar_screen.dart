@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import '../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class ParentBottomNavigationBar extends StatelessWidget {
@@ -16,6 +17,8 @@ class ParentBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PortraitOrientation();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.currentIndex.value != 0) {
         controller.currentIndex.value = 0;

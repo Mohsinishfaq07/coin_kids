@@ -12,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../app_assets.dart';
 import '../../theme/color_theme.dart';
+import 'kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   RoleSelectionScreen({super.key});
@@ -21,6 +22,8 @@ class RoleSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PortraitOrientation();
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(

@@ -13,6 +13,7 @@ import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/components/AppButton.dart';
 import '../../../../../theme/text_theme.dart';
+import '../../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -21,6 +22,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PortraitOrientation();
     final screenWidth = MediaQuery.of(context).size.width;
 
     return PopScope(

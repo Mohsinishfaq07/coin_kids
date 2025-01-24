@@ -16,6 +16,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../../../../../theme/color_theme.dart';
+import '../../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class ParentsHomeScreen extends StatefulWidget {
   const ParentsHomeScreen({super.key});
@@ -42,6 +43,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PortraitOrientation();
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 60.h,

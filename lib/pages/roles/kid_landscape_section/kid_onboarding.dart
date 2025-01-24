@@ -19,7 +19,7 @@ class KidSectionOnboarding extends StatelessWidget {
   Widget build(BuildContext context) {
     final KidsOnBoardingController kidSectionOnboardingController =
         Get.put(KidsOnBoardingController());
-    setOrientationAndStatusBar();
+    landScapeOrientation();
     return Scaffold(
       extendBodyBehindAppBar: false,
       // appBar: kidsAppBar(
