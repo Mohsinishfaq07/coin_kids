@@ -18,7 +18,7 @@ class RoleSelectionScreen extends StatelessWidget {
   RoleSelectionScreen({super.key});
   // final splashCOntroller = Get.put(SplashController());
   final firebaseAuthController = Get.put(FirebaseAuthController());
-  final homeController = Get.put(ParentHomeController());
+  final parentController = Get.put(ParentController());
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class RoleSelectionScreen extends StatelessWidget {
                       final isParent = await firebaseAuthController
                           .checkIfParent(firebaseAuthController.email.value);
                       if (isParent) {
-                        bool parentHasKids = await homeController.fetchKids();
+                        bool parentHasKids = await parentController.fetchKids();
                         if (parentHasKids) {
                           Get.off(() => ParentBottomNavigationBar());
                         } else {
@@ -79,11 +79,11 @@ class RoleSelectionScreen extends StatelessWidget {
                       final isParent = await firebaseAuthController
                           .checkIfParent(firebaseAuthController.email.value);
                       if (isParent) {
-                        bool parentHasKids = await homeController.fetchKids();
+                        bool parentHasKids = await parentController.fetchKids();
                         if (parentHasKids) {
                           Get.off(() => KidHomePage());
                         } else {
-                          Get.off(() => const KidSectionOnboarding());
+                          Get.off(() =>   KidSectionOnboarding());
                         }
                         // Navigate to ParentBottomNavigationBar if user is a parent
                       } else {

@@ -6,7 +6,7 @@ import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/p
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-class ParentHomeController extends GetxController {
+class ParentController extends GetxController {
   var parentId = ''
       .obs; // Parent ID (can be passed dynamically or fetched from authentication)
   var kidsList = [].obs; // List to store kids data

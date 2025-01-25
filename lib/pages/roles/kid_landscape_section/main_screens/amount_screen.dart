@@ -20,16 +20,15 @@ class AmountScreen extends StatefulWidget {
 }
 
 class _AmountScreenState extends State<AmountScreen> {
-  final parentController = Get.find<ParentHomeController>();
+  final parentController =  Get.put(ParentController());
   @override
   void initState() {
     super.initState();
-    homeController.fetchParentDetails();
-    homeController.fetchKids();
+    parentController.fetchParentDetails();
+    parentController.fetchKids();
   }
 
-  final ParentHomeController homeController = Get.put(ParentHomeController());
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +88,7 @@ class _AmountScreenState extends State<AmountScreen> {
                         await firestoreOperations.parentFirebaseFunctions
                             .kidSpendingToSavings(
                                 save: false,
-                                childId: homeController.kidsList[0]['id'],
+                                childId: parentController.kidsList[0]['id'],
                                 enteredAmount: enteredAmount);
                         Get.to(() => AddMoneyScreen());
                       },

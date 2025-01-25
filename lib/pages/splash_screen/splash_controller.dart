@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 class SplashController extends GetxController {
   final FirebaseAuthController firebaseAuthController =
       Get.put(FirebaseAuthController());
-  final ParentHomeController homeController = Get.put(ParentHomeController());
+  final parentController = Get.put(ParentController());
 
   @override
   void onInit() {
@@ -32,7 +32,7 @@ class SplashController extends GetxController {
       // Fetch user role from Firestore
       final isParent = await _checkIfParent(user.email!);
       if (isParent) {
-        bool parentHasKids = await homeController.fetchKids();
+        bool parentHasKids = await parentController.fetchKids();
         if (parentHasKids) {
           Get.off(() => ParentBottomNavigationBar());
         } else {
@@ -57,7 +57,7 @@ class SplashController extends GetxController {
           final isParent =
               await _checkIfParent(firebaseAuthController.email.value);
           if (isParent) {
-            if (homeController.kidsList.isNotEmpty) {
+            if (parentController.kidsList.isNotEmpty) {
               Get.off(() => ParentBottomNavigationBar());
             } else {
               Get.off(() => const ParentsHomeScreen());
@@ -103,5 +103,4 @@ class SplashController extends GetxController {
 
     return false; // Default to kid if no matching document is found
   }
-
 }

@@ -27,7 +27,7 @@ class ParentFirebaseFunctions {
 
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   AddChildController addChildController = Get.put(AddChildController());
-  final ParentHomeController homeController = Get.put(ParentHomeController());
+  final ParentController homeController = Get.put(ParentController());
   // fetch the details of parent
   Stream<Map<String, dynamic>?> fetchParentData() {
     try {
@@ -199,7 +199,7 @@ class ParentFirebaseFunctions {
       Get.log(
         'Added new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
-      Get.off(() => ParentBottomNavigationBar());
+      // Get.off(() => ParentBottomNavigationBar());
 
       Get.snackbar("Success", "Child added and parent updated successfully");
     } catch (e) {

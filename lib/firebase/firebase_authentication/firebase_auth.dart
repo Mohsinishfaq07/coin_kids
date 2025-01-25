@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
-import 'package:coin_kids/pages/roles/kid/kid_bottom_nav/kid_bottom_nav_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
@@ -19,9 +18,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-
 class FirebaseAuthController extends GetxController {
-final ParentHomeController homeController = Get.put(ParentHomeController());  final email = ''.obs;
+  final ParentController homeController = Get.put(ParentController());
+  final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
   final username = ''.obs;
@@ -74,17 +73,13 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
         email: email.value,
         password: pin.value,
       );
-      
-   await    saveParentInfo(
-          fieldName: 'email',
-          fieldValue: email.value);
-      saveInfoLocally(
-          email.value,
-          pin.value);
+
+      await saveParentInfo(fieldName: 'email', fieldValue: email.value);
+      saveInfoLocally(email.value, pin.value);
       // saveUserInfo(fieldName: 'email', fieldValue: email.value);
       // await saveParentInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
-      Get.off(() =>   RoleSelectionScreen());
+      Get.off(() => RoleSelectionScreen());
       // Get.offAll(() => BottomNavigationBarScreen());
     } on FirebaseAuthException catch (e) {
       Get.back();
@@ -104,8 +99,9 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
       Get.log(e.toString());
     }
   }
- // save user info
- Future<void> saveParentInfo(
+
+  // save user info
+  Future<void> saveParentInfo(
       {required String fieldName, required String fieldValue}) async {
     try {
       await FirebaseFirestore.instance
@@ -128,7 +124,6 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
       Get.log(e.toString());
     }
   }
-
 
   Future<void> saveInfoLocally(String email, String password) async {
     try {
@@ -200,27 +195,26 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
     }
   }
 
-  signUpWithNumber() {
-    if (!RegExp(r'^\d+$').hasMatch(number.value)) {
-      Get.snackbar(
-        "Error",
-        "Enter valid number!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-    try {
-      // phone validation
-      //get otp
-      //verify otp
-      //store user information
-      //all set
-    } catch (e) {
-      Get.log(e.toString());
-    }
-  }
+  // signUpWithNumber() {
+  //   if (!RegExp(r'^\d+$').hasMatch(number.value)) {
+  //     Get.snackbar(
+  //       "Error",
+  //       "Enter valid number!",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //     return;
+  //   }
+  //   try {
+  //     // phone validation
+  //     //get otp
+  //     //verify otp
+  //     //store user information
+  //     //all set
+  //   } catch (e) {
+  //     Get.log(e.toString());
+  //   }
+  // }
 
- 
   saveKidInfo({required String fieldName, required String fieldValue}) async {
     try {
       await FirebaseFirestore.instance.collection('kids').doc(fieldValue).set({
@@ -241,7 +235,6 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
   }
 
   Future<void> loginWithEmail() async {
-
     try {
       isEmailLoading.value = true; // Start loading
       showDialog(
@@ -257,9 +250,8 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
       //     fieldValue: email.value);
       // await saveInfoLocally(email.value, pin.value);
       // Get.back(); // Stop loading
-      Get.offAll(  RoleSelectionScreen());
+      Get.offAll(RoleSelectionScreen());
       // Fetch user role from Firestore
-
 
       // Navigate to Home Screen
     } on FirebaseAuthException catch (e) {
@@ -330,7 +322,7 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
           // Navigate to ParentBottomNavigationBar if user is a parent
         } else {
           // Navigate to KidMyMoney if user is a kid
-          Get.off(() => KidBottomNavScreen());
+          Get.off(() => KidHomePage());
         }
 
         // comment out above  line and add these instead of them
@@ -390,30 +382,13 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
 
   // forget credentials
 
-  Future<void> resetPassword(String email) async {
-    showDialog(
-        context: Get.context!,
-        builder: (context) => LoadingProgressDialogueWidget(
-              title: "Processing",
-            ));
-
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      Get.back();
-      Get.snackbar('Alert', 'Check your inbox for password reset link');
-    } catch (e) {
-      Get.back();
-      Get.snackbar('Alert', e.toString());
-    }
-  }
-
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     await clearCredentials(); // Clear local credentials
     isEmailLoading.value = false;
     isGoogleLoading.value = false;
     isAppleLoading.value = false;
-    Get.offAll(() =>LoginScreen());
+    Get.offAll(() => LoginScreen());
   }
 
   Future<bool> checkIfParent(String email) async {
@@ -444,25 +419,41 @@ final ParentHomeController homeController = Get.put(ParentHomeController());  fi
   }
 
 // update kid name
-  Future<void> updateKidName(String kidId, String newName) async {
+  // Future<void> updateKidName(String kidId, String newName) async {
+  //   try {
+  //     // Update the name field in the kid's document
+  //     await FirebaseFirestore.instance.collection('kids').doc(kidId).update({
+  //       'name': newName,
+  //     });
+  //     Get.snackbar(
+  //       "Success",
+  //       "Kid's name updated successfully!",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   } catch (e) {
+  //     // Log the error and show a message
+  //     Get.log("Error updating kid's name: $e");
+  //     Get.snackbar(
+  //       "Error",
+  //       "Failed to update the kid's name.",
+  //       snackPosition: SnackPosition.BOTTOM,
+  //     );
+  //   }
+  // }
+  Future<void> resetPassword(String email) async {
+    showDialog(
+        context: Get.context!,
+        builder: (context) => LoadingProgressDialogueWidget(
+              title: "Processing",
+            ));
+
     try {
-      // Update the name field in the kid's document
-      await FirebaseFirestore.instance.collection('kids').doc(kidId).update({
-        'name': newName,
-      });
-      Get.snackbar(
-        "Success",
-        "Kid's name updated successfully!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      Get.back();
+      Get.snackbar('Alert', 'Check your inbox for password reset link');
     } catch (e) {
-      // Log the error and show a message
-      Get.log("Error updating kid's name: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to update the kid's name.",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.back();
+      Get.snackbar('Alert', e.toString());
     }
   }
 }

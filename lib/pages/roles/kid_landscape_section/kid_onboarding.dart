@@ -5,6 +5,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_b
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class KidSectionOnboarding extends StatelessWidget {
-  const KidSectionOnboarding({super.key});
+  KidSectionOnboarding({super.key});
+  final _addChildController = Get.put(AddChildController());
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +98,11 @@ class KidSectionOnboarding extends StatelessWidget {
                             ),
                             KidCustomTextField(
                                 hintText: "“Enter your name” e.g. Alex",
-                                onChange: (val) {
-                                  firebaseAuthController.username.value =
-                                      val.trim();
+                                onChange: (value) {
+                                  // firebaseAuthController.username.value =
+                                  //     val.trim();
+                                  _addChildController.childName.value =
+                                      value.trim();
                                 }),
                             SizedBox(
                               height: MediaQuery.of(context).size.height *
@@ -248,9 +252,21 @@ class KidSectionOnboarding extends StatelessWidget {
                                 return Align(
                                   alignment: Alignment.center,
                                   child: GestureDetector(
+                                    // onTap: () {
+                                    //   kidSectionOnboardingController
+                                    //           .selectedAge.value =
+                                    //       kidSectionOnboardingController
+                                    //           .ageList[index];
+                                    // },
                                     onTap: () {
+                                      // Set the selected age in kidSectionOnboardingController
                                       kidSectionOnboardingController
                                               .selectedAge.value =
+                                          kidSectionOnboardingController
+                                              .ageList[index];
+
+                                      // Store the same value in _addChildController.childAge
+                                      _addChildController.childAge.value =
                                           kidSectionOnboardingController
                                               .ageList[index];
                                     },
@@ -429,8 +445,12 @@ class KidSectionOnboarding extends StatelessWidget {
                                   itemCount: kidSectionOnboardingController
                                       .avatars.length,
                                   itemBuilder: (context, index) {
+                                    final avatarIndex = index - 1;
                                     return GestureDetector(
-                                      onTap: () {},
+                                      onTap: () async {
+                                        _addChildController
+                                            .selectAvatar(avatarIndex);
+                                      },
                                       child: CircleAvatar(
                                         radius: 30.r,
                                         backgroundColor: Colors.grey[200],
@@ -540,7 +560,15 @@ class KidSectionOnboarding extends StatelessWidget {
                                   padding:
                                       EdgeInsets.only(right: 20.w, left: 20.w),
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
+                                      if (!firebaseAuthController
+                                          .isNormalLoading.value) {
+                                        firebaseAuthController
+                                            .isNormalLoading.value = true;
+                                        await firestoreOperations
+                                            .parentFirebaseFunctions
+                                            .addChildAndUpdateParent();
+                                      }
                                       Get.to(() => const KidHomePage());
                                     },
                                     child: Container(
@@ -567,7 +595,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  "Next",
+                                                  "Done",
                                                   style: AppTextStyle
                                                       .headingMedium
                                                       .copyWith(

@@ -97,11 +97,11 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
   @override
   void initState() {
     super.initState();
-    homeController.fetchParentDetails();
-    homeController.fetchKids();
+    parentController.fetchParentDetails();
+    parentController.fetchKids();
   }
 
-  final ParentHomeController homeController = Get.put(ParentHomeController());
+  final   parentController = Get.put(ParentController());
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +201,7 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
                             colors[colorController.selectedColorIndex.value];
                         colorController.updateSpendingJarColor(
                           save: true,
-                          childId: homeController.kidsList[0]['id'],
+                          childId: parentController.kidsList[0]['id'],
                           spendingJarColor: selectedColor,
                         );
                       }

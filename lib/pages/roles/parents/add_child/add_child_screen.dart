@@ -4,6 +4,7 @@ import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'package:get/get.dart';
 import '../../../../theme/color_theme.dart';
 
 class AddChildScreen extends StatelessWidget {
-  final AddChildController _controller = Get.put(AddChildController());
+  final AddChildController _addChildController = Get.put(AddChildController());
 
   AddChildScreen({super.key});
 
@@ -40,7 +41,7 @@ class AddChildScreen extends StatelessWidget {
                   titleText: "Child name",
                   hintText: "Enter your child name",
                   onChanged: (value) =>
-                      _controller.childName.value = value.trim(),
+                      _addChildController.childName.value = value.trim(),
                 ),
                 SizedBox(height: 16.h),
 
@@ -50,7 +51,7 @@ class AddChildScreen extends StatelessWidget {
                   hintText: "Enter child's age",
                   keyboardType: TextInputType.number,
                   onChanged: (value) =>
-                      _controller.childAge.value = value.trim(),
+                      _addChildController.childAge.value = value.trim(),
                 ),
                 SizedBox(height: 19.h),
 
@@ -73,27 +74,27 @@ class AddChildScreen extends StatelessWidget {
                       crossAxisSpacing: 26.w, // Space between columns
                       mainAxisSpacing: 16.h, // Space between rows
                     ),
-                    itemCount: _controller.avatars.length + 1,
+                    itemCount: _addChildController.avatars.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         // First item: Custom Avatar Picker
                         return Obx(
                           () => GestureDetector(
                             onTap: () async {
-                              await _controller.pickCustomAvatar();
+                              await _addChildController.pickCustomAvatar();
                             },
                             child: Padding(
                               padding: EdgeInsets.all(4.h),
                               child: CircleAvatar(
                                 radius: 2,
                                 backgroundColor: Colors.purple,
-                                backgroundImage: _controller
+                                backgroundImage: _addChildController
                                         .customAvatarPath.value.isEmpty
                                     ? null
                                     : FileImage(File(
-                                        _controller.customAvatarPath.value)),
+                                        _addChildController.customAvatarPath.value)),
                                 child:
-                                    _controller.customAvatarPath.value.isEmpty
+                                    _addChildController.customAvatarPath.value.isEmpty
                                         ? Center(
                                             child: Image.asset(
                                               "assets/child_avatar_image_pngs/CameraIcon.png",
@@ -112,7 +113,7 @@ class AddChildScreen extends StatelessWidget {
                         return Obx(
                           () => GestureDetector(
                             onTap: () {
-                              _controller.selectAvatar(avatarIndex);
+                              _addChildController.selectAvatar(avatarIndex);
                             },
                             child: Padding(
                               padding: EdgeInsets.all(4.h),
@@ -124,7 +125,7 @@ class AddChildScreen extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color:
-                                            _controller.selectedAvatar.value ==
+                                            _addChildController.selectedAvatar.value ==
                                                     avatarIndex
                                                 ? Colors.purple
                                                 : Colors.transparent,
@@ -132,7 +133,7 @@ class AddChildScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(60.r),
                                     ),
                                     child: Image.asset(
-                                      _controller.avatars[avatarIndex],
+                                      _addChildController.avatars[avatarIndex],
                                       height:
                                           60.h, // Adjust the size of the avatar
                                       width: 60.w,
@@ -140,7 +141,7 @@ class AddChildScreen extends StatelessWidget {
                                     ),
                                   ),
                                   // Centered Check Icon (only when the avatar is selected)
-                                  if (_controller.selectedAvatar.value ==
+                                  if (_addChildController.selectedAvatar.value ==
                                       avatarIndex)
                                     Positioned(
                                       child: Container(
@@ -176,6 +177,7 @@ class AddChildScreen extends StatelessWidget {
                       firebaseAuthController.isNormalLoading.value = true;
                       await firestoreOperations.parentFirebaseFunctions
                           .addChildAndUpdateParent();
+                          Get.off(() => ParentBottomNavigationBar());
                     }
                   },
                 )),

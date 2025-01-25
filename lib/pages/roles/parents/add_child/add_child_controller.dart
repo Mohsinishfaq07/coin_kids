@@ -57,7 +57,6 @@ class AddChildController extends GetxController {
     "assets/child_avatar_image_pngs/Frame 34.png",
     "assets/child_avatar_image_pngs/Frame 35.png",
     "assets/child_avatar_image_pngs/Frame 36.png"
-
   ];
   @override
   void onInit() {

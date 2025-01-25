@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/message_placeholder_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/shop/shop.dart';
@@ -19,7 +18,7 @@ class ParentNavigationBarController extends GetxController {
     //KidZoneScreen(),
   ];
 
- Future<void> loadAvatarFromPreferences() async {
+  Future<void> loadAvatarFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     final storedPath = prefs.getString('profileImagePath');
 
@@ -82,34 +81,5 @@ class ParentNavigationBarController extends GetxController {
       rethrow;
     }
   }
-
-
-
-
-
-
-
-
-
 }
 
- 
-
-
-
-class KidZoneScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Kid Zone'),
-      ),
-      body: Center(
-        child: Text(
-          'Welcome to Kid Zone Screen',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
-  }
-}

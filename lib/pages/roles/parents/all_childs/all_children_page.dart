@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/controllers/parent_controller.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
 import 'package:coin_kids/features/custom_widgets/quick_transfer_text_field.dart';
@@ -20,7 +19,7 @@ import '../../../../app_assets.dart';
 import '../../../../theme/color_theme.dart';
 
 class AllChildrenPage extends StatelessWidget {
-  final parentController = Get.find<ParentHomeController>();
+  final parentController = Get.find<ParentController>();
   AllChildrenPage({super.key});
 
   @override

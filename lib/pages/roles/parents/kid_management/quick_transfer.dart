@@ -23,7 +23,7 @@ class QuickTransferPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      final homeController = Get.put(ParentHomeController());
+      final parentController = Get.put(ParentController());
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -109,7 +109,7 @@ class QuickTransferPage extends StatelessWidget {
                         hintText: "0,00",
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
-                          homeController.amount.value = val;
+                          parentController.amount.value = val;
                         },
                         prefix: SvgPicture.asset("assets/currency_euro.svg")),
                     SizedBox(height: 24.h),
@@ -160,16 +160,16 @@ class QuickTransferPage extends StatelessWidget {
                             size: Size(125.w, 50.h),
                             text: '- Remove',
                             backgroundColor:
-                                homeController.amount.value.isNotEmpty
+                                parentController.amount.value.isNotEmpty
                                     ? AppColors.buttonPrimary
                                     : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (homeController.amount.value.isEmpty) {
-                                homeController.amountValidation.value =
+                              if (parentController.amount.value.isEmpty) {
+                                parentController.amountValidation.value =
                                     'Enter valid amount';
                               } else {
                                 double enteredAmount =
-                                    double.parse(homeController.amount.value);
+                                    double.parse(parentController.amount.value);
 
                                 await firestoreOperations
                                     .parentFirebaseFunctions
@@ -187,17 +187,17 @@ class QuickTransferPage extends StatelessWidget {
                             size: Size(125.w, 50.h),
                             text: '+ Send',
                             backgroundColor:
-                                homeController.amount.value.isNotEmpty
+                                parentController.amount.value.isNotEmpty
                                     ? AppColors.buttonPrimary
                                     : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (homeController.amount.value.isEmpty) {
-                                homeController.amountValidation.value =
+                              if (parentController.amount.value.isEmpty) {
+                                parentController.amountValidation.value =
                                     'Enter valid amount';
                               } else {
                                 try {
                                   double enteredAmount = double.parse(
-                                      homeController.amount.value);
+                                      parentController.amount.value);
 
                                   await firestoreOperations
                                       .parentFirebaseFunctions

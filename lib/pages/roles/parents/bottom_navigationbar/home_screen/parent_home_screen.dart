@@ -26,8 +26,8 @@ class ParentsHomeScreen extends StatefulWidget {
 }
 
 class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
-  final ParentHomeController parentHomeController =
-      Get.put(ParentHomeController());
+  final   parentController =
+      Get.put(ParentController());
 
   final bottomNavigationBarController =
       Get.put(ParentNavigationBarController());
@@ -35,8 +35,8 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      parentHomeController.fetchParentDetails();
-      parentHomeController.fetchKids();
+      parentController.fetchParentDetails();
+      parentController.fetchKids();
       bottomNavigationBarController.loadAvatarFromPreferences();
     });
   }
@@ -98,7 +98,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(() => Text(
-                        parentHomeController.parentName.value,
+                        parentController.parentName.value,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
@@ -117,14 +117,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
           ),
           child: Obx(
             () {
-              if (parentHomeController.isLoading.value) {
+              if (parentController.isLoading.value) {
                 // Show loading indicator
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              if (parentHomeController.kidsList.isEmpty) {
+              if (parentController.kidsList.isEmpty) {
                 // No kids available
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -233,17 +233,17 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.all(16),
-                        itemCount: parentHomeController.kidsList.length +
+                        itemCount: parentController.kidsList.length +
                             1, // Add 1 for "Add" circle at the end
                         itemBuilder: (context, index) {
-                          if (index == parentHomeController.kidsList.length) {
+                          if (index == parentController.kidsList.length) {
                             // Last item: Add circle
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  if (parentHomeController
+                                  if (parentController
                                       .kidsList.isNotEmpty) {
                                     Fluttertoast.showToast(
                                       msg: "You already have a child added.",
@@ -295,7 +295,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                             );
                           } else {
                             // Other items: Display kids' data
-                            final kid = parentHomeController.kidsList[
+                            final kid = parentController.kidsList[
                                 index]; // Use index directly for kidsList
 
                             return Padding(
