@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/pages/onboard/parent_onboarding_screen.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
+import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -23,12 +24,14 @@ class SplashController extends GetxController {
   /// Check if the user is logged in and navigate accordingly
   void _checkLoginStatus() async {
     // Simulate a splash screen delay (3 seconds)
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
 
     // Check if user is already logged in with Firebase
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
+      //  Get.off(() => RoleSelectionScreen());
+
       // Fetch user role from Firestore
       final isParent = await _checkIfParent(user.email!);
       if (isParent) {
@@ -41,7 +44,7 @@ class SplashController extends GetxController {
         // Navigate to ParentBottomNavigationBar if user is a parent
       } else {
         // Navigate to KidMyMoney if user is a kid
-        Get.off(() => const KidHomePage());
+        Get.off(() => const KidHomeScreen());
       }
     } else {
       // User is not logged in, attempt auto-login using local credentials
@@ -63,7 +66,7 @@ class SplashController extends GetxController {
               Get.off(() => const ParentsHomeScreen());
             }
           } else {
-            Get.off(() => const KidHomePage());
+            Get.off(() => const KidHomeScreen());
           }
         } catch (e) {
           Get.log("Auto-login failed: $e");

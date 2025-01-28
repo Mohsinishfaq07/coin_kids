@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -322,7 +322,7 @@ class FirebaseAuthController extends GetxController {
           // Navigate to ParentBottomNavigationBar if user is a parent
         } else {
           // Navigate to KidMyMoney if user is a kid
-          Get.off(() => KidHomePage());
+          Get.off(() => KidHomeScreen());
         }
 
         // comment out above  line and add these instead of them

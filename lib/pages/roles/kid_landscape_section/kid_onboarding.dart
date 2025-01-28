@@ -4,7 +4,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dar
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
@@ -445,18 +445,54 @@ class KidSectionOnboarding extends StatelessWidget {
                                   itemCount: kidSectionOnboardingController
                                       .avatars.length,
                                   itemBuilder: (context, index) {
-                                    final avatarIndex = index - 1;
+                                    final avatarIndex = index;
+                                    final isSelected = _addChildController
+                                            .selectedAvatar.value ==
+                                        index; // Check if the avatar is selected
+
                                     return GestureDetector(
                                       onTap: () async {
-                                        _addChildController
-                                            .selectAvatar(avatarIndex);
+                                        if (isSelected) {
+                                          // Deselect if the avatar is already selected
+                                          _addChildController.deselectAvatar();
+                                        } else {
+                                          // Select the avatar
+                                          _addChildController
+                                              .selectAvatar(avatarIndex);
+                                        }
+
+                                        // _addChildController
+                                        //     .selectAvatar(avatarIndex);
                                       },
-                                      child: CircleAvatar(
-                                        radius: 30.r,
-                                        backgroundColor: Colors.grey[200],
-                                        backgroundImage: AssetImage(
-                                            kidSectionOnboardingController
-                                                .avatars[index]),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 30.r,
+                                            backgroundColor: Colors.grey[200],
+                                            backgroundImage: AssetImage(
+                                                kidSectionOnboardingController
+                                                    .avatars[index]),
+                                          ),
+                                          if (_addChildController
+                                                  .selectedAvatar.value ==
+                                              index) // Show tick icon only for the selected avatar
+                                            Positioned(
+                                              top: 5.r, // Adjust as needed
+                                              right: 5.r, // Adjust as needed
+                                              child: CircleAvatar(
+                                                radius: 12.r,
+                                                backgroundColor: Colors
+                                                    .green, // Background color for the tick
+                                                child: Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 16
+                                                      .r, // Adjust size of the tick icon
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     );
                                   },
@@ -478,7 +514,7 @@ class KidSectionOnboarding extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Get.to(() => const KidHomePage());
+                                    Get.off(() => const KidHomeScreen());
                                   },
                                   child: Container(
                                     width: 120.w,
@@ -569,7 +605,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                             .parentFirebaseFunctions
                                             .addChildAndUpdateParent();
                                       }
-                                      Get.to(() => const KidHomePage());
+                                      Get.off(() => const KidHomeScreen());
                                     },
                                     child: Container(
                                       width: 120.w,

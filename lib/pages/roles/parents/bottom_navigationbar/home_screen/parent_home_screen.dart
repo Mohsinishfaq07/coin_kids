@@ -373,20 +373,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                 fontWeight: FontWeight.w600,
                                 fontFamily: "Roboto",
                               ),
-                              // CustomButton(
-                              //   width: 180,
-                              //   text: 'Quick Transfer',
-                              //   onPressed: () {
-                              //     Get.to(() => AllChildrenPage());
-                              //   },
-                              // buttonStyle: Theme.of(context)
-                              //     .textTheme
-                              //     .bodyMedium!
-                              //     .copyWith(
-                              //         color: CustomThemeData().whiteColorText,
-                              //         fontWeight: FontWeight.w600,
-                              //         fontSize: 15),
-                              //),
+                          
                               const SizedBox(height: 20),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -452,17 +439,4 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
   }
 }
 
-/*
 
-kid['avatar'] != null &&
-                                            kid['avatar'].toString().isNotEmpty
-                                        ? (kid['avatar'].startsWith('/')
-                                            ? FileImage(File(kid[
-                                                'avatar'])) // Load local image
-                                            :  NetworkImage(kid[
-                                                    'avatar']) // Load network image
-                                                as ImageProvider) // Determine if it's a local or network image
-                                        : const AssetImage(
-                                            "assets/googlelogo.png"),
-
-*/

@@ -13,14 +13,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class AmountScreen extends StatefulWidget {
-  AmountScreen({Key? key}) : super(key: key);
+  RxBool isSpending;
+  AmountScreen({required this.isSpending, Key? key}) : super(key: key);
 
   @override
   State<AmountScreen> createState() => _AmountScreenState();
 }
 
 class _AmountScreenState extends State<AmountScreen> {
-  final parentController =  Get.put(ParentController());
+  final parentController = Get.put(ParentController());
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,6 @@ class _AmountScreenState extends State<AmountScreen> {
     parentController.fetchKids();
   }
 
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,25 +72,62 @@ class _AmountScreenState extends State<AmountScreen> {
                     alignment: Alignment.bottomRight,
                     child: GestureDetector(
                       onTap: () async {
-                        if (parentController.amount.value.isEmpty) {
+                        // Validate and parse the entered amount safely
+                        String enteredAmountString =
+                            parentController.amount.value;
+
+                        if (enteredAmountString.isEmpty ||
+                            double.tryParse(enteredAmountString) == null) {
+                          // Show a toast message for invalid input
                           Fluttertoast.showToast(
-                            msg: "Please Enter amount ",
+                            msg: "Please enter a valid amount",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             backgroundColor: AppColors.textHighlighted,
                             textColor: AppColors.textOnPrimary,
                             fontSize: 16.0.sp,
                           );
+                          return; // Stop further execution
                         }
-                        double enteredAmount =
-                            double.parse(parentController.amount.value);
 
-                        await firestoreOperations.parentFirebaseFunctions
-                            .kidSpendingToSavings(
-                                save: false,
-                                childId: parentController.kidsList[0]['id'],
-                                enteredAmount: enteredAmount);
-                        Get.to(() => AddMoneyScreen());
+                        double enteredAmount =
+                            double.parse(enteredAmountString);
+
+                        if (enteredAmount <= 0) {
+                          // Show a toast message for invalid amount
+                          Fluttertoast.showToast(
+                            msg: "Amount must be greater than 0",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: AppColors.textHighlighted,
+                            textColor: AppColors.textOnPrimary,
+                            fontSize: 16.0.sp,
+                          );
+                          return; // Stop further execution
+                        }
+
+                        // Perform the desired operation
+
+                        if (widget.isSpending.value) {
+                          await firestoreOperations.parentFirebaseFunctions
+                              .updateKidSpending(
+                            save: true,
+                            childId: parentController.kidsList[0]['id'],
+                            enteredAmount: enteredAmount,
+                          );
+                        } else {
+                          await firestoreOperations.parentFirebaseFunctions
+                              .kidSpendingToSavings(
+                            save: true,
+                            childId: parentController.kidsList[0]['id'],
+                            enteredAmount: enteredAmount,
+                          );
+                        }
+
+                        // Navigate to the next screen
+                        Get.to(() => AddMoneyScreen(
+                              isSpending: widget.isSpending,
+                            ));
                       },
                       child: Container(
                         width: 120.w,
@@ -117,9 +154,10 @@ class _AmountScreenState extends State<AmountScreen> {
                                   children: [
                                     Text(
                                       "Next",
-                                      style: AppTextStyle.headingMedium.copyWith(
-                                          color: AppColors.textOnPrimary,
-                                          fontSize: 22.sp),
+                                      style: AppTextStyle.headingMedium
+                                          .copyWith(
+                                              color: AppColors.textOnPrimary,
+                                              fontSize: 22.sp),
                                     ),
                                     SizedBox(width: 10.w),
                                     Center(

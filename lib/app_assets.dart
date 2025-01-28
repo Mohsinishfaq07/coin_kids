@@ -25,6 +25,8 @@ class AppAssets {
   static const kidCardICon = "assets/kidRoleIcons/kidCardIcon.svg";
   static const kidCoinIcon = "assets/kidRoleIcons/kidCoinIcon.svg";
   static const kidEmptyJarIcon = "assets/kidRoleIcons/kidEmptyJarIcon.svg";
+  static const KidFilledMoneyJarIcon = "assets/filledJar.svg";
+  static const kidEmptyMoneyJarIcon = "assets/emptyJar.svg";
   static const kidGoalIcon = "assets/kidRoleIcons/kidGoalIcon.svg";
   static const kidHomeIcon = "assets/kidRoleIcons/kidHomeIcon.svg";
   static const kidLockIcon = "assets/kidRoleIcons/kidLockIcon.svg";

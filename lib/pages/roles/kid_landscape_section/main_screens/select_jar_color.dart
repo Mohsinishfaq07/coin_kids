@@ -11,8 +11,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class ColorController extends GetxController {
+class JarColorController extends GetxController {
   var selectedColorIndex = (-1).obs; // Default to no selection
+  RxBool isSelected = false.obs; //
 
   // Update Spending Jar Color in Firebase
   Future<void> updateSpendingJarColor({
@@ -49,7 +50,62 @@ class ColorController extends GetxController {
           // Get.back();
           print("Spending Jar Color updated successfully to: $colorHex");
           Get.log("Spending Jar Color updated successfully to: $colorHex");
-          Get.to(() => AmountScreen());
+          Get.to(() => AmountScreen(
+                isSpending: true.obs,
+              ));
+        } else {
+          Get.back();
+          Get.log("Save flag is false. No changes made.");
+        }
+      } else {
+        Get.back();
+        Get.log("Kid document does not exist.");
+      }
+    } catch (e) {
+      // Handle errors
+      Get.back();
+      Get.log("Error updating spending jar color: $e");
+    }
+  }
+
+  // Update Spending Jar Color in Firebase
+  Future<void> updateSavingJarColor({
+    required bool save,
+    required String childId,
+    required Color spendingJarColor, // Color passed as parameter
+  }) async {
+    try {
+      // Show loading dialog
+      // showDialog(
+      //   context: Get.context!,
+      //   builder: (context) => LoadingProgressDialogueWidget(
+      //     title: "Saving...",
+      //   ),
+      // );
+
+      // Reference to the kid's document
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(childId);
+      DocumentSnapshot snapshot = await kidDocRef.get();
+
+      if (snapshot.exists) {
+        // Convert color to a string value (Hex or RGBA)
+        String colorHex = spendingJarColor.value
+            .toRadixString(16)
+            .padLeft(8, '0'); // Converts to hex format
+
+        if (save) {
+          // Save the updated spending jar color as a hex string
+          await kidDocRef.update({
+            'savings.color': colorHex, // Use dot notation for nested fields
+          });
+          // Close loading dialog
+          // Get.back();
+          print("Spending Jar Color updated successfully to: $colorHex");
+          Get.log("Spending Jar Color updated successfully to: $colorHex");
+          Get.to(() => AmountScreen(
+                isSpending: false.obs,
+              ));
         } else {
           Get.back();
           Get.log("Save flag is false. No changes made.");
@@ -66,18 +122,19 @@ class ColorController extends GetxController {
   }
 }
 
-class SelectJarColorScreen extends StatefulWidget {
-  // final String childId;
+class JarColorScreen extends StatefulWidget {
+  RxBool isSpending;
 
-  SelectJarColorScreen({
+  JarColorScreen({
+    required this.isSpending,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<SelectJarColorScreen> createState() => _SelectJarColorScreenState();
+  State<JarColorScreen> createState() => _JarColorScreenState();
 }
 
-class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
+class _JarColorScreenState extends State<JarColorScreen> {
   final List<Color> colors = [
     const Color(0xFFFF6060),
     const Color(0xFF8F60FF),
@@ -93,7 +150,7 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
     const Color(0xFF3F51FC),
   ];
 
-  final ColorController colorController = Get.put(ColorController());
+  final colorController = Get.put(JarColorController());
   @override
   void initState() {
     super.initState();
@@ -101,7 +158,7 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
     parentController.fetchKids();
   }
 
-  final   parentController = Get.put(ParentController());
+  final parentController = Get.put(ParentController());
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +219,8 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
                                 color: colors[index],
                                 shape: BoxShape.circle,
                                 border: isSelected
-                                    ? Border.all(color: Colors.white, width: 3.w)
+                                    ? Border.all(
+                                        color: Colors.white, width: 3.w)
                                     : null,
                               ),
                             ),
@@ -196,17 +254,24 @@ class _SelectJarColorScreenState extends State<SelectJarColorScreen> {
                           fontSize: 16.0.sp,
                         );
                       } else {
-                        // Get the selected color and update it in Firebase
                         final selectedColor =
                             colors[colorController.selectedColorIndex.value];
-                        colorController.updateSpendingJarColor(
-                          save: true,
-                          childId: parentController.kidsList[0]['id'],
-                          spendingJarColor: selectedColor,
-                        );
+                        if (widget.isSpending.value) {
+                          colorController.updateSpendingJarColor(
+                            save: true,
+                            childId: parentController.kidsList[0]
+                                ['id'], // Assuming the first child is selected
+                            spendingJarColor: selectedColor,
+                          );
+                        } else {
+                          colorController.updateSavingJarColor(
+                            save: true,
+                            childId: parentController.kidsList[0]
+                                ['id'], // Assuming the first child is selected
+                            spendingJarColor: selectedColor,
+                          );
+                        }
                       }
-          
-                      
                     },
                     child: Container(
                       width: 120.w,

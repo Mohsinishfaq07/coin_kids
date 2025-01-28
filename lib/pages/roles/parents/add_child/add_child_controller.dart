@@ -131,6 +131,10 @@ class AddChildController extends GetxController {
     selectedGrade.value = grade;
   }
 
+  void deselectAvatar() {
+    selectedAvatar.value = -1; // Deselect by setting to -1 or any invalid value
+  }
+
   // Function to update selected avatar
   void selectAvatar(int index) {
     selectedAvatar.value = index;

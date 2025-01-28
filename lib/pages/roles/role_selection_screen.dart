@@ -1,6 +1,6 @@
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_onboarding.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_page.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -16,7 +16,7 @@ import 'kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   RoleSelectionScreen({super.key});
-  // final splashCOntroller = Get.put(SplashController());
+  
   final firebaseAuthController = Get.put(FirebaseAuthController());
   final parentController = Get.put(ParentController());
 
@@ -81,9 +81,9 @@ class RoleSelectionScreen extends StatelessWidget {
                       if (isParent) {
                         bool parentHasKids = await parentController.fetchKids();
                         if (parentHasKids) {
-                          Get.off(() => KidHomePage());
+                          Get.off(() => KidHomeScreen());
                         } else {
-                          Get.off(() =>   KidSectionOnboarding());
+                          Get.off(() => KidSectionOnboarding());
                         }
                         // Navigate to ParentBottomNavigationBar if user is a parent
                       } else {
@@ -210,8 +210,8 @@ class OptionCard extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        AppAssets.coinSvg,
-                        height: 22,
+                        AppAssets.supportSvg,
+                        height: 18.h,
                         color: Colors.transparent,
                       ),
                       const SizedBox(width: 12),
