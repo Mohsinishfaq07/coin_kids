@@ -183,8 +183,8 @@ class AllChildrenPage extends StatelessWidget {
                                       SizedBox(
                                         height: 6.h,
                                       ),
-                                      Text(
-                                        '€ ${dataKid['spendings']['amount']}',
+                                      Text("€${(dataKid['spendings']?['amount'] ?? 0.0).toString()}",
+
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineMedium!

@@ -318,8 +318,8 @@ class KidProfileManagementPage extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Text(
-                  "€${docData['spendings']['amount']}",
+                Text("€${(docData['spendings']?['amount'] ?? 0.0).toString()}",
+
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

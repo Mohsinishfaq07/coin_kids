@@ -246,7 +246,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                   if (parentController
                                       .kidsList.isNotEmpty) {
                                     Fluttertoast.showToast(
-                                      msg: "You already have a child added.",
+                                      msg: "You have already added a child",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
                                       backgroundColor:
