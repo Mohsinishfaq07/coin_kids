@@ -1,8 +1,11 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_done_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/orange_skip_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
@@ -10,7 +13,7 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class KidSectionOnboarding extends StatelessWidget {
@@ -99,8 +102,6 @@ class KidSectionOnboarding extends StatelessWidget {
                             KidCustomTextField(
                                 hintText: "“Enter your name” e.g. Alex",
                                 onChange: (value) {
-                                  // firebaseAuthController.username.value =
-                                  //     val.trim();
                                   _addChildController.childName.value =
                                       value.trim();
                                 }),
@@ -112,87 +113,21 @@ class KidSectionOnboarding extends StatelessWidget {
                               padding: EdgeInsets.only(right: 20.w),
                               child: Align(
                                 alignment: Alignment.bottomRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    kidSectionOnboardingController
-                                        .increaseSpotLightIndex(index: 1);
-                                  },
-                                  child: Container(
-                                    width: 120.w,
-                                    height: 32.h,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFF19B859),
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            width: 2.22.w,
-                                            color: const Color(0xFF0E9454)),
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                      ),
+                                child:  GreenNextButton(
+                                      onTap: () {
+                                        if (_addChildController
+                                            .childName.value.isEmpty) {
+                                          showToast(
+                                              "Please enter your name"); // Show toast if empty
+                                        } else {
+                                          kidSectionOnboardingController
+                                              .increaseSpotLightIndex(index: 1);
+                                        }
+                                      },
+                                      buttonText: 'Next',
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          left: 20.w,
-                                          right: 12.w,
-                                          top: 4.h,
-                                          bottom: 4.h,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "Next",
-                                                style: AppTextStyle
-                                                    .headingMedium
-                                                    .copyWith(
-                                                        color: AppColors
-                                                            .textOnPrimary,
-                                                        fontSize: 22.sp),
-                                              ),
-                                              SizedBox(
-                                                width: 10.w,
-                                              ),
-                                              Center(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors
-                                                        .transparent, // Background color (optional)
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(
-                                                                0.2), // Shadow color
-                                                        blurRadius:
-                                                            10, // Blur radius for the shadow
-                                                        offset: const Offset(2,
-                                                            4), // Shadow position (x, y)
-                                                      ),
-                                                    ],
-                                                    shape: BoxShape
-                                                        .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                                  ),
-                                                  child: SvgPicture.asset(
-                                                    "assets/arrorDirectionNoShadow.svg",
-                                                    height: 12.h,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Positioned(
-                                            left: 1,
-                                            top: 1.29,
-                                            child: Image.asset(
-                                              "assets/Button_shadow.png",
-                                              height: 10.h,
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
@@ -252,12 +187,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                 return Align(
                                   alignment: Alignment.center,
                                   child: GestureDetector(
-                                    // onTap: () {
-                                    //   kidSectionOnboardingController
-                                    //           .selectedAge.value =
-                                    //       kidSectionOnboardingController
-                                    //           .ageList[index];
-                                    // },
+                                   
                                     onTap: () {
                                       // Set the selected age in kidSectionOnboardingController
                                       kidSectionOnboardingController
@@ -321,84 +251,14 @@ class KidSectionOnboarding extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(right: 20.w),
                       child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            kidSectionOnboardingController
-                                .increaseSpotLightIndex(index: 2);
-                          },
-                          child: Container(
-                            width: 120.w,
-                            height: 32.h,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFF19B859),
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    width: 2.22.w,
-                                    color: const Color(0xFF0E9454)),
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  left: 20.w,
-                                  right: 12.w,
-                                  top: 4.h,
-                                  bottom: 4.h,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Next",
-                                        style: AppTextStyle.headingMedium
-                                            .copyWith(
-                                                color: AppColors.textOnPrimary,
-                                                fontSize: 22.sp),
-                                      ),
-                                      SizedBox(
-                                        width: 12.w,
-                                      ),
-                                      Center(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors
-                                                .transparent, // Background color (optional)
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                    0.2), // Shadow color
-                                                blurRadius:
-                                                    10, // Blur radius for the shadow
-                                                offset: const Offset(2,
-                                                    4), // Shadow position (x, y)
-                                              ),
-                                            ],
-                                            shape: BoxShape
-                                                .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                          ),
-                                          child: SvgPicture.asset(
-                                            "assets/arrorDirectionNoShadow.svg",
-                                            fit: BoxFit.cover,
-                                            height: 10.h,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                    left: 1,
-                                    top: 1.29,
-                                    child: Image.asset(
-                                      "assets/Button_shadow.png",
-                                      height: 10.h,
-                                    )),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                          alignment: Alignment.bottomRight,
+                          child: GreenNextButton(
+                            onTap: () {
+                              kidSectionOnboardingController
+                                  .increaseSpotLightIndex(index: 2);
+                            },
+                            buttonText: 'Next',
+                          )),
                     ),
                   ] else ...[
                     Stack(
@@ -436,68 +296,58 @@ class KidSectionOnboarding extends StatelessWidget {
                                       EdgeInsets.symmetric(horizontal: 10.w),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        5, // Number of avatars in one row
-                                    crossAxisSpacing:
-                                        26.w, // Space between columns
-                                    mainAxisSpacing: 16.h, // Space between rows
+                                    crossAxisCount: 5,
+                                    crossAxisSpacing: 26.w,
+                                    mainAxisSpacing: 16.h,
                                   ),
                                   itemCount: kidSectionOnboardingController
                                       .avatars.length,
                                   itemBuilder: (context, index) {
-                                    final avatarIndex = index;
-                                    final isSelected = _addChildController
-                                            .selectedAvatar.value ==
-                                        index; // Check if the avatar is selected
+                                    final avatarIndex = index - 1;
 
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        if (isSelected) {
-                                          // Deselect if the avatar is already selected
-                                          _addChildController.deselectAvatar();
-                                        } else {
-                                          // Select the avatar
-                                          _addChildController
-                                              .selectAvatar(avatarIndex);
-                                        }
-
-                                        // _addChildController
-                                        //     .selectAvatar(avatarIndex);
-                                      },
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 30.r,
-                                            backgroundColor: Colors.grey[200],
-                                            backgroundImage: AssetImage(
-                                                kidSectionOnboardingController
-                                                    .avatars[index]),
-                                          ),
-                                          if (_addChildController
-                                                  .selectedAvatar.value ==
-                                              index) // Show tick icon only for the selected avatar
-                                            Positioned(
-                                              top: 5.r, // Adjust as needed
-                                              right: 5.r, // Adjust as needed
-                                              child: CircleAvatar(
-                                                radius: 12.r,
-                                                backgroundColor: Colors
-                                                    .green, // Background color for the tick
-                                                child: Icon(
-                                                  Icons.check,
-                                                  color: Colors.white,
-                                                  size: 16
-                                                      .r, // Adjust size of the tick icon
-                                                ),
+                                    return Obx(() => GestureDetector(
+                                          onTap: () {
+                                            _addChildController
+                                                .selectAvatar(avatarIndex);
+                                          },
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 30.r,
+                                                backgroundColor:
+                                                    Colors.grey[200],
+                                                backgroundImage: AssetImage(
+                                                    kidSectionOnboardingController
+                                                        .avatars[index]),
                                               ),
-                                            ),
-                                        ],
-                                      ),
-                                    );
+                                              if (_addChildController
+                                                      .selectedAvatar.value ==
+                                                  avatarIndex)
+                                                Positioned(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(60.r),
+                                                        color: Colors.black38,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.white)),
+                                                    child: Icon(
+                                                      Icons.check,
+                                                      color: Colors.white,
+                                                      size: 24
+                                                          .sp, // Size of the check icon
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ));
                                   },
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),
@@ -512,90 +362,23 @@ class KidSectionOnboarding extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Get.off(() => const KidHomeScreen());
+                                OrangeSkipButton(
+                                  onTap: () async{
+                                       if (!firebaseAuthController
+                                          .isNormalLoading.value) {
+                                        firebaseAuthController
+                                            .isNormalLoading.value = true;
+                                        await firestoreOperations
+                                            .parentFirebaseFunctions
+                                            .addChildAndUpdateParent();
+                                      }
+                                      Get.off(() => const KidHomeScreen());
                                   },
-                                  child: Container(
-                                    width: 120.w,
-                                    height: 32.h,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFFF9E29),
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          width: 2.22.w,
-                                          color: const Color(0xFFD67513),
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                      ),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          left: 20.w,
-                                          right: 12.w,
-                                          top: 4.h,
-                                          bottom: 4.h,
-                                          child: Row(
-                                            children: [
-                                              Center(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors
-                                                        .transparent, // Background color (optional)
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(
-                                                                0.2), // Shadow color
-                                                        blurRadius:
-                                                            10, // Blur radius for the shadow
-                                                        offset: const Offset(2,
-                                                            4), // Shadow position (x, y)
-                                                      ),
-                                                    ],
-                                                    shape: BoxShape
-                                                        .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                                  ),
-                                                  child: SvgPicture.asset(
-                                                    AppAssets.kidCrossIcons,
-                                                    fit: BoxFit.cover,
-                                                    height: 12.h,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 8.w,
-                                              ),
-                                              Text(
-                                                "Skip",
-                                                style: AppTextStyle
-                                                    .headingMedium
-                                                    .copyWith(
-                                                        color: AppColors
-                                                            .textOnPrimary,
-                                                        fontSize: 22.sp),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Positioned(
-                                            left: 1,
-                                            top: 1.29,
-                                            child: Image.asset(
-                                              "assets/Button_shadow.png",
-                                              height: 10.h,
-                                            )),
-                                      ],
-                                    ),
-                                  ),
                                 ),
                                 Padding(
                                   padding:
                                       EdgeInsets.only(right: 20.w, left: 20.w),
-                                  child: GestureDetector(
+                                  child: GreenDoneButton(
                                     onTap: () async {
                                       if (!firebaseAuthController
                                           .isNormalLoading.value) {
@@ -607,81 +390,6 @@ class KidSectionOnboarding extends StatelessWidget {
                                       }
                                       Get.off(() => const KidHomeScreen());
                                     },
-                                    child: Container(
-                                      width: 120.w,
-                                      height: 32.h,
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xFF19B859),
-                                        shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              width: 2.22.w,
-                                              color: const Color(0xFF0E9454)),
-                                          borderRadius:
-                                              BorderRadius.circular(20.r),
-                                        ),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                            left: 20.w,
-                                            right: 12.w,
-                                            top: 4.h,
-                                            bottom: 4.h,
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  "Done",
-                                                  style: AppTextStyle
-                                                      .headingMedium
-                                                      .copyWith(
-                                                          color: AppColors
-                                                              .textOnPrimary,
-                                                          fontSize: 22.sp),
-                                                ),
-                                                SizedBox(
-                                                  width: 12.w,
-                                                ),
-                                                Center(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors
-                                                          .transparent, // Background color (optional)
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.2), // Shadow color
-                                                          blurRadius:
-                                                              10, // Blur radius for the shadow
-                                                          offset: const Offset(
-                                                              2,
-                                                              4), // Shadow position (x, y)
-                                                        ),
-                                                      ],
-                                                      shape: BoxShape
-                                                          .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                                    ),
-                                                    child: SvgPicture.asset(
-                                                      "assets/arrorDirectionNoShadow.svg",
-                                                      fit: BoxFit.cover,
-                                                      height: 10.h,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Positioned(
-                                              left: 1,
-                                              top: 1.29,
-                                              child: Image.asset(
-                                                "assets/Button_shadow.png",
-                                                height: 10.h,
-                                              )),
-                                        ],
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ],
@@ -695,6 +403,17 @@ class KidSectionOnboarding extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: AppColors.iconPrimary,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 }

@@ -91,7 +91,7 @@ class RoleSelectionScreen extends StatelessWidget {
                         if (parentHasKids) {
                           Get.off(() => KidHomeScreen());
                         } else {
-                          Get.off(() => KidSectionOnboarding());
+                          Get.to(() => KidSectionOnboarding());
                         }
                         // Navigate to ParentBottomNavigationBar if user is a parent
                       } else {

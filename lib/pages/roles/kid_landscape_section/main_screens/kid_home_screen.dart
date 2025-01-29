@@ -3,11 +3,12 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_with_money.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_without_money.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_name.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_transfer.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/select_jar_color.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/Jar_color_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/vertical_navigation_bar.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
@@ -29,475 +30,371 @@ class KidHomeScreen extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: false,
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppColors.background,
-          image: DecorationImage(
-            image: AssetImage(AppAssets.kidSectionBG),
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  kidAvatarContainer(),
-                  GestureDetector(
-                      onTap: () async {
-                        await firebaseAuthController.logout();
-                      },
-                      child: Icon(Icons.logout)),
-                  Row(
-                    children: [
-                      cardContainerIcon(),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      coinLockedWidget(),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      totalBalanceWidget()
-                    ],
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  VerticalNavBar(),
-                  Obx(() {
-                    return verticalNavBarController.currentItem.value == 0
-                        ? SizedBox(
-                            height: 100.h,
-                            width: 400.w,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Obx(() {
-                                  final spendingAmount =
-                                      addMoneyController.spendingAmount.value;
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('kids')
+              .where('parentId',
+                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return CircularProgressIndicator();
+            else if (snapshot.hasError)
+              return Text(snapshot.error.toString());
+            else {
+              final List<QueryDocumentSnapshot> kidsData = snapshot.data!.docs;
+              print("kidsdata is $kidsData");
 
-                                  if (spendingAmount == 0) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => JarColorScreen(
-                                              isSpending: true.obs,
-                                            ));
-                                      },
-                                      child: SvgPicture.asset(
-                                        AppAssets.kidEmptyJarIcon,
-                                        height: 90.h,
-                                        width: 132.w,
-                                      ),
-                                    );
-                                  }
-                                  // If spendingAmount is greater than 0, show jar with spending amount
-                                  else {
-                                    return Stack(
-                                      // mainAxisAlignment: MainAxisAlignment.center,
+              return Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: AppColors.background,
+                  image: DecorationImage(
+                    image: AssetImage(AppAssets.kidSectionBG),
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          kidAvatarContainer(),
+                          GestureDetector(
+                              onTap: () async {
+                                await firebaseAuthController.logout();
+                              },
+                              child: Icon(Icons.logout)),
+                          Row(
+                            children: [
+                              cardContainerIcon(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              coinLockedWidget(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              totalBalanceWidget()
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          VerticalNavBar(),
+                          Obx(() {
+                            return verticalNavBarController.currentItem.value ==
+                                    0
+                                ? SizedBox(
+                                    height: 100.h,
+                                    width: 400.w,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        Image.asset(
-                                          "assets/jar_home.png", // Replace with your filled jar asset
-                                          height: 100.h,
-                                          width: 140.w,
+                                        if (kidsData.isNotEmpty) ...[
+                                          (() {
+                                            final Map<String, dynamic> kidData =
+                                                kidsData[0].data()
+                                                    as Map<String, dynamic>;
+                                            final Map<String, dynamic>
+                                                spendingData =
+                                                kidData.containsKey('spendings')
+                                                    ? kidData['spendings']
+                                                        as Map<String, dynamic>
+                                                    : {};
+                                            print("$spendingData");
+
+                                           
+                                            final double spendingAmount =
+                                                (spendingData['amount'] ?? 0.0)
+                                                    .toDouble();
+                                            final String spendingJarColor =
+                                                (spendingData['color'] ?? "")
+                                                    .toString();
+
+                                            if (spendingJarColor == "#000000" ||
+                                                (spendingJarColor.isEmpty &&
+                                                    spendingAmount == 0.0)) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Get.to(JarColorScreen(
+                                                      isSpending: true.obs));
+                                                },
+                                                child: Image.asset(
+                                                    "assets/jar.png"),
+                                              );
+                                            } else if (spendingAmount != 0.0) {
+                                              return JarWithMoneyTitle(
+                                                JarTitle: 'Spendings',
+                                                amount: spendingAmount,
+                                                color: spendingJarColor,
+                                              );
+                                            } else {
+                                              return JarWithoutMoneyTitle(
+                                                JarTitle: 'Spendings',
+                                                amount: spendingAmount,
+                                              );
+                                            }
+                                          })(),
+                                        ],
+                                        SizedBox(width: 20.w),
+                                        SizedBox(
+                                          width: 20.w,
                                         ),
-                                        Positioned(
-                                          bottom: 36.h,
-                                          left: 34.w,
-                                          child: Center(
-                                              child: Text(
-                                            'Spendings',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Color(0xFF015486),
-                                              fontSize: 18.sp,
-                                              fontFamily: 'Open Sans',
-                                              fontWeight: FontWeight.w800,
-                                              height: 2.44,
-                                            ),
-                                          )),
+                                        Obx(() {
+                                          // Ensure both spendingAmount and savingAmount are non-zero
+                                          if (addMoneyController
+                                                      .spendingAmount.value !=
+                                                  0.0 &&
+                                              addMoneyController
+                                                      .savingAmount.value !=
+                                                  0.00) {
+                                            return Container(
+                                              child: GestureDetector(
+                                                  onTap: () {
+                                                    Get.to(KidTransferScreen());
+                                                  },
+                                                  child: Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .buttonPrimary,
+                                                      borderRadius: BorderRadius
+                                                          .circular(30
+                                                              .r), // Rounded corners
+                                                      border: Border.all(
+                                                        width: 2.22.w,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    child: Stack(
+                                                      children: [
+                                                        Positioned(
+                                                          left: 12.w,
+                                                          right: 12.w,
+                                                          top: 4.h,
+                                                          bottom: 4.h,
+                                                          child: Center(
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .transparent, // Background color (optional)
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.2), // Shadow color
+                                                                    blurRadius:
+                                                                        10, // Blur radius for the shadow
+                                                                    offset: Offset(
+                                                                        2,
+                                                                        4), // Shadow position (x, y)
+                                                                  ),
+                                                                ],
+                                                                shape: BoxShape
+                                                                    .circle, //
+                                                              ),
+                                                              child: SvgPicture
+                                                                  .asset(
+                                                                "assets/arrow.svg",
+                                                                height: 14.h,
+                                                                width: 14.w,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                            left: 0.5,
+                                                            top: 0.29,
+                                                            child: Image.asset(
+                                                              "assets/Button_shadow.png",
+                                                              height: 8.h,
+                                                            )),
+                                                      ],
+                                                    ),
+                                                  )),
+                                            );
+                                          } else {
+                                            // Return an alternative widget if either of the values is 0
+                                            return SizedBox
+                                                .shrink(); // You can return another widget here if needed
+                                          }
+                                        }),
+                                        SizedBox(
+                                          width: 20.w,
                                         ),
-                                        // SizedBox(height: 10.h),
-                                        Positioned(
-                                            bottom: 0.h,
-                                            left: 30.w,
-                                            child: Center(
-                                              child: Container(
-                                                width: 90.w,
-                                                height: 16.h,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 6.w,
-                                                    vertical: 2.h),
-                                                decoration: ShapeDecoration(
-                                                  color: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        width: 1.53.w,
-                                                        color:
-                                                            Color(0xFF015486)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            51.33.r),
-                                                  ),
-                                                  shadows: [
-                                                    BoxShadow(
-                                                      color: Color(0x3F6169D3),
-                                                      blurRadius: 2.60,
-                                                      offset:
-                                                          Offset(-1.30, 1.95),
-                                                      spreadRadius: 0,
+                                        if (kidsData.isNotEmpty) ...[
+                                          (() {
+                                            // Extract kid data safely
+                                            final Map<String, dynamic> kidData =
+                                                kidsData[0].data()
+                                                    as Map<String, dynamic>;
+
+                                            // Ensure "savings" field exists, otherwise provide default values
+                                            final Map<String, dynamic>
+                                                savingsData =
+                                                kidData.containsKey('savings')
+                                                    ? kidData['savings']
+                                                        as Map<String, dynamic>
+                                                    : {};
+                                            print("$savingsData");
+
+                                            final double savingAmount =
+                                                (savingsData['amount'] ?? 0.0)
+                                                    .toDouble();
+                                            final String savingJarColor =
+                                                (savingsData['color'] ??
+                                                        "#000000")
+                                                    .toString();
+
+                                            // Ensure "spendings" field exists, otherwise provide default values
+                                            final Map<String, dynamic>
+                                                spendingsData =
+                                                kidData.containsKey('spendings')
+                                                    ? kidData['spendings']
+                                                        as Map<String, dynamic>
+                                                    : {};
+
+                                            final String spendingJarColor =
+                                                (spendingsData['color'] ??
+                                                        "#000000")
+                                                    .toString();
+
+                                            print(
+                                                "Spending jar color: $spendingJarColor");
+                                            print(
+                                                "Saving jar color: $savingJarColor");
+
+                                            // Return appropriate widget
+                                            if (savingJarColor == "#000000" ||
+                                                (savingJarColor.isEmpty &&
+                                                    savingAmount == 0.0)) {
+                                              return (spendingJarColor ==
+                                                          "#000000" ||
+                                                      spendingJarColor.isEmpty)
+                                                  ? Container(
+                                                      color: Colors.green,
+                                                      height: 100.h,
+                                                      width: 100.w,
                                                     )
-                                                  ],
+                                                  : GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(JarColorScreen(
+                                                            isSpending:
+                                                                false.obs));
+                                                      },
+                                                      child: Image.asset(
+                                                          "assets/jar.png"),
+                                                    );
+                                            } else if (savingAmount != 0.0) {
+                                              return JarWithMoneyTitle(
+                                                JarTitle: 'Savings',
+                                                amount: savingAmount,
+                                                color: savingJarColor,
+                                              );
+                                            } else {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Get.to(() => JarColorScreen(
+                                                      isSpending: false.obs));
+                                                },
+                                                child: JarWithoutMoneyTitle(
+                                                  JarTitle: 'Savings',
+                                                  amount: savingAmount,
                                                 ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                '\$$spendingAmount',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xFF015486),
-                                                              fontSize:
-                                                                  15.83.sp,
-                                                              fontFamily:
-                                                                  'Open Sans',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: '€',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xFF015486),
-                                                              fontSize:
-                                                                  15.83.sp,
-                                                              fontFamily:
-                                                                  'Open Sans',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            )),
+                                              );
+                                            }
+                                          })(), // Properly call the function
+                                        ]
                                       ],
-                                    );
-                                  }
-                                }),
-                                SizedBox(
-                                  width: 20.w,
-                                ),
-                                Obx(() {
-                                  // Ensure both spendingAmount and savingAmount are non-zero
-                                  if (addMoneyController.spendingAmount.value !=
-                                          0 ||
-                                      addMoneyController.savingAmount.value !=
-                                          0) {
-                                    return Container(
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            Get.to(KidTransferScreen());
-                                          },
-                                          child: Container(
-                                            width: 50,
-                                            height: 50,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.buttonPrimary,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      30.r), // Rounded corners
-                                              border: Border.all(
-                                                width: 2.22.w,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            child: Stack(
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Column(
                                               children: [
-                                                Positioned(
-                                                  left: 12.w,
-                                                  right: 12.w,
-                                                  top: 4.h,
-                                                  bottom: 4.h,
-                                                  child: Center(
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .transparent, // Background color (optional)
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.2), // Shadow color
-                                                            blurRadius:
-                                                                10, // Blur radius for the shadow
-                                                            offset: Offset(2,
-                                                                4), // Shadow position (x, y)
-                                                          ),
-                                                        ],
-                                                        shape:
-                                                            BoxShape.circle, //
-                                                      ),
-                                                      child: SvgPicture.asset(
-                                                        "assets/arrow.svg",
-                                                        height: 14.h,
-                                                        width: 14.w,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                Text(
+                                                  'Create a save goal! 🎯',
+                                                  style:
+                                                      AppTextStyle.headingLarge,
                                                 ),
-                                                Positioned(
-                                                    left: 0.5,
-                                                    top: 0.29,
-                                                    child: Image.asset(
-                                                      "assets/Button_shadow.png",
-                                                      height: 8.h,
-                                                    )),
+                                                CustomButton(
+                                                  text: '+ Add a Goal',
+                                                  color: Color(0xffFF9E29),
+                                                  onPressed: () {
+                                                    Get.to(() => KidAddGoal(
+                                                          childMoney: '',
+                                                        ));
+                                                  },
+                                                )
                                               ],
                                             ),
-                                          )),
-                                    );
-                                  } else {
-                                    // Return an alternative widget if either of the values is 0
-                                    return Container(); // You can return another widget here if needed
-                                  }
-                                }),
-                                SizedBox(
-                                  width: 20.w,
-                                ),
-                                Obx(() {
-                                  final savingAmount =
-                                      addMoneyController.savingAmount.value;
-
-                                  if (addMoneyController.spendingAmount.value !=
-                                      0) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => JarColorScreen(
-                                              isSpending: false.obs,
-                                            ));
-                                      },
-                                      child: SvgPicture.asset(
-                                        AppAssets.kidEmptyJarIcon,
-                                        height: 90.h,
-                                        width: 132.w,
-                                      ),
-                                    );
-                                  } else if (savingAmount != 0 &&
-                                      savingAmount != "0") {
-                                    return Expanded(
-                                      child: Stack(
-                                        // mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "assets/jar_home.png", // Replace with your filled jar asset
-                                            height: 100.h,
-                                            width: 140.w,
                                           ),
-                                          Positioned(
-                                            bottom: 36.h,
-                                            left: 34.w,
-                                            child: Center(
-                                                child: Text(
-                                              'Savings',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Color(0xFF015486),
-                                                fontSize: 18.sp,
-                                                fontFamily: 'Open Sans',
-                                                fontWeight: FontWeight.w800,
-                                                height: 2.44,
-                                              ),
-                                            )),
-                                          ),
-                                          // SizedBox(height: 10.h),
-                                          Positioned(
-                                              bottom: 1.h,
-                                              left: 30.w,
-                                              child: Center(
-                                                child: Container(
-                                                  width: 90.w,
-                                                  height: 16.h,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 6.w,
-                                                      vertical: 2.h),
-                                                  decoration: ShapeDecoration(
-                                                    color: Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          width: 1.53.w,
-                                                          color: Color(
-                                                              0xFF015486)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              51.33.r),
-                                                    ),
-                                                    shadows: [
-                                                      BoxShadow(
-                                                        color:
-                                                            Color(0x3F6169D3),
-                                                        blurRadius: 2.60,
-                                                        offset:
-                                                            Offset(-1.30, 1.95),
-                                                        spreadRadius: 0,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  '\$$savingAmount',
-                                                              style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF015486),
-                                                                fontSize:
-                                                                    15.83.sp,
-                                                                fontFamily:
-                                                                    'Open Sans',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w800,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text: '€',
-                                                              style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF015486),
-                                                                fontSize:
-                                                                    15.83.sp,
-                                                                fontFamily:
-                                                                    'Open Sans',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              )),
-                                        ],
-                                      ),
-                                    );
-                                  } else {
-                                    return SizedBox.shrink();
-                                  }
-                                }),
-                              ],
-                            ),
-                          )
-                        : Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Create a save goal! 🎯',
-                                          style: AppTextStyle.headingLarge,
-                                        ),
-                                        CustomButton(
-                                          text: '+ Add a Goal',
-                                          color: Color(0xffFF9E29),
-                                          onPressed: () {
-                                            Get.to(() => KidAddGoal(
-                                                  childMoney: '',
-                                                ));
-                                          },
                                         )
                                       ],
                                     ),
+                                  );
+                          }),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              height: 51.h,
+                              width: 70.w,
+                              decoration: BoxDecoration(
+                                color: AppColors.textOnPrimary,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(80.r),
+                                  topRight: Radius.circular(80.r),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(2.h),
+                                    child: SvgPicture.asset(
+                                      "assets/parent.svg",
+                                      height: 30.h,
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
-                          );
-                  }),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      height: 51.h,
-                      width: 70.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.textOnPrimary,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(80.r),
-                          topRight: Radius.circular(80.r),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(2.h),
-                            child: SvgPicture.asset(
-                              "assets/parent.svg",
-                              height: 30.h,
-                            ),
-                          ),
-                          Text(
-                            "Parent\nZone",
-                            style: AppTextStyle.labelSmall.copyWith(
-                              color: AppColors.KidZoneParent,
-                              fontWeight: MyFontWeight.ExtraBold.fontWeight,
+                                  Text(
+                                    "Parent\nZone",
+                                    style: AppTextStyle.labelSmall.copyWith(
+                                      color: AppColors.KidZoneParent,
+                                      fontWeight:
+                                          MyFontWeight.ExtraBold.fontWeight,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           )
                         ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }),
     );
   }
 
@@ -694,6 +591,100 @@ class KidHomeScreen extends StatelessWidget {
   }
 }
 
+// totalBalanceWidget() {
+//   return Padding(
+//     padding: EdgeInsets.only(right: 10.w),
+//     child: SizedBox(
+//       height: 27.h,
+//       width: 120.w,
+//       child: Stack(
+//         alignment: Alignment.center,
+//         children: [
+//           // Blue Container
+//           Positioned(
+//             top: 5.h,
+//             right: 10.w,
+//             bottom: 5.h,
+//             child: Container(
+//               height: 18.h,
+//               width: 96.w,
+//               decoration: BoxDecoration(
+//                 color: AppColors.iconPrimaryVariant,
+//                 borderRadius: BorderRadius.circular(10.r),
+//               ),
+//               alignment: Alignment.center,
+//               child: Padding(
+//                 padding: EdgeInsets.only(right: 8.w, left: 8.w),
+//                 child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+//                   future: FirebaseFirestore.instance
+//                       .collection('kids')
+//                       .where('parentId',
+//                           isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+//                       .get(),
+//                   builder: (context, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return CircularProgressIndicator(); // Placeholder while loading
+//                     }
+//                     if (snapshot.hasError ||
+//                         !snapshot.hasData ||
+//                         snapshot.data!.docs.isEmpty) {
+//                       return CircleAvatar(
+//                         radius: 22.h,
+//                         backgroundImage: AssetImage(
+//                             "assets/child_avatar_image_pngs/Frame 1.png"),
+//                       );
+//                     }
+
+//                     final data = snapshot.data!.docs.first.data();
+//                     final spendingAmount = double.tryParse(
+//                             data['spendings']['amount']?.toString() ?? "0") ??
+//                         0.0;
+//                     final savingsAmount = double.tryParse(
+//                             data['savings']['amount']?.toString() ?? "0") ??
+//                         0.0;
+//                     final totalBalance = spendingAmount + savingsAmount;
+
+//                     return Text(
+//                       "€$totalBalance",
+//                       style: AppTextStyle.headingMedium
+//                           .copyWith(color: AppColors.textOnPrimary),
+//                     );
+//                   },
+//                 ),
+//               ),
+//             ),
+//           ),
+
+//           Positioned(
+//             right: -2.w,
+//             child: SvgPicture.asset(
+//               'assets/kidRoleIcons/kidCoinIcon.svg',
+//               height: 22.h,
+//               width: 22.w,
+//             ),
+//           ),
+//           Positioned(
+//               left: 5.w,
+//               child: Container(
+//                 height: 25,
+//                 width: 25,
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xff19B859),
+//                   borderRadius: BorderRadius.circular(3.r),
+//                 ),
+//                 child: Padding(
+//                   padding: EdgeInsets.all(3.h),
+//                   child: SvgPicture.asset(
+//                     'assets/add_icon.svg',
+//                     height: 7.h,
+//                   ),
+//                 ),
+//               )),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 totalBalanceWidget() {
   return Padding(
     padding: EdgeInsets.only(right: 10.w),
@@ -728,6 +719,7 @@ totalBalanceWidget() {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator(); // Placeholder while loading
                     }
+
                     if (snapshot.hasError ||
                         !snapshot.hasData ||
                         snapshot.data!.docs.isEmpty) {
@@ -739,16 +731,25 @@ totalBalanceWidget() {
                     }
 
                     final data = snapshot.data!.docs.first.data();
-                    final spendingAmount = double.tryParse(
-                            data['spendings']['amount']?.toString() ?? "0") ??
-                        0.0;
-                    final savingsAmount = double.tryParse(
-                            data['savings']['amount']?.toString() ?? "0") ??
-                        0.0;
+
+                    // Safely retrieve 'spendings' and 'savings' amounts, defaulting to 0.0 if not found
+                    final spendingAmount = (data['spendings'] != null &&
+                            data['spendings']['amount'] != null)
+                        ? double.tryParse(
+                                data['spendings']['amount'].toString()) ??
+                            0.0
+                        : 0.0;
+                    final savingsAmount = (data['savings'] != null &&
+                            data['savings']['amount'] != null)
+                        ? double.tryParse(
+                                data['savings']['amount'].toString()) ??
+                            0.0
+                        : 0.0;
+
                     final totalBalance = spendingAmount + savingsAmount;
 
                     return Text(
-                      "€$totalBalance",
+                      "€${totalBalance.toStringAsFixed(2)}", // Formatting to show two decimal places
                       style: AppTextStyle.headingMedium
                           .copyWith(color: AppColors.textOnPrimary),
                     );
@@ -766,23 +767,25 @@ totalBalanceWidget() {
               width: 22.w,
             ),
           ),
+
           Positioned(
-              left: 5.w,
-              child: Container(
-                height: 25,
-                width: 25,
-                decoration: BoxDecoration(
-                  color: const Color(0xff19B859),
-                  borderRadius: BorderRadius.circular(3.r),
+            left: 5.w,
+            child: Container(
+              height: 25,
+              width: 25,
+              decoration: BoxDecoration(
+                color: const Color(0xff19B859),
+                borderRadius: BorderRadius.circular(3.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(3.h),
+                child: SvgPicture.asset(
+                  'assets/add_icon.svg',
+                  height: 7.h,
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(3.h),
-                  child: SvgPicture.asset(
-                    'assets/add_icon.svg',
-                    height: 7.h,
-                  ),
-                ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     ),
@@ -823,6 +826,7 @@ Widget cardContainerIcon() {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(); // Placeholder while loading
                   }
+
                   if (snapshot.hasError ||
                       !snapshot.hasData ||
                       snapshot.data!.docs.isEmpty) {
@@ -834,8 +838,12 @@ Widget cardContainerIcon() {
                   }
 
                   final data = snapshot.data!.docs.first.data();
-                  final spendingsAmount =
-                      data['spendings']['amount']?.toString() ?? "€00";
+
+                  // Safely retrieve 'spendings' amount, defaulting to 0.0 if not found
+                  final spendingsAmount = (data['spendings'] != null &&
+                          data['spendings']['amount'] != null)
+                      ? data['spendings']['amount'].toString()
+                      : "€0.00"; // Default to "€0.00" if the field is missing or null
 
                   return Text(
                     "€$spendingsAmount",

@@ -328,7 +328,7 @@ class AllChildrenPage extends StatelessWidget {
                                               .selectedChildIdForQuickTransfer
                                               .value,
                                           enteredAmount: enteredAmount,
-                                          save: false);
+                                          save: false, spendingJarColor: AppColors.textPrimary);
                                   // parentController.amount.value = "";
                                 }
                               },
@@ -357,7 +357,10 @@ class AllChildrenPage extends StatelessWidget {
                                               .selectedChildIdForQuickTransfer
                                               .value,
                                           enteredAmount: enteredAmount,
-                                          save: true);
+                                          save: true,
+                                          
+                                          spendingJarColor: AppColors.textPrimary
+                                          );
                                   // parentController.amount.value = "";
                                 }
                               },

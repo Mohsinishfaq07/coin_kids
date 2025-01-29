@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/card_container_icon.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
@@ -468,7 +469,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                         width: 88.85.w,
                                         height: 16.h,
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 12.69.w, vertical: 2.h),
+                                            horizontal: 2.69.w, vertical: 2.h),
                                         decoration: ShapeDecoration(
                                           color: Colors.white,
                                           shape: RoundedRectangleBorder(
@@ -544,71 +545,36 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 20.w, top: 10.h),
                 child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      if (addMoneyController.totalValue.value ==
-                          addMoneyController.spendingAmount.value) {
-                        print('Amounts match!');
-                        Get.off(() => KidHomeScreen());
-                      } else {
-                        Get.snackbar(
-                          "Warning",
-                          "Total value does not match spending amount!",
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      }
-                    },
-                    child: Container(
-                      width: 120.w,
-                      height: 32.h,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF19B859),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 2.22.w, color: const Color(0xFF0E9454)),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 20.w,
-                            right: 12.w,
-                            top: 4.h,
-                            bottom: 4.h,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Next",
-                                  style: AppTextStyle.headingMedium.copyWith(
-                                      color: AppColors.textOnPrimary,
-                                      fontSize: 22.sp),
-                                ),
-                                SizedBox(width: 12.w),
-                                Center(
-                                  child: SvgPicture.asset(
-                                    "assets/arrorDirectionNoShadow.svg",
-                                    height: 12.h,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            left: 1,
-                            top: 1.29,
-                            child: Image.asset(
-                              "assets/Button_shadow.png",
-                              height: 10.h,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                    alignment: Alignment.bottomRight,
+                    child: GreenNextButton(
+                        onTap: () {
+                          if (widget.isSpending == true) {
+                            if (addMoneyController.totalValue.value ==
+                                addMoneyController.spendingAmount.value) {
+                              print('Amounts match!');
+                              Get.off(() => KidHomeScreen());
+                            } else {
+                              Get.snackbar(
+                                "Warning",
+                                "Total value does not match spending amount!",
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          } else {
+                            if (addMoneyController.totalValue.value ==
+                                addMoneyController.savingAmount.value) {
+                              print('Amounts match!');
+                              Get.off(() => KidHomeScreen());
+                            } else {
+                              Get.snackbar(
+                                "Warning",
+                                "Total value does not match savings amount!",
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          }
+                        },
+                        buttonText: "Next")),
               ),
             ],
           ),

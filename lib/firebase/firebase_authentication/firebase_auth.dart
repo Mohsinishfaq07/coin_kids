@@ -75,7 +75,7 @@ class FirebaseAuthController extends GetxController {
       );
 
       await saveParentInfo(fieldName: 'email', fieldValue: email.value);
-       saveInfoLocally(email.value, pin.value);
+      saveInfoLocally(email.value, pin.value);
       // saveUserInfo(fieldName: 'email', fieldValue: email.value);
       // await saveParentInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading
@@ -380,16 +380,32 @@ class FirebaseAuthController extends GetxController {
     }
   }
 
-  // forget credentials
-
   Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-    await clearCredentials(); // Clear local credentials
-    isEmailLoading.value = false;
-    isGoogleLoading.value = false;
-    isAppleLoading.value = false;
-    Get.offAll(() => LoginScreen());
+    try {
+      // Ensure the current user is not null before logging out
+      if (FirebaseAuth.instance.currentUser != null) {
+        await FirebaseAuth.instance.signOut();
+        await clearCredentials(); // Clear local credentials
+        isEmailLoading.value = false;
+        isGoogleLoading.value = false;
+        isAppleLoading.value = false;
+        Get.offAll(() => LoginScreen());
+      } else {
+        Get.snackbar("Error", "No user is logged in");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred during logout: $e");
+    }
   }
+
+  // Future<void> logout() async {
+  //   await FirebaseAuth.instance.signOut();
+  //   await clearCredentials(); // Clear local credentials
+  //   isEmailLoading.value = false;
+  //   isGoogleLoading.value = false;
+  //   isAppleLoading.value = false;
+  //   Get.offAll(() => LoginScreen());
+  // }
 
   Future<bool> checkIfParent(String email) async {
     try {

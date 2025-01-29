@@ -1,9 +1,7 @@
 import 'package:coin_kids/controllers/favorite_controller.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
 import 'package:coin_kids/pages/onboard/onboard_controller.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/select_jar_color.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -26,8 +24,7 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<OnboardingController>(() => OnboardingController(),
         fenix: true);
     Get.lazyPut<FavoriteController>(() => FavoriteController(), fenix: true);
-    Get.lazyPut<JarColorController>(() => JarColorController(), fenix: true);
-    Get.lazyPut<AddMoneyController>(() => AddMoneyController(),
+     Get.lazyPut<AddMoneyController>(() => AddMoneyController(),
         fenix: true);
   }
 }

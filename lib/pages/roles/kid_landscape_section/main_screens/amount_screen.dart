@@ -1,5 +1,6 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
@@ -13,8 +14,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class AmountScreen extends StatefulWidget {
+  Color jarColor;
   RxBool isSpending;
-  AmountScreen({required this.isSpending, Key? key}) : super(key: key);
+  AmountScreen({required this.isSpending, required this.jarColor, Key? key})
+      : super(key: key);
 
   @override
   State<AmountScreen> createState() => _AmountScreenState();
@@ -70,8 +73,9 @@ class _AmountScreenState extends State<AmountScreen> {
                   padding: EdgeInsets.only(right: 20.w, top: 16.h),
                   child: Align(
                     alignment: Alignment.bottomRight,
-                    child: GestureDetector(
-                      onTap: () async {
+                    child:  GreenNextButton(
+                      
+                        onTap: () async {
                         // Validate and parse the entered amount safely
                         String enteredAmountString =
                             parentController.amount.value;
@@ -114,13 +118,18 @@ class _AmountScreenState extends State<AmountScreen> {
                             save: true,
                             childId: parentController.kidsList[0]['id'],
                             enteredAmount: enteredAmount,
+                            spendingJarColor: widget.jarColor,
                           );
+                          Get.to(() => AddMoneyScreen(
+                            isSpending: widget.isSpending,
+                          ));
                         } else {
                           await firestoreOperations.parentFirebaseFunctions
                               .kidSpendingToSavings(
                             save: true,
                             childId: parentController.kidsList[0]['id'],
                             enteredAmount: enteredAmount,
+                            savingsJarColor: widget.jarColor,
                           );
                         }
 
@@ -129,60 +138,8 @@ class _AmountScreenState extends State<AmountScreen> {
                               isSpending: widget.isSpending,
                             ));
                       },
-                      child: Container(
-                        width: 120.w,
-                        height: 32.h,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFF19B859),
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                width: 2.22.w, color: const Color(0xFF0E9454)),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              left: 20.w,
-                              right: 12.w,
-                              top: 4.h,
-                              bottom: 4.h,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Next",
-                                      style: AppTextStyle.headingMedium
-                                          .copyWith(
-                                              color: AppColors.textOnPrimary,
-                                              fontSize: 22.sp),
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    Center(
-                                      child: SvgPicture.asset(
-                                        "assets/arrorDirectionNoShadow.svg",
-                                        height: 12.h,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 1,
-                              top: 1.29,
-                              child: Image.asset(
-                                "assets/Button_shadow.png",
-                                height: 10.h,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )),
+                    
+                     buttonText: 'Next') )),
             ],
           ),
         ),
