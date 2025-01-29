@@ -75,7 +75,7 @@ class FirebaseAuthController extends GetxController {
       );
 
       await saveParentInfo(fieldName: 'email', fieldValue: email.value);
-      saveInfoLocally(email.value, pin.value);
+       saveInfoLocally(email.value, pin.value);
       // saveUserInfo(fieldName: 'email', fieldValue: email.value);
       // await saveParentInfoLocally(email.value, pin.value);
       Get.back(); // Stop loading

@@ -10,13 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../app_assets.dart';
 import '../../theme/color_theme.dart';
 import 'kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   RoleSelectionScreen({super.key});
-  
+
   final firebaseAuthController = Get.put(FirebaseAuthController());
   final parentController = Get.put(ParentController());
 
@@ -52,6 +53,10 @@ class RoleSelectionScreen extends StatelessWidget {
                       final isParent = await firebaseAuthController
                           .checkIfParent(firebaseAuthController.email.value);
                       if (isParent) {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.setInt("LoggedInAsParent", 1);
+
                         bool parentHasKids = await parentController.fetchKids();
                         if (parentHasKids) {
                           Get.off(() => ParentBottomNavigationBar());
@@ -76,6 +81,9 @@ class RoleSelectionScreen extends StatelessWidget {
                     title: "I’m a Child",
                     description: "Receive Allowance",
                     onTap: () async {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setInt("LoggedInAsParent", 2);
                       final isParent = await firebaseAuthController
                           .checkIfParent(firebaseAuthController.email.value);
                       if (isParent) {

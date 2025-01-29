@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 landScapeOrientation() {
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
+    // DeviceOrientation.landscapeLeft,
   ]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -18,6 +18,7 @@ landScapeOrientation() {
     ),
   );
 }
+
 PortraitOrientation() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

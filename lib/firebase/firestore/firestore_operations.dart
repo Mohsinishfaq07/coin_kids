@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
+ import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -175,12 +174,12 @@ class ParentFirebaseFunctions {
         'avatar': avatarUrl,
         'age': addChildController.childAge.value,
         'savings': {
-          'amount': '0', // Default savings value
+          'amount': 0.0, // Default savings value
           'color': '#227799',
           'name': 'Savings',
         },
         'spendings': {
-          'amount': 0, // Default spendings value
+          'amount': 0.0, // Default spendings value
           'color': '#F54422',
           'name': 'Spendings',
         },
@@ -276,9 +275,9 @@ class ParentFirebaseFunctions {
             Get.log("Current Spending Amount: $currentSpending");
 
             // Save the updated spending amount as a numeric value (double or int)
-            await kidDocRef.set({
+            await kidDocRef.update({
               'spendings': {'amount': updatedAmount}, // Save as a numeric type
-            }, SetOptions(merge: true));
+            });
             Get.back();
             Get.log("Spending updated successfully to: $updatedAmount");
 
@@ -351,23 +350,11 @@ class ParentFirebaseFunctions {
         // Update Firestore document
         await kidDocRef.update({
           'spendings.amount': updatedSpending,
-          'savings.amount': updatedSavings.toString(), // Save as string
+          'savings.amount': updatedSavings.toDouble(),
         });
 
         // Get.back();
         Get.log("Spending and savings updated successfully.");
-
-        // Show success dialog
-        // showDialog(
-        //   context: Get.context!,
-        //   builder: (context) => TransferSuccessDialog(
-        //     receiverName: data['name'] ?? 'Unknown',
-        //     amount: enteredAmount.toString(),
-        //     dateTime: formatDate(DateTime.now().toLocal()),
-        //     title: 'Transfer Successful',
-        //     transferType: 'Transferred to Savings',
-        //   ),
-        // );
       } else {
         // Child document does not exist
         Get.back();
@@ -379,5 +366,3 @@ class ParentFirebaseFunctions {
     }
   }
 }
-
-// class ChildFirebaseFunctions {}

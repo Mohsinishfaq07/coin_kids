@@ -150,7 +150,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                                         fontSize: 22.sp),
                                               ),
                                               SizedBox(
-                                                width: 12.w,
+                                                width: 10.w,
                                               ),
                                               Center(
                                                 child: Container(

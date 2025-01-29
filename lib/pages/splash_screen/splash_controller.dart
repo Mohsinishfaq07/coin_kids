@@ -8,6 +8,7 @@ import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/p
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController {
   final FirebaseAuthController firebaseAuthController =
@@ -23,6 +24,9 @@ class SplashController extends GetxController {
   // Check for saved credentials
   /// Check if the user is logged in and navigate accordingly
   void _checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setBool("LoggedInAsParent", true);
+
     // Simulate a splash screen delay (3 seconds)
     await Future.delayed(const Duration(seconds: 2));
 
@@ -33,8 +37,10 @@ class SplashController extends GetxController {
       //  Get.off(() => RoleSelectionScreen());
 
       // Fetch user role from Firestore
-      final isParent = await _checkIfParent(user.email!);
-      if (isParent) {
+      // final isParent = await _checkIfParent(user.email!);
+      int? loginAsParent;
+      loginAsParent = prefs.getInt("LoggedInAsParent") ?? 0;
+      if (loginAsParent == 1) {
         bool parentHasKids = await parentController.fetchKids();
         if (parentHasKids) {
           Get.off(() => ParentBottomNavigationBar());
@@ -42,12 +48,13 @@ class SplashController extends GetxController {
           Get.off(() => const ParentsHomeScreen());
         }
         // Navigate to ParentBottomNavigationBar if user is a parent
-      } else {
+      } else if (loginAsParent == 2) {
         // Navigate to KidMyMoney if user is a kid
         Get.off(() => const KidHomeScreen());
+      } else {
+        Get.off(() => RoleSelectionScreen());
       }
     } else {
-      // User is not logged in, attempt auto-login using local credentials
       await firebaseAuthController.loadCredentials();
       if (firebaseAuthController.email.isNotEmpty &&
           firebaseAuthController.pin.isNotEmpty) {
