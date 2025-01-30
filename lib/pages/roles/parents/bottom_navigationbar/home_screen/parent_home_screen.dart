@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_screen.dart';
 import 'package:coin_kids/pages/roles/parents/all_childs/all_children_page.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/parent_drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/kid_profile_management_page.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/App_small_button.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
-import '../../../../../theme/color_theme.dart';
-import '../../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
-
+  
 class ParentsHomeScreen extends StatefulWidget {
   const ParentsHomeScreen({super.key});
 

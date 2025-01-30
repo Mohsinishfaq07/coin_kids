@@ -1,5 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +16,9 @@ class SplashScreen extends StatelessWidget {
     final splashController = Get.put(SplashController());
 
     return Scaffold(
-      body: Container(
+      body:
+      
+       Container(
         decoration: const BoxDecoration(
           gradient: AppColors.background,
         ),

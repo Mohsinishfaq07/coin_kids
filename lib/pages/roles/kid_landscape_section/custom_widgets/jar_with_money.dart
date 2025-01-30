@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:marquee/marquee.dart';
 
 class JarWithMoneyTitle extends StatelessWidget {
   final String JarTitle;
@@ -23,14 +25,40 @@ class JarWithMoneyTitle extends StatelessWidget {
     return Stack(
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          color: Colors.green,
+        SvgPicture.asset(
+          "assets/JarBg (1).svg",
+          color: jarColor,
+          height: 100.h,
+          width: 140.w,
+        ),
+        Image.asset(
+          // "assets/jar_home.png", // Replace with your filled jar asset
+          //"assets/role_selection_icons/emptyJar.png",
+          //"assets/jarOutline.png",
+          "assets/jarOutline (1).png",
+
+          height: 100.h,
+          width: 140.w,
+          color: Colors.white,
+
+          // colorBlendMode: BlendMode.srcIn,
+        ),
+        Positioned(
+          left: 3.w,
           child: Image.asset(
-            "assets/jar_home.png", // Replace with your filled jar asset
+            // "assets/jar_home.png", // Replace with your filled jar asset
+            //"assets/role_selection_icons/emptyJar.png",
+            //"assets/jarOutline.png",
+            "assets/Group 1000005706.png",
+
             height: 100.h,
-            width: 140.w,
+            width: 136.w,
+            color: Colors.transparent,
+
+            // colorBlendMode: BlendMode.srcIn,
           ),
         ),
+
         Positioned(
           bottom: 36.h,
           left: 28.w,
@@ -70,37 +98,21 @@ class JarWithMoneyTitle extends StatelessWidget {
                     )
                   ],
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '\$$amount',
-                            style: TextStyle(
-                              color: jarColor,
-                              fontSize: 15.83.sp,
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          TextSpan(
-                            text: '€',
-                            style: TextStyle(
-                              color: jarColor,
-                              fontSize: 15.83.sp,
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                child: Marquee(
+                  text: '$amount€',
+                  decelerationDuration: Duration(milliseconds: 500),
+                  decelerationCurve: Curves.easeOut,
+                  velocity: 10.0,
+                  accelerationDuration: Duration(seconds: 1),
+                  accelerationCurve: Curves.linear,
+                  pauseAfterRound: Duration(seconds: 1),
+                  blankSpace: 10.0,
+                  style: TextStyle(
+                    color: jarColor,
+                    fontSize: 15.83.sp,
+                    fontFamily: 'Open Sans',
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             )),

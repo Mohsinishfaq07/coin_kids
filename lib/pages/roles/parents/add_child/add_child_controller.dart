@@ -13,7 +13,7 @@ class AddChildController extends GetxController {
   var childName = ''.obs;
   var childAge = ''.obs;
   var selectedGrade = ''.obs;
-  var selectedAvatar = 0.obs;
+  var selectedAvatar = (-1).obs;
   var customAvatarPath = ''.obs; // Path for custom uploaded avatar
   final selectedAvatarPath = ''.obs;
   var parentId = ''.obs; // Observable for parentId

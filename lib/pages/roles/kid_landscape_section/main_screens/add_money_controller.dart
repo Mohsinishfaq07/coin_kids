@@ -1,30 +1,23 @@
- 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
- import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class AddMoneyController extends GetxController {
   RxDouble spendingAmount = 0.0.obs; // Changed to RxDouble
   RxDouble savingAmount = 0.0.obs; // Changed to RxDouble
-  RxDouble totalValue = 0.0.obs; // Changed to RxDouble
+  RxDouble totalValue = 0.00.obs; // Changed to RxDouble
   var clickedIndex = 0.obs; // Observable for the text
   RxBool isJarFilled = false.obs;
   RxList<double> droppedNotes = <double>[].obs; // Changed to double
   RxString spendingJarColor = ''.obs;
   RxString savingJarColor = ''.obs;
-  // var droppedNotes = <int>[].obs;
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //    //fetchSpendingAmount();
-  //   // fetchSavingAmount();
-  //   // fetchSavingsColor();
-  //   // fetchSpendingColor();
-  //   // Call this method to fetch the spending amount when the controller is initialized
-  // }
 
- 
   Future<void> fetchSpendingColor() async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -37,7 +30,7 @@ class AddMoneyController extends GetxController {
         final colorString =
             data['spendings']?['color'] ?? "#000000"; // Default black color
 
-         spendingJarColor.value = colorString;
+        spendingJarColor.value = colorString;
         print('Updated spendingColor: ${spendingJarColor.value}');
       } else {
         print('No document found for the given parentId');
@@ -49,20 +42,42 @@ class AddMoneyController extends GetxController {
     }
   }
 
+  // void onNoteDropped(String noteAsset) {
+  //   try {
+  //     // Extract numeric value from the asset name using regular expression
+  //     final noteValueString = noteAsset.split('/').last.split('.').first;
+  //     final noteValue =
+  //         double.parse(RegExp(r'\d+').stringMatch(noteValueString)!);
+
+  //     droppedNotes.add(noteValue);
+
+  //     // Update the total value
+  //     totalValue.value =
+  //         droppedNotes.fold(0.0, (sum, value) => sum + value); // Changed to 0.0
+  //   } catch (e) {
+  //     print("Error parsing note asset: $e");
+  //   }
+  // }
+
   void onNoteDropped(String noteAsset) {
     try {
-      // Extract numeric value from the asset name using regular expression
-      final noteValueString = noteAsset.split('/').last.split('.').first;
-      final noteValue =
-          double.parse(RegExp(r'\d+').stringMatch(noteValueString)!);
+      // Check in all maps to get exact value
+      double? noteValue = notesMap[noteAsset] ??
+          firstCoinList[noteAsset] ??
+          secondCoinList[noteAsset] ??
+          thirdCoinList[noteAsset];
+
+      if (noteValue == null) {
+        print("Unknown asset: $noteAsset");
+        return;
+      }
 
       droppedNotes.add(noteValue);
 
       // Update the total value
-      totalValue.value =
-          droppedNotes.fold(0.0, (sum, value) => sum + value); // Changed to 0.0
+      totalValue.value = droppedNotes.fold(0.0, (sum, value) => sum + value);
     } catch (e) {
-      print("Error parsing note asset: $e");
+      print("Error processing note asset: $e");
     }
   }
 
@@ -168,9 +183,9 @@ class AddMoneyController extends GetxController {
   };
 
   final Map<String, double> secondCoinList = {
-    "assets/50cent.png": 0.5,
-    "assets/20cents.png": 0.2,
-    "assets/10cents.png": 0.1,
+    "assets/50cent.png": 0.50,
+    "assets/20cents.png": 0.20,
+    "assets/10cents.png": 0.10,
   };
 
   final Map<String, double> thirdCoinList = {
@@ -200,6 +215,130 @@ class AddMoneyController extends GetxController {
     } catch (e) {
       print('Error fetching spending color: $e');
       savingJarColor.value = "#000000"; // Default black color
+    }
+  }
+
+  Future<void> transferSpendingToSavings({
+    required String childId,
+    required double enteredAmount,
+  }) async {
+    try {
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(childId);
+
+      DocumentSnapshot snapshot = await kidDocRef.get();
+
+      if (!snapshot.exists) {
+        // Create a new record if child data doesn't exist
+        await kidDocRef.set({
+          'spendings': {'amount': 0.0},
+          'savings': {
+            'amount': enteredAmount,
+            'color': 0xFF000000,
+            'name': "Savings"
+          }
+        });
+
+        Get.log("New savings record created successfully.");
+        return;
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+
+      double currentSpending = (data['spendings']?['amount'] ?? 0.0).toDouble();
+      double currentSavings = (data['savings']?['amount'] ?? 0.0).toDouble();
+
+      if (enteredAmount > currentSpending) {
+        Fluttertoast.showToast(
+          msg: 'Not Enough Funds',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: AppColors.textHighlighted,
+          textColor: Colors.white,
+          fontSize: 16.sp,
+        );
+        return;
+      }
+
+      // Update values
+      double updatedSpending = currentSpending - enteredAmount;
+      double updatedSavings = currentSavings + enteredAmount;
+      int savingsJarColor = data['savings']?['color'] ?? 0xFF000000;
+
+      await kidDocRef.set({
+        'spendings': {'amount': updatedSpending},
+        'savings': {
+          'amount': updatedSavings,
+          'color': savingsJarColor,
+          'name': "Savings"
+        }
+      }, SetOptions(merge: true));
+
+      Get.log(
+          "Spending deducted and savings updated successfully.$updatedSpending ,$updatedSavings");
+    } catch (e) {
+      Get.log("Error transferring spendings to savings: $e");
+    }
+  }
+
+  Future<void> transferSavingsToSpending({
+    required String childId,
+    required double enteredAmount,
+  }) async {
+    try {
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(childId);
+
+      DocumentSnapshot snapshot = await kidDocRef.get();
+
+      if (!snapshot.exists) {
+        // Agar child data exist nahi karta, naya record bana do
+        await kidDocRef.set({
+          'spendings': {
+            'amount': enteredAmount
+          }, // Spendings ko update kar diya
+          'savings': {'amount': 0.0, 'color': 0xFF000000, 'name': "Savings"}
+        });
+
+        Get.log("New spending record created successfully.");
+        return;
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+
+      double currentSpending = (data['spendings']?['amount'] ?? 0.0).toDouble();
+      double currentSavings = (data['savings']?['amount'] ?? 0.0).toDouble();
+
+      if (enteredAmount > currentSavings) {
+        Fluttertoast.showToast(
+          msg: 'Not Enough Savings',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: AppColors.textHighlighted,
+          textColor: Colors.white,
+          fontSize: 16.sp,
+        );
+        return;
+      }
+
+      // **New Values After Transfer**
+      double updatedSpending = currentSpending + enteredAmount;
+      double updatedSavings = currentSavings - enteredAmount;
+      int savingsJarColor = data['savings']?['color'] ?? 0xFF000000;
+
+      await kidDocRef.set({
+        'spendings': {'amount': updatedSpending},
+        'savings': {
+          'amount': updatedSavings,
+          'color': savingsJarColor,
+          'name': "Savings"
+        }
+      }, SetOptions(merge: true));
+
+      Get.log(
+          "Savings deducted and spending updated successfully. Savings: $updatedSavings, Spendings: $updatedSpending");
+    } catch (e) {
+      Get.log("Error transferring savings to spendings: $e");
     }
   }
 }

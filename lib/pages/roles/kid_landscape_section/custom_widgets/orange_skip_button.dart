@@ -36,7 +36,7 @@ class OrangeSkipButton extends StatelessWidget {
               left: 20.w,
               right: 12.w,
               top: 4.h,
-              bottom: 4.h,
+              bottom: 3.h,
               child: Row(
                 children: [
                   Center(

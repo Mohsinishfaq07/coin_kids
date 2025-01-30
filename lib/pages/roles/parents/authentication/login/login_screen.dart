@@ -1,20 +1,18 @@
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
-
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
-
 import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/components/AppButton.dart';
 import '../../../../../theme/text_theme.dart';
-import '../../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
-
+ 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 

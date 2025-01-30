@@ -195,45 +195,6 @@ class FirebaseAuthController extends GetxController {
     }
   }
 
-  // signUpWithNumber() {
-  //   if (!RegExp(r'^\d+$').hasMatch(number.value)) {
-  //     Get.snackbar(
-  //       "Error",
-  //       "Enter valid number!",
-  //       snackPosition: SnackPosition.BOTTOM,
-  //     );
-  //     return;
-  //   }
-  //   try {
-  //     // phone validation
-  //     //get otp
-  //     //verify otp
-  //     //store user information
-  //     //all set
-  //   } catch (e) {
-  //     Get.log(e.toString());
-  //   }
-  // }
-
-  saveKidInfo({required String fieldName, required String fieldValue}) async {
-    try {
-      await FirebaseFirestore.instance.collection('kids').doc(fieldValue).set({
-        fieldName: fieldValue,
-        'name': username.value.isNotEmpty ? username.value : 'Not specified',
-        'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
-        'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
-        'gender': selectedGender.value.isNotEmpty
-            ? selectedGender.value
-            : 'Not specified',
-        'created_at': DateTime.now().toIso8601String(),
-      }, SetOptions(merge: true));
-      Get.snackbar("Success", "Account created",
-          snackPosition: SnackPosition.BOTTOM);
-    } catch (e) {
-      Get.log(e.toString());
-    }
-  }
-
   Future<void> loginWithEmail() async {
     try {
       isEmailLoading.value = true; // Start loading
@@ -245,15 +206,8 @@ class FirebaseAuthController extends GetxController {
 
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email.value, password: pin.value);
-      //       saveParentInfo(
-      //     fieldName: 'email',
-      //     fieldValue: email.value);
-      // await saveInfoLocally(email.value, pin.value);
-      // Get.back(); // Stop loading
-      Get.offAll(RoleSelectionScreen());
-      // Fetch user role from Firestore
 
-      // Navigate to Home Screen
+      Get.offAll(RoleSelectionScreen());
     } on FirebaseAuthException catch (e) {
       isEmailLoading.value = false;
       if (e.code == 'user-not-found') {

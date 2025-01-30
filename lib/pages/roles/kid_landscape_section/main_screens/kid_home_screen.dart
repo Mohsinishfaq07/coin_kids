@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_button.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_with_money.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_without_money.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
@@ -26,7 +26,7 @@ class KidHomeScreen extends StatelessWidget {
     VerticalNavBarController verticalNavBarController =
         Get.put(VerticalNavBarController());
     final addMoneyController = Get.put(AddMoneyController());
-    landScapeOrientation();
+    landscapeOrientation();
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: false,
@@ -44,6 +44,40 @@ class KidHomeScreen extends StatelessWidget {
             else {
               final List<QueryDocumentSnapshot> kidsData = snapshot.data!.docs;
               print("kidsdata is $kidsData");
+              if (kidsData.isEmpty) {
+                return Center(child: CircularProgressIndicator());
+              }
+              final Map<String, dynamic> kidData =
+                  kidsData[0].data() as Map<String, dynamic>;
+              final Map<String, dynamic> spendingData =
+                  kidData.containsKey('spendings')
+                      ? kidData['spendings'] as Map<String, dynamic>
+                      : {};
+              final double spendingAmount =
+                  (spendingData['amount'] ?? 0.0).toDouble();
+              final String spendingJarColor =
+                  (spendingData['color'] ?? "").toString();
+
+              // Ensure "savings" field exists, otherwise provide default values
+              final Map<String, dynamic> savingsData =
+                  kidData.containsKey('savings')
+                      ? kidData['savings'] as Map<String, dynamic>
+                      : {};
+              print("$savingsData");
+
+              final double savingAmount =
+                  (savingsData['amount'] ?? 0.0).toDouble();
+              final String savingJarColor =
+                  (savingsData['color'] ?? "#000000").toString();
+
+              // Ensure "spendings" field exists, otherwise provide default values
+              final Map<String, dynamic> spendingsData =
+                  kidData.containsKey('spendings')
+                      ? kidData['spendings'] as Map<String, dynamic>
+                      : {};
+
+              print("Spending jar color: $spendingJarColor");
+              print("Saving jar color: $savingJarColor");
 
               return Container(
                 height: double.infinity,
@@ -99,24 +133,7 @@ class KidHomeScreen extends StatelessWidget {
                                       children: [
                                         if (kidsData.isNotEmpty) ...[
                                           (() {
-                                            final Map<String, dynamic> kidData =
-                                                kidsData[0].data()
-                                                    as Map<String, dynamic>;
-                                            final Map<String, dynamic>
-                                                spendingData =
-                                                kidData.containsKey('spendings')
-                                                    ? kidData['spendings']
-                                                        as Map<String, dynamic>
-                                                    : {};
                                             print("$spendingData");
-
-                                           
-                                            final double spendingAmount =
-                                                (spendingData['amount'] ?? 0.0)
-                                                    .toDouble();
-                                            final String spendingJarColor =
-                                                (spendingData['color'] ?? "")
-                                                    .toString();
 
                                             if (spendingJarColor == "#000000" ||
                                                 (spendingJarColor.isEmpty &&
@@ -127,7 +144,7 @@ class KidHomeScreen extends StatelessWidget {
                                                       isSpending: true.obs));
                                                 },
                                                 child: Image.asset(
-                                                    "assets/jar.png"),
+                                                    "assets/jars/jar.png"),
                                               );
                                             } else if (spendingAmount != 0.0) {
                                               return JarWithMoneyTitle(
@@ -143,138 +160,113 @@ class KidHomeScreen extends StatelessWidget {
                                             }
                                           })(),
                                         ],
-                                        SizedBox(width: 20.w),
-                                        SizedBox(
-                                          width: 20.w,
-                                        ),
-                                        Obx(() {
-                                          // Ensure both spendingAmount and savingAmount are non-zero
-                                          if (addMoneyController
-                                                      .spendingAmount.value !=
-                                                  0.0 &&
-                                              addMoneyController
-                                                      .savingAmount.value !=
-                                                  0.00) {
-                                            return Container(
-                                              child: GestureDetector(
-                                                  onTap: () {
-                                                    Get.to(KidTransferScreen());
-                                                  },
-                                                  child: Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    clipBehavior:
-                                                        Clip.antiAlias,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors
-                                                          .buttonPrimary,
-                                                      borderRadius: BorderRadius
-                                                          .circular(30
-                                                              .r), // Rounded corners
-                                                      border: Border.all(
-                                                        width: 2.22.w,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                    child: Stack(
-                                                      children: [
-                                                        Positioned(
-                                                          left: 12.w,
-                                                          right: 12.w,
-                                                          top: 4.h,
-                                                          bottom: 4.h,
-                                                          child: Center(
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .transparent, // Background color (optional)
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.2), // Shadow color
-                                                                    blurRadius:
-                                                                        10, // Blur radius for the shadow
-                                                                    offset: Offset(
-                                                                        2,
-                                                                        4), // Shadow position (x, y)
-                                                                  ),
-                                                                ],
-                                                                shape: BoxShape
-                                                                    .circle, //
-                                                              ),
-                                                              child: SvgPicture
-                                                                  .asset(
-                                                                "assets/arrow.svg",
-                                                                height: 14.h,
-                                                                width: 14.w,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Positioned(
-                                                            left: 0.5,
-                                                            top: 0.29,
-                                                            child: Image.asset(
-                                                              "assets/Button_shadow.png",
-                                                              height: 8.h,
-                                                            )),
-                                                      ],
-                                                    ),
-                                                  )),
-                                            );
-                                          } else {
-                                            // Return an alternative widget if either of the values is 0
-                                            return SizedBox
-                                                .shrink(); // You can return another widget here if needed
-                                          }
-                                        }),
                                         SizedBox(
                                           width: 20.w,
                                         ),
                                         if (kidsData.isNotEmpty) ...[
                                           (() {
                                             // Extract kid data safely
-                                            final Map<String, dynamic> kidData =
-                                                kidsData[0].data()
-                                                    as Map<String, dynamic>;
 
-                                            // Ensure "savings" field exists, otherwise provide default values
-                                            final Map<String, dynamic>
-                                                savingsData =
-                                                kidData.containsKey('savings')
-                                                    ? kidData['savings']
-                                                        as Map<String, dynamic>
-                                                    : {};
-                                            print("$savingsData");
-
-                                            final double savingAmount =
-                                                (savingsData['amount'] ?? 0.0)
-                                                    .toDouble();
-                                            final String savingJarColor =
-                                                (savingsData['color'] ??
-                                                        "#000000")
-                                                    .toString();
-
-                                            // Ensure "spendings" field exists, otherwise provide default values
-                                            final Map<String, dynamic>
-                                                spendingsData =
-                                                kidData.containsKey('spendings')
-                                                    ? kidData['spendings']
-                                                        as Map<String, dynamic>
-                                                    : {};
-
-                                            final String spendingJarColor =
-                                                (spendingsData['color'] ??
-                                                        "#000000")
-                                                    .toString();
-
-                                            print(
-                                                "Spending jar color: $spendingJarColor");
-                                            print(
-                                                "Saving jar color: $savingJarColor");
+                                            // Return appropriate widget
+                                            if (spendingJarColor != "#000000" ||
+                                                (spendingJarColor.isEmpty &&
+                                                        spendingAmount ==
+                                                            0.0) &&
+                                                    savingJarColor !=
+                                                        "#000000" ||
+                                                (savingJarColor.isEmpty &&
+                                                    savingAmount == 0.0)) {
+                                              return (spendingJarColor ==
+                                                          "#000000" ||
+                                                      spendingJarColor.isEmpty)
+                                                  ? SizedBox.shrink()
+                                                  : //     return Container(
+                                                  GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(
+                                                            KidTransferScreen());
+                                                      },
+                                                      child: Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        clipBehavior:
+                                                            Clip.antiAlias,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .buttonPrimary,
+                                                          borderRadius: BorderRadius
+                                                              .circular(30
+                                                                  .r), // Rounded corners
+                                                          border: Border.all(
+                                                            width: 2.22.w,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        child: Stack(
+                                                          children: [
+                                                            Positioned(
+                                                              left: 12.w,
+                                                              right: 12.w,
+                                                              top: 4.h,
+                                                              bottom: 4.h,
+                                                              child: Center(
+                                                                child:
+                                                                    Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .transparent, // Background color (optional)
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(0.2), // Shadow color
+                                                                        blurRadius:
+                                                                            10, // Blur radius for the shadow
+                                                                        offset: Offset(
+                                                                            2,
+                                                                            4), // Shadow position (x, y)
+                                                                      ),
+                                                                    ],
+                                                                    shape: BoxShape
+                                                                        .circle, //
+                                                                  ),
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    "assets/arrow.svg",
+                                                                    height:
+                                                                        14.h,
+                                                                    width: 14.w,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Positioned(
+                                                                left: 0.5,
+                                                                top: 0.29,
+                                                                child:
+                                                                    Image.asset(
+                                                                  "assets/Button_shadow.png",
+                                                                  height: 8.h,
+                                                                )),
+                                                          ],
+                                                        ),
+                                                      ));
+                                            } else {
+                                              // Return an alternative widget if either of the values is 0
+                                              return SizedBox
+                                                  .shrink(); // You can return another widget here if needed
+                                            }
+                                          })(), // Properly call the function
+                                        ],
+                                        SizedBox(
+                                          width: 20.w,
+                                        ),
+                                        if (kidsData.isNotEmpty) ...[
+                                          (() {
+                                            // Extract kid data safely
 
                                             // Return appropriate widget
                                             if (savingJarColor == "#000000" ||
@@ -283,11 +275,7 @@ class KidHomeScreen extends StatelessWidget {
                                               return (spendingJarColor ==
                                                           "#000000" ||
                                                       spendingJarColor.isEmpty)
-                                                  ? Container(
-                                                      color: Colors.green,
-                                                      height: 100.h,
-                                                      width: 100.w,
-                                                    )
+                                                  ? SizedBox.shrink()
                                                   : GestureDetector(
                                                       onTap: () {
                                                         Get.to(JarColorScreen(
@@ -295,7 +283,7 @@ class KidHomeScreen extends StatelessWidget {
                                                                 false.obs));
                                                       },
                                                       child: Image.asset(
-                                                          "assets/jar.png"),
+                                                          "assets/jars/jar.png"),
                                                     );
                                             } else if (savingAmount != 0.0) {
                                               return JarWithMoneyTitle(
@@ -591,100 +579,6 @@ class KidHomeScreen extends StatelessWidget {
   }
 }
 
-// totalBalanceWidget() {
-//   return Padding(
-//     padding: EdgeInsets.only(right: 10.w),
-//     child: SizedBox(
-//       height: 27.h,
-//       width: 120.w,
-//       child: Stack(
-//         alignment: Alignment.center,
-//         children: [
-//           // Blue Container
-//           Positioned(
-//             top: 5.h,
-//             right: 10.w,
-//             bottom: 5.h,
-//             child: Container(
-//               height: 18.h,
-//               width: 96.w,
-//               decoration: BoxDecoration(
-//                 color: AppColors.iconPrimaryVariant,
-//                 borderRadius: BorderRadius.circular(10.r),
-//               ),
-//               alignment: Alignment.center,
-//               child: Padding(
-//                 padding: EdgeInsets.only(right: 8.w, left: 8.w),
-//                 child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-//                   future: FirebaseFirestore.instance
-//                       .collection('kids')
-//                       .where('parentId',
-//                           isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-//                       .get(),
-//                   builder: (context, snapshot) {
-//                     if (snapshot.connectionState == ConnectionState.waiting) {
-//                       return CircularProgressIndicator(); // Placeholder while loading
-//                     }
-//                     if (snapshot.hasError ||
-//                         !snapshot.hasData ||
-//                         snapshot.data!.docs.isEmpty) {
-//                       return CircleAvatar(
-//                         radius: 22.h,
-//                         backgroundImage: AssetImage(
-//                             "assets/child_avatar_image_pngs/Frame 1.png"),
-//                       );
-//                     }
-
-//                     final data = snapshot.data!.docs.first.data();
-//                     final spendingAmount = double.tryParse(
-//                             data['spendings']['amount']?.toString() ?? "0") ??
-//                         0.0;
-//                     final savingsAmount = double.tryParse(
-//                             data['savings']['amount']?.toString() ?? "0") ??
-//                         0.0;
-//                     final totalBalance = spendingAmount + savingsAmount;
-
-//                     return Text(
-//                       "€$totalBalance",
-//                       style: AppTextStyle.headingMedium
-//                           .copyWith(color: AppColors.textOnPrimary),
-//                     );
-//                   },
-//                 ),
-//               ),
-//             ),
-//           ),
-
-//           Positioned(
-//             right: -2.w,
-//             child: SvgPicture.asset(
-//               'assets/kidRoleIcons/kidCoinIcon.svg',
-//               height: 22.h,
-//               width: 22.w,
-//             ),
-//           ),
-//           Positioned(
-//               left: 5.w,
-//               child: Container(
-//                 height: 25,
-//                 width: 25,
-//                 decoration: BoxDecoration(
-//                   color: const Color(0xff19B859),
-//                   borderRadius: BorderRadius.circular(3.r),
-//                 ),
-//                 child: Padding(
-//                   padding: EdgeInsets.all(3.h),
-//                   child: SvgPicture.asset(
-//                     'assets/add_icon.svg',
-//                     height: 7.h,
-//                   ),
-//                 ),
-//               )),
-//         ],
-//       ),
-//     ),
-//   );
-// }
 totalBalanceWidget() {
   return Padding(
     padding: EdgeInsets.only(right: 10.w),

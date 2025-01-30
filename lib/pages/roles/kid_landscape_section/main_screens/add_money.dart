@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class AddMoneyScreen extends StatefulWidget {
   final RxBool isSpending;
@@ -59,6 +60,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                       Row(children: [
                         kidBackButton(
                           onTap: () {
+                            addMoneyController.totalValue.value = 0.0;
                             Get.back();
                           },
                         ),
@@ -224,139 +226,137 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                               }),
                         );
                       } else if (addMoneyController.clickedIndex.value == 1) {
-                        return Center(
-                          child: SizedBox(
-                            width: 150.w,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // First List
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 1.w,
-                                    crossAxisSpacing: 14.w,
-                                  ),
-                                  itemCount:
-                                      addMoneyController.firstCoinList.length,
-                                  itemBuilder: (context, index) {
-                                    var coinAsset = addMoneyController
-                                        .firstCoinList.keys
-                                        .elementAt(index);
-                                    var noteValue = addMoneyController
-                                        .firstCoinList[coinAsset];
+                        return SizedBox(
+                          width: 150.w,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // First List
+                              GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 1.w,
+                                  crossAxisSpacing: 14.w,
+                                ),
+                                itemCount:
+                                    addMoneyController.firstCoinList.length,
+                                itemBuilder: (context, index) {
+                                  var coinAsset = addMoneyController
+                                      .firstCoinList.keys
+                                      .elementAt(index);
+                                  var noteValue = addMoneyController
+                                      .firstCoinList[coinAsset];
 
-                                    return Draggable<String>(
-                                      data: coinAsset,
-                                      feedback: Material(
-                                        color: Colors.transparent,
-                                        child: Image.asset(
-                                          coinAsset,
-                                          height: 70.h,
-                                          width: 120.w,
-                                        ),
+                                  return Draggable<String>(
+                                    data: coinAsset,
+                                    feedback: Material(
+                                      color: Colors.transparent,
+                                      child: Image.asset(
+                                        coinAsset,
+                                        height: 70.h,
+                                        width: 120.w,
                                       ),
-                                      childWhenDragging: Opacity(
-                                        opacity: 0.5,
-                                        child: Image.asset(coinAsset),
+                                    ),
+                                    childWhenDragging: Opacity(
+                                      opacity: 0.5,
+                                      child: Image.asset(coinAsset),
+                                    ),
+                                    child: Center(
+                                      child: Image.asset(
+                                        coinAsset,
+                                        height: 100.h,
+                                        width: 120.w,
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          coinAsset,
-                                          height: 100.h,
-                                          width: 120.w,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                    ),
+                                  );
+                                },
+                              ),
+                              // Second List
+                              GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 1.w,
+                                  crossAxisSpacing: 4.h,
+                                  // mainAxisSpacing: 8.h,
                                 ),
-                                // Second List
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    childAspectRatio: 1.w,
-                                    crossAxisSpacing: 4.h,
-                                    // mainAxisSpacing: 8.h,
-                                  ),
-                                  itemCount:
-                                      addMoneyController.secondCoinList.length,
-                                  itemBuilder: (context, index) {
-                                    var secondCoinAsset = addMoneyController
-                                        .secondCoinList.keys
-                                        .elementAt(index);
-                                    var noteValue = addMoneyController
-                                        .secondCoinList[secondCoinAsset];
-                                    return Draggable<String>(
-                                      data: secondCoinAsset,
-                                      feedback: Material(
-                                        color: Colors.transparent,
-                                        child: Image.asset(
-                                          secondCoinAsset,
-                                          height: 60.h,
-                                          width: 120.w,
-                                        ),
+                                itemCount:
+                                    addMoneyController.secondCoinList.length,
+                                itemBuilder: (context, index) {
+                                  var secondCoinAsset = addMoneyController
+                                      .secondCoinList.keys
+                                      .elementAt(index);
+                                  var noteValue = addMoneyController
+                                      .secondCoinList[secondCoinAsset];
+                                  return Draggable<String>(
+                                    data: secondCoinAsset,
+                                    feedback: Material(
+                                      color: Colors.transparent,
+                                      child: Image.asset(
+                                        secondCoinAsset,
+                                        height: 60.h,
+                                        width: 120.w,
                                       ),
-                                      childWhenDragging: Opacity(
-                                        opacity: 0.5,
-                                        child: Image.asset(secondCoinAsset),
+                                    ),
+                                    childWhenDragging: Opacity(
+                                      opacity: 0.5,
+                                      child: Image.asset(secondCoinAsset),
+                                    ),
+                                    child: Center(
+                                      child: Image.asset(
+                                        secondCoinAsset,
+                                        height: 60.h,
+                                        width: 120.w,
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          secondCoinAsset,
-                                          height: 60.h,
-                                          width: 120.w,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                    ),
+                                  );
+                                },
+                              ),
+                              // Third List
+                              GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 2.w,
+                                  crossAxisSpacing: 0.w,
                                 ),
-                                // Third List
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    childAspectRatio: 2.w,
-                                    crossAxisSpacing: 0.w,
-                                  ),
-                                  itemCount:
-                                      addMoneyController.thirdCoinList.length,
-                                  itemBuilder: (context, index) {
-                                    var thirdCoinAsset = addMoneyController
-                                        .thirdCoinList.keys
-                                        .elementAt(index);
-                                    var noteValue = addMoneyController
-                                        .thirdCoinList[thirdCoinAsset];
-                                    return Draggable<String>(
-                                      data: thirdCoinAsset,
-                                      feedback: Material(
-                                        color: Colors.transparent,
-                                        child: Image.asset(
-                                          thirdCoinAsset,
-                                          height: 60.h,
-                                          width: 120.w,
-                                        ),
+                                itemCount:
+                                    addMoneyController.thirdCoinList.length,
+                                itemBuilder: (context, index) {
+                                  var thirdCoinAsset = addMoneyController
+                                      .thirdCoinList.keys
+                                      .elementAt(index);
+                                  var noteValue = addMoneyController
+                                      .thirdCoinList[thirdCoinAsset];
+                                  return Draggable<String>(
+                                    data: thirdCoinAsset,
+                                    feedback: Material(
+                                      color: Colors.transparent,
+                                      child: Image.asset(
+                                        thirdCoinAsset,
+                                        height: 60.h,
+                                        width: 120.w,
                                       ),
-                                      childWhenDragging: Opacity(
-                                        opacity: 0.5,
-                                        child: Image.asset(thirdCoinAsset),
+                                    ),
+                                    childWhenDragging: Opacity(
+                                      opacity: 0.5,
+                                      child: Image.asset(thirdCoinAsset),
+                                    ),
+                                    child: Center(
+                                      child: Image.asset(
+                                        thirdCoinAsset,
+                                        height: 60.h,
+                                        width: 120.w,
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          thirdCoinAsset,
-                                          height: 60.h,
-                                          width: 120.w,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         );
                       } else {
@@ -455,15 +455,15 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                   addMoneyController.totalValue.value > 0
                                       ? "assets/filledJar.png"
                                       : "assets/emptyJar.png",
-                                  height: 80.h,
+                                  height: 90.h,
                                   width: 130.w,
                                   color: candidateData.isNotEmpty
                                       ? Colors.green.withOpacity(0.5)
                                       : null, // Highlight effect when dragging over
                                 ),
                                 Positioned(
-                                    bottom: 10.h,
-                                    left: 20.w,
+                                    bottom: 0.h,
+                                    left: 24.w,
                                     child: Center(
                                       child: Container(
                                         width: 88.85.w,
@@ -488,43 +488,75 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                             )
                                           ],
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text.rich(
-                                              TextSpan(
+                                        child: addMoneyController
+                                                    .totalValue.value >
+                                                0
+                                            ? Marquee(
+                                                text:
+                                                    '${addMoneyController.totalValue.value}',
+                                                decelerationDuration: Duration(
+                                                    milliseconds:
+                                                        300), // Shortened
+                                                decelerationCurve:
+                                                    Curves.easeOut,
+                                                velocity:
+                                                    60.0, // Slower velocity
+                                                accelerationDuration: Duration(
+                                                    milliseconds:
+                                                        300), // Shortened
+                                                accelerationCurve:
+                                                    Curves.linear,
+                                                pauseAfterRound:
+                                                    Duration(seconds: 1),
+                                                blankSpace: 10.0,
+                                                style: TextStyle(
+                                                  color: Color(0xFF015486),
+                                                  fontSize: 15.83.sp,
+                                                  fontFamily: 'Open Sans',
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              )
+                                            : Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  TextSpan(
-                                                    text:
-                                                        '${addMoneyController.totalValue.value}',
-                                                    style: TextStyle(
-                                                      color: Color(0xFF015486),
-                                                      fontSize: 15.83.sp,
-                                                      fontFamily: 'Open Sans',
-                                                      fontWeight:
-                                                          FontWeight.w800,
+                                                  Text.rich(
+                                                    TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              '${addMoneyController.totalValue.value}',
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xFF015486),
+                                                            fontSize: 15.83.sp,
+                                                            fontFamily:
+                                                                'Open Sans',
+                                                            fontWeight:
+                                                                FontWeight.w800,
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: '€',
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xFF015486),
+                                                            fontSize: 15.83.sp,
+                                                            fontFamily:
+                                                                'Open Sans',
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: '€',
-                                                    style: TextStyle(
-                                                      color: Color(0xFF015486),
-                                                      fontSize: 15.83.sp,
-                                                      fontFamily: 'Open Sans',
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
+                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ],
                                               ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
                                       ),
                                     )),
                               ]),
@@ -552,6 +584,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                             if (addMoneyController.totalValue.value ==
                                 addMoneyController.spendingAmount.value) {
                               print('Amounts match!');
+                              addMoneyController.totalValue.value = 0.0;
                               Get.off(() => KidHomeScreen());
                             } else {
                               Get.snackbar(
@@ -564,6 +597,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                             if (addMoneyController.totalValue.value ==
                                 addMoneyController.savingAmount.value) {
                               print('Amounts match!');
+                              addMoneyController.totalValue.value = 0.0;
                               Get.off(() => KidHomeScreen());
                             } else {
                               Get.snackbar(

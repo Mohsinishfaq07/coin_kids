@@ -1,6 +1,6 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_done_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
@@ -9,6 +9,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/orang
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
+import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,9 @@ class KidSectionOnboarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final KidsOnBoardingController kidSectionOnboardingController =
+    final KidsOnBoardingController kidOnboardingController =
         Get.put(KidsOnBoardingController());
-    landScapeOrientation();
+    landscapeOrientation();
     return Scaffold(
       extendBodyBehindAppBar: false,
       // appBar: kidsAppBar(
@@ -54,9 +55,8 @@ class KidSectionOnboarding extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (kidSectionOnboardingController.spotLightIndex.value ==
-                      0) ...[
-                    if (!kidSectionOnboardingController.spotLightOn.value) ...[
+                  if (kidOnboardingController.spotLightIndex.value == 0) ...[
+                    if (!kidOnboardingController.spotLightOn.value) ...[
                       SizedBox(
                         height: 16.h,
                       ),
@@ -66,8 +66,8 @@ class KidSectionOnboarding extends StatelessWidget {
                           padding: EdgeInsets.only(left: 20.w),
                           child: kidBackButton(
                             onTap: () {
-                              kidSectionOnboardingController
-                                  .decreaseSpotLightIndex();
+                              Get.to(RoleSelectionScreen());
+                              kidOnboardingController.decreaseSpotLightIndex();
                             },
                           ),
                         ),
@@ -113,33 +113,32 @@ class KidSectionOnboarding extends StatelessWidget {
                               padding: EdgeInsets.only(right: 20.w),
                               child: Align(
                                 alignment: Alignment.bottomRight,
-                                child:  GreenNextButton(
-                                      onTap: () {
-                                        if (_addChildController
-                                            .childName.value.isEmpty) {
-                                          showToast(
-                                              "Please enter your name"); // Show toast if empty
-                                        } else {
-                                          kidSectionOnboardingController
-                                              .increaseSpotLightIndex(index: 1);
-                                        }
-                                      },
-                                      buttonText: 'Next',
-                                    ),
+                                child: GreenNextButton(
+                                  onTap: () {
+                                    if (_addChildController
+                                        .childName.value.isEmpty) {
+                                      showToast(
+                                          "Please enter your name"); // Show toast if empty
+                                    } else {
+                                      kidOnboardingController
+                                          .increaseSpotLightIndex(index: 1);
+                                    }
+                                  },
+                                  buttonText: 'Next',
+                                ),
                               ),
                             )
                           ],
                         ),
                       ),
                     ],
-                    if (kidSectionOnboardingController.spotLightOn.value)
+                    if (kidOnboardingController.spotLightOn.value)
                       Flexible(
                           fit: FlexFit.loose,
                           child: SizedBox(
                             height: 20.h,
                           )),
-                  ] else if (kidSectionOnboardingController
-                          .spotLightIndex.value ==
+                  ] else if (kidOnboardingController.spotLightIndex.value ==
                       1) ...[
                     // if (!kidSectionOnboardingController.spotLightOn.value) ...[
                     SizedBox(
@@ -151,8 +150,7 @@ class KidSectionOnboarding extends StatelessWidget {
                         padding: EdgeInsets.only(left: 20.w),
                         child: kidBackButton(
                           onTap: () {
-                            kidSectionOnboardingController
-                                .decreaseSpotLightIndex();
+                            kidOnboardingController.decreaseSpotLightIndex();
                           },
                         ),
                       ),
@@ -162,7 +160,7 @@ class KidSectionOnboarding extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        'Hi Nina,',
+                        _addChildController.childName.value,
                         style: AppTextStyle.headingLarge,
                       ),
                     ),
@@ -179,26 +177,25 @@ class KidSectionOnboarding extends StatelessWidget {
                         height: 50.h,
                         // width: double.infinity,
                         child: ListView.builder(
-                            itemCount:
-                                kidSectionOnboardingController.ageList.length,
+                            itemCount: kidOnboardingController.ageList.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
                               return Obx(() {
                                 return Align(
                                   alignment: Alignment.center,
                                   child: GestureDetector(
-                                   
                                     onTap: () {
-                                      // Set the selected age in kidSectionOnboardingController
-                                      kidSectionOnboardingController
+                                      kidOnboardingController
                                               .selectedAge.value =
-                                          kidSectionOnboardingController
+                                          kidOnboardingController
                                               .ageList[index];
 
                                       // Store the same value in _addChildController.childAge
                                       _addChildController.childAge.value =
-                                          kidSectionOnboardingController
+                                          kidOnboardingController
                                               .ageList[index];
+
+                                      // Set the selected age in kidSectionOnboardingController
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.all(4.0),
@@ -206,18 +203,18 @@ class KidSectionOnboarding extends StatelessWidget {
                                         height: 50,
                                         width: 50,
                                         decoration: BoxDecoration(
-                                          color: kidSectionOnboardingController
+                                          color: kidOnboardingController
                                                       .selectedAge.value ==
-                                                  kidSectionOnboardingController
+                                                  kidOnboardingController
                                                       .ageList[index]
                                               ? AppColors.textPrimary
                                               : AppColors.textOnPrimary,
                                           borderRadius:
                                               BorderRadius.circular(50.r),
                                           border: Border.all(
-                                            color: kidSectionOnboardingController
+                                            color: kidOnboardingController
                                                         .selectedAge.value ==
-                                                    kidSectionOnboardingController
+                                                    kidOnboardingController
                                                         .ageList[index]
                                                 ? AppColors.textOnPrimary
                                                 : AppColors.textPrimary,
@@ -225,16 +222,19 @@ class KidSectionOnboarding extends StatelessWidget {
                                         ),
                                         child: Center(
                                           child: Text(
-                                            kidSectionOnboardingController
+                                            kidOnboardingController
                                                 .ageList[index],
-                                            style: AppTextStyle.headingMedium.copyWith(
-                                                color: kidSectionOnboardingController
-                                                            .selectedAge
-                                                            .value ==
-                                                        kidSectionOnboardingController
-                                                            .ageList[index]
-                                                    ? AppColors.textOnPrimary
-                                                    : AppColors.textPrimary),
+                                            style: AppTextStyle.headingMedium
+                                                .copyWith(
+                                                    color: kidOnboardingController
+                                                                .selectedAge
+                                                                .value ==
+                                                            kidOnboardingController
+                                                                .ageList[index]
+                                                        ? AppColors
+                                                            .textOnPrimary
+                                                        : AppColors
+                                                            .textPrimary),
                                           ),
                                         ),
                                       ),
@@ -254,8 +254,14 @@ class KidSectionOnboarding extends StatelessWidget {
                           alignment: Alignment.bottomRight,
                           child: GreenNextButton(
                             onTap: () {
-                              kidSectionOnboardingController
-                                  .increaseSpotLightIndex(index: 2);
+                              if (kidOnboardingController
+                                  .selectedAge.value.isEmpty) {
+                                showToast(
+                                    "Please enter your Age"); // Show toast if empty
+                              } else {
+                                kidOnboardingController.increaseSpotLightIndex(
+                                    index: 2);
+                              }
                             },
                             buttonText: 'Next',
                           )),
@@ -276,7 +282,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                   padding: EdgeInsets.only(left: 20.w),
                                   child: kidBackButton(
                                     onTap: () {
-                                      kidSectionOnboardingController
+                                      kidOnboardingController
                                           .decreaseSpotLightIndex();
                                     },
                                   ),
@@ -300,8 +306,8 @@ class KidSectionOnboarding extends StatelessWidget {
                                     crossAxisSpacing: 26.w,
                                     mainAxisSpacing: 16.h,
                                   ),
-                                  itemCount: kidSectionOnboardingController
-                                      .avatars.length,
+                                  itemCount:
+                                      kidOnboardingController.avatars.length,
                                   itemBuilder: (context, index) {
                                     final avatarIndex = index - 1;
 
@@ -318,7 +324,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                                 backgroundColor:
                                                     Colors.grey[200],
                                                 backgroundImage: AssetImage(
-                                                    kidSectionOnboardingController
+                                                    kidOnboardingController
                                                         .avatars[index]),
                                               ),
                                               if (_addChildController
@@ -363,16 +369,16 @@ class KidSectionOnboarding extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 OrangeSkipButton(
-                                  onTap: () async{
-                                       if (!firebaseAuthController
-                                          .isNormalLoading.value) {
-                                        firebaseAuthController
-                                            .isNormalLoading.value = true;
-                                        await firestoreOperations
-                                            .parentFirebaseFunctions
-                                            .addChildAndUpdateParent();
-                                      }
-                                      Get.off(() => const KidHomeScreen());
+                                  onTap: () async {
+                                    if (!firebaseAuthController
+                                        .isNormalLoading.value) {
+                                      firebaseAuthController
+                                          .isNormalLoading.value = true;
+                                      await firestoreOperations
+                                          .parentFirebaseFunctions
+                                          .addChildAndUpdateParent();
+                                    }
+                                    Get.off(() => const KidHomeScreen());
                                   },
                                 ),
                                 Padding(
@@ -380,6 +386,12 @@ class KidSectionOnboarding extends StatelessWidget {
                                       EdgeInsets.only(right: 20.w, left: 20.w),
                                   child: GreenDoneButton(
                                     onTap: () async {
+                                      if (_addChildController
+                                              .selectedAvatar.value ==
+                                          0.obs) {
+                                        showToast("Please select an avatar");
+                                        return;
+                                      }
                                       if (!firebaseAuthController
                                           .isNormalLoading.value) {
                                         firebaseAuthController

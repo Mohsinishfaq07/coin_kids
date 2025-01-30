@@ -1,4 +1,5 @@
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_onboarding.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
@@ -13,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app_assets.dart';
 import '../../theme/color_theme.dart';
-import 'kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   RoleSelectionScreen({super.key});

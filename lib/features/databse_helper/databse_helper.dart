@@ -90,4 +90,18 @@ class DatabaseHelper {
     final db = await instance.database;
     db.close();
   }
+   Future<String?> getSavedEmail() async {
+    final db = await instance.database;
+    final result = await db.query(
+      'credentials',
+      columns: ['email'],
+      orderBy: 'id DESC', // Get the latest saved email
+      limit: 1,
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['email'] as String?;
+    }
+    return null; // Return null if no email is found
+  }
 }

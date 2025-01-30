@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/onboard/onboard_controller.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/AppButton.dart';
@@ -12,8 +13,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-import '../roles/kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
-
 class ParentOnboardingScreen extends StatelessWidget {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
@@ -23,7 +22,6 @@ class ParentOnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     PortraitOrientation();
     const List<Widget> pages = [
       OnboardingPage(
@@ -90,12 +88,7 @@ class ParentOnboardingScreen extends StatelessWidget {
                               Get.off(() => SignupParentScreen());
                             },
                             text: "Get Started")
-                        /*CustomButton(
-                            text: 'Get Started',
-                            onPressed: () {
-                              Get.off(() => SignupParentScreen());
-                              // Get.off(() =>  const RoleSelectionScreen());
-                            })*/
+                        
                         : Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Row(

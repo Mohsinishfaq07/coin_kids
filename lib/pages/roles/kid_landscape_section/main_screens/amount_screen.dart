@@ -72,74 +72,72 @@ class _AmountScreenState extends State<AmountScreen> {
               Padding(
                   padding: EdgeInsets.only(right: 20.w, top: 16.h),
                   child: Align(
-                    alignment: Alignment.bottomRight,
-                    child:  GreenNextButton(
-                      
-                        onTap: () async {
-                        // Validate and parse the entered amount safely
-                        String enteredAmountString =
-                            parentController.amount.value;
+                      alignment: Alignment.bottomRight,
+                      child: GreenNextButton(
+                          onTap: () async {
+                            // Validate and parse the entered amount safely
+                            String enteredAmountString =
+                                parentController.amount.value;
 
-                        if (enteredAmountString.isEmpty ||
-                            double.tryParse(enteredAmountString) == null) {
-                          // Show a toast message for invalid input
-                          Fluttertoast.showToast(
-                            msg: "Please enter a valid amount",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: AppColors.textHighlighted,
-                            textColor: AppColors.textOnPrimary,
-                            fontSize: 16.0.sp,
-                          );
-                          return; // Stop further execution
-                        }
+                            if (enteredAmountString.isEmpty ||
+                                double.tryParse(enteredAmountString) == null) {
+                              // Show a toast message for invalid input
+                              Fluttertoast.showToast(
+                                msg: "Please enter a valid amount",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: AppColors.textHighlighted,
+                                textColor: AppColors.textOnPrimary,
+                                fontSize: 16.0.sp,
+                              );
+                              return; // Stop further execution
+                            }
 
-                        double enteredAmount =
-                            double.parse(enteredAmountString);
+                            double enteredAmount =
+                                double.parse(enteredAmountString);
 
-                        if (enteredAmount <= 0) {
-                          // Show a toast message for invalid amount
-                          Fluttertoast.showToast(
-                            msg: "Amount must be greater than 0",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: AppColors.textHighlighted,
-                            textColor: AppColors.textOnPrimary,
-                            fontSize: 16.0.sp,
-                          );
-                          return; // Stop further execution
-                        }
+                            if (enteredAmount <= 0) {
+                              // Show a toast message for invalid amount
+                              Fluttertoast.showToast(
+                                msg: "Amount must be greater than 0",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: AppColors.textHighlighted,
+                                textColor: AppColors.textOnPrimary,
+                                fontSize: 16.0.sp,
+                              );
+                              return; // Stop further execution
+                            }
 
-                        // Perform the desired operation
+                            // Perform the desired operation
 
-                        if (widget.isSpending.value) {
-                          await firestoreOperations.parentFirebaseFunctions
-                              .updateKidSpending(
-                            save: true,
-                            childId: parentController.kidsList[0]['id'],
-                            enteredAmount: enteredAmount,
-                            spendingJarColor: widget.jarColor,
-                          );
-                          Get.to(() => AddMoneyScreen(
-                            isSpending: widget.isSpending,
-                          ));
-                        } else {
-                          await firestoreOperations.parentFirebaseFunctions
-                              .kidSpendingToSavings(
-                            save: true,
-                            childId: parentController.kidsList[0]['id'],
-                            enteredAmount: enteredAmount,
-                            savingsJarColor: widget.jarColor,
-                          );
-                        }
+                            if (widget.isSpending.value) {
+                              await firestoreOperations.parentFirebaseFunctions
+                                  .updateKidSpending(
+                                save: true,
+                                childId: parentController.kidsList[0]['id'],
+                                enteredAmount: enteredAmount,
+                                spendingJarColor: widget.jarColor,
+                              );
+                              Get.to(() => AddMoneyScreen(
+                                    isSpending: widget.isSpending,
+                                  ));
+                            } else {
+                              await firestoreOperations.parentFirebaseFunctions
+                                  .kidSpendingToSavings(
+                                save: true,
+                                childId: parentController.kidsList[0]['id'],
+                                enteredAmount: enteredAmount,
+                                savingsJarColor: widget.jarColor,
+                              );
+                            }
 
-                        // Navigate to the next screen
-                        Get.to(() => AddMoneyScreen(
-                              isSpending: widget.isSpending,
-                            ));
-                      },
-                    
-                     buttonText: 'Next') )),
+                            // Navigate to the next screen
+                            // Get.to(() => AddMoneyScreen(
+                            //       isSpending: widget.isSpending,
+                            //     ));
+                          },
+                          buttonText: 'Next'))),
             ],
           ),
         ),

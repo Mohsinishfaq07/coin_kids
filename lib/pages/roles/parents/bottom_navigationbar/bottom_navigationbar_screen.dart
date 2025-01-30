@@ -1,19 +1,18 @@
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../kid_landscape_section/common_funcitons.dart/common_funcitons.dart';
-import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
+ import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class ParentBottomNavigationBar extends StatelessWidget {
   ParentBottomNavigationBar({super.key});
   final  controller =
       Get.put(ParentNavigationBarController());
 
-  bool _isOnHomeScreen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,6 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 );
               } else {
                 controller.currentIndex.value = index;
-                _isOnHomeScreen = index == 0;
               }
             },
             type: BottomNavigationBarType.fixed,
