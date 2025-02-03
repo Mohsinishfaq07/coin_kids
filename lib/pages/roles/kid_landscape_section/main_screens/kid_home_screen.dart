@@ -1,14 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/features/custom_widgets/custom_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_with_money.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_without_money.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_name.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_transfer.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/Jar_color_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_avatar_container.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_finance_widget.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/parent_zone_widget.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/save_goal_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/vertical_navigation_bar.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
@@ -25,7 +23,6 @@ class KidHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     VerticalNavBarController verticalNavBarController =
         Get.put(VerticalNavBarController());
-    final addMoneyController = Get.put(AddMoneyController());
     landscapeOrientation();
     return Scaffold(
       extendBody: true,
@@ -95,7 +92,7 @@ class KidHomeScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          kidAvatarContainer(),
+                          KidAvatarContainer(),
                           GestureDetector(
                               onTap: () async {
                                 await firebaseAuthController.logout();
@@ -103,7 +100,7 @@ class KidHomeScreen extends StatelessWidget {
                               child: Icon(Icons.logout)),
                           Row(
                             children: [
-                              cardContainerIcon(),
+                              SpendingCardContainer(),
                               SizedBox(
                                 width: 10.w,
                               ),
@@ -118,263 +115,32 @@ class KidHomeScreen extends StatelessWidget {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           VerticalNavBar(),
                           Obx(() {
-                            return verticalNavBarController.currentItem.value ==
-                                    0
-                                ? SizedBox(
-                                    height: 100.h,
-                                    width: 400.w,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        if (kidsData.isNotEmpty) ...[
-                                          (() {
-                                            print("$spendingData");
-
-                                            if (spendingJarColor == "#000000" ||
-                                                (spendingJarColor.isEmpty &&
-                                                    spendingAmount == 0.0)) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Get.to(JarColorScreen(
-                                                      isSpending: true.obs));
-                                                },
-                                                child: Image.asset(
-                                                    "assets/jars/jar.png"),
-                                              );
-                                            } else if (spendingAmount != 0.0) {
-                                              return JarWithMoneyTitle(
-                                                JarTitle: 'Spendings',
-                                                amount: spendingAmount,
-                                                color: spendingJarColor,
-                                              );
-                                            } else {
-                                              return JarWithoutMoneyTitle(
-                                                JarTitle: 'Spendings',
-                                                amount: spendingAmount,
-                                              );
-                                            }
-                                          })(),
-                                        ],
-                                        SizedBox(
-                                          width: 20.w,
-                                        ),
-                                        if (kidsData.isNotEmpty) ...[
-                                          (() {
-                                            // Extract kid data safely
-
-                                            // Return appropriate widget
-                                            if (spendingJarColor != "#000000" ||
-                                                (spendingJarColor.isEmpty &&
-                                                        spendingAmount ==
-                                                            0.0) &&
-                                                    savingJarColor !=
-                                                        "#000000" ||
-                                                (savingJarColor.isEmpty &&
-                                                    savingAmount == 0.0)) {
-                                              return (spendingJarColor ==
-                                                          "#000000" ||
-                                                      spendingJarColor.isEmpty)
-                                                  ? SizedBox.shrink()
-                                                  : //     return Container(
-                                                  GestureDetector(
-                                                      onTap: () {
-                                                        Get.to(
-                                                            KidTransferScreen());
-                                                      },
-                                                      child: Container(
-                                                        width: 50,
-                                                        height: 50,
-                                                        clipBehavior:
-                                                            Clip.antiAlias,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: AppColors
-                                                              .buttonPrimary,
-                                                          borderRadius: BorderRadius
-                                                              .circular(30
-                                                                  .r), // Rounded corners
-                                                          border: Border.all(
-                                                            width: 2.22.w,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        child: Stack(
-                                                          children: [
-                                                            Positioned(
-                                                              left: 12.w,
-                                                              right: 12.w,
-                                                              top: 4.h,
-                                                              bottom: 4.h,
-                                                              child: Center(
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .transparent, // Background color (optional)
-                                                                    boxShadow: [
-                                                                      BoxShadow(
-                                                                        color: Colors
-                                                                            .black
-                                                                            .withOpacity(0.2), // Shadow color
-                                                                        blurRadius:
-                                                                            10, // Blur radius for the shadow
-                                                                        offset: Offset(
-                                                                            2,
-                                                                            4), // Shadow position (x, y)
-                                                                      ),
-                                                                    ],
-                                                                    shape: BoxShape
-                                                                        .circle, //
-                                                                  ),
-                                                                  child:
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                    "assets/arrow.svg",
-                                                                    height:
-                                                                        14.h,
-                                                                    width: 14.w,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Positioned(
-                                                                left: 0.5,
-                                                                top: 0.29,
-                                                                child:
-                                                                    Image.asset(
-                                                                  "assets/Button_shadow.png",
-                                                                  height: 8.h,
-                                                                )),
-                                                          ],
-                                                        ),
-                                                      ));
-                                            } else {
-                                              // Return an alternative widget if either of the values is 0
-                                              return SizedBox
-                                                  .shrink(); // You can return another widget here if needed
-                                            }
-                                          })(), // Properly call the function
-                                        ],
-                                        SizedBox(
-                                          width: 20.w,
-                                        ),
-                                        if (kidsData.isNotEmpty) ...[
-                                          (() {
-                                            // Extract kid data safely
-
-                                            // Return appropriate widget
-                                            if (savingJarColor == "#000000" ||
-                                                (savingJarColor.isEmpty &&
-                                                    savingAmount == 0.0)) {
-                                              return (spendingJarColor ==
-                                                          "#000000" ||
-                                                      spendingJarColor.isEmpty)
-                                                  ? SizedBox.shrink()
-                                                  : GestureDetector(
-                                                      onTap: () {
-                                                        Get.to(JarColorScreen(
-                                                            isSpending:
-                                                                false.obs));
-                                                      },
-                                                      child: Image.asset(
-                                                          "assets/jars/jar.png"),
-                                                    );
-                                            } else if (savingAmount != 0.0) {
-                                              return JarWithMoneyTitle(
-                                                JarTitle: 'Savings',
-                                                amount: savingAmount,
-                                                color: savingJarColor,
-                                              );
-                                            } else {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Get.to(() => JarColorScreen(
-                                                      isSpending: false.obs));
-                                                },
-                                                child: JarWithoutMoneyTitle(
-                                                  JarTitle: 'Savings',
-                                                  amount: savingAmount,
-                                                ),
-                                              );
-                                            }
-                                          })(), // Properly call the function
-                                        ]
-                                      ],
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  'Create a save goal! 🎯',
-                                                  style:
-                                                      AppTextStyle.headingLarge,
-                                                ),
-                                                CustomButton(
-                                                  text: '+ Add a Goal',
-                                                  color: Color(0xffFF9E29),
-                                                  onPressed: () {
-                                                    Get.to(() => KidAddGoal(
-                                                          childMoney: '',
-                                                        ));
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  );
+                            if (verticalNavBarController.currentItem.value ==
+                                0) {
+                              return KidFinanceWidgets(
+                                spendingJarColor: spendingJarColor,
+                                spendingAmount: spendingAmount,
+                                savingJarColor: savingJarColor,
+                                savingAmount: savingAmount,
+                                kidsData: kidsData,
+                              );
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                1) {
+                              return AddGoalWidget();
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                2) {
+                              return Text("Shop widget"); //
+                            } else {
+                              return SizedBox(); // Default case
+                            }
                           }),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                              height: 51.h,
-                              width: 70.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.textOnPrimary,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(80.r),
-                                  topRight: Radius.circular(80.r),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(2.h),
-                                    child: SvgPicture.asset(
-                                      "assets/parent.svg",
-                                      height: 30.h,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Parent\nZone",
-                                    style: AppTextStyle.labelSmall.copyWith(
-                                      color: AppColors.KidZoneParent,
-                                      fontWeight:
-                                          MyFontWeight.ExtraBold.fontWeight,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
+                          ParentZoneWidget()
                         ],
                       ),
                     ],
@@ -383,127 +149,6 @@ class KidHomeScreen extends StatelessWidget {
               );
             }
           }),
-    );
-  }
-
-  Widget kidAvatarContainer() {
-    return Container(
-      height: 27.h,
-      width: 120.w,
-      color: Colors.transparent,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 34.w),
-            child: Container(
-              height: 20.h,
-              width: 100.w,
-              alignment: Alignment.centerRight,
-              decoration: BoxDecoration(
-                color: AppColors.textPrimary,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(14.r),
-                  bottomRight: Radius.circular(14.r),
-                ),
-                border: Border.all(color: const Color(0xff0095e5), width: 2.w),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 12.w, right: 4.w),
-                child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  future: FirebaseFirestore.instance
-                      .collection('kids') // Replace with your collection name
-                      .where('parentId',
-                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                      .get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text(
-                        "Loading...",
-                        style: AppTextStyle.headingMedium
-                            .copyWith(color: AppColors.textOnPrimary),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Text(
-                        "Error",
-                        style: AppTextStyle.headingMedium
-                            .copyWith(color: AppColors.textOnPrimary),
-                      );
-                    }
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Text(
-                        "No Data",
-                        style: AppTextStyle.headingMedium
-                            .copyWith(color: AppColors.textOnPrimary),
-                      );
-                    }
-
-                    // Retrieve the name and avatar of the first kid in the list
-                    final kidData = snapshot.data!.docs.first.data();
-                    final kidName = kidData['name'] as String? ?? "Unknown";
-
-                    return Padding(
-                      padding: EdgeInsets.only(right: 8.w),
-                      child: Text(
-                        kidName,
-                        style: AppTextStyle.headingMedium
-                            .copyWith(color: AppColors.textOnPrimary),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: -12.h,
-            left: 0.w,
-            child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              future: FirebaseFirestore.instance
-                  .collection('kids')
-                  .where('parentId',
-                      isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // Placeholder while loading
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    snapshot.data!.docs.isEmpty) {
-                  return CircleAvatar(
-                    radius: 22.h,
-                    backgroundImage: AssetImage(
-                        "assets/child_avatar_image_pngs/Frame 1.png"),
-                  );
-                }
-
-                // Retrieve avatar URL
-                final kidData = snapshot.data!.docs.first.data();
-                final kidAvatar = kidData['avatar'] as String? ?? "";
-
-                return Container(
-                  height: 45.h,
-                  width: 45.w,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: kidAvatar.startsWith('http')
-                          ? NetworkImage(kidAvatar) as ImageProvider
-                          : AssetImage(kidAvatar),
-                      // fit: BoxFit.cover,
-                    ),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.textOnPrimary,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -538,7 +183,7 @@ class KidHomeScreen extends StatelessWidget {
                           Border.all(color: AppColors.textPrimary, width: 2.0),
                     ),
                     child: Text(
-                      "500",
+                      "5000",
                       style: AppTextStyle.headingMedium
                           .copyWith(color: AppColors.textOnPrimary),
                     ),
@@ -555,11 +200,6 @@ class KidHomeScreen extends StatelessWidget {
                   child: SvgPicture.asset(AppAssets.kidCoinIcon, height: 24.h),
                 ),
               ),
-
-              // Align(
-              //   alignment: Alignment.topLeft,
-              //   child: SvgPicture.asset(AppAssets.kidCoinIcon),
-              // ),
               Container(
                 height: 28.9.h,
                 width: 120.w,
