@@ -17,9 +17,9 @@ import '../../../../theme/color_theme.dart';
 
 class QuickTransferPage extends StatelessWidget {
   final dynamic docData;
-  final String childId;
+  final String kidId;
   const QuickTransferPage(
-      {super.key, required this.docData, required this.childId});
+      {super.key, required this.docData, required this.kidId});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class QuickTransferPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20.h),
-                    quickTransferChildGeneralDetailWidget(childId: childId),
+                    quickTransferChildGeneralDetailWidget(childId: kidId),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
@@ -174,7 +174,7 @@ class QuickTransferPage extends StatelessWidget {
                                 await firestoreOperations
                                     .parentFirebaseFunctions
                                     .updateKidSpending(
-                                        childId: childId,
+                                        kidId: kidId,
                                         enteredAmount: enteredAmount,
                                         save: false,
                                         spendingJarColor: AppColors.textPrimary
@@ -204,7 +204,7 @@ class QuickTransferPage extends StatelessWidget {
                                   await firestoreOperations
                                       .parentFirebaseFunctions
                                       .updateKidSpending(
-                                          childId: childId,
+                                          kidId: kidId,
                                           enteredAmount: enteredAmount,
                                           save: true,
                                           

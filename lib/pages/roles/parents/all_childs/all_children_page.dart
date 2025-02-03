@@ -324,7 +324,7 @@ class AllChildrenPage extends StatelessWidget {
                                       parentController.amount.value);
                                await   firestoreOperations.parentFirebaseFunctions
                                       .updateKidSpending(
-                                          childId: parentController
+                                          kidId: parentController
                                               .selectedChildIdForQuickTransfer
                                               .value,
                                           enteredAmount: enteredAmount,
@@ -353,7 +353,7 @@ class AllChildrenPage extends StatelessWidget {
                                   await firestoreOperations
                                       .parentFirebaseFunctions
                                       .updateKidSpending(
-                                          childId: parentController
+                                          kidId: parentController
                                               .selectedChildIdForQuickTransfer
                                               .value,
                                           enteredAmount: enteredAmount,

@@ -252,7 +252,7 @@ class AddGoalImage extends StatelessWidget {
                                       GestureDetector(
                                         onTap: () async {
                                           await kidGoalsController
-                                              .pickCustomAvatar();
+                                              .pickFromGallery();
                                         },
                                         child: Container(
                                           width: 230.w,
@@ -264,8 +264,11 @@ class AddGoalImage extends StatelessWidget {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Pick from Gallery",
-                                              style: AppTextStyle.bodyLarge,
+                                              "Add From Gallery",
+                                              style: AppTextStyle.headingMedium
+                                                  .copyWith(
+                                                color: AppColors.textOnPrimary,
+                                              ),
                                             ),
                                           ),
                                         ),

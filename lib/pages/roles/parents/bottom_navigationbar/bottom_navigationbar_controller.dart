@@ -9,7 +9,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ParentNavigationBarController extends GetxController {
-  var currentIndex = 0.obs; // Reactive index to track selected tab
+  var currentIndex = 0.obs;
+  var toggleValue = true.obs;
+  var toggleValue1 = true.obs;
 
   final List<Widget> screens = [
     const ParentsHomeScreen(),
@@ -35,7 +37,7 @@ class ParentNavigationBarController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> pickCustomAvatar() async {
+  Future<void> pickUpFromGallery() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -69,6 +71,26 @@ class ParentNavigationBarController extends GetxController {
     }
   }
 
+  Future<void> pickFromCamera() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+
+      if (pickedFile != null) {
+        final String localPath = await saveImageLocally(File(pickedFile.path));
+        customAvatarPath.value = localPath;
+
+        // Save the image path in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profileImagePath', localPath);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to capture and save image: $e");
+    }
+  }
+
   // Save the image locally
   Future<String> saveImageLocally(File image) async {
     try {
@@ -82,4 +104,3 @@ class ParentNavigationBarController extends GetxController {
     }
   }
 }
-

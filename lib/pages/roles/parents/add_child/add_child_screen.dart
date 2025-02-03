@@ -81,7 +81,7 @@ class AddChildScreen extends StatelessWidget {
                         return Obx(
                           () => GestureDetector(
                             onTap: () async {
-                              await _addChildController.pickCustomAvatar();
+                              await _addChildController.pickKidImage();
                             },
                             child: Padding(
                               padding: EdgeInsets.all(4.h),
@@ -89,12 +89,12 @@ class AddChildScreen extends StatelessWidget {
                                 radius: 2,
                                 backgroundColor: Colors.purple,
                                 backgroundImage: _addChildController
-                                        .customAvatarPath.value.isEmpty
+                                        .kidImagePath.value.isEmpty
                                     ? null
                                     : FileImage(File(
-                                        _addChildController.customAvatarPath.value)),
+                                        _addChildController.kidImagePath.value)),
                                 child:
-                                    _addChildController.customAvatarPath.value.isEmpty
+                                    _addChildController.kidImagePath.value.isEmpty
                                         ? Center(
                                             child: Image.asset(
                                               "assets/child_avatar_image_pngs/CameraIcon.png",
@@ -176,7 +176,7 @@ class AddChildScreen extends StatelessWidget {
                     if (!firebaseAuthController.isNormalLoading.value) {
                       firebaseAuthController.isNormalLoading.value = true;
                       await firestoreOperations.parentFirebaseFunctions
-                          .addChildAndUpdateParent();
+                          .addKidAndUpdateParent();
                           Get.off(() => ParentBottomNavigationBar());
                     }
                   },

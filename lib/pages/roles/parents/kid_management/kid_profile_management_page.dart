@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
-import 'package:coin_kids/pages/roles/parents/kid_management/edit_profile.dart';
+import 'package:coin_kids/pages/roles/parents/kid_management/update_kid_profile.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/quick_transfer.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
@@ -17,18 +17,18 @@ class KidProfileManagementPageController extends GetxController {
 }
 
 class KidProfileManagementPage extends StatelessWidget {
-  final String childId;
+  final String kidId;
   final dynamic docData;
 
   const KidProfileManagementPage(
-      {super.key, required this.childId, this.docData});
+      {super.key, required this.kidId, this.docData});
 
   @override
   Widget build(BuildContext context) {
     KidProfileManagementPageController kidProfileManagementPageController =
         Get.put(KidProfileManagementPageController());
     final DocumentReference kidDocRef =
-        FirebaseFirestore.instance.collection('kids').doc(childId);
+        FirebaseFirestore.instance.collection('kids').doc(kidId);
     return FutureBuilder<DocumentSnapshot>(
         future: kidDocRef.get(),
         builder: (context, snapshot) {
@@ -96,7 +96,7 @@ class KidProfileManagementPage extends StatelessWidget {
                                     onTap: () {
                                       Get.to(() => QuickTransferPage(
                                             docData: docData,
-                                            childId: childId,
+                                            kidId: kidId,
                                           ));
                                     }),
                                 kidMainButtons(
@@ -120,8 +120,8 @@ class KidProfileManagementPage extends StatelessWidget {
                                     assetPath:
                                         'assets/kidManageIcons/editProfile.svg',
                                     onTap: () {
-                                      Get.to(() => EditProfile(
-                                            childId: childId,
+                                      Get.to(() => UpdateKidProfile(
+                                            childId: kidId,
                                             childAge: docData['age'] ?? '1',
                                             childGrade: docData['grade'],
                                             childAvatar: docData['avatar'],
@@ -233,13 +233,13 @@ class KidProfileManagementPage extends StatelessWidget {
                             return kidProfileManagementPageController
                                         .currentType.value ==
                                     'jarType'
-                                ? coinTempData(childId: childId)
+                                ? coinTempData(childId: kidId)
                                 // ? jarData(childId: childId)
                                 : kidProfileManagementPageController
                                             .currentType.value ==
                                         'notificationType'
-                                    ? notificationData(childId: childId)
-                                    : goalsData(childId: childId);
+                                    ? notificationData(childId: kidId)
+                                    : goalsData(childId: kidId);
                           }),
                         ],
                       );
@@ -318,8 +318,8 @@ class KidProfileManagementPage extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Text("€${(docData['spendings']?['amount'] ?? 0.0).toString()}",
-
+                Text(
+                  "€${(docData['spendings']?['amount'] ?? 0.0).toString()}",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

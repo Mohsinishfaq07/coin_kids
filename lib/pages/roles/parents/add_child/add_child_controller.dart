@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +14,7 @@ class AddChildController extends GetxController {
   var childAge = ''.obs;
   var selectedGrade = ''.obs;
   var selectedAvatar = (-1).obs;
-  var customAvatarPath = ''.obs; // Path for custom uploaded avatar
+  var kidImagePath = ''.obs; // Path for custom uploaded avatar
   final selectedAvatarPath = ''.obs;
   var parentId = ''.obs; // Observable for parentId
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -92,7 +91,7 @@ class AddChildController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Function to open camera or gallery to upload photo
-  Future<void> pickCustomAvatar() async {
+  Future<void> pickKidImage() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -101,7 +100,7 @@ class AddChildController extends GetxController {
 
       if (pickedFile != null) {
         final String localPath = await saveImageLocally(File(pickedFile.path));
-        customAvatarPath.value = localPath;
+        kidImagePath.value = localPath;
         selectedAvatarPath.value = '';
         // Save the image path in SQLite
         await DatabaseHelper.instance.insertImage(localPath);
@@ -139,7 +138,7 @@ class AddChildController extends GetxController {
   // Function to update selected avatar
   void selectAvatar(int index) {
     selectedAvatar.value = index;
-    customAvatarPath.value = ''; // Clear custom avatar selection
+    kidImagePath.value = ''; // Clear custom avatar selection
 
     selectedAvatarPath.value = avatars[index];
 

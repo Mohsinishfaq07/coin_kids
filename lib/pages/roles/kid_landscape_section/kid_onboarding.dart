@@ -376,7 +376,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                           .isNormalLoading.value = true;
                                       await firestoreOperations
                                           .parentFirebaseFunctions
-                                          .addChildAndUpdateParent();
+                                          .addKidAndUpdateParent();
                                     }
                                     Get.off(() => const KidHomeScreen());
                                   },
@@ -398,7 +398,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                             .isNormalLoading.value = true;
                                         await firestoreOperations
                                             .parentFirebaseFunctions
-                                            .addChildAndUpdateParent();
+                                            .addKidAndUpdateParent();
                                       }
                                       Get.off(() => const KidHomeScreen());
                                     },

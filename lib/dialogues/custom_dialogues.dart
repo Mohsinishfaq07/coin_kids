@@ -16,7 +16,7 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
         },
         child: Center(
           child: Container(
-            height: 160.h, // Square height
+            height: 160.w, // Square height
             width: 160.w, // Square width
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.r),

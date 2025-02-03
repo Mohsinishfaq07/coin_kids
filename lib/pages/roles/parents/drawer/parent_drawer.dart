@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import '../../../../app_assets.dart';
 import '../../../../theme/color_theme.dart';
 import '../../../../theme/text_theme.dart';
@@ -23,15 +22,12 @@ class _ParentDrawerState extends State<ParentDrawer> {
     bottomNavigationBarController.loadAvatarFromPreferences();
   }
 
-  final ToggleRowController toggleRowController =
-      Get.put(ToggleRowController());
   final bottomNavigationBarController =
       Get.put(ParentNavigationBarController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // Light blue background
         body: Container(
       decoration: const BoxDecoration(
         gradient: AppColors.background,
@@ -68,14 +64,14 @@ class _ParentDrawerState extends State<ParentDrawer> {
               firebaseAuthController.username.value = data['name'];
               firebaseAuthController.birthday.value = data['dob'];
               firebaseAuthController.selectedGender.value = data['gender'];
-              return originalWidget(parentData: data);
+              return drawerWidget(parentData: data);
             }),
       ]),
     ));
   }
 
   // after data fetched widget
-  originalWidget({required Map<String, dynamic> parentData}) {
+  drawerWidget({required Map<String, dynamic> parentData}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -114,70 +110,53 @@ class _ParentDrawerState extends State<ParentDrawer> {
                           )),
                     ),
                   ),
-                  // Stack(
-                  //   alignment: Alignment.bottomRight,
-                  //   children: [
-                  //     GestureDetector(
-                  //       onTap: () async {
-                  //         await pickCustomAvatar();
-                  //       },
-                  //       child: SizedBox(
-                  //         height: 100.h,
-                  //         width: 100.w,
-                  //         child: SvgPicture.asset(AppAssets.drawerIconSvg),
-                  //       ),
-                  //     ),
-                  //     CircleAvatar(
-                  //         radius: 15.r,
-                  //         backgroundColor: const Color(0xFFFEC84B),
-                  //         child: SvgPicture.asset(AppAssets.pencilIconSvg)),
-                  //   ],
-                  // ),
-
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
+                      Obx(() {
+                        if (bottomNavigationBarController
+                            .customAvatarPath.value.isNotEmpty) {
+                          // Show the selected image
+                          return Container(
+                            height: 100.h,
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: FileImage(File(
+                                    bottomNavigationBarController
+                                        .customAvatarPath.value)),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Show the default SVG
+                          return SvgPicture.asset(
+                            AppAssets.drawerIconSvg,
+                            height: 100.h,
+                            width: 100.w,
+                          );
+                        }
+                      }),
                       GestureDetector(
                         onTap: () async {
-                          // Pick an image and update the avatar
-                          await bottomNavigationBarController
-                              .pickCustomAvatar();
+                          showImageSourceBottomSheet(onCameraTap: () {
+                            Get.back(); // Close the bottom sheet
+                            bottomNavigationBarController.pickFromCamera();
+                          }, onGalleryTap: () {
+                            Get.back(); // Close the bottom sheet
+                            bottomNavigationBarController.pickUpFromGallery();
+                          });
                         },
-                        child: Obx(() {
-                          if (bottomNavigationBarController
-                              .customAvatarPath.value.isNotEmpty) {
-                            // Show the selected image
-                            return Container(
-                              height: 100.h,
-                              width: 100.w,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: FileImage(File(
-                                      bottomNavigationBarController
-                                          .customAvatarPath.value)),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Show the default SVG
-                            return SvgPicture.asset(
-                              AppAssets.drawerIconSvg,
-                              height: 100.h,
-                              width: 100.w,
-                            );
-                          }
-                        }),
-                      ),
-                      CircleAvatar(
-                        radius: 15.r,
-                        backgroundColor: const Color(0xFFFEC84B),
-                        child: SvgPicture.asset(AppAssets.pencilIconSvg),
+                        child: CircleAvatar(
+                          radius: 15.r,
+                          backgroundColor: const Color(0xFFFEC84B),
+                          child: SvgPicture.asset(AppAssets.pencilIconSvg),
+                        ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 12.h),
                   Text(
                     "${parentData['name']}",
@@ -303,12 +282,14 @@ class _ParentDrawerState extends State<ParentDrawer> {
                     _buildToggleRow(
                       "Goal Achievement",
                       "assets/drawer_svgs/flag_check.svg",
-                      toggleRowController.toggleValue, // Reactive state
+                      bottomNavigationBarController
+                          .toggleValue, // Reactive state
                     ),
                     _buildToggleRow(
                       "Money Request",
                       "assets/drawer_svgs/euro.svg",
-                      toggleRowController.toggleValue1, // Reactive state
+                      bottomNavigationBarController
+                          .toggleValue1, // Reactive state
                     ),
                   ],
                 ),
@@ -545,8 +526,48 @@ class _ParentDrawerState extends State<ParentDrawer> {
   }
 }
 
-class ToggleRowController extends GetxController {
-  // Create an RxBool to manage the state of the Switch
-  var toggleValue = true.obs;
-  var toggleValue1 = true.obs;
+void showImageSourceBottomSheet({
+  required VoidCallback onCameraTap,
+  required VoidCallback onGalleryTap,
+}) {
+  Get.bottomSheet(
+    Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Choose Image Source",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 12),
+          ListTile(
+            leading: Icon(Icons.camera_alt, color: Colors.blue),
+            title: Text(
+              "Take Photo",
+              style: AppTextStyle.bodyLarge,
+            ),
+            onTap: () {
+              Get.back(); // Close the bottom sheet
+              onCameraTap(); // Execute the custom camera function
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.photo_library, color: Colors.green),
+            title: Text(
+              "Choose from Gallery",
+              style: AppTextStyle.bodyLarge,
+            ),
+            onTap: () {
+              Get.back(); // Close the bottom sheet
+              onGalleryTap(); // Execute the custom gallery function
+            },
+          ),
+        ],
+      ),
+    ),
+    isDismissible: true,
+  );
 }

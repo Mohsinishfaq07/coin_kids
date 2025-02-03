@@ -10,7 +10,6 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';

@@ -97,7 +97,7 @@ class KidGoalAllInfoDisplay extends StatelessWidget {
                                     KidGoalAllInfoDisplayPickerButton(
                                         onTap: () async {
                                           await kidGoalsController
-                                              .pickCustomAvatar();
+                                              .pickFromGallery();
                                         },
                                         color: Color(0xffE28424),
                                         buttonTitle: 'Add from Gallery',

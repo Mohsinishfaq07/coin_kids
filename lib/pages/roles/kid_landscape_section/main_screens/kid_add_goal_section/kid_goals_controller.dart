@@ -19,22 +19,7 @@ class KidGoalsController extends GetxController {
   RxString goalImage = ''.obs;
   RxBool isPickingImage = false.obs; // Add flag
 
-  // Future<void> pickImageFromGallery() async {
-  //   if (isPickingImage.value) return; // Prevent multiple calls
-  //   isPickingImage.value = true;
-
-  //   try {
-  //     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-  //     if (pickedImage != null) {
-  //       goalImage.value = pickedImage.path;
-  //     }
-  //   } catch (e) {
-  //     print("Error picking image: $e");
-  //   } finally {
-  //     isPickingImage.value = false; // Reset flag
-  //   }
-  // }
-  Future<void> pickCustomAvatar() async {
+  Future<void> pickFromGallery() async {
     try {
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
@@ -42,11 +27,7 @@ class KidGoalsController extends GetxController {
       );
 
       if (pickedFile != null) {
-        final String localPath = await saveImageLocally(File(pickedFile.path));
-        goalImage.value = localPath;
-        // goalImage.value = '';
-        // Save the image path in SQLite
-        await DatabaseHelper.instance.insertImage(localPath);
+        goalImage.value = pickedFile.path;
 
         Get.snackbar("Success", "Image saved locally.");
       } else {
@@ -98,7 +79,8 @@ class KidGoalsController extends GetxController {
       DocumentSnapshot kidDoc = kidSnapshot.docs.first;
       DocumentReference kidRef = kidDoc.reference;
       final String avatarUrl =
-          goalImage.value.isEmpty ? 'assets/defaultImage.png' : goalImage.value;
+          goalImage.value.isEmpty ? 'assets/logo.png' : goalImage.value;
+      //locally store the image
 
       // Firestore goal data
       final Map<String, dynamic> goalData = {
@@ -109,6 +91,7 @@ class KidGoalsController extends GetxController {
         'image': avatarUrl,
         'name': goalName.value,
         'progress': 0,
+        'goalId': goalRef.id,
         //  'kid': '/kids/${kidRef.id}',
       };
 
@@ -131,6 +114,14 @@ class KidGoalsController extends GetxController {
 
           // Update kid document
           transaction.update(kidRef, kidData);
+
+          final String localPath =
+              await saveImageLocally(File(goalImage.value), goalRef.id);
+          goalImage.value = localPath;
+
+          // Save the image path in SQLite, associating it with the goalId
+          await DatabaseHelper.instance
+              .insertImageForGoals(goalRef.id, localPath);
         } catch (e) {
           Get.log('Error in Firestore transaction: $e');
           rethrow; // Re-throw exception to be caught outside
@@ -159,15 +150,36 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  Future<String> saveImageLocally(File image) async {
+  Future<String> saveImageLocally(File image, String goalId) async {
     try {
       final Directory appDir = await getApplicationDocumentsDirectory();
+
+      final String goalDirPath =
+          '${appDir.path}/$goalId'; // Create a directory per goalId
+      final Directory goalDir = Directory(goalDirPath);
+      if (!await goalDir.exists()) {
+        await goalDir.create(recursive: true);
+      }
       final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final File localImage = await image.copy('${appDir.path}/$fileName.jpg');
-      return localImage.path; // Return the local path
+      final File localImage = await image.copy('$goalDirPath/$fileName.jpg');
+      return localImage.path;
     } catch (e) {
       Get.snackbar("Error", "Failed to save image locally: $e");
       rethrow;
+    }
+  }
+
+  Future<String?> getImageFromDatabase(String goalId) async {
+    try {
+      final imagePath = await DatabaseHelper.instance.getImageByGoalId(goalId);
+      if (imagePath != null && imagePath.isNotEmpty) {
+        return imagePath;
+      }
+      return null; // Return null if no image is found
+    } catch (e) {
+      Get.snackbar("Error", "Failed to fetch image: $e");
+      print("Error Failed to fetch image: $e");
+      return null;
     }
   }
 }

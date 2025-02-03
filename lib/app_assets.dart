@@ -33,4 +33,6 @@ class AppAssets {
   static const kidShopIcons = "assets/kidRoleIcons/kidShopIcon.svg";
   static const kidParentZoneIcon = "assets/kidRoleIcons/kidParentZoneIcon.svg";
   static const kidPlusIcon = "assets/kidRoleIcons/kidPlusIcon.svg";
+  static const jarBackgroundSvg = "assets/jars/JarBg.svg";
+  static const jarOutLinePng = "assets/jars/jarOutline.png";
 }

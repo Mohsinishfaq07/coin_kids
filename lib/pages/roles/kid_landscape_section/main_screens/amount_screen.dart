@@ -111,26 +111,30 @@ class _AmountScreenState extends State<AmountScreen> {
                             // Perform the desired operation
 
                             if (widget.isSpending.value) {
-                              await firestoreOperations.parentFirebaseFunctions
-                                  .updateKidSpending(
-                                save: true,
-                                childId: parentController.kidsList[0]['id'],
-                                enteredAmount: enteredAmount,
-                                spendingJarColor: widget.jarColor,
-                              );
+                              // await firestoreOperations.parentFirebaseFunctions
+                              //     .updateKidSpendingForJar(
+                              //   save: true,
+                              //   kidId: parentController.kidsList[0]['id'],
+                              //   enteredAmount: enteredAmount,
+                              //   spendingJarColor: widget.jarColor,
+                              // );
                               Get.to(() => AddMoneyScreen(
                                     isSpending: widget.isSpending,
+                                    amount: enteredAmount,
+                                    jarColor: widget.jarColor,
                                   ));
                             } else {
-                              await firestoreOperations.parentFirebaseFunctions
-                                  .kidSpendingToSavings(
-                                save: true,
-                                childId: parentController.kidsList[0]['id'],
-                                enteredAmount: enteredAmount,
-                                savingsJarColor: widget.jarColor,
-                              );
+                              // await firestoreOperations.parentFirebaseFunctions
+                              //     .kidSpendingToSavings(
+                              //   save: true,
+                              //   childId: parentController.kidsList[0]['id'],
+                              //   enteredAmount: enteredAmount,
+                              //   savingsJarColor: widget.jarColor,
+                              // );
                               Get.to(() => AddMoneyScreen(
                                     isSpending: false.obs,
+                                    amount: enteredAmount,
+                                    jarColor: widget.jarColor,
                                   ));
                             }
                           },

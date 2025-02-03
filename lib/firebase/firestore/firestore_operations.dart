@@ -141,7 +141,7 @@ class ParentFirebaseFunctions {
   }
 
   // add child to parent
-  Future<void> addChildAndUpdateParent() async {
+  Future<void> addKidAndUpdateParent() async {
     Get.log(
       'Adding new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
     );
@@ -160,14 +160,16 @@ class ParentFirebaseFunctions {
               ));
       final String avatarUrl =
           addChildController.selectedAvatarPath.value.isEmpty &&
-                  addChildController.customAvatarPath.value.isEmpty
+                  addChildController.kidImagePath.value.isEmpty
               ? 'assets/defaultImage.png' // Default image URL if both are empty
               : addChildController.selectedAvatarPath.value.isEmpty
-                  ? addChildController.customAvatarPath.value
+                  ? addChildController.kidImagePath.value
                   : addChildController
                       .selectedAvatarPath.value; // Use selected avatar
 
       // Reference to the parent document
+      final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
       DocumentReference parentRef = _firebaseFirestore
           .collection('parents')
           .doc(FirebaseAuth.instance.currentUser!.email);
@@ -175,6 +177,7 @@ class ParentFirebaseFunctions {
       // Prepare child data
       final Map<String, dynamic> childData = {
         'name': addChildController.childName.value,
+        // 'kidId': kidRef.id,
         'parentId': FirebaseAuth.instance.currentUser!.uid,
         'grade': 'Grade 1',
         'parent': parentRef,
@@ -221,7 +224,7 @@ class ParentFirebaseFunctions {
 
   Future<void> updateKidSpending({
     required bool save,
-    required String childId,
+    required String kidId,
     required double enteredAmount,
     required Color spendingJarColor,
   }) async {
@@ -234,9 +237,10 @@ class ParentFirebaseFunctions {
       );
 
       DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(childId);
+          FirebaseFirestore.instance.collection('kids').doc(kidId);
 
       DocumentSnapshot snapshot = await kidDocRef.get();
+      
 
       if (snapshot.exists) {
         // Check if 'spendings' exists, if not, initialize it with default values
@@ -270,6 +274,7 @@ class ParentFirebaseFunctions {
                   'amount': updatedAmount, // Save as a numeric type
                   'color': colorHex, // Default color for spendings
                   'name': 'Spendings', // Default name for spendings
+                  'kidId': kidId,
                 }
               },
               SetOptions(
@@ -329,7 +334,7 @@ class ParentFirebaseFunctions {
         }
       } else {
         Get.back();
-        Get.log("Document does not exist for childId: $childId");
+        Get.log("Document does not exist for childId: $kidId");
       }
     } catch (e) {
       Get.back();
@@ -339,13 +344,13 @@ class ParentFirebaseFunctions {
 
   Future<void> kidSpendingToSavings({
     required bool save,
-    required String childId,
+    required String kidId,
     required double enteredAmount,
     required Color savingsJarColor,
   }) async {
     try {
       DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(childId);
+          FirebaseFirestore.instance.collection('kids').doc(kidId);
 
       DocumentSnapshot snapshot = await kidDocRef.get();
 
@@ -416,9 +421,9 @@ class ParentFirebaseFunctions {
 
         Get.log("New savings record created successfully.");
 
-        Get.to(() => AddMoneyScreen(
-              isSpending: false.obs,
-            ));
+        // Get.to(() => AddMoneyScreen(
+        //       isSpending: false.obs, amount: null, jarColor: null,
+        //     ));
       }
     } catch (e) {
       Get.back();
@@ -428,60 +433,127 @@ class ParentFirebaseFunctions {
 
   var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
+ 
+ Future<void> updateKidSpendingForJar({
+    required bool save,
+    required String kidId,
+    required double enteredAmount,
+    required Color spendingJarColor,
+  }) async {
+    try {
+      // showDialog(
+      //   context: Get.context!,
+      //   builder: (context) => LoadingProgressDialogueWidget(
+      //     title: "saving..",
+      //   ),
+      // );
 
-  // // Update Spending Jar Color in Firebase
-  // Future<void> updateSpendingJarColor({
-  //   required bool save,
-  //   required String childId,
-  //   required Color spendingJarColor, // Color passed as parameter
-  // }) async {
-  //   try {
-  //     // Show loading dialog
-  //     // showDialog(
-  //     //   context: Get.context!,
-  //     //   builder: (context) => LoadingProgressDialogueWidget(
-  //     //     title: "Saving...",
-  //     //   ),
-  //     // );
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(kidId);
 
-  //     // Reference to the kid's document
-  //     DocumentReference kidDocRef =
-  //         FirebaseFirestore.instance.collection('kids').doc(childId);
-  //     DocumentSnapshot snapshot = await kidDocRef.get();
+      DocumentSnapshot snapshot = await kidDocRef.get();
+      
 
-  //     if (snapshot.exists) {
-  //       // Convert color to a string value (Hex or RGBA)
-  //       String colorHex = spendingJarColor.value
-  //           .toRadixString(16)
-  //           .padLeft(8, '0'); // Converts to hex format
+      if (snapshot.exists) {
+        // Check if 'spendings' exists, if not, initialize it with default values
+        final currentSpending = (snapshot.data()
+                as Map<String, dynamic>?)?['spendings']?['amount'] ??
+            0.0; // Default to 0.0 if spendings don't exist
+        double updatedAmount = 0.0;
+        // Convert the color to hex string
+        // String colorHex = spendingJarColor.value.toRadixString(16).padLeft(8, '0');
+        String colorHex =
+            '#${spendingJarColor.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}'; // Format like "#RRGGBB"
 
-  //       if (save) {
-  //         // Save the updated spending jar color as a hex string
-  //         await kidDocRef.update({
-  //           'spendings.color': colorHex, // Use dot notation for nested fields
-  //         });
-  //         // Close loading dialog
-  //         // Get.back();
-  //         print("Spending Jar Color updated successfully to: $colorHex");
-  //         Get.log("Spending Jar Color updated successfully to: $colorHex");
-  //         // Get.to(() => AmountScreen(
-  //         //       isSpending: true.obs,
-  //         //     ));
-  //       } else {
-  //         Get.back();
-  //         Get.log("Save flag is false. No changes made.");
-  //       }
-  //     } else {
-  //       Get.back();
-  //       Get.log("Kid document does not exist.");
-  //     }
-  //   } catch (e) {
-  //     // Handle errors
-  //     Get.back();
-  //     Get.log("Error updating spending jar color: $e");
-  //   }
-  // }
+        // If the color is not already present, set the default color
+        String currentColorHex = (snapshot.data()
+                as Map<String, dynamic>?)?['spendings']?['color'] ??
+            '#227799';
 
-  
+        // Update the spending jar color if it's new
+        if (currentColorHex != colorHex) {
+          await kidDocRef.update({
+            'spendings.color': colorHex, // Update color
+          });
+        }
+        if (save) {
+          updatedAmount = currentSpending + enteredAmount;
+
+          // Save the updated spending amount as a numeric value (double or int)
+          await kidDocRef.set(
+              {
+                'spendings': {
+                  'amount': updatedAmount, // Save as a numeric type
+                  'color': colorHex, // Default color for spendings
+                  'name': 'Spendings', // Default name for spendings
+                  'kidId': kidId,
+                }
+              },
+              SetOptions(
+                  merge: true)); // Merge to avoid overwriting other fields
+          Get.back();
+          Get.log("Spending updated successfully to: $updatedAmount");
+
+          // showDialog(
+          //   context: Get.context!,
+          //   builder: (context) => TransferSuccessDialog(
+          //     receiverName: snapshot['name'],
+          //     amount: homeController.amount.value,
+          //     dateTime: formatDate(DateTime.now().toLocal()),
+          //     title: 'Transfer Successful',
+          //     transferType: 'received',
+          //   ),
+          // );
+        } else {
+          if (enteredAmount > currentSpending) {
+            homeController.amountValidation.value = 'Not Enough Funds,';
+            Get.back();
+
+            Fluttertoast.showToast(
+              msg: 'Not Enough Funds', // Message to display
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: AppColors.textHighlighted,
+              textColor: Colors.white,
+              fontSize: 16.sp,
+            );
+          } else {
+            updatedAmount = currentSpending - enteredAmount;
+            Get.log("Current Spending Amount: $currentSpending");
+
+            // Save the updated spending amount as a numeric value (double or int)
+            await kidDocRef.update({
+              'spendings': {
+                'amount': updatedAmount, // Save as a numeric type
+                'color': colorHex, // Default color for spendings
+                'name': 'Spendings', // Default name for spendings
+              }
+            });
+            Get.back();
+            Get.log("Spending updated successfully to: $updatedAmount");
+
+            showDialog(
+              context: Get.context!,
+              builder: (context) => TransferSuccessDialog(
+                receiverName: snapshot['name'] ?? 'Unknown',
+                amount: homeController.amount.value,
+                dateTime: formatDate(DateTime.now().toLocal()),
+                title: 'Deduction Successful',
+                transferType: 'deducted',
+              ),
+            );
+          }
+        }
+      } else {
+        Get.back();
+        Get.log("Document does not exist for childId: $kidId");
+      }
+    } catch (e) {
+      Get.back();
+      Get.log("Error updating spendings: $e");
+    }
+  }
+
+
 
 }

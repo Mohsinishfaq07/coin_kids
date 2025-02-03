@@ -303,7 +303,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   Get.to(() => KidProfileManagementPage(
-                                        childId: '${kid['id']}',
+                                        kidId: '${kid['id']}',
                                       ));
                                 },
                                 child: Column(
