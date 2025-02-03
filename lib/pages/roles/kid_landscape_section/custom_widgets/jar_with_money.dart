@@ -43,21 +43,21 @@ class JarWithMoneyTitle extends StatelessWidget {
 
           // colorBlendMode: BlendMode.srcIn,
         ),
-        Positioned(
-          left: 3.w,
-          child: Image.asset(
-            // "assets/jar_home.png", // Replace with your filled jar asset
-            //"assets/role_selection_icons/emptyJar.png",
-            //"assets/jarOutline.png",
-            "assets/Group 1000005706.png",
+        // Positioned(
+        //   left: 3.w,
+        //   child: Image.asset(
+        //     // "assets/jar_home.png", // Replace with your filled jar asset
+        //     //"assets/role_selection_icons/emptyJar.png",
+        //     //"assets/jarOutline.png",
+        //     "assets/Group 1000005706.png",
 
-            height: 100.h,
-            width: 136.w,
-            color: Colors.transparent,
+        //     height: 100.h,
+        //     width: 136.w,
+        //     color: Colors.transparent,
 
-            // colorBlendMode: BlendMode.srcIn,
-          ),
-        ),
+        //     // colorBlendMode: BlendMode.srcIn,
+        //   ),
+        // ),
 
         Positioned(
           bottom: 36.h,
@@ -106,7 +106,7 @@ class JarWithMoneyTitle extends StatelessWidget {
                   accelerationDuration: Duration(seconds: 1),
                   accelerationCurve: Curves.linear,
                   pauseAfterRound: Duration(seconds: 1),
-                  blankSpace: 10.0,
+                  blankSpace: 20.0,
                   style: TextStyle(
                     color: jarColor,
                     fontSize: 15.83.sp,

@@ -1,42 +1,33 @@
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_ammount.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/add_goal_amount.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
+import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
+import 'package:coin_kids/theme/color_theme.dart';
+import 'package:coin_kids/theme/text_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-import '../../../../../app_assets.dart';
-import '../../../../../theme/color_theme.dart';
-import '../../../../../theme/text_theme.dart';
-import '../../custom_widgets/kid_text_field.dart';
-import '../kid_home_screen.dart';
+class AddGoalName extends StatelessWidget {
+  AddGoalName({Key? key}) : super(key: key);
 
-class KidAddGoal extends StatelessWidget {
-  final String childMoney;
-  const KidAddGoal({super.key, required this.childMoney});
+  final parentController = Get.put(ParentController());
+
+  final kidGoalsController = Get.put(KidGoalsController());
 
   @override
   Widget build(BuildContext context) {
-    KidGoalsController kidGoalsController = Get.put(KidGoalsController());
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: Container(
-            child: SvgPicture.asset(AppAssets.kidSectionBackIconSvg),
-          ),
-        ),
-        title: Text(
-          'Name Your Goal',
-          style: AppTextStyle.headingLarge,
-        ),
-        actions: [cardContainerIcon()],
-      ),
-      body: SafeArea(
-        child: Container(
+        extendBody: true,
+        body: Container(
           height: double.infinity,
           width: double.infinity,
           decoration: const BoxDecoration(
@@ -45,113 +36,65 @@ class KidAddGoal extends StatelessWidget {
               image: AssetImage(AppAssets.kidSectionBG),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                'What are you saving for 🎯',
-                style: AppTextStyle.headingLarge,
-              ),
-              KidCustomTextField(
-                hintText: "e.g Electric Bike",
-                onChange: (value) {
-                  kidGoalsController.goalName.value = value;
-                },
-              ),
-              kidCustomButton(
-                  onTap: () {
-                    Get.log(
-                        'log: goal name controller:${kidGoalsController.goalName.value}');
-                    if (kidGoalsController.goalName.value.isNotEmpty) {
-                      Get.to(() => KidAddGoalAmount());
-                    }
-                  },
-                  color: Color(0xFF19B859),
-                  buttonTitle: 'Next')
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-kidCustomButton(
-    {required Function() onTap,
-    required Color color,
-    required String buttonTitle}) {
-  return Padding(
-    padding: EdgeInsets.only(right: 20.w),
-    child: Align(
-      alignment: Alignment.bottomRight,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 120.w,
-          height: 42.h,
-          clipBehavior: Clip.antiAlias,
-          decoration: ShapeDecoration(
-            color: color,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 2.22.w, color: color),
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 20.w,
-                right: 12.w,
-                top: 4.h,
-                bottom: 4.h,
-                child: Row(
-                  children: [
-                    Text(
-                      buttonTitle,
-                      style: AppTextStyle.headingMedium.copyWith(
-                          color: AppColors.textOnPrimary, fontSize: 22.sp),
-                    ),
-                    SizedBox(
-                      width: 12.w,
-                    ),
-                    Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color:
-                              Colors.transparent, // Background color (optional)
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  Colors.black.withOpacity(0.2), // Shadow color
-                              blurRadius: 10, // Blur radius for the shadow
-                              offset:
-                                  const Offset(2, 4), // Shadow position (x, y)
-                            ),
-                          ],
-                          shape: BoxShape
-                              .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                        ),
-                        child: SvgPicture.asset(
-                          "assets/arrorDirectionNoShadow.svg",
-                          height: 12.h,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 16.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.w),
+                        child: kidBackButton(
+                          onTap: () {
+                            Get.back();
+                          },
                         ),
                       ),
-                    ),
-                  ],
+                      SpendingCardContainer()
+                    ],
+                  ),
                 ),
-              ),
-              Positioned(
-                  left: 1,
-                  top: 1.29,
-                  child: Image.asset(
-                    "assets/Button_shadow.png",
-                    height: 10.h,
-                  )),
-            ],
+                SizedBox(height: 16.h),
+                Text(
+                  'What are you saving for 🎯',
+                  style: AppTextStyle.headingLarge,
+                ),
+                SizedBox(height: 20.h),
+                KidCustomTextField(
+                    keyboardType: TextInputType.name,
+                    hintText: "e.g Electric Bike ",
+                    onChange: (val) {
+                      kidGoalsController.goalName.value = val;
+                    }),
+                Padding(
+                    padding: EdgeInsets.only(right: 20.w, top: 16.h),
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: GreenNextButton(
+                            onTap: () async {
+                              if (kidGoalsController.goalName.value.isEmpty) {
+                                Fluttertoast.showToast(
+                                  msg:
+                                      'Goal Name Could Not be empty ', // Message to display
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: AppColors.textHighlighted,
+                                  textColor: Colors.white,
+                                  fontSize: 16.sp,
+                                );
+                              } else {
+                                kidGoalsController.goalName.value;
+                                // kidGoalsController.addKidGoal();
+                                 Get.to(() => AddGoalAmount());
+                              }
+                            },
+                            buttonText: 'Next'))),
+              ],
+            ),
           ),
-        ),
-      ),
-    ),
-  );
+        ));
+  }
 }

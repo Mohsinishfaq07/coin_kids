@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 class AddChildController extends GetxController {
   // Observable fields
   var childName = ''.obs;
+  var kidGoalName = ''.obs;
   var childAge = ''.obs;
   var selectedGrade = ''.obs;
   var selectedAvatar = (-1).obs;

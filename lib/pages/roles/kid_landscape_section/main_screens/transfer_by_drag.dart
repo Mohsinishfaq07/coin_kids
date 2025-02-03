@@ -1,7 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/card_container_icon.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money_controller.dart';
@@ -121,9 +121,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                     style: AppTextStyle.headingLarge,
                                   )
                                 ]),
-                                CardContainerIcon(
-                                  isSpending: widget.isSpending,
-                                ),
+                                SpendingCardContainer(),
                               ],
                             ),
                           ),

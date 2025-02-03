@@ -1,6 +1,7 @@
 import 'dart:io';
 
- import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_name.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,7 +34,7 @@ class KidGoalAllInfoDisplay extends StatelessWidget {
             child: SvgPicture.asset(AppAssets.kidSectionBackIconSvg),
           ),
         ),
-        actions: [cardContainerIcon()],
+        actions: [SpendingCardContainer()],
       ),
       body: SafeArea(
         child: Container(
@@ -94,9 +95,9 @@ class KidGoalAllInfoDisplay extends StatelessWidget {
                                       height: 5.h,
                                     ),
                                     KidGoalAllInfoDisplayPickerButton(
-                                        onTap: () {
-                                          kidGoalsController
-                                              .pickImageFromGallery();
+                                        onTap: () async {
+                                          await kidGoalsController
+                                              .pickCustomAvatar();
                                         },
                                         color: Color(0xffE28424),
                                         buttonTitle: 'Add from Gallery',
@@ -149,12 +150,12 @@ class KidGoalAllInfoDisplay extends StatelessWidget {
                   height: 5.h,
                 ),
                 Obx(() {
-                  return kidCustomButton(
+                  return GreenNextButton(
                     onTap: () {},
-                    color: kidGoalsController.goalImage.value.isNotEmpty
-                        ? Color(0xff19B859)
-                        : Color(0xffAB47BC),
-                    buttonTitle: kidGoalsController.goalImage.value.isNotEmpty
+                    // color: kidGoalsController.goalImage.value.isNotEmpty
+                    //     ? Color(0xff19B859)
+                    //     : Color(0xffAB47BC),
+                    buttonText: kidGoalsController.goalImage.value.isNotEmpty
                         ? 'Next'
                         : 'Skip',
                   );

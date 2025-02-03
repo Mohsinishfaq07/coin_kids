@@ -141,57 +141,57 @@ class ParentController extends GetxController {
   RxBool isSelected = false.obs; //
 
   // Update Spending Jar Color in Firebase
-  Future<void> updateSpendingJar({
-    required bool save,
-    required String childId,
-    required Color spendingJarColor, // Color passed as parameter
-  }) async {
-    try {
-      // Show loading dialog
-      // showDialog(
-      //   context: Get.context!,
-      //   builder: (context) => LoadingProgressDialogueWidget(
-      //     title: "Saving...",
-      //   ),
-      // );
+  // Future<void> updateSpendingJarColor({
+  //   required bool save,
+  //   required String childId,
+  //   required Color spendingJarColor, // Color passed as parameter
+  // }) async {
+  //   try {
+  //     // Show loading dialog
+  //     // showDialog(
+  //     //   context: Get.context!,
+  //     //   builder: (context) => LoadingProgressDialogueWidget(
+  //     //     title: "Saving...",
+  //     //   ),
+  //     // );
 
-      // Reference to the kid's document
-      DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(childId);
-      DocumentSnapshot snapshot = await kidDocRef.get();
+  //     // Reference to the kid's document
+  //     DocumentReference kidDocRef =
+  //         FirebaseFirestore.instance.collection('kids').doc(childId);
+  //     DocumentSnapshot snapshot = await kidDocRef.get();
 
-      if (snapshot.exists) {
-        // Convert color to a string value (Hex or RGBA)
-        String colorHex = spendingJarColor.value
-            .toRadixString(16)
-            .padLeft(8, '0'); // Converts to hex format
+  //     if (snapshot.exists) {
+  //       // Convert color to a string value (Hex or RGBA)
+  //       String colorHex = spendingJarColor.value
+  //           .toRadixString(16)
+  //           .padLeft(8, '0'); // Converts to hex format
 
-        if (save) {
-          // Save the updated spending jar color as a hex string
-          await kidDocRef.update({
-            'spendings.color': colorHex, // Use dot notation for nested fields
-          });
-          // Close loading dialog
-          // Get.back();
-          print("Spending Jar Color updated successfully to: $colorHex");
-          Get.log("Spending Jar Color updated successfully to: $colorHex");
-          // Get.to(() => AmountScreen(
-          //       isSpending: true.obs,
-          //     ));
-        } else {
-          Get.back();
-          Get.log("Save flag is false. No changes made.");
-        }
-      } else {
-        Get.back();
-        Get.log("Kid document does not exist.");
-      }
-    } catch (e) {
-      // Handle errors
-      Get.back();
-      Get.log("Error updating spending jar color: $e");
-    }
-  }
+  //       if (save) {
+  //         // Save the updated spending jar color as a hex string
+  //         await kidDocRef.update({
+  //           'spendings.color': colorHex, // Use dot notation for nested fields
+  //         });
+  //         // Close loading dialog
+  //         // Get.back();
+  //         print("Spending Jar Color updated successfully to: $colorHex");
+  //         Get.log("Spending Jar Color updated successfully to: $colorHex");
+  //         // Get.to(() => AmountScreen(
+  //         //       isSpending: true.obs,
+  //         //     ));
+  //       } else {
+  //         Get.back();
+  //         Get.log("Save flag is false. No changes made.");
+  //       }
+  //     } else {
+  //       Get.back();
+  //       Get.log("Kid document does not exist.");
+  //     }
+  //   } catch (e) {
+  //     // Handle errors
+  //     Get.back();
+  //     Get.log("Error updating spending jar color: $e");
+  //   }
+  // }
 
   // Update Spending Jar Color in Firebase
   Future<void> updateSavingJarColor({

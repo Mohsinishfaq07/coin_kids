@@ -9,7 +9,7 @@ void landscapeOrientation() {
   ]);
 
   // Show the status bar
-  _showStatusBar();
+  _hideStatusBar();
 
   // Set system UI overlay styles
   SystemChrome.setSystemUIOverlayStyle(
@@ -25,8 +25,8 @@ void landscapeOrientation() {
 }
 
 // Show the status bar briefly
-void _showStatusBar() {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+void _hideStatusBar() {
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 }
 
-// Hide the status bar
+ 

@@ -1,4 +1,4 @@
- import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/amount_screen.dart';
@@ -7,22 +7,22 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
- import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class JarColorScreen extends StatefulWidget {
+class AddJarColorScreen extends StatefulWidget {
   RxBool isSpending;
 
-  JarColorScreen({
+  AddJarColorScreen({
     required this.isSpending,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<JarColorScreen> createState() => _JarColorScreenState();
+  State<AddJarColorScreen> createState() => _AddJarColorScreenState();
 }
 
-class _JarColorScreenState extends State<JarColorScreen> {
+class _AddJarColorScreenState extends State<AddJarColorScreen> {
   final List<Color> colors = [
     const Color(0xFFFF6060),
     const Color(0xFF8F60FF),

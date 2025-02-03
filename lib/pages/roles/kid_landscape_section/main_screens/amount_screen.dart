@@ -9,7 +9,6 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
@@ -130,12 +129,10 @@ class _AmountScreenState extends State<AmountScreen> {
                                 enteredAmount: enteredAmount,
                                 savingsJarColor: widget.jarColor,
                               );
+                              Get.to(() => AddMoneyScreen(
+                                    isSpending: false.obs,
+                                  ));
                             }
-
-                            // Navigate to the next screen
-                            // Get.to(() => AddMoneyScreen(
-                            //       isSpending: widget.isSpending,
-                            //     ));
                           },
                           buttonText: 'Next'))),
             ],

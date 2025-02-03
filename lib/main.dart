@@ -1,5 +1,7 @@
 import 'package:coin_kids/bindings/controller_bindings.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +14,8 @@ import 'pages/splash_screen/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // Automatically generated options
-
+    options: DefaultFirebaseOptions
+        .currentPlatform, // Automatically generated options
   );
   controllerAndClassInitialization();
 
@@ -37,20 +39,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        return ScreenUtilInit(
-          designSize:  orientation == Orientation.portrait ? const Size(360, 800) : const Size(800, 360),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          child: GetMaterialApp(
-            theme: CustomThemeData.getThemeData(),
-            debugShowCheckedModeBanner: false,
-            initialBinding: ControllerBindings(),
-            home: const SplashScreen(),
-          ),
-        );
+    return OrientationBuilder(builder: (context, orientation) {
+      if (orientation == Orientation.portrait) {
+        PortraitOrientation();
+      } else {
+        landscapeOrientation();
       }
-    );
+      return ScreenUtilInit(
+        designSize: orientation == Orientation.portrait
+            ? const Size(360, 800)
+            : const Size(800, 360),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: GetMaterialApp(
+          theme: CustomThemeData.getThemeData(),
+          debugShowCheckedModeBanner: false,
+          initialBinding: ControllerBindings(),
+          home: const SplashScreen(),
+        ),
+      );
+    });
   }
 }

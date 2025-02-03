@@ -62,8 +62,7 @@ class SignupParentScreen extends StatelessWidget {
 
                       
                     ),
-                    // email
-
+                    
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.h),
                       child: CustomTextField(

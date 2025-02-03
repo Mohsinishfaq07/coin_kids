@@ -7,10 +7,18 @@ import 'package:flutter_svg/svg.dart';
 class GreenNextButton extends StatelessWidget {
   final VoidCallback onTap;
   final String buttonText;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? textColor;
 
-  const GreenNextButton(
-      {Key? key, required this.onTap, required this.buttonText})
-      : super(key: key);
+  const GreenNextButton({
+    Key? key,
+    required this.onTap,
+    required this.buttonText,
+    this.backgroundColor, // Optional custom background color
+    this.borderColor, // Optional custom border color
+    this.textColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +29,11 @@ class GreenNextButton extends StatelessWidget {
         height: 32.h,
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
-          color: const Color(0xFF19B859),
+          color: backgroundColor ?? const Color(0xFF19B859), 
           shape: RoundedRectangleBorder(
             side: BorderSide(
               width: 2.22.w,
-              color: const Color(0xFF0E9454),
+               color: borderColor ?? const Color(0xFF0E9454),
             ),
             borderRadius: BorderRadius.circular(20.r),
           ),
@@ -42,7 +50,7 @@ class GreenNextButton extends StatelessWidget {
                   Text(
                     buttonText,
                     style: AppTextStyle.headingMedium.copyWith(
-                      color: AppColors.textOnPrimary,
+                     color: textColor ?? AppColors.textOnPrimary,
                       fontSize: 22.sp,
                     ),
                   ),
