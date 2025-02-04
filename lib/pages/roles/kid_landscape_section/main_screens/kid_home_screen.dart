@@ -77,112 +77,109 @@ class KidHomeScreen extends StatelessWidget {
               print("Spending jar color: $spendingJarColor");
               print("Saving jar color: $savingJarColor");
 
-              return SafeArea(
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    gradient: AppColors.background,
-                    image: DecorationImage(
-                      image: AssetImage(AppAssets.kidSectionBG),
-                    ),
+              return Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: AppColors.background,
+                  image: DecorationImage(
+                    image: AssetImage(AppAssets.kidSectionBG),
                   ),
-                  child: SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 10.w, right: 10.w, top: 6.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              KidAvatarContainer(),
-                              GestureDetector(
-                                  onTap: () async {
-                                    await firebaseAuthController.logout();
-                                  },
-                                  child: Icon(Icons.logout)),
-                              Row(
-                                children: [
-                                  SpendingCardContainer(),
-                                  SizedBox(
-                                    width: 10.w,
-                                  ),
-                                  coinLockedWidget(),
-                                  SizedBox(
-                                    width: 10.w,
-                                  ),
-                                  totalBalanceWidget()
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        Stack(children: [
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.only(left: 10.w, right: 10.w, top: 6.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          KidAvatarContainer(),
+                          GestureDetector(
+                              onTap: () async {
+                                await firebaseAuthController.logout();
+                              },
+                              child: Icon(Icons.logout)),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              VerticalNavBar(),
-                              Obx(() {
-                                if (verticalNavBarController
-                                        .currentItem.value ==
-                                    0) {
-                                  return KidFinanceWidgets(
-                                    spendingJarColor: spendingJarColor,
-                                    spendingAmount: spendingAmount,
-                                    savingJarColor: savingJarColor,
-                                    savingAmount: savingAmount,
-                                    kidsData: kidsData,
-                                  );
-                                } else if (verticalNavBarController
-                                        .currentItem.value ==
-                                    1) {
-                                  final Map<String, dynamic> spendingData =
-                                      kidData.containsKey('spendings')
-                                          ? kidData['spendings']
-                                              as Map<String, dynamic>
-                                          : {};
-
-                                  final String kidId =
-                                      spendingData.containsKey('kidId')
-                                          ? spendingData['kidId'] as String
-                                          : "";
-
-                                  if (kidData.containsKey('goals')) {
-                                    final String currentKidId =
-                                        kidId; // Ensure kidId exists
-
-                                    print("$currentKidId");
-
-                                    return GoalsScreen(
-                                        currentKidId: currentKidId);
-                                  } else {
-                                    return AddGoalWidget();
-                                  }
-                                } else if (verticalNavBarController
-                                        .currentItem.value ==
-                                    2) {
-                                  return Text("Shop widget"); //
-                                } else {
-                                  return SizedBox(); // Default case
-                                }
-                              }),
-                              SizedBox(),
+                              SpendingCardContainer(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              coinLockedWidget(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              totalBalanceWidget()
                             ],
-                          ),
-                          verticalNavBarController.currentItem.value == 0
-                              ? Positioned(
-                                  bottom: 0.h,
-                                  right: 0.w,
-                                  child: ParentZoneWidget(),
-                                )
-                              : SizedBox(),
-                        ]),
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                    Stack(children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          VerticalNavBar(),
+                          Obx(() {
+                            if (verticalNavBarController.currentItem.value ==
+                                0) {
+                              return KidFinanceWidgets(
+                                spendingJarColor: spendingJarColor,
+                                spendingAmount: spendingAmount,
+                                savingJarColor: savingJarColor,
+                                savingAmount: savingAmount,
+                                kidsData: kidsData,
+                              );
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                1) {
+                              final Map<String, dynamic> spendingData = kidData
+                                      .containsKey('spendings')
+                                  ? kidData['spendings'] as Map<String, dynamic>
+                                  : {};
+
+                              final String kidId =
+                                  spendingData.containsKey('kidId')
+                                      ? spendingData['kidId'] as String
+                                      : "";
+
+                              if (kidData.containsKey('goals')) {
+                                final String currentKidId =
+                                    kidId; // Ensure kidId exists
+
+                                print("$currentKidId");
+
+                                return GoalsScreen(currentKidId: currentKidId);
+                              } else {
+                                return AddGoalWidget();
+                              }
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                2) {
+                              return Text("Shop widget"); //
+                            } else {
+                              return SizedBox(); // Default case
+                            }
+                          }),
+                          SizedBox(),
+                        ],
+                      ),
+                      Obx(() {
+                        return Visibility(
+                          visible:
+                              verticalNavBarController.currentItem.value == 0,
+                          child: Positioned(
+                            bottom: 0.h,
+                            right: 0.w,
+                            child: ParentZoneWidget(),
+                          ),
+                        );
+                      }),
+                    ]),
+                  ],
                 ),
               );
             }

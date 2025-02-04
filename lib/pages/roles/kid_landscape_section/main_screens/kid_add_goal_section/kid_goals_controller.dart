@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
   final ImagePicker picker = ImagePicker();
@@ -118,10 +120,11 @@ class KidGoalsController extends GetxController {
           final String localPath =
               await saveImageLocally(File(goalImage.value), goalRef.id);
           goalImage.value = localPath;
+          await saveImageToPrefs(goalRef.id, File(goalImage.value));
 
           // Save the image path in SQLite, associating it with the goalId
-          await DatabaseHelper.instance
-              .insertImageForGoals(goalRef.id, localPath);
+          // await DatabaseHelper.instance
+          //     .insertImageForGoals(goalRef.id, localPath);
         } catch (e) {
           Get.log('Error in Firestore transaction: $e');
           rethrow; // Re-throw exception to be caught outside
@@ -179,6 +182,53 @@ class KidGoalsController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", "Failed to fetch image: $e");
       print("Error Failed to fetch image: $e");
+      return null;
+    }
+  }
+
+  Future<void> saveImageToPrefs(String goalId, File imageFile) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Read the image file as bytes
+      List<int> imageBytes = await imageFile.readAsBytes();
+
+      // Convert image to Base64 string
+      String base64Image = base64Encode(imageBytes);
+
+      // Store in SharedPreferences with goalId as key
+      await prefs.setString('goal_image_$goalId', base64Image);
+
+      print("Image saved successfully for goalId: $goalId");
+    } catch (e) {
+      print("Error saving image: $e");
+    }
+  }
+
+  Future<File?> getImageFromPrefs(String goalId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Retrieve Base64 string from SharedPreferences
+      String? base64Image = prefs.getString('goal_image_$goalId');
+
+      if (base64Image == null) return null; // If no image found, return null
+
+      // Convert Base64 to bytes
+      List<int> imageBytes = base64Decode(base64Image);
+
+      // Get the temporary directory
+      Directory tempDir = await Directory.systemTemp.createTemp();
+
+      // Create a file with the goalId as its name
+      File imageFile = File('${tempDir.path}/$goalId.png');
+
+      // Write bytes to the file
+      await imageFile.writeAsBytes(imageBytes);
+
+      return imageFile;
+    } catch (e) {
+      print("❌ Error retrieving image: $e");
       return null;
     }
   }
