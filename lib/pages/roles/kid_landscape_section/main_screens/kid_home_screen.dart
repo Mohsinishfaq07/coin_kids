@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goals_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goals_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_avatar_container.dart';
@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class KidHomeScreen extends StatelessWidget {
@@ -45,6 +46,7 @@ class KidHomeScreen extends StatelessWidget {
               if (kidsData.isEmpty) {
                 return Center(child: CircularProgressIndicator());
               }
+
               final Map<String, dynamic> kidData =
                   kidsData[0].data() as Map<String, dynamic>;
               final Map<String, dynamic> spendingData =
@@ -73,116 +75,145 @@ class KidHomeScreen extends StatelessWidget {
                   kidData.containsKey('spendings')
                       ? kidData['spendings'] as Map<String, dynamic>
                       : {};
+              final List<dynamic> goalsRefs = kidData['goals'] ?? [];
+
+              List<String> goalIds = goalsRefs
+                  .map((ref) => (ref as DocumentReference).id)
+                  .toList();
+
+              print("Goal IDs: $goalIds");
 
               print("Spending jar color: $spendingJarColor");
+
+              print("Spending jar color: $spendingAmount");
               print("Saving jar color: $savingJarColor");
 
-              return SafeArea(
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    gradient: AppColors.background,
-                    image: DecorationImage(
-                      image: AssetImage(AppAssets.kidSectionBG),
-                    ),
+              return Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: AppColors.background,
+                  image: DecorationImage(
+                    image: AssetImage(AppAssets.kidSectionBG),
                   ),
-                  child: SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 10.w, right: 10.w, top: 6.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              KidAvatarContainer(),
-                              GestureDetector(
-                                  onTap: () async {
-                                    await firebaseAuthController.logout();
-                                  },
-                                  child: Icon(Icons.logout)),
-                              Row(
-                                children: [
-                                  SpendingCardContainer(),
-                                  SizedBox(
-                                    width: 10.w,
-                                  ),
-                                  coinLockedWidget(),
-                                  SizedBox(
-                                    width: 10.w,
-                                  ),
-                                  totalBalanceWidget()
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        Stack(children: [
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.only(left: 10.w, right: 10.w, top: 6.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          KidAvatarContainer(),
+                          GestureDetector(
+                              onTap: () async {
+                                await firebaseAuthController.logout();
+                              },
+                              child: Icon(Icons.logout)),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              VerticalNavBar(),
-                              Obx(() {
-                                if (verticalNavBarController
-                                        .currentItem.value ==
-                                    0) {
-                                  return KidFinanceWidgets(
-                                    spendingJarColor: spendingJarColor,
-                                    spendingAmount: spendingAmount,
-                                    savingJarColor: savingJarColor,
-                                    savingAmount: savingAmount,
-                                    kidsData: kidsData,
-                                  );
-                                } else if (verticalNavBarController
-                                        .currentItem.value ==
-                                    1) {
-                                  final Map<String, dynamic> spendingData =
-                                      kidData.containsKey('spendings')
-                                          ? kidData['spendings']
-                                              as Map<String, dynamic>
-                                          : {};
-
-                                  final String kidId =
-                                      spendingData.containsKey('kidId')
-                                          ? spendingData['kidId'] as String
-                                          : "";
-
-                                  if (kidData.containsKey('goals')) {
-                                    final String currentKidId =
-                                        kidId; // Ensure kidId exists
-
-                                    print("$currentKidId");
-
-                                    return GoalsScreen(
-                                        currentKidId: currentKidId);
-                                  } else {
-                                    return AddGoalWidget();
-                                  }
-                                } else if (verticalNavBarController
-                                        .currentItem.value ==
-                                    2) {
-                                  return Text("Shop widget"); //
-                                } else {
-                                  return SizedBox(); // Default case
-                                }
-                              }),
-                              SizedBox(),
+                              SpendingCardContainer(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              coinLockedWidget(),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              totalBalanceWidget()
                             ],
-                          ),
-                          verticalNavBarController.currentItem.value == 0
-                              ? Positioned(
-                                  bottom: 0.h,
-                                  right: 0.w,
-                                  child: ParentZoneWidget(),
-                                )
-                              : SizedBox(),
-                        ]),
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                    Stack(children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          VerticalNavBar(),
+                          Obx(() {
+                            if (verticalNavBarController.currentItem.value ==
+                                0) {
+                              return KidFinanceWidgets(
+                                spendingJarColor: spendingJarColor,
+                                spendingAmount: spendingAmount,
+                                savingJarColor: savingJarColor,
+                                savingAmount: savingAmount,
+                                kidsData: kidsData,
+                              );
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                1) {
+                              if (spendingJarColor.isEmpty) {
+                                showToast("Spending Jar is required!");
+                                return KidFinanceWidgets(
+                                  // Keep user on the same screen
+                                  spendingJarColor: spendingJarColor,
+                                  spendingAmount: spendingAmount,
+                                  savingJarColor: savingJarColor,
+                                  savingAmount: savingAmount,
+                                  kidsData: kidsData,
+                                );
+                              }
+                              final String kidId =
+                                  kidData.containsKey('kidId')
+                                      ? kidData['kidId'] as String
+                                      : "";
+
+                              if (kidData.containsKey('goals')) {
+                                final String currentKidId = kidId;
+                                print("$currentKidId");
+                                return GoalsWidget(currentKidId: currentKidId);
+                              } else {
+                                return AddGoalWidget();
+                              }
+                            } else if (verticalNavBarController
+                                    .currentItem.value ==
+                                2) {
+                              if (spendingJarColor.isEmpty) {
+                                showToast("Invalid selection");
+                                return KidFinanceWidgets(
+                                  // Prevent navigation
+                                  spendingJarColor: spendingJarColor,
+                                  spendingAmount: spendingAmount,
+                                  savingJarColor: savingJarColor,
+                                  savingAmount: savingAmount,
+                                  kidsData: kidsData,
+                                );
+                              }
+
+                              return Text("Shop widget");
+                            } else {
+                              showToast("Invalid selection");
+                              return KidFinanceWidgets(
+                                // Prevent navigation for invalid selection
+                                spendingJarColor: spendingJarColor,
+                                spendingAmount: spendingAmount,
+                                savingJarColor: savingJarColor,
+                                savingAmount: savingAmount,
+                                kidsData: kidsData,
+                              );
+                            }
+                          }),
+                          SizedBox.shrink(),
+                        ],
+                      ),
+                      Obx(() {
+                        return Visibility(
+                          visible:
+                              verticalNavBarController.currentItem.value == 0,
+                          child: Positioned(
+                            bottom: 0.h,
+                            right: 0.w,
+                            child: ParentZoneWidget(),
+                          ),
+                        );
+                      }),
+                    ]),
+                  ],
                 ),
               );
             }
@@ -253,6 +284,17 @@ class KidHomeScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: AppColors.iconPrimary,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 }

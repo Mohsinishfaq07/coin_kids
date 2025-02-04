@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
   final ImagePicker picker = ImagePicker();
@@ -15,7 +18,7 @@ class KidGoalsController extends GetxController {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   RxString goalName = ''.obs;
-  RxString goalAmount = ''.obs;
+  RxDouble goalAmount = 0.0.obs;
   RxString goalImage = ''.obs;
   RxBool isPickingImage = false.obs; // Add flag
 
@@ -56,10 +59,17 @@ class KidGoalsController extends GetxController {
 
   Future<void> addKidGoal() async {
     try {
+      firebaseAuthController.isNormalLoading.value = true;
+      Get.dialog(
+        Center(child: CircularProgressIndicator()),
+        barrierDismissible:
+            true, // Prevent dialog from being dismissed by tapping outside
+      );
       // Ensure user is authenticated
       final String? parentId = _firebaseAuth.currentUser?.uid;
       if (parentId == null) {
         Get.snackbar("Error", "User not authenticated");
+        firebaseAuthController.isNormalLoading.value = false;
         return;
       }
 
@@ -78,12 +88,15 @@ class KidGoalsController extends GetxController {
           _firebaseFirestore.collection('goals').doc(); // New goal document
       DocumentSnapshot kidDoc = kidSnapshot.docs.first;
       DocumentReference kidRef = kidDoc.reference;
-      final String avatarUrl =
-          goalImage.value.isEmpty ? 'assets/logo.png' : goalImage.value;
+      final String avatarUrl = goalImage.value.isEmpty || goalImage.value == ""
+          ? 'assets/logo.png'
+          : goalImage.value;
+
       //locally store the image
 
       // Firestore goal data
       final Map<String, dynamic> goalData = {
+        'currentAmount': 0,
         'amount': goalAmount.value,
         'kidId': kidRef.id,
         'completed': false,
@@ -92,7 +105,6 @@ class KidGoalsController extends GetxController {
         'name': goalName.value,
         'progress': 0,
         'goalId': goalRef.id,
-        //  'kid': '/kids/${kidRef.id}',
       };
 
       // Firestore kid data to update (Add new goal reference to 'goalsReference' field)
@@ -118,10 +130,8 @@ class KidGoalsController extends GetxController {
           final String localPath =
               await saveImageLocally(File(goalImage.value), goalRef.id);
           goalImage.value = localPath;
-
-          // Save the image path in SQLite, associating it with the goalId
-          await DatabaseHelper.instance
-              .insertImageForGoals(goalRef.id, localPath);
+          await saveImageToPrefs(goalRef.id, File(goalImage.value));
+          await saveGoalIdToPrefs(goalRef.id);
         } catch (e) {
           Get.log('Error in Firestore transaction: $e');
           rethrow; // Re-throw exception to be caught outside
@@ -132,8 +142,12 @@ class KidGoalsController extends GetxController {
 
       // Success response
       firebaseAuthController.isNormalLoading.value = false;
+      goalImage.value = "";
+      goalName.value = "";
+      goalAmount.value = 0.0;
       Get.snackbar("Success", "Goal added for kid successfully");
       Get.log('Added new goal for kid with parent ID: $parentId');
+      goalImage.value = "";
     } catch (e) {
       firebaseAuthController.isNormalLoading.value = false;
       Get.back();
@@ -179,6 +193,63 @@ class KidGoalsController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", "Failed to fetch image: $e");
       print("Error Failed to fetch image: $e");
+      return null;
+    }
+  }
+
+  Future<void> saveGoalIdToPrefs(String goalId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentGoalId', goalId);
+  }
+
+  Future<String?> getGoalIdFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('currentGoalId');
+  }
+
+  Future<void> saveImageToPrefs(String goalId, File imageFile) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Read the image file as bytes
+      List<int> imageBytes = await imageFile.readAsBytes();
+
+      // Convert image to Base64 string
+      String base64Image = base64Encode(imageBytes);
+
+      // Store in SharedPreferences with goalId as key
+      await prefs.setString('goal_image_$goalId', base64Image);
+
+      print("Image saved successfully for goalId: $goalId");
+    } catch (e) {
+      print("Error saving image: $e");
+    }
+  }
+
+  Future<File?> getImageFromPrefs(String goalId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Retrieve Base64 string from SharedPreferences
+      String? base64Image = prefs.getString('goal_image_$goalId');
+
+      if (base64Image == null) return null; // If no image found, return null
+
+      // Convert Base64 to bytes
+      List<int> imageBytes = base64Decode(base64Image);
+
+      // Get the temporary directory
+      Directory tempDir = await Directory.systemTemp.createTemp();
+
+      // Create a file with the goalId as its name
+      File imageFile = File('${tempDir.path}/$goalId.png');
+
+      // Write bytes to the file
+      await imageFile.writeAsBytes(imageBytes);
+
+      return imageFile;
+    } catch (e) {
+      print("❌ Error retrieving image: $e");
       return null;
     }
   }

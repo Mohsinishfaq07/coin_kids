@@ -23,7 +23,7 @@ class AddGoalWidget extends StatelessWidget {
                 style: AppTextStyle.headingLarge,
               ),
               SizedBox(height: 30.h),
-              addGoalButton(
+              AddGoalButton(
                 onTap: () {
                   Get.to(() => AddGoalName());
                 },

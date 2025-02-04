@@ -3,11 +3,10 @@ import 'dart:io';
 
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_progress.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
+  import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,14 +16,18 @@ import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/text_theme.dart';
 
-class AddGoalImage extends StatelessWidget {
-  const AddGoalImage({
+class EditGoal extends StatelessWidget {
+ 
+    
+  const EditGoal({
+     
+    
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    landscapeOrientation();
+        landscapeOrientation();
 
     KidGoalsController kidGoalsController = Get.find<KidGoalsController>();
     return Scaffold(
@@ -149,38 +152,14 @@ class AddGoalImage extends StatelessWidget {
                           child: GreenNextButton(
                             onTap: () async {
                               if (kidGoalsController.goalImage.value.isEmpty) {
-                                kidGoalsController.goalImage.value = "";
-                                kidGoalsController.goalName.value = "";
-                                await kidGoalsController.addKidGoal();
-                                String? goalId = await kidGoalsController
-                                    .getGoalIdFromPrefs();
-                                if (goalId != null && goalId.isNotEmpty) {
-                                  Get.off(() => GoalProgress(
-                                        goalId: goalId,
-                                        fromHome: false.obs,
-                                      ));
-                                } else {
-                                  showToast("Goal ID not found");
-                                }
-                                // showToast("Please select an image");
+                                showToast("Please select an image");
                               } else {
                                 try {
                                   await kidGoalsController.addKidGoal();
-                                  String? goalId = await kidGoalsController
-                                      .getGoalIdFromPrefs();
-
-                                  if (goalId != null && goalId.isNotEmpty) {
-                                    Get.off(() => GoalProgress(
-                                          goalId: goalId,
-                                          fromHome: false.obs,
-                                        ));
-                                    kidGoalsController.goalImage.value = "";
-                                    kidGoalsController.goalName.value = "";
-                                  } else {
-                                    showToast("Goal ID not found");
-                                  }
+                                  // Get.off(() => GoalProgress(cur ));
                                 } on TimeoutException catch (e) {
-                                   print("Firestore transaction timed out: $e");
+                                  // Handle timeout here (e.g., show a message or retry logic)
+                                  print("Firestore transaction timed out: $e");
                                 }
                               }
                             },

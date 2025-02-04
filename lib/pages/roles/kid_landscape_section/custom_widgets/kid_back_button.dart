@@ -7,19 +7,24 @@ Widget kidBackButton({
   String svgAsset = "assets/backButton.svg", // Default SVG
   double? svgHeight, // Optional custom height
   double? svgWidth,
+  double? buttonHeight = 40,
+  double? buttonWidth = 40,
+  Color? backgroundColor = const Color(0xFFFF9E29),
+  Color borderColor = const Color(0xFFD67513),
+  Color? iconColor = Colors.white,
 }) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40,
-      height: 40,
+      width: buttonWidth,
+      height: buttonHeight,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFFF9E29),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(30.r), // Rounded corners
         border: Border.all(
           width: 2.22.w,
-          color: const Color(0xFFD67513),
+          color: borderColor,
         ),
       ),
       child: Stack(
@@ -43,6 +48,7 @@ Widget kidBackButton({
                   shape: BoxShape.circle,
                 ),
                 child: SvgPicture.asset(
+                  color: iconColor,
                   svgAsset, // Uses default or user-provided SVG
                   height:
                       svgHeight ?? 10.h, // Use default height if not provided

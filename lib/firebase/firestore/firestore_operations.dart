@@ -173,9 +173,13 @@ class ParentFirebaseFunctions {
       DocumentReference parentRef = _firebaseFirestore
           .collection('parents')
           .doc(FirebaseAuth.instance.currentUser!.email);
+      DocumentReference newChildRef =
+          _firebaseFirestore.collection('kids').doc();
+      String kidDocumentId = newChildRef.id; // Extracting the child document ID
 
       // Prepare child data
       final Map<String, dynamic> childData = {
+        'kidId': kidDocumentId,
         'name': addChildController.childName.value,
         // 'kidId': kidRef.id,
         'parentId': FirebaseAuth.instance.currentUser!.uid,
@@ -240,7 +244,6 @@ class ParentFirebaseFunctions {
           FirebaseFirestore.instance.collection('kids').doc(kidId);
 
       DocumentSnapshot snapshot = await kidDocRef.get();
-      
 
       if (snapshot.exists) {
         // Check if 'spendings' exists, if not, initialize it with default values
@@ -282,16 +285,16 @@ class ParentFirebaseFunctions {
           Get.back();
           Get.log("Spending updated successfully to: $updatedAmount");
 
-          showDialog(
-            context: Get.context!,
-            builder: (context) => TransferSuccessDialog(
-              receiverName: snapshot['name'],
-              amount: homeController.amount.value,
-              dateTime: formatDate(DateTime.now().toLocal()),
-              title: 'Transfer Successful',
-              transferType: 'received',
-            ),
-          );
+          // showDialog(
+          //   context: Get.context!,
+          //   builder: (context) => TransferSuccessDialog(
+          //     receiverName: snapshot['name'],
+          //     amount: homeController.amount.value,
+          //     dateTime: formatDate(DateTime.now().toLocal()),
+          //     title: 'Transfer Successful',
+          //     transferType: 'received',
+          //   ),
+          //);
         } else {
           if (enteredAmount > currentSpending) {
             homeController.amountValidation.value = 'Not Enough Funds,';
@@ -320,16 +323,16 @@ class ParentFirebaseFunctions {
             Get.back();
             Get.log("Spending updated successfully to: $updatedAmount");
 
-            showDialog(
-              context: Get.context!,
-              builder: (context) => TransferSuccessDialog(
-                receiverName: snapshot['name'] ?? 'Unknown',
-                amount: homeController.amount.value,
-                dateTime: formatDate(DateTime.now().toLocal()),
-                title: 'Deduction Successful',
-                transferType: 'deducted',
-              ),
-            );
+            // showDialog(
+            //   context: Get.context!,
+            //   builder: (context) => TransferSuccessDialog(
+            //     receiverName: snapshot['name'] ?? 'Unknown',
+            //     amount: homeController.amount.value,
+            //     dateTime: formatDate(DateTime.now().toLocal()),
+            //     title: 'Deduction Successful',
+            //     transferType: 'deducted',
+            //   ),
+            // );
           }
         }
       } else {
@@ -433,8 +436,8 @@ class ParentFirebaseFunctions {
 
   var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
- 
- Future<void> updateKidSpendingForJar({
+
+  Future<void> updateKidSpendingForJar({
     required bool save,
     required String kidId,
     required double enteredAmount,
@@ -452,7 +455,6 @@ class ParentFirebaseFunctions {
           FirebaseFirestore.instance.collection('kids').doc(kidId);
 
       DocumentSnapshot snapshot = await kidDocRef.get();
-      
 
       if (snapshot.exists) {
         // Check if 'spendings' exists, if not, initialize it with default values
@@ -554,6 +556,86 @@ class ParentFirebaseFunctions {
     }
   }
 
+  Future<void> SpendingTOGoals({
+    required String kidId,
+    required double enteredAmount,
+  }) async {
+    try {
+      showDialog(
+        context: Get.context!,
+        builder: (context) => LoadingProgressDialogueWidget(
+          title: "Processing...",
+        ),
+      );
 
+      // References to Firestore collections
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(kidId);
+      DocumentReference goalDocRef =
+          FirebaseFirestore.instance.collection('goals').doc(kidId);
 
+      // Fetch current spending details
+      DocumentSnapshot kidSnapshot = await kidDocRef.get();
+      if (!kidSnapshot.exists) {
+        Get.back();
+        Get.log("Kid document not found: $kidId");
+        return;
+      }
+
+      double currentSpending = (kidSnapshot.data()
+              as Map<String, dynamic>?)?['spendings']?['amount'] ??
+          0.0;
+
+      if (enteredAmount > currentSpending) {
+        Get.back();
+        Fluttertoast.showToast(
+          msg: 'Not Enough Funds',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: AppColors.textHighlighted,
+          textColor: Colors.white,
+          fontSize: 16.sp,
+        );
+        return;
+      }
+
+      // Deduct from spending
+      double updatedSpending = currentSpending - enteredAmount;
+
+      // Update spending in `kids` collection
+      await kidDocRef.update({
+        'spendings.amount': updatedSpending,
+      });
+
+      // Fetch existing goal amount
+      DocumentSnapshot goalSnapshot = await goalDocRef.get();
+      double currentGoalAmount =
+          (goalSnapshot.exists && goalSnapshot.data() != null)
+              ? (goalSnapshot.data() as Map<String, dynamic>)['amount'] ?? 0.0
+              : 0.0;
+
+      double updatedGoalAmount = currentGoalAmount + enteredAmount;
+
+      // Update or create goal document in `goals` collection
+      await goalDocRef.set({
+        'kidId': kidId,
+        'currentAmount': updatedGoalAmount,
+      }, SetOptions(merge: true));
+
+      Get.back();
+      Get.log(
+          "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
+      Fluttertoast.showToast(
+        msg: 'Funds moved to Goals successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: AppColors.KidZoneParent,
+        textColor: Colors.white,
+        fontSize: 16.sp,
+      );
+    } catch (e) {
+      Get.back();
+      Get.log("Error transferring funds: $e");
+    }
+  }
 }

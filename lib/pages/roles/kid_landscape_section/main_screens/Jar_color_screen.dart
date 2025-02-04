@@ -76,9 +76,11 @@ class _AddJarColorScreenState extends State<AddJarColorScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01.h),
-              Text("Select Jar Color🎨🖌️", style: AppTextStyle.headingLarge),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01.h),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: Text("Select Jar Color🎨🖌️",
+                    style: AppTextStyle.headingLarge),
+              ),
               SizedBox(
                 height: 80.h,
                 width: 399.w,

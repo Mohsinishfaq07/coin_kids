@@ -35,111 +35,112 @@ class TransferSuccessDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
           color: Colors.white,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20.h,),
-
-            Container(
-
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.buttonPrimary, // Purple background
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 10.h,
               ),
 
-              child: Padding(
-                padding:  EdgeInsets.all(12.h),
-                child: SvgPicture.asset("assets/Vector2.svg",
-                  height: 30.h,
-                  width: 30.w,
-
-
+              Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.buttonPrimary, // Purple background
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.h),
+                  child: SvgPicture.asset(
+                    "assets/Vector2.svg",
+                    height: 30.h,
+                    width: 30.w,
+                  ),
                 ),
               ),
-            ),
-            //Icon
-            SizedBox(height: 20.h,),
-            // Transfer successful title
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textHighlighted,
-                fontSize: 18.sp,
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.w800,
+              //Icon
+              SizedBox(
+                height: 10.h,
               ),
-
-            ),
-            const SizedBox(height: 10),
-
-            // Receiver information
-            RichText(
-              text: TextSpan(
-                text: '$receiverName $transferType ',
-                style:  TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.normal,
-                  color: const Color(0xFF015486),
+              // Transfer successful title
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textHighlighted,
+                  fontSize: 18.sp,
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w800,
                 ),
+              ),
+              const SizedBox(height: 10),
+
+              // Receiver information
+              RichText(
+                text: TextSpan(
+                  text: '$receiverName $transferType ',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.normal,
+                    color: const Color(0xFF015486),
+                  ),
+                  children: [
+                    TextSpan(
+                      text: '€ $amount',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF015486),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Date & Time
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextSpan(
-                    text: '€ $amount',
-                    style: const TextStyle(
+                  Text(
+                    'Time & date: ',
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    dateTime,
+                    style: TextStyle(
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF015486),
+                      color: AppColors.textHighlighted,
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Date & Time
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Time & date: ',
-                  style: TextStyle(
-                      fontSize: 15.sp,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500
+              // Close Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                Text(
-                  dateTime,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textHighlighted,
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(fontSize: 16),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Close Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Close',
-                  style: TextStyle(fontSize: 16),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

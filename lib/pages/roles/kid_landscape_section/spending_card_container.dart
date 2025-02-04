@@ -13,7 +13,6 @@ class SpendingCardContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
       height: 27.h,
       width: 128.w,
       child: Stack(
