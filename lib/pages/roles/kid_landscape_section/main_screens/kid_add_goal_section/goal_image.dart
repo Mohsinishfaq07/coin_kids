@@ -7,6 +7,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
+import 'package:coin_kids/pages/roles/parents/drawer/parent_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -107,6 +108,10 @@ class AddGoalImage extends StatelessWidget {
                                           await kidGoalsController
                                               .pickFromGallery();
                                         },
+                                        // onTap: () async {
+                                        //   await kidGoalsController
+                                        //       .pickFromGallery();
+                                        // },
                                         child: Container(
                                           width: 230.w,
                                           height: 32.h,
