@@ -2,17 +2,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/role_selection_screen.dart';
-import 'package:coin_kids/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
@@ -84,15 +82,7 @@ class FirebaseAuthController extends GetxController {
     } on FirebaseAuthException catch (e) {
       Get.back();
       isEmailLoading.value = false;
-
-      Fluttertoast.showToast(
-        msg: "$e", // Message to display
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: AppColors.textHighlighted,
-        textColor: Colors.white,
-        fontSize: 16.sp,
-      );
+      ToastUtil.showToast("$e");
     } catch (e) {
       Get.back();
       isEmailLoading.value = false;
@@ -117,8 +107,8 @@ class FirebaseAuthController extends GetxController {
             : 'Not specified',
         'created_at': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
-      Get.snackbar("Success", "Account created",
-          snackPosition: SnackPosition.BOTTOM);
+
+      ToastUtil.showToast("Account created");
       // Get.off(() => ParentLoginScreen());
     } catch (e) {
       Get.log(e.toString());
@@ -145,7 +135,7 @@ class FirebaseAuthController extends GetxController {
 
       if (googleUser == null) {
         // User canceled the Google Sign-In process
-        Get.snackbar("Sign-In Canceled", "You canceled the Google Sign-In.");
+        ToastUtil.showToast("Sign-In Canceled");
         return;
       }
 
@@ -172,22 +162,20 @@ class FirebaseAuthController extends GetxController {
 
         // Navigate to the main screen
         Get.offAll(() => ParentBottomNavigationBar());
-        Get.snackbar("Welcome", "Logged in as ${user.email}");
-
-        // comment out above two lines and add these instead of them
-        // Get.back(); // Stop loading
-        // Get.off(() => const RoleSelectionScreen());
+        ToastUtil.showToast("Logged in as ${user.email}");
       } else {
         // Handle null user case
-        Get.snackbar("Sign-In Failed", "User data could not be retrieved.");
+        ToastUtil.showToast("Sign In Failed");
       }
     } on FirebaseAuthException catch (e) {
       // Handle Firebase authentication errors
-      Get.snackbar("Error", "Firebase Auth Error: ${e.message}");
+      ToastUtil.showToast("Firebase Auth Error: ${e.message}");
+
       Get.log("An error occurred in Firebase Auth: $e");
     } catch (e) {
       // Handle general errors
-      Get.snackbar("Error", "An error occurred: $e");
+      ToastUtil.showToast("An error occurred: $e");
+
       Get.log("An error occurred in catch: $e");
     } finally {
       // Reset the loading state
@@ -213,29 +201,26 @@ class FirebaseAuthController extends GetxController {
       if (e.code == 'user-not-found') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "No user found for that email.",
-              snackPosition: SnackPosition.BOTTOM);
+          ToastUtil.showToast("No user found for that email.");
         });
       } else if (e.code == 'wrong-password') {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "Incorrect password entered.",
-              snackPosition: SnackPosition.BOTTOM);
+          ToastUtil.showToast("Incorrect password entered.");
         });
       } else {
         Get.back();
         Future.delayed(const Duration(milliseconds: 500), () {
-          Get.snackbar("Error", "An unexpected error occurred: ${e.message}",
-              snackPosition: SnackPosition.BOTTOM);
+          ToastUtil.showToast(
+            "An unexpected error occurred: ${e.message}",
+          );
         });
       }
     } catch (e) {
       isEmailLoading.value = false;
       Get.back();
-      Get.snackbar(
-        "Error",
+      ToastUtil.showToast(
         "Failed to login. Please try again later.",
-        snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
@@ -345,10 +330,10 @@ class FirebaseAuthController extends GetxController {
         isAppleLoading.value = false;
         Get.offAll(() => LoginScreen());
       } else {
-        Get.snackbar("Error", "No user is logged in");
+        ToastUtil.showToast("No user is logged in");
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred during logout: $e");
+      ToastUtil.showToast("An error occurred during logout: $e");
     }
   }
 
@@ -388,28 +373,6 @@ class FirebaseAuthController extends GetxController {
     return false; // Default to kid if no matching document is found
   }
 
-// update kid name
-  // Future<void> updateKidName(String kidId, String newName) async {
-  //   try {
-  //     // Update the name field in the kid's document
-  //     await FirebaseFirestore.instance.collection('kids').doc(kidId).update({
-  //       'name': newName,
-  //     });
-  //     Get.snackbar(
-  //       "Success",
-  //       "Kid's name updated successfully!",
-  //       snackPosition: SnackPosition.BOTTOM,
-  //     );
-  //   } catch (e) {
-  //     // Log the error and show a message
-  //     Get.log("Error updating kid's name: $e");
-  //     Get.snackbar(
-  //       "Error",
-  //       "Failed to update the kid's name.",
-  //       snackPosition: SnackPosition.BOTTOM,
-  //     );
-  //   }
-  // }
   Future<void> resetPassword(String email) async {
     showDialog(
         context: Get.context!,
@@ -420,10 +383,10 @@ class FirebaseAuthController extends GetxController {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       Get.back();
-      Get.snackbar('Alert', 'Check your inbox for password reset link');
+      ToastUtil.showToast('Check your inbox for password reset link');
     } catch (e) {
       Get.back();
-      Get.snackbar('Alert', e.toString());
+      ToastUtil.showToast(e.toString());
     }
   }
 }

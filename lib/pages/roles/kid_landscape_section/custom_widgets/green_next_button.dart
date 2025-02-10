@@ -10,6 +10,11 @@ class GreenNextButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? borderColor;
   final Color? textColor;
+  final double? width;
+  final bool showPrefix;
+  final String prefixSvg;
+  final bool showSuffix;
+  final String suffixSvg;
 
   const GreenNextButton({
     Key? key,
@@ -18,6 +23,11 @@ class GreenNextButton extends StatelessWidget {
     this.backgroundColor, // Optional custom background color
     this.borderColor, // Optional custom border color
     this.textColor,
+    this.width,
+    this.showPrefix = false, // Default: false
+    this.prefixSvg = "assets/kidRoleIcons/kidCrossButton.svg",
+    this.showSuffix = false,
+    this.suffixSvg = "assets/arrorDirectionNoShadow.svg",
   }) : super(key: key);
 
   @override
@@ -25,17 +35,17 @@ class GreenNextButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 120.w,
+        width: width ?? 120.w,
         height: 32.h,
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
-          color: backgroundColor ?? const Color(0xFF19B859), 
+          color: backgroundColor ?? const Color(0xFF19B859),
           shape: RoundedRectangleBorder(
             side: BorderSide(
               width: 2.22.w,
-               color: borderColor ?? const Color(0xFF0E9454),
+              color: borderColor ?? const Color(0xFF0E9454),
             ),
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(16.r),
           ),
         ),
         child: Stack(
@@ -47,38 +57,66 @@ class GreenNextButton extends StatelessWidget {
               bottom: 4.h,
               child: Row(
                 children: [
+                  if (showPrefix)
+                    Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              Colors.transparent, // Background color (optional)
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10, // Blur radius for the shadow
+                              offset:
+                                  const Offset(2, 4), // Shadow position (x, y)
+                            ),
+                          ],
+                          shape: BoxShape
+                              .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
+                        ),
+                        child: SvgPicture.asset(
+                          prefixSvg, // Arrow icon asset
+                          height: 12.h,
+                        ),
+                      ),
+                    ),
+                  if (showPrefix)
+                    SizedBox(
+                      width: 6.w,
+                    ),
                   Text(
                     buttonText,
                     style: AppTextStyle.headingMedium.copyWith(
-                     color: textColor ?? AppColors.textOnPrimary,
+                      color: textColor ?? AppColors.textOnPrimary,
                       fontSize: 22.sp,
                     ),
                   ),
                   SizedBox(
-                    width: 10.w,
+                    width: 4.w,
                   ),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color:
-                            Colors.transparent, // Background color (optional)
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10, // Blur radius for the shadow
-                            offset:
-                                const Offset(2, 4), // Shadow position (x, y)
-                          ),
-                        ],
-                        shape: BoxShape
-                            .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                      ),
-                      child: SvgPicture.asset(
-                        "assets/arrorDirectionNoShadow.svg", // Arrow icon asset
-                        height: 12.h,
+                  if (showSuffix)
+                    Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              Colors.transparent, // Background color (optional)
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10, // Blur radius for the shadow
+                              offset:
+                                  const Offset(2, 4), // Shadow position (x, y)
+                            ),
+                          ],
+                          shape: BoxShape
+                              .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
+                        ),
+                        child: SvgPicture.asset(
+                          suffixSvg, // Arrow icon asset
+                          height: 12.h,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

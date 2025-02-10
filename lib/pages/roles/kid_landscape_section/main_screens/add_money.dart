@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
@@ -710,10 +711,8 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                             0.0;
                                         Get.off(() => KidHomeScreen());
                                       } else {
-                                        Get.snackbar(
-                                          "Warning",
+                                        ToastUtil.showToast(
                                           "Total value does not match spending amount!",
-                                          snackPosition: SnackPosition.BOTTOM,
                                         );
                                       }
                                     } else {
@@ -733,10 +732,8 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                             0.0;
                                         Get.off(() => KidHomeScreen());
                                       } else {
-                                        Get.snackbar(
-                                          "Warning",
+                                        ToastUtil.showToast(
                                           "Total value does not match savings amount!",
-                                          snackPosition: SnackPosition.BOTTOM,
                                         );
                                       }
                                     }

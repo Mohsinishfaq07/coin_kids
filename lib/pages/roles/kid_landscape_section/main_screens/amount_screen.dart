@@ -1,5 +1,4 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';

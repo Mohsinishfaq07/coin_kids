@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/text_theme.dart';
-import '../kid_home_screen.dart';
 
 class KidGoalAllInfoDisplay extends StatelessWidget {
   const KidGoalAllInfoDisplay({

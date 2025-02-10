@@ -74,7 +74,7 @@ class GoalsScreen extends StatelessWidget {
                 ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: addGoalButton(
+                  child: AddGoalButton(
                     onTap: () {
                       Get.to(() => AddGoalName());
                     },

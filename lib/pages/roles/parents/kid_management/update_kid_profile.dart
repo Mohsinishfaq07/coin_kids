@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/drawer/parent_drawer.dart';
 import 'package:coin_kids/pages/roles/parents/kid_management/edit_profile_controller.dart';
@@ -254,7 +253,7 @@ class UpdateKidProfile extends StatelessWidget {
                             onPressed: () async {
                               if (editProfileController
                                   .childNameController.value.text.isEmpty) {
-                                Get.snackbar('Alert', 'name is required');
+                                ToastUtil.showToast('name is required');
                               } else {
                                 final String avatarUrl = addChildController
                                         .selectedAvatarPath.value.isEmpty
@@ -302,7 +301,7 @@ class UpdateKidProfile extends StatelessWidget {
         {'grade': grade, 'name': name, 'age': age, 'avatar': avatarPath},
         SetOptions(merge: true),
       );
-      Get.snackbar('Alert', 'Child info updated');
+      ToastUtil.showToast('Child info updated');
       Get.off(ParentBottomNavigationBar());
       editProfileController.childUpdate.value = false;
     } catch (e) {

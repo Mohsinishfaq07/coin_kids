@@ -114,8 +114,10 @@ class GoalCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Get.to(() => GoalProgress(
+              isCompleted: (goal['completed'] as bool).obs,
               goalId: goal['goalId'],
               fromHome: true.obs,
+              //completed: goal['completed']
             ));
       },
       child: Padding(
@@ -129,77 +131,79 @@ class GoalCard extends StatelessWidget {
           width: 150.w,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  goal['name'] ?? 'No Name',
-                  style: AppTextStyle.headingMedium
-                      .copyWith(color: AppColors.iconPrimary),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 4.h),
-                imageFile != null
-                    ? Container(
-                        height: 50.h,
-                        width: 40.h,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: FileImage(imageFile!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      )
-                    : Icon(Icons.image, size: 60.h, color: Colors.grey),
-                SizedBox(height: 4.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "€${goal['amount']}",
-                          style: AppTextStyle.headingMedium
-                              .copyWith(color: AppColors.iconPrimary),
-                        ),
-                        Text(
-                          goal['completed']
-                              ? "Goal Achieved"
-                              : "Goal Not Achieved",
-                          style: AppTextStyle.bodySmall
-                              .copyWith(color: AppColors.textHighlighted),
-                        ),
-                      ],
-                    ),
-                    Center(
-                      child: Container(
-                        height: 15.h,
-                        width: 15.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.iconPrimary,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 10,
-                              offset: const Offset(2, 4),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    goal['name'] ?? 'No Name',
+                    style: AppTextStyle.headingMedium
+                        .copyWith(color: AppColors.iconPrimary),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 4.h),
+                  imageFile != null
+                      ? Container(
+                          height: 50.h,
+                          width: 40.h,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: FileImage(imageFile!),
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(5.h),
-                          child: SvgPicture.asset(
-                            "assets/arrorDirectionNoShadow.svg",
-                            height: 2.h,
+                          ),
+                        )
+                      : Icon(Icons.image, size: 45.h, color: Colors.grey),
+                  SizedBox(height: 4.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "€${goal['amount']}",
+                            style: AppTextStyle.headingMedium
+                                .copyWith(color: AppColors.iconPrimary),
+                          ),
+                          Text(
+                            goal['completed']
+                                ? "Goal Achieved"
+                                : "Goal Not Achieved",
+                            style: AppTextStyle.bodySmall
+                                .copyWith(color: AppColors.textHighlighted),
+                          ),
+                        ],
+                      ),
+                      Center(
+                        child: Container(
+                          height: 15.h,
+                          width: 15.h,
+                          decoration: BoxDecoration(
+                            color: AppColors.iconPrimary,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(2, 4),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(5.h),
+                            child: SvgPicture.asset(
+                              "assets/arrorDirectionNoShadow.svg",
+                              height: 2.h,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

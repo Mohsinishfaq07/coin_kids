@@ -18,6 +18,7 @@ class AppColors {
   static const Color buttonPrimary = const Color(0xffa421d9);
   static const Color buttonSecondary = const Color(0xfff3c84b);
   static const Color buttonDisabled = const Color(0xffd9d9d9);
+  static const Color skipButton = const Color(0xFFFF9E29);
 
   //Icon
   static const Color iconPrimary = Color(0xffa421d9);

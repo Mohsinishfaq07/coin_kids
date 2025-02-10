@@ -1,5 +1,6 @@
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                     await firebaseAuthController
                         .resetPassword(firebaseAuthController.email.value);
                   } else {
-                    Get.snackbar('Alert', 'Check your email');
+                    ToastUtil.showToast('Check your email');
                   }
                 },
               ),
