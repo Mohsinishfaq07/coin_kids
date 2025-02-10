@@ -114,8 +114,10 @@ class GoalCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Get.to(() => GoalProgress(
+              isCompleted: (goal['completed'] as bool).obs,
               goalId: goal['goalId'],
               fromHome: true.obs,
+              //completed: goal['completed']
             ));
       },
       child: Padding(

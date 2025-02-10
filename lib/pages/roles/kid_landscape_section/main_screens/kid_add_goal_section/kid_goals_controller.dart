@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,12 +33,12 @@ class KidGoalsController extends GetxController {
       if (pickedFile != null) {
         goalImage.value = pickedFile.path;
 
-        Get.snackbar("Success", "Image saved locally.");
+        ToastUtil.showToast("Image saved locally.");
       } else {
-        Get.snackbar("No Image Selected", "Please select an image.");
+        ToastUtil.showToast("No Image Selected");
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick and save image: $e");
+      ToastUtil.showToast("Failed to pick and save image: $e");
     }
   }
 
@@ -68,7 +69,7 @@ class KidGoalsController extends GetxController {
       // Ensure user is authenticated
       final String? parentId = _firebaseAuth.currentUser?.uid;
       if (parentId == null) {
-        Get.snackbar("Error", "User not authenticated");
+        ToastUtil.showToast("User not authenticated");
         firebaseAuthController.isNormalLoading.value = false;
         return;
       }
@@ -145,7 +146,7 @@ class KidGoalsController extends GetxController {
       goalImage.value = "";
       goalName.value = "";
       goalAmount.value = 0.0;
-      Get.snackbar("Success", "Goal added for kid successfully");
+      ToastUtil.showToast("Goal added for kid successfully");
       Get.log('Added new goal for kid with parent ID: $parentId');
       goalImage.value = "";
     } catch (e) {
@@ -154,10 +155,9 @@ class KidGoalsController extends GetxController {
 
       // Firestore timeout error handling
       if (e is TimeoutException) {
-        Get.snackbar(
-            "Error", "Firestore operation timed out. Please try again.");
+        ToastUtil.showToast("Firestore operation timed out. Please try again.");
       } else {
-        Get.snackbar("Error", "Failed to add goal: $e");
+        ToastUtil.showToast("Failed to add goal: $e");
       }
 
       Get.log('Error adding goal: $e');
@@ -178,7 +178,7 @@ class KidGoalsController extends GetxController {
       final File localImage = await image.copy('$goalDirPath/$fileName.jpg');
       return localImage.path;
     } catch (e) {
-      Get.snackbar("Error", "Failed to save image locally: $e");
+      ToastUtil.showToast("Failed to save image locally: $e");
       rethrow;
     }
   }
@@ -191,7 +191,7 @@ class KidGoalsController extends GetxController {
       }
       return null; // Return null if no image is found
     } catch (e) {
-      Get.snackbar("Error", "Failed to fetch image: $e");
+      ToastUtil.showToast("Failed to fetch image: $e");
       print("Error Failed to fetch image: $e");
       return null;
     }

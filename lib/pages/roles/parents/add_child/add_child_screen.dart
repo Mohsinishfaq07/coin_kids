@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/features/custom_widgets/custom_text_field.dart';
@@ -91,17 +90,17 @@ class AddChildScreen extends StatelessWidget {
                                 backgroundImage: _addChildController
                                         .kidImagePath.value.isEmpty
                                     ? null
-                                    : FileImage(File(
-                                        _addChildController.kidImagePath.value)),
-                                child:
-                                    _addChildController.kidImagePath.value.isEmpty
-                                        ? Center(
-                                            child: Image.asset(
-                                              "assets/child_avatar_image_pngs/CameraIcon.png",
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : null,
+                                    : FileImage(File(_addChildController
+                                        .kidImagePath.value)),
+                                child: _addChildController
+                                        .kidImagePath.value.isEmpty
+                                    ? Center(
+                                        child: Image.asset(
+                                          "assets/child_avatar_image_pngs/CameraIcon.png",
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : null,
                               ),
                             ),
                           ),
@@ -124,11 +123,11 @@ class AddChildScreen extends StatelessWidget {
                                   Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:
-                                            _addChildController.selectedAvatar.value ==
-                                                    avatarIndex
-                                                ? Colors.purple
-                                                : Colors.transparent,
+                                        color: _addChildController
+                                                    .selectedAvatar.value ==
+                                                avatarIndex
+                                            ? Colors.purple
+                                            : Colors.transparent,
                                       ),
                                       borderRadius: BorderRadius.circular(60.r),
                                     ),
@@ -141,7 +140,8 @@ class AddChildScreen extends StatelessWidget {
                                     ),
                                   ),
                                   // Centered Check Icon (only when the avatar is selected)
-                                  if (_addChildController.selectedAvatar.value ==
+                                  if (_addChildController
+                                          .selectedAvatar.value ==
                                       avatarIndex)
                                     Positioned(
                                       child: Container(
@@ -177,7 +177,7 @@ class AddChildScreen extends StatelessWidget {
                       firebaseAuthController.isNormalLoading.value = true;
                       await firestoreOperations.parentFirebaseFunctions
                           .addKidAndUpdateParent();
-                          Get.off(() => ParentBottomNavigationBar());
+                      Get.off(() => ParentBottomNavigationBar());
                     }
                   },
                 )),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -114,26 +115,20 @@ class ParentFirebaseFunctions {
         });
         homeController.parentName.value = firebaseAuthController.username.value;
         Get.back();
-        Get.snackbar(
-          "Success",
+        ToastUtil.showToast(
           "Profile updated successfully!",
-          snackPosition: SnackPosition.BOTTOM,
         );
         Get.back(closeOverlays: true);
         Get.log('profile updated');
       } else {
-        Get.snackbar(
-          "Error",
+        ToastUtil.showToast(
           "User not logged in. Please log in again.",
-          snackPosition: SnackPosition.BOTTOM,
         );
       }
     } catch (e) {
       Get.back();
-      Get.snackbar(
-        "Error",
+      ToastUtil.showToast(
         "Failed to update profile: $e",
-        snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
       firebaseAuthController.isNormalLoading.value = false;
@@ -147,7 +142,7 @@ class ParentFirebaseFunctions {
     );
     if (addChildController.childName.value.isEmpty ||
         addChildController.childAge.isEmpty) {
-      Get.snackbar("Error", "All fields are required");
+      ToastUtil.showToast("All fields are required");
       firebaseAuthController.isNormalLoading.value = false;
       return;
     }
@@ -214,11 +209,11 @@ class ParentFirebaseFunctions {
       );
       // Get.off(() => ParentBottomNavigationBar());
 
-      Get.snackbar("Success", "Child added and parent updated successfully");
+      ToastUtil.showToast("Child added successfully");
     } catch (e) {
       Get.back();
       firebaseAuthController.isNormalLoading.value = false;
-      Get.snackbar("Error", "Failed to add child: $e");
+      ToastUtil.showToast("Failed to add child: $e");
       Get.log(
         'Error adding new child with parent ID: ${FirebaseAuth.instance.currentUser!.uid} and normal loading value:${firebaseAuthController.isNormalLoading.value}',
       );
@@ -299,15 +294,7 @@ class ParentFirebaseFunctions {
           if (enteredAmount > currentSpending) {
             homeController.amountValidation.value = 'Not Enough Funds,';
             Get.back();
-
-            Fluttertoast.showToast(
-              msg: 'Not Enough Funds', // Message to display
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: AppColors.textHighlighted,
-              textColor: Colors.white,
-              fontSize: 16.sp,
-            );
+            ToastUtil.showToast("Not Enough Funds");
           } else {
             updatedAmount = currentSpending - enteredAmount;
             Get.log("Current Spending Amount: $currentSpending");
@@ -556,23 +543,101 @@ class ParentFirebaseFunctions {
     }
   }
 
-  Future<void> SpendingTOGoals({
+  // Future<void> SpendingTOGoals({
+  //   required String kidId,
+  //   required String goalId,
+  //   required double enteredAmount,
+  // }) async {
+  //   try {
+  //     DocumentReference kidDocRef =
+  //         FirebaseFirestore.instance.collection('kids').doc(kidId);
+  //     DocumentReference goalDocRef =
+  //         FirebaseFirestore.instance.collection('goals').doc(goalId);
+
+  //     // Fetch current spending details
+  //     DocumentSnapshot kidSnapshot = await kidDocRef.get();
+  //     if (!kidSnapshot.exists) {
+  //       Get.back();
+  //       Get.log("Kid document not found: $kidId");
+  //       return;
+  //     }
+
+  //     double currentSpending = (kidSnapshot.data()
+  //             as Map<String, dynamic>?)?['spendings']?['amount'] ??
+  //         0.0;
+
+  //     if (enteredAmount > currentSpending) {
+  //       ToastUtil.showToast('Not Enough Funds');
+
+  //       return;
+  //     }
+
+  //     // Deduct from spending
+  //     double updatedSpending = currentSpending - enteredAmount;
+
+  //     // Update spending in `kids` collection
+  //     await kidDocRef.update({
+  //       'spendings.amount': updatedSpending,
+  //     });
+
+  //     // Fetch existing goal amount
+  //     DocumentSnapshot goalSnapshot = await goalDocRef.get();
+  //     if (!goalSnapshot.exists) {
+  //       Get.back();
+  //       Get.log("Goal document not found: ");
+  //       return;
+  //     }
+  //     double currentGoalAmount =
+  //         (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
+  //                 ?.toDouble() ??
+  //             0.0;
+  //     double goalAmount =
+  //         (goalSnapshot.data() as Map<String, dynamic>?)?['amount']
+  //                 ?.toDouble() ??
+  //             0.0;
+  //     if (currentGoalAmount + enteredAmount > goalAmount) {
+  //       ToastUtil.showToast('Goal amount already reached!');
+  //       return; // Prevent further processing if goal amount is exceeded
+  //     }
+
+  //     double updatedGoalAmount = currentGoalAmount + enteredAmount;
+
+  //     // Update or create goal document in `goals` collection
+  //     await goalDocRef.update(
+  //       {
+  //         'kidId': kidId,
+  //         'currentAmount': updatedGoalAmount,
+  //       },
+  //     );
+  //     if (updatedGoalAmount >= goalAmount) {
+  //       await goalDocRef.update({
+  //         'completed': true,
+  //       });
+  //       Get.log("Goal completed!");
+  //     }
+
+  //     Get.log(
+  //         "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
+  //     ToastUtil.showToast(
+  //       'Funds moved to Goals successfully!',
+  //     );
+  //   } catch (e) {
+  //     Get.back();
+  //     Get.log("Error transferring funds: $e");
+  //   }
+  // }
+  var previousValue = 0.0.obs;
+  Future<void> GoalsTOSpending({
     required String kidId,
+    required String goalId,
     required double enteredAmount,
   }) async {
     try {
-      showDialog(
-        context: Get.context!,
-        builder: (context) => LoadingProgressDialogueWidget(
-          title: "Processing...",
-        ),
-      );
-
       // References to Firestore collections
       DocumentReference kidDocRef =
           FirebaseFirestore.instance.collection('kids').doc(kidId);
       DocumentReference goalDocRef =
-          FirebaseFirestore.instance.collection('goals').doc(kidId);
+          FirebaseFirestore.instance.collection('goals').doc(goalId);
 
       // Fetch current spending details
       DocumentSnapshot kidSnapshot = await kidDocRef.get();
@@ -588,19 +653,13 @@ class ParentFirebaseFunctions {
 
       if (enteredAmount > currentSpending) {
         Get.back();
-        Fluttertoast.showToast(
-          msg: 'Not Enough Funds',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: AppColors.textHighlighted,
-          textColor: Colors.white,
-          fontSize: 16.sp,
-        );
+        ToastUtil.showToast('Not Enough Funds');
+
         return;
       }
 
       // Deduct from spending
-      double updatedSpending = currentSpending - enteredAmount;
+      double updatedSpending = currentSpending + enteredAmount;
 
       // Update spending in `kids` collection
       await kidDocRef.update({
@@ -609,29 +668,130 @@ class ParentFirebaseFunctions {
 
       // Fetch existing goal amount
       DocumentSnapshot goalSnapshot = await goalDocRef.get();
+      if (!goalSnapshot.exists) {
+        Get.back();
+        Get.log("Goal document not found: ");
+        return;
+      }
       double currentGoalAmount =
-          (goalSnapshot.exists && goalSnapshot.data() != null)
-              ? (goalSnapshot.data() as Map<String, dynamic>)['amount'] ?? 0.0
-              : 0.0;
+          (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
+                  ?.toDouble() ??
+              0.0;
 
-      double updatedGoalAmount = currentGoalAmount + enteredAmount;
+      double updatedGoalAmount = currentGoalAmount - enteredAmount;
 
       // Update or create goal document in `goals` collection
-      await goalDocRef.set({
-        'kidId': kidId,
-        'currentAmount': updatedGoalAmount,
-      }, SetOptions(merge: true));
+      await goalDocRef.update(
+        {
+          'kidId': kidId,
+          'currentAmount': updatedGoalAmount,
+        },
+      );
 
-      Get.back();
+      // Get.back();
       Get.log(
           "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
-      Fluttertoast.showToast(
-        msg: 'Funds moved to Goals successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: AppColors.KidZoneParent,
-        textColor: Colors.white,
-        fontSize: 16.sp,
+      ToastUtil.showToast('Funds moved to Spendings successfully!');
+    } catch (e) {
+      Get.back();
+      Get.log("Error transferring funds: $e");
+    }
+  }
+
+  Future<void> SpendingTOGoals({
+    required String kidId,
+    required String goalId,
+    required double enteredAmount,
+  }) async {
+    try {
+      DocumentReference kidDocRef =
+          FirebaseFirestore.instance.collection('kids').doc(kidId);
+      DocumentReference goalDocRef =
+          FirebaseFirestore.instance.collection('goals').doc(goalId);
+
+      // Fetch current spending details
+      DocumentSnapshot kidSnapshot = await kidDocRef.get();
+      if (!kidSnapshot.exists) {
+        Get.back();
+        Get.log("Kid document not found: $kidId");
+        return;
+      }
+
+      double currentSpending = (kidSnapshot.data()
+              as Map<String, dynamic>?)?['spendings']?['amount'] ??
+          0.0;
+
+      // Fetch existing goal amount
+      DocumentSnapshot goalSnapshot = await goalDocRef.get();
+      if (!goalSnapshot.exists) {
+        Get.back();
+        Get.log("Goal document not found: ");
+        return;
+      }
+
+      double currentGoalAmount =
+          (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
+                  ?.toDouble() ??
+              0.0;
+      double goalAmount =
+          (goalSnapshot.data() as Map<String, dynamic>?)?['amount']
+                  ?.toDouble() ??
+              0.0;
+
+      // Check if the goal is already completed (currentGoalAmount >= goalAmount)
+      if (currentGoalAmount == goalAmount) {
+        ToastUtil.showToast('Goal already achieved!');
+        return; // If goal is already reached, prevent any changes
+      }
+
+      if (enteredAmount > currentSpending) {
+        ToastUtil.showToast('Not Enough Funds');
+        return;
+      }
+
+      if (enteredAmount > goalAmount) {
+        ToastUtil.showToast('Not Enough Funds');
+        return;
+      }
+
+      // Deduct from spending only if goal is not completed
+      double updatedSpending = currentSpending - enteredAmount;
+
+      // Update spending in `kids` collection
+      await kidDocRef.update({
+        'spendings.amount': updatedSpending,
+      });
+
+      // Prevent exceeding the goalAmount while updating goal
+      if (currentGoalAmount + enteredAmount > goalAmount) {
+        ToastUtil.showToast('Goal amount already reached!');
+        return; // Prevent further processing if goal amount is exceeded
+      }
+
+      // Update goal amount
+      double updatedGoalAmount = currentGoalAmount + enteredAmount;
+      int completionPercentage =
+          ((updatedGoalAmount / goalAmount) * 100).toInt();
+
+      // Update goal document in `goals` collection
+      await goalDocRef.update({
+        'kidId': kidId,
+        'currentAmount': updatedGoalAmount,
+        'progress': completionPercentage,
+      });
+
+      // Mark goal as completed if the goal is fully achieved
+      if (updatedGoalAmount >= goalAmount) {
+        await goalDocRef.update({
+          'completed': true,
+        });
+        Get.log("Goal completed!");
+      }
+      previousValue.value = 0.0;
+      Get.log(
+          "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
+      ToastUtil.showToast(
+        'Funds moved to Goals successfully!',
       );
     } catch (e) {
       Get.back();

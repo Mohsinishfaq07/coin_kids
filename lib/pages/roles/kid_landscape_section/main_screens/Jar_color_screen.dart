@@ -10,7 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class AddJarColorScreen extends StatefulWidget {
+class AddJarColorScreen extends StatelessWidget {
   RxBool isSpending;
 
   AddJarColorScreen({
@@ -18,11 +18,6 @@ class AddJarColorScreen extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  @override
-  State<AddJarColorScreen> createState() => _AddJarColorScreenState();
-}
-
-class _AddJarColorScreenState extends State<AddJarColorScreen> {
   final List<Color> colors = [
     const Color(0xFFFF6060),
     const Color(0xFF8F60FF),
@@ -37,14 +32,6 @@ class _AddJarColorScreenState extends State<AddJarColorScreen> {
     const Color(0xFFFF60C4),
     const Color(0xFF3F51FC),
   ];
-
-  // final colorController = Get.put(JarColorController());
-  @override
-  void initState() {
-    super.initState();
-    parentController.fetchParentDetails();
-    parentController.fetchKids();
-  }
 
   final parentController = Get.put(ParentController());
 
@@ -147,26 +134,9 @@ class _AddJarColorScreenState extends State<AddJarColorScreen> {
                             Color selectedColor = colors[
                                 parentController.selectedColorIndex.value];
                             Get.to(() => AmountScreen(
-                                  isSpending: widget.isSpending,
+                                  isSpending: isSpending,
                                   jarColor: selectedColor,
                                 ));
-                            // final selectedColor = colors[
-                            //     colorController.selectedColorIndex.value];
-                            // if (widget.isSpending.value) {
-                            //   colorController.updateSpendingJarColor(
-                            //     save: true,
-                            //     childId: parentController.kidsList[0][
-                            //         'id'], // Assuming the first child is selected
-                            //     spendingJarColor: selectedColor,
-                            //   );
-                            // } else {
-                            //   colorController.updateSavingJarColor(
-                            //     save: true,
-                            //     childId: parentController.kidsList[0][
-                            //         'id'], // Assuming the first child is selected
-                            //     spendingJarColor: selectedColor,
-                            //   );
-                            // }
                           }
                         },
                         buttonText: "Next")),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/message_placeholder_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/shop/shop.dart';
@@ -62,12 +63,10 @@ class ParentNavigationBarController extends GetxController {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('profileImagePath', localPath);
 
-        // Get.snackbar("Success", "Image saved locally.");
-      } else {
-        // Get.snackbar("No Image Selected", "Please select an image.");
-      }
+        ToastUtil.showToast("Image saved locally.");
+      } else {}
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick and save image: $e");
+      ToastUtil.showToast("Failed to pick and save image: $e");
     }
   }
 
@@ -87,7 +86,7 @@ class ParentNavigationBarController extends GetxController {
         await prefs.setString('profileImagePath', localPath);
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to capture and save image: $e");
+      ToastUtil.showToast("Failed to capture and save image: $e");
     }
   }
 
@@ -99,7 +98,7 @@ class ParentNavigationBarController extends GetxController {
       final File localImage = await image.copy('${appDir.path}/$fileName.jpg');
       return localImage.path; // Return the local path
     } catch (e) {
-      Get.snackbar("Error", "Failed to save image locally: $e");
+      ToastUtil.showToast("Failed to save image locally: $e");
       rethrow;
     }
   }

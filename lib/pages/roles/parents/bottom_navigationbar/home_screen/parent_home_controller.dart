@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/pages/roles/kid/kid_model_class.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -76,7 +77,7 @@ class ParentController extends GetxController {
       return kidsList.isNotEmpty; // Return whether kidsList has data
     } catch (e) {
       isLoading.value = false; // Ensure loading is stopped on error
-      Get.snackbar("Error", "Failed to fetch kids: $e");
+      ToastUtil.showToast("Failed to fetch kids: $e");
       return false; // Return false in case of an error
     }
   }
@@ -101,7 +102,7 @@ class ParentController extends GetxController {
         }
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to fetch parent details: $e");
+      ToastUtil.showToast("Failed to fetch parent details: $e");
     } finally {
       isLoading.value = false; // Stop loading
     }
@@ -128,18 +129,18 @@ class ParentController extends GetxController {
           kidName.value = 'Kid';
         }
       } else {
-        Get.snackbar("Error", "User is not logged in");
+        ToastUtil.showToast("User is not logged in");
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to fetch kid details: $e");
+      ToastUtil.showToast("Failed to fetch kid details: $e");
     } finally {
       isLoading.value = false; // Stop loading
     }
   }
 
-     var selectedColorIndex = (-1).obs; // Default to no selection
+  var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
- 
+
   // Update Spending Jar Color in Firebase
   Future<void> updateSavingJarColor({
     required bool save,
@@ -192,7 +193,7 @@ class ParentController extends GetxController {
       Get.log("Error updating spending jar color: $e");
     }
   }
- 
+
 // Future<void> getParentDataForKidGoals(String parentId) async {
 //   try {
 //     // Fetch the parent document
@@ -234,6 +235,4 @@ class ParentController extends GetxController {
 //     print('Error: $e');
 //   }
 // }
-
- 
 }

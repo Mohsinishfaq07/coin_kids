@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -84,7 +85,7 @@ class AddChildController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to fetch parent ID: $e");
+      ToastUtil.showToast("Failed to fetch parent ID: $e");
     }
   }
 
@@ -105,12 +106,14 @@ class AddChildController extends GetxController {
         // Save the image path in SQLite
         await DatabaseHelper.instance.insertImage(localPath);
 
-        Get.snackbar("Success", "Image saved locally.");
+        ToastUtil.showToast("Image saved locally.");
       } else {
-        Get.snackbar("No Image Selected", "Please select an image.");
+        ToastUtil.showToast(
+          "No Image Selected",
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick and save image: $e");
+      ToastUtil.showToast("Failed to pick and save image: $e");
     }
   }
 
@@ -122,7 +125,7 @@ class AddChildController extends GetxController {
       final File localImage = await image.copy('${appDir.path}/$fileName.jpg');
       return localImage.path; // Return the local path
     } catch (e) {
-      Get.snackbar("Error", "Failed to save image locally: $e");
+      ToastUtil.showToast("Failed to save image locally: $e");
       rethrow;
     }
   }

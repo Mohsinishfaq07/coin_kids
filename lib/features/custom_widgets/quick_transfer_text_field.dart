@@ -110,8 +110,6 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
 
   @override
   Widget build(BuildContext context) {
-    double defaultWidth =
-        widget.width ?? MediaQuery.of(context).size.width * 0.9;
     double defaultHeight = widget.height ?? 50;
 
     return TextFormField(
@@ -125,34 +123,28 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       validator: widget.validator,
       cursorColor: Colors.blue.shade800,
-      autovalidateMode:
-      widget.autoValidateMode ?? AutovalidateMode.disabled,
+      autovalidateMode: widget.autoValidateMode ?? AutovalidateMode.disabled,
       cursorHeight: 16.h,
       style: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.normal// Adjust text size as needed
-      ),
+          fontSize: 14.sp,
+          fontWeight: FontWeight.normal // Adjust text size as needed
+          ),
 
       decoration: InputDecoration(
-          fillColor: Theme.of(context)
-          .inputDecorationTheme
-          .fillColor,
-          filled: true,
-        contentPadding:
-          EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+        fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+        filled: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: CustomThemeData()
-                .borderColor, // Border color when unfocused
+            color: CustomThemeData().borderColor, // Border color when unfocused
             width: 1.5,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: CustomThemeData()
-                .borderColor, // Border color when enabled
+            color: CustomThemeData().borderColor, // Border color when enabled
             width: 1.5,
           ),
         ),
@@ -164,16 +156,11 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
           ),
         ),
 
-
         floatingLabelBehavior: widget.floatingLabelBehavior,
         hintText: widget.hintText,
         hintStyle: TextStyle(
-            color: Colors.grey,
-            fontSize: 15.sp,
-            fontWeight: FontWeight.normal),
-        labelStyle:
-
-        TextStyle(color: Colors.grey.shade200, fontSize: 14.sp),
+            color: Colors.grey, fontSize: 15.sp, fontWeight: FontWeight.normal),
+        labelStyle: TextStyle(color: Colors.grey.shade200, fontSize: 14.sp),
         suffixIcon: _buildSuffixIcon(),
         prefixIcon: Row(
           mainAxisSize: MainAxisSize.min,
@@ -183,17 +170,17 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: widget.prefix is String
                     ? SvgPicture.asset(
-                  widget.prefix as String,
-                  color: _prefixContainerColor, // Dynamic color
-                  width: 20, // Adjust size as needed
-                  height: 20,
-                )
+                        widget.prefix as String,
+                        color: _prefixContainerColor, // Dynamic color
+                        width: 20, // Adjust size as needed
+                        height: 20,
+                      )
                     : IconTheme(
-                  data: IconThemeData(
-                    color: _prefixContainerColor, // Dynamic color here
-                  ),
-                  child: widget.prefix!,
-                ),
+                        data: IconThemeData(
+                          color: _prefixContainerColor, // Dynamic color here
+                        ),
+                        child: widget.prefix!,
+                      ),
               ),
             Container(
               height: defaultHeight - 15,

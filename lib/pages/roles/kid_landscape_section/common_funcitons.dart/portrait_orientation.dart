@@ -8,7 +8,7 @@ PortraitOrientation() {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
     SystemUiOverlay.top, // Show status bar
-    SystemUiOverlay.bottom, // Show navigation bar
+    // SystemUiOverlay.bottom, // Show navigation bar
   ]);
 
   SystemChrome.setSystemUIOverlayStyle(

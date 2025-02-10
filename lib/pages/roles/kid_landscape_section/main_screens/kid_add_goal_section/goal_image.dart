@@ -1,19 +1,16 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_progress.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
-import 'package:coin_kids/pages/roles/parents/drawer/parent_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
 import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/text_theme.dart';
@@ -161,11 +158,13 @@ class AddGoalImage extends StatelessWidget {
                                     .getGoalIdFromPrefs();
                                 if (goalId != null && goalId.isNotEmpty) {
                                   Get.off(() => GoalProgress(
+                                        isCompleted: false.obs,
                                         goalId: goalId,
                                         fromHome: false.obs,
+                                        //  completed: false.obs,
                                       ));
                                 } else {
-                                  showToast("Goal ID not found");
+                                  ToastUtil.showToast("Goal ID not found");
                                 }
                                 // showToast("Please select an image");
                               } else {
@@ -176,16 +175,18 @@ class AddGoalImage extends StatelessWidget {
 
                                   if (goalId != null && goalId.isNotEmpty) {
                                     Get.off(() => GoalProgress(
+                                          isCompleted: false.obs,
                                           goalId: goalId,
                                           fromHome: false.obs,
+                                          // completed: false.obs,
                                         ));
                                     kidGoalsController.goalImage.value = "";
                                     kidGoalsController.goalName.value = "";
                                   } else {
-                                    showToast("Goal ID not found");
+                                    ToastUtil.showToast("Goal ID not found");
                                   }
                                 } on TimeoutException catch (e) {
-                                   print("Firestore transaction timed out: $e");
+                                  print("Firestore transaction timed out: $e");
                                 }
                               }
                             },
@@ -212,17 +213,6 @@ class AddGoalImage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: AppColors.iconPrimary,
-      textColor: Colors.white,
-      fontSize: 16.0,
     );
   }
 }
