@@ -3,7 +3,9 @@ import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/dialogues/delete_dialogue.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/Icon_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/custom_icon_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/goal_completed_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
@@ -40,6 +42,47 @@ class GoalProgress extends StatelessWidget {
 
     final kidGoalController =
         Get.find<KidGoalsController>(); // Using Get.find to access controller
+    void onDeleteGoal() async {
+      try {
+        // Get the current kid's id and goalId
+        final kidSnapshot = await FirebaseFirestore.instance
+            .collection('kids')
+            .where('parentId',
+                isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .get();
+
+        if (kidSnapshot.docs.isEmpty) {
+          print("[DEBUG] No kids found");
+          return;
+        }
+
+        final kidId = kidSnapshot.docs.first.id;
+        print("[DEBUG] Found Kid ID: $kidId");
+
+        final goalSnapshot = await FirebaseFirestore.instance
+            .collection('goals')
+            .where('kidId', isEqualTo: kidId)
+            .where('goalId', isEqualTo: goalId) // Using the goalId
+            .get();
+
+        if (goalSnapshot.docs.isEmpty) {
+          print("[DEBUG] No goal found");
+          return;
+        }
+
+        // Get the goal document reference
+        final goalDocRef = goalSnapshot.docs.first.reference;
+        await goalDocRef.delete(); // Delete the goal document
+
+        // Optionally, show a confirmation message or navigate
+        Get.snackbar("Success", "Goal deleted successfully");
+        Get.offAll(
+            KidHomeScreen()); // Redirect to the home screen or another page
+      } catch (e) {
+        print("[ERROR] Error deleting goal: $e");
+        Get.snackbar("Error", "Failed to delete the goal");
+      }
+    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -271,10 +314,40 @@ class GoalProgress extends StatelessWidget {
                                                     "[DEBUG] Slider incremented to: $newSliderValue");
                                               },
                                             ),
-                                            SliderWidget(
-                                              goalId: goalId,
+                                            StreamBuilder<QuerySnapshot>(
+                                              stream: FirebaseFirestore.instance
+                                                  .collection('kids')
+                                                  .where('parentId',
+                                                      isEqualTo: FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)
+                                                  .snapshots(),
+                                              builder: (context, kidSnapshot) {
+                                                if (kidSnapshot
+                                                        .connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                }
 
-                                              // Pass the required firestore operations
+                                                if (!kidSnapshot.hasData ||
+                                                    kidSnapshot
+                                                        .data!.docs.isEmpty) {
+                                                  print(
+                                                      "[DEBUG] No kids found");
+                                                  return Text("No Kids Found");
+                                                }
+
+                                                final kidId = kidSnapshot
+                                                    .data!
+                                                    .docs
+                                                    .first
+                                                    .id; // Get the kidId
+                                                return SliderWidget(
+                                                    kidId: kidId,
+                                                    goalId:
+                                                        goalId); // Pass both kidId and goalId to SliderWidget
+                                              },
                                             ),
                                             kidBackButton(
                                               buttonHeight: 26.h,
@@ -382,7 +455,17 @@ class GoalProgress extends StatelessWidget {
                                               CustomIconButton(
                                                 iconPath: "assets/trash.svg",
                                                 label: 'Delete',
-                                                onTap: () {},
+                                                onTap: () {
+                                                  showDeleteGoalDialog(
+                                                    context,
+                                                    label:
+                                                        "Delete Goal", // The title of the dialog
+                                                    subLabel:
+                                                        "Are you sure you want to delete this goal?", // The subtitle
+                                                    YesonTap:
+                                                        onDeleteGoal, // The action to take on "Yes" button click
+                                                  );
+                                                },
                                               ),
                                             ],
                                           ),

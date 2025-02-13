@@ -11,135 +11,124 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class SliderWidget extends StatelessWidget {
   final String goalId;
+  final String kidId;
 
   SliderWidget({
     required this.goalId,
+    required this.kidId,
   });
-
-  Stream<QuerySnapshot> _kidsStream() {
-    return FirebaseFirestore.instance.collection('kids').snapshots();
-  }
 
   @override
   Widget build(BuildContext context) {
     final kidGoalController = Get.put(KidGoalsController());
     return StreamBuilder<QuerySnapshot>(
-      stream: _kidsStream(),
-      builder: (context, kidSnapshot) {
-        if (kidSnapshot.connectionState == ConnectionState.waiting) {
+      stream: FirebaseFirestore.instance
+          .collection('goals')
+          .where('kidId',
+              isEqualTo: kidId) // Ensure `kidId` is the correct type
+          .where('goalId',
+              isEqualTo: goalId) // Ensure `goalId` is the correct type
+          .where('deleted', isEqualTo: false)
+          .limit(1)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
 
-        if (!kidSnapshot.hasData || kidSnapshot.data!.docs.isEmpty) {
-          return Text("No Kids Found");
+        // Debugging: Check if data exists in the snapshot
+        print("[DEBUG] Snapshot data: ${snapshot.data?.docs.length}");
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          print("[DEBUG] No goal found for goalId: $goalId and kidId: $kidId");
+          return Text("No Goal Found");
+        }
+        if (snapshot.data!.docs.isEmpty) {
+          print(
+              "${snapshot.data}[DEBUG] No goal found for goalId: $goalId and kidId: $kidId");
+          return Text("No Goal Found");
         }
 
-        final kidId = kidSnapshot.data!.docs.first.id;
+        // final goal =
+        //     snapshot.data!.docs.first.data() as Map<String, dynamic>?;
+        final goal = snapshot.data!.docs.first.data() as Map<String, dynamic>?;
+        final goalAmount = goal?['amount'] ?? 0.0;
+        final goalCurrentAmount = goal?['currentAmount'] ?? 0.0;
+        final maxAmount = goalAmount > 0 ? goalAmount.toDouble() : 100.0;
 
-        return StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('goals')
-              .where('kidId', isEqualTo: kidId)
-              .where('goalId', isEqualTo: goalId)
-              .where('deleted', isEqualTo: false)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
+        kidGoalController.setGoalAmount(maxAmount);
 
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Text("No Data Found");
-            }
+        final currentSliderValue = kidGoalController.sliderValue.value;
+        final completed = goal?['completed'] ?? false;
 
-            final goal =
-                snapshot.data!.docs.first.data() as Map<String, dynamic>?;
-            final goalAmount = goal?['amount'] ?? 0.0;
-            final goalCurrentAmount = goal?['currentAmount'] ?? 0.0;
-            final maxAmount = goalAmount > 0 ? goalAmount.toDouble() : 100.0;
+        if (completed) {
+          Future.delayed(Duration.zero, () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("This goal is already achieved")),
+            );
+          });
+          return TimelineScreen(); // Navigate or show completed screen
+        }
 
-            kidGoalController.setGoalAmount(maxAmount);
+        return Obx(() {
+          double initialSliderValue =
+              0.0; // Store initial position before sliding
 
-            final currentSliderValue = kidGoalController.sliderValue.value;
-            final completed = goal?['completed'] ?? false;
+          return SfSliderTheme(
+            data: SfSliderThemeData(
+              activeTrackHeight: 10.h,
+              inactiveTrackHeight: 10.h,
+            ),
+            child: SizedBox(
+              width: 320.w, // Adjust size as needed
+              child: SfSlider(
+                shouldAlwaysShowTooltip: true,
+                showTicks: true,
+                showLabels: true,
+                edgeLabelPlacement: EdgeLabelPlacement.auto,
+                thumbIcon: CircleAvatar(
+                    backgroundColor: AppColors.buttonPrimary,
+                    radius: 20.r,
+                    child: SvgPicture.asset(
+                      "assets/Coin.svg",
+                      height: 40.h,
+                    )),
+                enableTooltip: false,
+                activeColor: Colors.blue, // Adjust color
+                inactiveColor: Colors.grey, // Adjust color
+                value: kidGoalController.sliderValue.value == 0
+                    ? goalCurrentAmount // Show stored `currentAmount` first
+                    : kidGoalController.sliderValue.value,
+                min: 0,
+                max: maxAmount,
+                stepSize: 0.1,
+                onChangeStart: (dynamic value) {
+                  initialSliderValue = value.toDouble();
+                },
+                onChangeEnd: (dynamic value) async {
+                  double newValue = value.toDouble();
+                  kidGoalController.updateValue(newValue);
+                },
+                onChanged: (dynamic value) {
+                  double newValue = value.toDouble();
 
-            if (completed) {
-              Future.delayed(Duration.zero, () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("This goal is already achieved")),
-                );
-              });
-              return TimelineScreen(); // Navigate or show completed screen
-            }
+                  if (newValue > initialSliderValue) {
+                    print("[DEBUG] Moving Right → Increasing Value");
+                    kidGoalController.isMinus.value = false;
+                    kidGoalController.updateValue(newValue);
+                    print("newValue is $newValue");
+                  } else if (newValue < initialSliderValue) {
+                    print("[DEBUG] Moving Left → Decreasing Value");
+                    kidGoalController.isMinus.value = true; // Decrease
+                    kidGoalController.updateValue(newValue);
+                    print("newValue is $newValue");
+                  }
 
-            return Obx(() {
-              double initialSliderValue =
-                  0.0; // Store initial position before sliding
-
-              return SfSliderTheme(
-                data: SfSliderThemeData(
-                  activeTrackHeight: 10.h,
-                  inactiveTrackHeight: 10.h,
-                ),
-                child: SizedBox(
-                  width: 320.w, // Adjust size as needed
-
-                  child: SfSlider(
-                    shouldAlwaysShowTooltip: true,
-                    showTicks: true,
-                    showLabels: true,
-                    edgeLabelPlacement: EdgeLabelPlacement.auto,
-                    thumbIcon: CircleAvatar(
-                        backgroundColor: AppColors.buttonPrimary,
-                        radius: 20.r,
-                        child: SvgPicture.asset(
-                          "assets/Coin.svg",
-                          height: 40.h,
-                        )),
-                    // onChangeStart: (value) => value = firestoreOperations
-                    //     .parentFirebaseFunctions.previousValue.value,
-
-                    enableTooltip: false,
-
-                    activeColor: Colors.blue, // Adjust color
-                    inactiveColor: Colors.grey, // Adjust color
-                    value: kidGoalController.sliderValue.value == 0
-                        ? goalCurrentAmount // Show stored `currentAmount` first
-                        : kidGoalController.sliderValue.value,
-                    min: 0,
-                    max: maxAmount,
-                    stepSize: 0.1,
-                    onChangeStart: (dynamic value) {
-                      initialSliderValue = value.toDouble();
-                    },
-                    onChangeEnd: (dynamic value) async {
-                      double newValue = value.toDouble();
-                      kidGoalController.updateValue(newValue);
-                    },
-                    onChanged: (dynamic value) {
-                      double newValue = value.toDouble();
-
-                      if (newValue > initialSliderValue) {
-                        print("[DEBUG] Moving Right → Increasing Value");
-                        kidGoalController.isMinus.value = false;
-                        kidGoalController.updateValue(newValue);
-                        print("newValue is $newValue");
-                        // Increase
-                      } else if (newValue < initialSliderValue) {
-                        print("[DEBUG] Moving Left → Decreasing Value");
-                        kidGoalController.isMinus.value = true; // Decrease
-                        kidGoalController.updateValue(newValue);
-                        print("newValue is $newValue");
-                      }
-
-                      kidGoalController.updateValue(newValue);
-                    },
-                  ),
-                ),
-              );
-            });
-          },
-        );
+                  kidGoalController.updateValue(newValue);
+                },
+              ),
+            ),
+          );
+        });
       },
     );
   }

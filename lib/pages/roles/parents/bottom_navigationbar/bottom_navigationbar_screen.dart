@@ -6,13 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
- import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
+import 'bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class ParentBottomNavigationBar extends StatelessWidget {
   ParentBottomNavigationBar({super.key});
-  final  controller =
-      Get.put(ParentNavigationBarController());
-
+  final controller = Get.put(ParentNavigationBarController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +49,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
               if (index == 3) {
                 showKidsZoneDialog(
                   context,
-                  purpleBgPath: 'assets/bottomSheetIcons/bottomSheetBg.svg',
                   coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
-                  closeIconPath: 'assets/bottomSheetIcons/closeButton.svg',
                   greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
                   tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
                   label: 'Go To Kids Zone!',

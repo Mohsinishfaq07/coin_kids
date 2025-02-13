@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,9 +60,7 @@ class LoadingProgressDialogueWidget extends StatelessWidget {
 }
 
 class KidsZoneDialog extends StatelessWidget {
-  final String purpleBgPath;
   final String coinIconPath;
-  final String closeIconPath;
   final String greenButtonBgPath;
   final String tickIconPath;
   final String label;
@@ -69,9 +68,7 @@ class KidsZoneDialog extends StatelessWidget {
 
   const KidsZoneDialog({
     Key? key,
-    required this.purpleBgPath,
     required this.coinIconPath,
-    required this.closeIconPath,
     required this.greenButtonBgPath,
     required this.tickIconPath,
     required this.label,
@@ -86,9 +83,10 @@ class KidsZoneDialog extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           SvgPicture.asset(
-            purpleBgPath,
+            AppAssets.dialogueBGSvg,
             fit: BoxFit.fill,
             width: 330.w,
+            height: 100.h,
           ),
           Positioned(
             top: -28.h,
@@ -106,7 +104,7 @@ class KidsZoneDialog extends StatelessWidget {
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: SvgPicture.asset(
-                closeIconPath,
+                AppAssets.crossSvg,
                 width: 32.w,
                 height: 30.h,
               ),
@@ -192,9 +190,7 @@ class KidsZoneDialog extends StatelessWidget {
 // Function to show the dialog
 void showKidsZoneDialog(
   BuildContext context, {
-  required String purpleBgPath,
   required String coinIconPath,
-  required String closeIconPath,
   required String greenButtonBgPath,
   required String tickIconPath,
   required String label,
@@ -202,9 +198,7 @@ void showKidsZoneDialog(
 }) {
   Get.bottomSheet(
     KidsZoneDialog(
-      purpleBgPath: purpleBgPath,
       coinIconPath: coinIconPath,
-      closeIconPath: closeIconPath,
       greenButtonBgPath: greenButtonBgPath,
       tickIconPath: tickIconPath,
       label: label,

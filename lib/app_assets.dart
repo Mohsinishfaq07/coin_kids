@@ -35,4 +35,6 @@ class AppAssets {
   static const kidPlusIcon = "assets/kidRoleIcons/kidPlusIcon.svg";
   static const jarBackgroundSvg = "assets/jars/JarBg.svg";
   static const jarOutLinePng = "assets/jars/jarOutline.png";
+  static const dialogueBGSvg = "assets/bottomSheetIcons/bottomSheetBg.svg";
+  static const crossSvg = 'assets/bottomSheetIcons/closeButton.svg';
 }

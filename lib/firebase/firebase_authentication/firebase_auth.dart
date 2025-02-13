@@ -325,9 +325,9 @@ class FirebaseAuthController extends GetxController {
       if (FirebaseAuth.instance.currentUser != null) {
         await FirebaseAuth.instance.signOut();
         await clearCredentials(); // Clear local credentials
-        isEmailLoading.value = false;
-        isGoogleLoading.value = false;
-        isAppleLoading.value = false;
+        // isEmailLoading.value = false;
+        // isGoogleLoading.value = false;
+        // isAppleLoading.value = false;
         Get.offAll(() => LoginScreen());
       } else {
         ToastUtil.showToast("No user is logged in");
@@ -337,14 +337,7 @@ class FirebaseAuthController extends GetxController {
     }
   }
 
-  // Future<void> logout() async {
-  //   await FirebaseAuth.instance.signOut();
-  //   await clearCredentials(); // Clear local credentials
-  //   isEmailLoading.value = false;
-  //   isGoogleLoading.value = false;
-  //   isAppleLoading.value = false;
-  //   Get.offAll(() => LoginScreen());
-  // }
+  
 
   Future<bool> checkIfParent(String email) async {
     try {

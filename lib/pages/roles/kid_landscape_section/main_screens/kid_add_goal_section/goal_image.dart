@@ -110,6 +110,7 @@ class AddGoalImage extends StatelessWidget {
                                         buttonText: 'Add From Gallery',
                                         width: 280.w,
                                         showPrefix: true,
+                                        prefixSvg: "assets/add_icon.svg",
                                       ),
                                     ],
                                   )
@@ -173,6 +174,7 @@ class AddGoalImage extends StatelessWidget {
                                 }
                               }
                             },
+                            showSuffix: true,
                             buttonText:
                                 kidGoalsController.goalImage.value.isNotEmpty
                                     ? 'save'

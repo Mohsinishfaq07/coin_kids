@@ -51,7 +51,7 @@ class JarWithMoneyTitle extends StatelessWidget {
           AppAssets.jarBackgroundSvg,
           color: jarColor,
           height: 100.h,
-          width: 140.w,
+          width: 138.w,
         ),
         Image.asset(
           AppAssets.jarOutLinePng,

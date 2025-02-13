@@ -27,14 +27,18 @@ class KidHomeScreen extends StatelessWidget {
     VerticalNavBarController verticalNavBarController =
         Get.put(VerticalNavBarController());
     landscapeOrientation();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // User is not logged in, you should handle this case
+      return Center(child: Text("No user is logged in"));
+    }
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: false,
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('kids')
-              .where('parentId',
-                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .where('parentId', isEqualTo: user!.uid)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)

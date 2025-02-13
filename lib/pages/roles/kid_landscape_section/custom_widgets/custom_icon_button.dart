@@ -4,12 +4,12 @@ import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomIconButton extends StatelessWidget {
+class CircleButtonWithTitle extends StatelessWidget {
   final String iconPath;
   final String label;
   final VoidCallback onTap;
 
-  const CustomIconButton({
+  const CircleButtonWithTitle({
     Key? key,
     required this.iconPath,
     required this.label,
@@ -30,7 +30,7 @@ class CustomIconButton extends StatelessWidget {
             svgAsset: iconPath,
             iconColor: Colors.white,
             svgHeight: 40.h,
-            onTap: () {},
+            onTap: onTap,
           ),
           SizedBox(
             height: 2.h,

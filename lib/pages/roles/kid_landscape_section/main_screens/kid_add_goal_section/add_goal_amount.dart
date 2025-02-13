@@ -77,6 +77,7 @@ class AddGoalAmount extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: GreenNextButton(
+                      showSuffix: true,
                       onTap: () {
                         if (kidGoalsController.goalAmount.value == 0.0) {
                           Fluttertoast.showToast(

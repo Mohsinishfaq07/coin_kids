@@ -74,6 +74,7 @@ class AddGoalName extends StatelessWidget {
                       child: Align(
                           alignment: Alignment.bottomRight,
                           child: GreenNextButton(
+                              showSuffix: true,
                               onTap: () async {
                                 if (kidGoalsController.goalName.value.isEmpty) {
                                   Fluttertoast.showToast(

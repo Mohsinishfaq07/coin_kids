@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
+  var isLoading = false.obs;
+  var isEditMode = false.obs;
   var goalCurrentAmount = 0.0.obs;
   final ImagePicker picker = ImagePicker();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -39,7 +38,7 @@ class KidGoalsController extends GetxController {
       if (pickedFile != null) {
         goalImage.value = pickedFile.path;
 
-        ToastUtil.showToast("Image saved locally.");
+        // ToastUtil.showToast("Image saved locally.");
       } else {
         ToastUtil.showToast("No Image Selected");
       }
@@ -103,7 +102,7 @@ class KidGoalsController extends GetxController {
 
       // Firestore goal data
       final Map<String, dynamic> goalData = {
-        'currentAmount': 0,
+        'currentAmount': 0.0,
         'amount': goalAmount.value,
         'kidId': kidRef.id,
         'completed': false,
@@ -170,20 +169,6 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  Future<String?> getImageFromDatabase(String goalId) async {
-    try {
-      final imagePath = await DatabaseHelper.instance.getImageByGoalId(goalId);
-      if (imagePath != null && imagePath.isNotEmpty) {
-        return imagePath;
-      }
-      return null; // Return null if no image is found
-    } catch (e) {
-      ToastUtil.showToast("Failed to fetch image: $e");
-      print("Error Failed to fetch image: $e");
-      return null;
-    }
-  }
-
   Future<void> saveGoalIdToPrefs(String goalId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('currentGoalId', goalId);
@@ -193,33 +178,6 @@ class KidGoalsController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('currentGoalId');
   }
-
-  // Future<void> saveImageToPrefs(String goalId, File imageFile) async {
-  //   try {
-  //     if (imageFile == "" || imageFile.path.isEmpty || imageFile == null) {
-  //       print("Invalid image file provided. Using default image.");
-  //       imageFile = File(
-  //           'path/to/default/assets/dollar_coin.png'); // Path to default image
-
-  //     }
-
-  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //     // Read the image file as bytes
-
-  //     List<int> imageBytes = await imageFile.readAsBytes();
-
-  //     // Convert image to Base64 string
-  //     String base64Image = base64Encode(imageBytes);
-
-  //     // Store in SharedPreferences with goalId as key
-  //     await prefs.setString('goal_image_$goalId', base64Image);
-
-  //     print("Image saved successfully for goalId: $goalId");
-  //   } catch (e) {
-  //     print("Error saving image: $e");
-  //   }
-  // }
 
   Future<void> saveImageToPrefs(String goalId, File? imageFile) async {
     try {
@@ -248,6 +206,16 @@ class KidGoalsController extends GetxController {
     } catch (e) {
       print("Error saving image: $e");
     }
+  }
+
+  Future<void> removeImageFromPrefs(String goalId) async {
+    isLoading.value = true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('goal_image_$goalId'); // Remove image based on goalId
+    goalImage.value = "";
+    isLoading.value = false;
+    ToastUtil.showToast("Goal Image Removed");
+    print("Image removed from SharedPreferences");
   }
 
   Future<File?> getImageFromPrefs(String goalId) async {

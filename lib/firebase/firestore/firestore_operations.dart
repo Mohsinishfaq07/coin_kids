@@ -164,13 +164,17 @@ class ParentFirebaseFunctions {
 
       // Reference to the parent document
       final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+      DocumentReference newChildRef =
+          _firebaseFirestore.collection('kids').doc();
+      String kidDocumentId = newChildRef.id;
 
       DocumentReference parentRef = _firebaseFirestore
           .collection('parents')
           .doc(FirebaseAuth.instance.currentUser!.email);
-      DocumentReference newChildRef =
-          _firebaseFirestore.collection('kids').doc();
-      String kidDocumentId = newChildRef.id; // Extracting the child document ID
+
+      String parentDocumentId =
+          FirebaseAuth.instance.currentUser!.uid; // This is the parent ID
+      print("Parent Document ID: $parentDocumentId");
 
       // Prepare child data
       final Map<String, dynamic> childData = {
@@ -182,22 +186,12 @@ class ParentFirebaseFunctions {
         'parent': parentRef,
         'avatar': avatarUrl,
         'age': addChildController.childAge.value,
-        // 'savings': {
-        //   'amount': 0.0, // Default savings value
-        //   'color': '#227799',
-        //   'name': 'Savings',
-        // },
-        // 'spendings': {
-        //   'amount': 0.0, // Default spendings value
-        //   'color': '#F54422',
-        //   'name': 'Spendings',
-        // },
       };
 
       // Add child and update parent in a transaction
       await _firebaseFirestore.runTransaction((transaction) async {
-        DocumentReference newChildRef =
-            _firebaseFirestore.collection('kids').doc();
+        // DocumentReference newChildRef =
+        //     _firebaseFirestore.collection('kids').doc();
         transaction.set(newChildRef, childData);
         transaction.update(parentRef, {
           'kids': FieldValue.arrayUnion([newChildRef])
@@ -542,89 +536,4 @@ class ParentFirebaseFunctions {
       Get.log("Error updating spendings: $e");
     }
   }
-
-  // Future<void> SpendingTOGoals({
-  //   required String kidId,
-  //   required String goalId,
-  //   required double enteredAmount,
-  // }) async {
-  //   try {
-  //     DocumentReference kidDocRef =
-  //         FirebaseFirestore.instance.collection('kids').doc(kidId);
-  //     DocumentReference goalDocRef =
-  //         FirebaseFirestore.instance.collection('goals').doc(goalId);
-
-  //     // Fetch current spending details
-  //     DocumentSnapshot kidSnapshot = await kidDocRef.get();
-  //     if (!kidSnapshot.exists) {
-  //       Get.back();
-  //       Get.log("Kid document not found: $kidId");
-  //       return;
-  //     }
-
-  //     double currentSpending = (kidSnapshot.data()
-  //             as Map<String, dynamic>?)?['spendings']?['amount'] ??
-  //         0.0;
-
-  //     if (enteredAmount > currentSpending) {
-  //       ToastUtil.showToast('Not Enough Funds');
-
-  //       return;
-  //     }
-
-  //     // Deduct from spending
-  //     double updatedSpending = currentSpending - enteredAmount;
-
-  //     // Update spending in `kids` collection
-  //     await kidDocRef.update({
-  //       'spendings.amount': updatedSpending,
-  //     });
-
-  //     // Fetch existing goal amount
-  //     DocumentSnapshot goalSnapshot = await goalDocRef.get();
-  //     if (!goalSnapshot.exists) {
-  //       Get.back();
-  //       Get.log("Goal document not found: ");
-  //       return;
-  //     }
-  //     double currentGoalAmount =
-  //         (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
-  //                 ?.toDouble() ??
-  //             0.0;
-  //     double goalAmount =
-  //         (goalSnapshot.data() as Map<String, dynamic>?)?['amount']
-  //                 ?.toDouble() ??
-  //             0.0;
-  //     if (currentGoalAmount + enteredAmount > goalAmount) {
-  //       ToastUtil.showToast('Goal amount already reached!');
-  //       return; // Prevent further processing if goal amount is exceeded
-  //     }
-
-  //     double updatedGoalAmount = currentGoalAmount + enteredAmount;
-
-  //     // Update or create goal document in `goals` collection
-  //     await goalDocRef.update(
-  //       {
-  //         'kidId': kidId,
-  //         'currentAmount': updatedGoalAmount,
-  //       },
-  //     );
-  //     if (updatedGoalAmount >= goalAmount) {
-  //       await goalDocRef.update({
-  //         'completed': true,
-  //       });
-  //       Get.log("Goal completed!");
-  //     }
-
-  //     Get.log(
-  //         "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
-  //     ToastUtil.showToast(
-  //       'Funds moved to Goals successfully!',
-  //     );
-  //   } catch (e) {
-  //     Get.back();
-  //     Get.log("Error transferring funds: $e");
-  //   }
-  // }
-  // var previousValue = 0.0.obs;
 }

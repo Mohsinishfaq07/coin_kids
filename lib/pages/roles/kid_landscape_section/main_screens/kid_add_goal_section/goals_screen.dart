@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/save_goal_widget.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/add_goal_button.dart';

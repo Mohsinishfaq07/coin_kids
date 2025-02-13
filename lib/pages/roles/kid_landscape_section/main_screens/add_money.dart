@@ -693,6 +693,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                           child: Align(
                               alignment: Alignment.bottomRight,
                               child: GreenNextButton(
+                                  showSuffix: true,
                                   onTap: () async {
                                     if (widget.isSpending == true) {
                                       if (addMoneyController.totalValue.value ==
