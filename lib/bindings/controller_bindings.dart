@@ -8,6 +8,8 @@ import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/p
 import 'package:coin_kids/pages/splash_screen/splash_controller.dart';
 import 'package:get/get.dart';
 
+import '../pages/roles/kid_landscape_section/kid_market/market_controller.dart';
+
 class ControllerBindings extends Bindings {
   @override
   void dependencies() {
@@ -26,5 +28,9 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<FavoriteController>(() => FavoriteController(), fenix: true);
      Get.lazyPut<AddMoneyController>(() => AddMoneyController(),
         fenix: true);
+    Get.lazyPut<MarketController>(
+          () => MarketController(),
+      fenix: true,
+    );
   }
 }

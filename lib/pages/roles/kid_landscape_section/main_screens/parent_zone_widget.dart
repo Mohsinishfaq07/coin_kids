@@ -21,24 +21,26 @@ class ParentZoneWidget extends StatelessWidget {
             topRight: Radius.circular(80.r),
           ),
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(2.h),
-              child: SvgPicture.asset(
-                "assets/parent.svg",
-                height: 30.h,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(2.h),
+                child: SvgPicture.asset(
+                  "assets/parent.svg",
+                  height: 30.h,
+                ),
               ),
-            ),
-            Text(
-              "Parent\nZone",
-              textAlign: TextAlign.center,
-              style: AppTextStyle.labelSmall.copyWith(
-                color: AppColors.KidZoneParent,
-                fontWeight: MyFontWeight.ExtraBold.fontWeight,
+              Text(
+                "Parent\nZone",
+                textAlign: TextAlign.center,
+                style: AppTextStyle.labelSmall.copyWith(
+                  color: AppColors.KidZoneParent,
+                  fontWeight: MyFontWeight.ExtraBold.fontWeight,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

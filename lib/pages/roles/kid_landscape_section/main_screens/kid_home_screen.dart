@@ -3,6 +3,7 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/total_money_widget.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/kids_market_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goals_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
@@ -18,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+
+import '../../../../features/custom_widgets/custom_text_field.dart';
 
 class KidHomeScreen extends StatelessWidget {
   const KidHomeScreen({super.key});
@@ -38,7 +41,7 @@ class KidHomeScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('kids')
-              .where('parentId', isEqualTo: user!.uid)
+              .where('parentId', isEqualTo: user.uid)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
@@ -105,34 +108,87 @@ class KidHomeScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.w, right: 10.w, top: 6.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          KidAvatarContainer(),
-                          GestureDetector(
-                              onTap: () async {
-                                await firebaseAuthController.logout();
-                              },
-                              child: Icon(Icons.logout)),
-                          Row(
+                    Obx(() {
+                      if (verticalNavBarController.currentItem.value == 0 ||
+                          verticalNavBarController.currentItem.value == 1) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              left: 10.w, right: 10.w, top: 6.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SpendingCardContainer(),
-                              SizedBox(
-                                width: 10.w,
+                              KidAvatarContainer(),
+                              GestureDetector(
+                                onTap: () async {
+                                  await firebaseAuthController.logout();
+                                },
+                                child: Icon(Icons.logout),
                               ),
-                              coinLockedWidget(),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              totalBalanceWidget()
+                              Row(
+                                children: [
+                                  SpendingCardContainer(),
+                                  SizedBox(width: 10.w),
+                                  coinLockedWidget(),
+                                  SizedBox(width: 10.w),
+                                  totalBalanceWidget()
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                    ),
+                          ),
+                        );
+                      } else if (verticalNavBarController.currentItem.value ==
+                          2) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Shop",
+                                  style: AppTextStyle.headingLarge,
+                                ),
+                                SizedBox(width: 20.w),
+                                Flexible(
+                                  child: Container(
+                                    constraints:
+                                        BoxConstraints(maxWidth: 400.w),
+                                    child: CustomTextField(
+                                      titleText: "",
+                                      hintText: "e.g Electric bike",
+                                      suffixIconColor:
+                                          AppColors.iconPrimaryVariant,
+                                      suffixSvgPath: "assets/shop/search.svg",
+                                      onChanged: (value) {
+                                        // Update search query when text changes
+                                        // controller.updateSearch(value);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                SpendingCardContainer(),
+                                Row(
+                                  children: [
+                                    // IconButton(
+                                    //   icon: const Icon(Icons.favorite_border),
+                                    //   onPressed: () => Get.to(() => WishlistScreen()),
+                                    // ),
+                                    // IconButton(
+                                    //   icon: const Icon(Icons.filter_list),
+                                    //   onPressed: () => _showFilterDialog(context),
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return SizedBox
+                          .shrink(); // Return empty widget for other cases
+                    }),
                     Stack(children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,7 +237,6 @@ class KidHomeScreen extends StatelessWidget {
                               if (spendingJarColor.isEmpty) {
                                 ToastUtil.showToast("Invalid selection");
                                 return KidFinanceWidgets(
-                                  // Prevent navigation
                                   spendingJarColor: spendingJarColor,
                                   spendingAmount: spendingAmount,
                                   savingJarColor: savingJarColor,
@@ -190,7 +245,12 @@ class KidHomeScreen extends StatelessWidget {
                                 );
                               }
 
-                              return Text("Shop widget");
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height:
+                                    MediaQuery.of(context).size.height - 100,
+                                child: KidsMarketScreen(),
+                              );
                             } else {
                               ToastUtil.showToast("Invalid selection");
                               return KidFinanceWidgets(
@@ -225,8 +285,6 @@ class KidHomeScreen extends StatelessWidget {
           }),
     );
   }
-
-  // card container icon
 
   coinLockedWidget() {
     return SizedBox(
