@@ -57,7 +57,7 @@ class SplashController extends GetxController {
       }
     } else if (loginAsParent == 2) {
       if (kidSnapshot.docs.isNotEmpty) {
-        Get.off(() => const KidHomeScreen());
+        Get.off(() =>  KidHomeScreen());
       } else {
         Get.off(() => KidSectionOnboarding());
       }
@@ -84,7 +84,7 @@ class SplashController extends GetxController {
             Get.off(() => const ParentsHomeScreen());
           }
         } else {
-          Get.off(() => const KidHomeScreen());
+          Get.off(() =>  KidHomeScreen());
         }
       } catch (e) {
         Get.log("Auto-login failed: $e");

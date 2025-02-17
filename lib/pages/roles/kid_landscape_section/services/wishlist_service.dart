@@ -5,6 +5,8 @@ import '../kid_market/product_model.dart';
 import 'package:get/get.dart';
 
 class WishlistService extends GetxService {
+  final RxList<dynamic> wishlistItems = <dynamic>[].obs;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -119,5 +121,21 @@ class WishlistService extends GetxService {
     } catch (e) {
       print('Failed to refresh wishlist statuses: $e');
     }
+  }
+
+  // Method to fetch the count of the wishlist for the current kid
+
+  Stream<List<WishlistModel>> getWishlistStream() {
+    final String kidId = _auth.currentUser?.uid ?? 'L7oiYyQUhT2aBRbmfUEP';
+    return _firestore
+        .collection('wishlist')
+        .where('kidId', isEqualTo: kidId)
+        .where('deleted', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => WishlistModel.fromJson(doc.data()))
+          .toList();
+    });
   }
 }

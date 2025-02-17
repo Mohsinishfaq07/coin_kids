@@ -3,9 +3,6 @@ import 'package:get/get.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/services/goal_service.dart';
 import 'product_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../models/goal_model.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final ProductModel product;

@@ -378,7 +378,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                           .parentFirebaseFunctions
                                           .addKidAndUpdateParent();
                                     }
-                                    Get.off(() => const KidHomeScreen());
+                                    Get.off(() =>  KidHomeScreen());
                                   },
                                 ),
                                 Padding(
@@ -400,7 +400,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                             .parentFirebaseFunctions
                                             .addKidAndUpdateParent();
                                       }
-                                      Get.off(() => const KidHomeScreen());
+                                      Get.off(() =>  KidHomeScreen());
                                     },
                                   ),
                                 ),

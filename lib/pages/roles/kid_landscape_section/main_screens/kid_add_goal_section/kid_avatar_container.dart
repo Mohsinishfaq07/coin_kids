@@ -74,10 +74,13 @@ class KidAvatarContainer extends StatelessWidget {
 
                     return Padding(
                       padding: EdgeInsets.only(right: 8.w),
-                      child: Text(
-                        kidName,
-                        style: AppTextStyle.headingMedium.copyWith(
-                          color: AppColors.textOnPrimary,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                          kidName,
+                          style: AppTextStyle.headingMedium.copyWith(
+                            color: AppColors.textOnPrimary,
+                          ),
                         ),
                       ),
                     );

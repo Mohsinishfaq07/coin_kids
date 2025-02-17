@@ -37,13 +37,25 @@ class _ProductCardState extends State<ProductCard> {
         () => ProductDetailsScreen(product: widget.product),
         transition: Transition.rightToLeft,
       ),
-      child: Card(
-        elevation: 2,
-        color: Colors.white,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+                width: 1, color: Color(0xFFCBE4F3)),
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x0F000000),
+              blurRadius: 6.r,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
+            )
+          ],
         ),
+
         child: Stack(
           children: [
             Container(
@@ -56,32 +68,35 @@ class _ProductCardState extends State<ProductCard> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12.r),
-                        child: Container(
-                          width: 130.w,
-                          height: 130.w,
-                          color: Colors.grey[200],
-                          child: widget.product.imageUrl.isNotEmpty
-                              ? Image.network(
-                                  widget.product.imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Center(
+                        child: Center(
+                          child: Container(
+
+                             width: double.infinity,
+                            height: 130.w,
+                            color: Colors.grey,
+                            child: widget.product.imageUrl.isNotEmpty
+                                ? Image.network(
+                                    widget.product.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Center(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        size: 40,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  )
+                                : const Center(
                                     child: Icon(
-                                      Icons.error_outline,
+                                      Icons.shopping_bag,
                                       size: 40,
-                                      color: Colors.red,
+                                      color: Colors.grey,
                                     ),
                                   ),
-                                )
-                              : const Center(
-                                  child: Icon(
-                                    Icons.shopping_bag,
-                                    size: 40,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 4.h),
                       Text(
                         widget.product.name,
                         style: AppTextStyle.bodyLarge
@@ -89,7 +104,7 @@ class _ProductCardState extends State<ProductCard> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4.h),
+                      // SizedBox(height: 2.h),
                       Text(
                         '\$${widget.product.price.toStringAsFixed(2)}',
                         style: AppTextStyle.headingMedium

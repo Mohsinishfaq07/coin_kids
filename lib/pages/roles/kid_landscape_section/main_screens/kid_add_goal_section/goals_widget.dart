@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/add_goal_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goal_progress.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/save_goal_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,7 +50,7 @@ class GoalsWidget extends StatelessWidget {
             }
 
             if (!goalSnapshot.hasData || goalSnapshot.data!.docs.isEmpty) {
-              return Center(child: Text("No Goal Found"));
+              return AddGoalWidget();;
             }
 
             return Expanded(

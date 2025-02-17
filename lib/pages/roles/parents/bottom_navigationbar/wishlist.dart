@@ -8,7 +8,7 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class Wishlist extends StatelessWidget {
+class ParentWishlist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize the controller

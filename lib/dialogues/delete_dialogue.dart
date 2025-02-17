@@ -66,33 +66,36 @@ class DeleteGoalDialog extends StatelessWidget {
               SizedBox(height: 10.h),
               Align(
                 alignment: Alignment.center,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GreenNextButton(
-                      backgroundColor: AppColors.critical,
-                      borderColor: AppColors.notificationCritical,
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      buttonText: "No",
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GreenNextButton(
+                        backgroundColor: AppColors.critical,
+                        borderColor: AppColors.notificationCritical,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        buttonText: "No",
 
-                      showPrefix: true,
-                      // tickIconPath
-                    ),
-                    SizedBox(
-                      width: 20.w,
-                    ),
-                    GreenNextButton(
-                      onTap: YesonTap,
-                      buttonText: "Yes",
+                        showPrefix: true,
+                        // tickIconPath
+                      ),
+                      SizedBox(
+                        width: 20.w,
+                      ),
+                      GreenNextButton(
+                        onTap: YesonTap,
+                        buttonText: "Yes",
 
-                      showPrefix: true,
-                      prefixSvg: AppAssets.kidTickButton,
-                      // tickIconPath
-                    ),
-                  ],
+                        showPrefix: true,
+                        prefixSvg: AppAssets.kidTickButton,
+                        // tickIconPath
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ]),

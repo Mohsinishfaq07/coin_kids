@@ -300,7 +300,7 @@ class ShopScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Get.to(() => Wishlist());
+                Get.to(() => ParentWishlist());
                 Get.delete<FavoriteController>();
               },
               child: Container(

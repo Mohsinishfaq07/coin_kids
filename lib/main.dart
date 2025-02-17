@@ -2,7 +2,6 @@ import 'package:coin_kids/bindings/controller_bindings.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/kids_market_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +55,7 @@ class MyApp extends StatelessWidget {
           theme: CustomThemeData.getThemeData(),
           debugShowCheckedModeBanner: false,
           initialBinding: ControllerBindings(),
-           home: SplashScreen(),
+          home: SplashScreen(),
           // home: KidsMarketScreen(),
         ),
       );
