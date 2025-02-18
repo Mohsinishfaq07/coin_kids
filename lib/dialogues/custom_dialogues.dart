@@ -104,7 +104,7 @@ class KidsZoneDialog extends StatelessWidget {
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: SvgPicture.asset(
-                AppAssets.crossSvg,
+                AppAssets.crossWithDoubleBorderSvg,
                 width: 32.w,
                 height: 30.h,
               ),

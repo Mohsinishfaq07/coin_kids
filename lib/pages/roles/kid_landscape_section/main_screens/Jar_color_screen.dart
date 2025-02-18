@@ -1,6 +1,7 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/amount_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
@@ -119,21 +120,15 @@ class AddJarColorScreen extends StatelessWidget {
                 child: Align(
                     alignment: Alignment.bottomRight,
                     child: GreenNextButton(
+                        showSuffix: true,
                         onTap: () {
                           if (parentController.selectedColorIndex.value == -1) {
                             // Show a toast message
-                            Fluttertoast.showToast(
-                              msg: "Please select a jar color.",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              backgroundColor: AppColors.textHighlighted,
-                              textColor: AppColors.textOnPrimary,
-                              fontSize: 16.0.sp,
-                            );
+                            ToastUtil.showToast("Please Select Jar Color");
                           } else {
                             Color selectedColor = colors[
                                 parentController.selectedColorIndex.value];
-                            Get.to(() => AmountScreen(
+                            Get.to(() => JarAmountScreen(
                                   isSpending: isSpending,
                                   jarColor: selectedColor,
                                 ));

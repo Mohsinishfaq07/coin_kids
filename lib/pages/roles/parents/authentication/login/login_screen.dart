@@ -1,7 +1,7 @@
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/features/custom_widgets/custom_app_bar.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/signup_screen.dart';
 import 'package:coin_kids/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +12,7 @@ import '../../../../../app_assets.dart';
 import '../../../../../theme/color_theme.dart';
 import '../../../../../theme/components/AppButton.dart';
 import '../../../../../theme/text_theme.dart';
- 
+
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
@@ -80,10 +80,9 @@ class LoginScreen extends StatelessWidget {
                         },
                         obscureText: firebaseAuthController.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath:
-                            firebaseAuthController.showPassword.value
-                                ? "assets/eye.svg"
-                                : "assets/hide_eye.svg",  
+                        suffixSvgPath: firebaseAuthController.showPassword.value
+                            ? "assets/eye.svg"
+                            : "assets/hide_eye.svg",
                         onSuffixTap: () {
                           firebaseAuthController.showPassword.value =
                               !firebaseAuthController.showPassword.value;
@@ -152,7 +151,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.off(() => SignupParentScreen());
+                            Get.off(() => SignupScreen());
                           },
                           child: Text(
                             "SignUp",

@@ -12,12 +12,12 @@ import '../models/wishlist_model.dart';
 import 'market_controller.dart';
 import 'product_details_screen.dart';
 
-class WishlistScreen extends StatelessWidget {
+class KidWishlistScreen extends StatelessWidget {
   final WishlistService _wishlistService = WishlistService();
   final MarketController _marketController = Get.find<MarketController>();
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
 
-  WishlistScreen({Key? key}) : super(key: key);
+  KidWishlistScreen({Key? key}) : super(key: key);
 
   Future<void> _navigateToProductDetails(WishlistModel item) async {
     try {
@@ -67,10 +67,10 @@ class WishlistScreen extends StatelessWidget {
           children: [
             // Back button
             Padding(
-              padding:  EdgeInsets.only(top: 10.h,left: 10.w),
+              padding: EdgeInsets.only(top: 10.h, left: 10.w),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                 children: [
+                children: [
                   kidBackButton(
                     onTap: () {
                       Get.back();
@@ -97,7 +97,8 @@ class WishlistScreen extends StatelessWidget {
                 }
 
                 return GridView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
                     childAspectRatio: 5,
@@ -136,25 +137,27 @@ class WishlistScreen extends StatelessWidget {
                                   SizedBox(width: 12.w),
                                   Expanded(
                                     child: Padding(
-                                      padding:  EdgeInsets.only(top: 12.h),
+                                      padding: EdgeInsets.only(top: 12.h),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
                                             item.name,
-                                            style: AppTextStyle.bodyLarge.copyWith(fontSize: 16.sp),
+                                            style: AppTextStyle.bodyLarge
+                                                .copyWith(fontSize: 16.sp),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-
-                                           SizedBox(height: 4.h),
-                                            Text(
-                                              '\$${item.price.toStringAsFixed(2)}',
-                                              style: AppTextStyle.bodyMedium.copyWith(
-                                                color: Colors.green,
-                                              ),
+                                          SizedBox(height: 4.h),
+                                          Text(
+                                            '\$${item.price.toStringAsFixed(2)}',
+                                            style: AppTextStyle.bodyMedium
+                                                .copyWith(
+                                              color: Colors.green,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -166,12 +169,11 @@ class WishlistScreen extends StatelessWidget {
                             Positioned(
                               top: 10,
                               right: 10,
-                              child:  GestureDetector(
+                              child: GestureDetector(
                                 onTap: () => _removeFromWishlist(item),
-
-                                  child: SvgPicture.asset("assets/small.svg"),
-
-                            ),),
+                                child: SvgPicture.asset("assets/small.svg"),
+                              ),
+                            ),
                           ],
                         ),
                       ),

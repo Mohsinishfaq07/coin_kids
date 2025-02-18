@@ -14,15 +14,16 @@ class SpendingCardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 27.h,
-      width: 128.w,
+      // width: 128.w,
+      // color: Colors.red,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Padding(
-            padding: EdgeInsets.only(right: 26.w, top: 4.h),
+            padding: EdgeInsets.only(right: 30.w, top: 4.h),
             child: Container(
               height: 19.h,
-              width: 96.w,
+              // width: 96.w,
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
                 color: AppColors.textPrimary,
@@ -34,7 +35,7 @@ class SpendingCardContainer extends StatelessWidget {
                 border: Border.all(color: AppColors.textPrimary, width: 2.w),
               ),
               child: Padding(
-                padding: EdgeInsets.only(left: 10.w),
+                padding: EdgeInsets.only(left: 10.w, right: 20.w),
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('kids')
@@ -68,10 +69,12 @@ class SpendingCardContainer extends StatelessWidget {
                         (spendingData['amount'] ?? 0.0).toDouble();
 
                     // Reactive logic to decide which amount to display
+                    final formattedSpendingAmount =
+                        spendingAmount.toStringAsFixed(2);
 
                     // Display the appropriate amount
                     return Text(
-                      "€$spendingAmount",
+                      "€$formattedSpendingAmount",
                       style: AppTextStyle.headingMedium
                           .copyWith(color: AppColors.textOnPrimary),
                     );

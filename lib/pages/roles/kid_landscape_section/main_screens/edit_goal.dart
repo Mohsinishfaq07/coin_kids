@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
@@ -30,7 +29,7 @@ class EditGoal extends StatelessWidget {
     landscapeOrientation();
 
     KidGoalsController kidGoalsController = Get.find<KidGoalsController>();
-    RxBool isLoading = false.obs;
+    kidGoalsController.getImageFromPrefs(goalId);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -56,7 +55,8 @@ class EditGoal extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 26.w),
                       child: kidBackButton(
                         onTap: () {
-                          kidGoalsController.goalImage.value = "";
+                          //kidGoalsController.goalImage.value = "";
+                          kidGoalsController.isImageRemoved.value = false;
                           Get.back();
                         },
                       ),
@@ -74,142 +74,145 @@ class EditGoal extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Stack(children: [
-                          Container(
-                            height: 100.h,
-                            width: 270.w,
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                                color: AppColors.primaryLightColor
-                                    .withOpacity(0.2),
-                                border:
-                                    Border.all(color: AppColors.buttonPrimary),
-                                borderRadius: BorderRadius.circular(20.r)),
-                            child: Center(
-                              child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('kids')
-                                    .where('parentId',
-                                        isEqualTo: FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                    .snapshots(),
-                                builder: (context, kidSnapshot) {
-                                  if (kidSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  }
+                          Obx(() {
+                            if (kidGoalsController.goalImage.value.isNotEmpty) {
+                              return Stack(
+                                children: [
+                                  Image.file(
+                                    File(kidGoalsController.goalImage.value),
+                                    height: 100.h,
+                                    width: 270.w,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        kidGoalsController
+                                                .isImageRemoved.value =
+                                            true; // Mark image for removal
+                                        kidGoalsController.goalImage.value =
+                                            ""; // Clear preview
+                                      },
+                                      child: SvgPicture.asset(
+                                        AppAssets.crossWithDoubleBorderSvg,
+                                        width: 22.w,
+                                        height: 22.h,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            } else {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await kidGoalsController
+                                            .pickImageFromCamera();
+                                      },
+                                      child: SvgPicture.asset(
+                                        "assets/kidCameraIcon.svg",
+                                        height: 30.h,
+                                        width: 30.h,
+                                      ),
+                                    ),
+                                    SizedBox(height: 15.h),
+                                    GreenNextButton(
+                                      onTap: () async {
+                                        await kidGoalsController
+                                            .pickFromGallery();
+                                      },
+                                      backgroundColor: Color(0xFFFF9E29),
+                                      borderColor: Color(0xFFFF9E29),
+                                      buttonText: 'Add Photo',
+                                      width: 190.w,
+                                      showPrefix: true,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }),
 
-                                  if (!kidSnapshot.hasData ||
-                                      kidSnapshot.data!.docs.isEmpty) {
-                                    return const Text("No Kids Found");
-                                  }
+                          // FutureBuilder<File?>(
+                          //   future:
+                          //       kidGoalsController.getImageFromPrefs(goalId),
+                          //   builder: (context, snapshot) {
+                          //     if (snapshot.connectionState ==
+                          //         ConnectionState.waiting) {
+                          //       return const CircularProgressIndicator(); // Loading state
+                          //     }
 
-                                  final kidId = kidSnapshot.data!.docs.first.id;
+                          //     if (snapshot.hasError) {
+                          //       return Text('Error: ${snapshot.error}');
+                          //     }
 
-                                  return StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('goals')
-                                          .where('kidId', isEqualTo: kidId)
-                                          .where('goalId', isEqualTo: goalId)
-                                          .where('deleted', isEqualTo: false)
-                                          .limit(1)
-                                          .snapshots(),
-                                      builder: (context, goalSnapshot) {
-                                        if (goalSnapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        }
+                          //     final file = snapshot.data;
+                          //     if (file != null) {
+                          //       return Image.file(
+                          //         file,
+                          //         height: 100.h,
+                          //         width: 270.w,
+                          //         fit: BoxFit.cover,
+                          //       );
+                          //     } else {
+                          //       return Center(
+                          //         child: Column(
+                          //           mainAxisAlignment: MainAxisAlignment.center,
+                          //           children: [
+                          //             GestureDetector(
+                          //               onTap: () async {
+                          //                 await kidGoalsController
+                          //                     .pickImageFromCamera();
+                          //               },
+                          //               child: SvgPicture.asset(
+                          //                 "assets/kidCameraIcon.svg",
+                          //                 height: 30.h,
+                          //                 width: 30.h,
+                          //               ),
+                          //             ),
+                          //             SizedBox(height: 15.h),
+                          //             GreenNextButton(
+                          //               onTap: () async {
+                          //                 await kidGoalsController
+                          //                     .pickFromGallery();
+                          //                 // This line is now unnecessary, as the UI will reactively update when goalImage.value changes.
+                          //               },
+                          //               backgroundColor: Color(0xFFFF9E29),
+                          //               borderColor: Color(0xFFFF9E29),
+                          //               buttonText: 'Add Photo',
+                          //               width: 190.w,
+                          //               showPrefix: true,
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       );
+                          //     }
+                          //   },
+                          // ),
 
-                                        if (!goalSnapshot.hasData ||
-                                            goalSnapshot.data!.docs.isEmpty) {
-                                          return AddGoalWidget();
-                                        }
-
-                                        return Obx(() {
-                                          if (isLoading.value) {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
-
-                                          // Instead of using FutureBuilder, directly use goalImage.value
-                                          return Center(
-                                            child: kidGoalsController
-                                                    .goalImage.value.isNotEmpty
-                                                ? Container(
-                                                    height: 80.h,
-                                                    width: 200.w,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: FileImage(File(
-                                                            kidGoalsController
-                                                                .goalImage
-                                                                .value)), // Directly use goalImage.value
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.r),
-                                                    ),
-                                                  )
-                                                : Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () async {
-                                                            await kidGoalsController
-                                                                .pickImageFromCamera();
-                                                          },
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            "assets/kidCameraIcon.svg",
-                                                            height: 30.h,
-                                                            width: 30.h,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 15.h),
-                                                        GreenNextButton(
-                                                          onTap: () async {
-                                                            await kidGoalsController
-                                                                .pickFromGallery();
-                                                            // This line is now unnecessary, as the UI will reactively update when goalImage.value changes.
-                                                          },
-                                                          backgroundColor:
-                                                              Color(0xFFFF9E29),
-                                                          borderColor:
-                                                              Color(0xFFFF9E29),
-                                                          buttonText:
-                                                              'Add Photo',
-                                                          width: 190.w,
-                                                          showPrefix: true,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                          );
-                                        });
-                                      });
-                                },
-                              ),
-                            ),
-                          ),
                           Positioned(
                             top: -0,
                             right: -0,
                             child: GestureDetector(
                               onTap: () async {
-                                isLoading.value =
-                                    true; // Show loading while removing image
-                                await kidGoalsController
-                                    .removeImageFromPrefs(goalId);
+                                kidGoalsController.isImageRemoved.value =
+                                    true; // Mark the image as removed
                                 kidGoalsController.goalImage.value = "";
-                                isLoading.value =
-                                    false; // Hide loading after image is removed
+                                //   isLoading.value =
+                                //       true; // Show loading while removing image
+                                //   await kidGoalsController
+                                //       .removeImageFromPrefs(goalId);
+                                //   kidGoalsController.goalImage.value = "";
+                                //   isLoading.value =
+                                //       false; // Hide loading after image is removed
+                                //   Get.off(KidHomeScreen());
                               },
                               child: SvgPicture.asset(
-                                AppAssets.crossSvg,
+                                AppAssets.crossWithDoubleBorderSvg,
                                 width: 22.w,
                                 height: 22.h,
                               ),
@@ -303,6 +306,8 @@ class EditGoal extends StatelessWidget {
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 6.h),
                                             child: KidCustomTextField(
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 hintText: goalAmount.toString(),
                                                 onChange: (value) {
                                                   kidGoalsController.goalAmount
@@ -311,6 +316,50 @@ class EditGoal extends StatelessWidget {
                                                       0.0; // ✅ Safe conversion with .value
                                                 }),
                                           ),
+                                          // Align(
+                                          //   alignment: Alignment.bottomRight,
+                                          //   child: GreenNextButton(
+                                          //     onTap: () async {
+                                          //       final goalDocRef =
+                                          //           FirebaseFirestore.instance
+                                          //               .collection('goals')
+                                          //               .doc(goalId);
+                                          //       await goalDocRef.update({
+                                          //         'name': kidGoalsController
+                                          //             .goalName
+                                          //             .value, // Use .value for RxString
+                                          //         'amount': kidGoalsController
+                                          //             .goalAmount
+                                          //             .value, // Use .value for RxDouble
+                                          //       });
+                                          //       if (kidGoalsController
+                                          //           .isImageRemoved.value) {
+                                          //         await kidGoalsController
+                                          //             .removeImageFromPrefs(
+                                          //                 goalId);
+                                          //       } else {
+                                          //         // If not removed, save the image
+                                          //         String imagePath =
+                                          //             kidGoalsController
+                                          //                 .goalImage.value;
+                                          //         if (imagePath.isNotEmpty) {
+                                          //           File imageFile =
+                                          //               File(imagePath);
+                                          //           await kidGoalsController
+                                          //               .saveImageToPrefs(
+                                          //                   goalId, imageFile);
+                                          //         }
+                                          //       }
+
+                                          //       Get.off(KidHomeScreen());
+                                          //     },
+                                          //     showSuffix: true,
+                                          //     buttonText: 'Save',
+                                          //     backgroundColor:
+                                          //         Color(0xff19B859),
+                                          //     borderColor: Color(0xff19B859),
+                                          //   ),
+                                          // ),
                                           Align(
                                             alignment: Alignment.bottomRight,
                                             child: GreenNextButton(
@@ -319,24 +368,71 @@ class EditGoal extends StatelessWidget {
                                                     FirebaseFirestore.instance
                                                         .collection('goals')
                                                         .doc(goalId);
-                                                await goalDocRef.update({
-                                                  'name': kidGoalsController
-                                                      .goalName
-                                                      .value, // Use .value for RxString
-                                                  'amount': kidGoalsController
-                                                      .goalAmount
-                                                      .value, // Use .value for RxDouble
-                                                });
 
-                                                String imagePath =
-                                                    kidGoalsController
-                                                        .goalImage.value;
-                                                if (imagePath.isNotEmpty) {
-                                                  File imageFile = File(
-                                                      imagePath); // Convert the path to a File object
+                                                // ✅ Create a dynamic map for updating only changed fields
+                                                Map<String, dynamic>
+                                                    updateData = {};
+
+                                                // ✅ Only update name if it has changed
+                                                if (kidGoalsController.goalName
+                                                    .value.isNotEmpty) {
+                                                  updateData['name'] =
+                                                      kidGoalsController
+                                                          .goalName.value;
+                                                }
+
+                                                // ✅ Only update amount if it has changed
+                                                if (kidGoalsController
+                                                        .goalAmount.value >
+                                                    0) {
+                                                  updateData['amount'] =
+                                                      kidGoalsController
+                                                          .goalAmount.value;
+                                                }
+
+                                                // ✅ Update only if there are changes
+                                                if (updateData.isNotEmpty) {
+                                                  await goalDocRef
+                                                      .update(updateData);
+                                                }
+                                                if (kidGoalsController
+                                                    .isImageRemoved.value) {
                                                   await kidGoalsController
-                                                      .saveImageToPrefs(
-                                                          goalId, imageFile);
+                                                      .removeImageFromPrefs(
+                                                          goalId);
+                                                  kidGoalsController
+                                                      .isImageRemoved
+                                                      .value = false;
+                                                } else {
+                                                  String imagePath =
+                                                      kidGoalsController
+                                                          .goalImage.value;
+                                                  if (imagePath.isNotEmpty) {
+                                                    File imageFile =
+                                                        File(imagePath);
+                                                    await kidGoalsController
+                                                        .saveImageToPrefs(
+                                                            goalId, imageFile);
+                                                  }
+
+                                                  // ✅ Handle image separately
+                                                  // if (kidGoalsController
+                                                  //     .isImageRemoved.value) {
+                                                  //   await kidGoalsController
+                                                  //       .removeImageFromPrefs(
+                                                  //           goalId);
+                                                  // } else {
+                                                  //   // If not removed, save the image only if it has changed
+                                                  //   String imagePath =
+                                                  //       kidGoalsController
+                                                  //           .goalImage.value;
+                                                  //   if (imagePath.isNotEmpty) {
+                                                  //     File imageFile =
+                                                  //         File(imagePath);
+                                                  //     await kidGoalsController
+                                                  //         .saveImageToPrefs(
+                                                  //             goalId, imageFile);
+                                                  //   }
                                                 }
 
                                                 Get.off(KidHomeScreen());

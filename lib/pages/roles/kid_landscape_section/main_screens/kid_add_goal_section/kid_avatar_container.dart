@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class KidAvatarContainer extends StatelessWidget {
   const KidAvatarContainer({Key? key}) : super(key: key);
-   String getKidAvatar(String localPath) {
+  String getKidAvatar(String localPath) {
     return File(localPath).existsSync()
         ? localPath
         : "assets/child_avatar_image_pngs/Frame 1.png"; // Fallback to default if the image does not exist locally
@@ -25,17 +25,15 @@ class KidAvatarContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 27.h,
-      width: 120.w,
-      color: Colors.transparent,
+      height: 22.h,
+      // width: 130.w,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 34.w),
+            padding: EdgeInsets.only(left: 36.w),
             child: Container(
               height: 20.h,
-              width: 100.w,
               alignment: Alignment.centerRight,
               decoration: BoxDecoration(
                 color: AppColors.textPrimary,

@@ -17,10 +17,12 @@ class GoalsWidget extends StatelessWidget {
   final String currentKidId;
 
   GoalsWidget({required this.currentKidId});
+  final KidGoalsController kidGoalController = Get.put(KidGoalsController());
 
   @override
   Widget build(BuildContext context) {
-    final kidGoalController = Get.put(KidGoalsController());
+    // final kidGoalController = Get.put(KidGoalsController());
+    kidGoalController.fetchGoals(currentKidId);
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -50,7 +52,7 @@ class GoalsWidget extends StatelessWidget {
             }
 
             if (!goalSnapshot.hasData || goalSnapshot.data!.docs.isEmpty) {
-              return AddGoalWidget();;
+              return AddGoalWidget();
             }
 
             return Expanded(

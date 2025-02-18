@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
@@ -19,7 +19,6 @@ import '../../dialogues/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
-  // ChildFirebaseFunctions childFirebaseFunctions = ChildFirebaseFunctions();
 }
 
 class ParentFirebaseFunctions {
@@ -31,6 +30,8 @@ class ParentFirebaseFunctions {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   AddChildController addChildController = Get.put(AddChildController());
   final ParentController homeController = Get.put(ParentController());
+  final KidsOnBoardingController kidsOnBoardingController =
+      Get.put(KidsOnBoardingController());
   // fetch the details of parent
   Stream<Map<String, dynamic>?> fetchParentData() {
     try {
@@ -153,14 +154,20 @@ class ParentFirebaseFunctions {
           builder: (context) => LoadingProgressDialogueWidget(
                 title: "adding..",
               ));
-      final String avatarUrl =
-          addChildController.selectedAvatarPath.value.isEmpty &&
-                  addChildController.kidImagePath.value.isEmpty
-              ? 'assets/defaultImage.png' // Default image URL if both are empty
-              : addChildController.selectedAvatarPath.value.isEmpty
-                  ? addChildController.kidImagePath.value
-                  : addChildController
-                      .selectedAvatarPath.value; // Use selected avatar
+      final String avatarUrl = addChildController
+                  .selectedAvatarPath.value.isEmpty &&
+              addChildController.kidImagePath.value.isEmpty
+          ? 'assets/default_profile_pic.png' // Default image URL if both are empty
+          : addChildController.selectedAvatarPath.value.isEmpty
+              ? addChildController.kidImagePath.value
+              : addChildController
+                  .selectedAvatarPath.value; // Use selected avatar
+      // String avatarUrl = isSkip
+      //     ? 'assets/default_profile_pic.png' // If skipped, use default image
+      //     : addChildController.selectedAvatarPath.value.isNotEmpty
+      //         ? addChildController
+      //             .selectedAvatarPath.value // If manually selected, use that
+      //         : kidsOnBoardingController.avatars[0];
 
       // Reference to the parent document
       final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -180,7 +187,6 @@ class ParentFirebaseFunctions {
       final Map<String, dynamic> childData = {
         'kidId': kidDocumentId,
         'name': addChildController.childName.value,
-        // 'kidId': kidRef.id,
         'parentId': FirebaseAuth.instance.currentUser!.uid,
         'grade': 'Grade 1',
         'parent': parentRef,
@@ -190,8 +196,6 @@ class ParentFirebaseFunctions {
 
       // Add child and update parent in a transaction
       await _firebaseFirestore.runTransaction((transaction) async {
-        // DocumentReference newChildRef =
-        //     _firebaseFirestore.collection('kids').doc();
         transaction.set(newChildRef, childData);
         transaction.update(parentRef, {
           'kids': FieldValue.arrayUnion([newChildRef])

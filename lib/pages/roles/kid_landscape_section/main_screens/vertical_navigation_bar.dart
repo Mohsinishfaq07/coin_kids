@@ -8,6 +8,11 @@ import 'package:get/get.dart';
 
 class VerticalNavBarController extends GetxController {
   RxInt currentItem = 0.obs;
+  void updateCurrentIndex(int newIndex) {
+    if (currentItem.value != newIndex) {
+      currentItem.value = newIndex;
+    }
+  }
 }
 
 class VerticalNavBar extends StatelessWidget {

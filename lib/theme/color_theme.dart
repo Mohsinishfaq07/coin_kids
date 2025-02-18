@@ -45,4 +45,5 @@ class AppColors {
   static const Color critical = const Color(0xffff6757);
   static const Color KidZoneParent = const Color(0xff38BEBE);
   static const Color primaryLightColor = const Color(0xFFD2A4EF);
+  static const Color addIconBorderColor = const Color(0xFF148F2F);
 }

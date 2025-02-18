@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class DeleteGoalDialog extends StatelessWidget {
   final String label;
   final String subLabel;
-  final VoidCallback YesonTap;
+  final Function YesonTap;
 
   const DeleteGoalDialog(
       {Key? key,
@@ -79,20 +79,17 @@ class DeleteGoalDialog extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         buttonText: "No",
-
                         showPrefix: true,
-                        // tickIconPath
                       ),
-                      SizedBox(
-                        width: 20.w,
-                      ),
+                      SizedBox(width: 20.w),
                       GreenNextButton(
-                        onTap: YesonTap,
+                        onTap: () {
+                          YesonTap();
+                          Navigator.pop(context);
+                        },
                         buttonText: "Yes",
-
                         showPrefix: true,
                         prefixSvg: AppAssets.kidTickButton,
-                        // tickIconPath
                       ),
                     ],
                   ),
@@ -111,7 +108,7 @@ void showDeleteGoalDialog(
   BuildContext context, {
   required String label,
   required String subLabel,
-  required YesonTap,
+  required Function YesonTap,
 }) {
   showModalBottomSheet(
     enableDrag: true,

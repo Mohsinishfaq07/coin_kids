@@ -8,6 +8,7 @@ class KidCustomTextField extends StatefulWidget {
   final Function(String) onChange;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
+  final int? maxlength;
 
   const KidCustomTextField({
     Key? key,
@@ -15,6 +16,7 @@ class KidCustomTextField extends StatefulWidget {
     required this.onChange,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
+    this.maxlength,
   }) : super(key: key);
 
   @override
@@ -50,6 +52,7 @@ class _KidCustomTextFieldState extends State<KidCustomTextField> {
       width: 444.w,
       // height: 65.h,
       child: TextField(
+        maxLength: widget.maxlength,
         keyboardType: widget.keyboardType,
         textInputAction: widget.textInputAction,
         controller: _controller,
@@ -65,6 +68,7 @@ class _KidCustomTextFieldState extends State<KidCustomTextField> {
         textAlign: TextAlign.center,
         decoration: InputDecoration(
           hintText: widget.hintText,
+          counterText: "",
           filled: true,
           hintStyle: AppTextStyle.headingMedium.copyWith(
             fontWeight: FontWeight.w700,

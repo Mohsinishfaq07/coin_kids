@@ -2,11 +2,9 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/delete_dialogue.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/Icon_button.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/custom_icon_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/goal_completed_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
@@ -42,47 +40,46 @@ class GoalProgress extends StatelessWidget {
 
     final kidGoalController =
         Get.find<KidGoalsController>(); // Using Get.find to access controller
-    void onDeleteGoal() async {
-      try {
-        // Get the current kid's id and goalId
-        final kidSnapshot = await FirebaseFirestore.instance
-            .collection('kids')
-            .where('parentId',
-                isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-            .get();
+    // void onDeleteGoal() async {
+    //   try {
+    //     // Get the current kid's id and goalId
+    //     final kidSnapshot = await FirebaseFirestore.instance
+    //         .collection('kids')
+    //         .where('parentId',
+    //             isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+    //         .get();
 
-        if (kidSnapshot.docs.isEmpty) {
-          print("[DEBUG] No kids found");
-          return;
-        }
+    //     if (kidSnapshot.docs.isEmpty) {
+    //       print("[DEBUG] No kids found");
+    //       return;
+    //     }
 
-        final kidId = kidSnapshot.docs.first.id;
-        print("[DEBUG] Found Kid ID: $kidId");
+    //     final kidId = kidSnapshot.docs.first.id;
+    //     print("[DEBUG] Found Kid ID: $kidId");
 
-        final goalSnapshot = await FirebaseFirestore.instance
-            .collection('goals')
-            .where('kidId', isEqualTo: kidId)
-            .where('goalId', isEqualTo: goalId) // Using the goalId
-            .get();
+    //     final goalSnapshot = await FirebaseFirestore.instance
+    //         .collection('goals')
+    //         .where('kidId', isEqualTo: kidId)
+    //         .where('goalId', isEqualTo: goalId) // Using the goalId
+    //         .get();
 
-        if (goalSnapshot.docs.isEmpty) {
-          print("[DEBUG] No goal found");
-          return;
-        }
+    //     if (goalSnapshot.docs.isEmpty) {
+    //       print("[DEBUG] No goal found");
+    //       return;
+    //     }
 
-        // Get the goal document reference
-        final goalDocRef = goalSnapshot.docs.first.reference;
-        await goalDocRef.delete(); // Delete the goal document
+    //     // Get the goal document reference
+    //     final goalDocRef = goalSnapshot.docs.first.reference;
+    //     await goalDocRef.delete(); // Delete the goal document
 
-        // Optionally, show a confirmation message or navigate
-        Get.snackbar("Success", "Goal deleted successfully");
-        Get.offAll(
-            KidHomeScreen()); // Redirect to the home screen or another page
-      } catch (e) {
-        print("[ERROR] Error deleting goal: $e");
-        Get.snackbar("Error", "Failed to delete the goal");
-      }
-    }
+    //     // Optionally, show a confirmation message or navigate
+    //     Get.snackbar("Success", "Goal deleted successfully");
+    //     Get.off(KidHomeScreen()); // Redirect to the home screen or another page
+    //   } catch (e) {
+    //     print("[ERROR] Error deleting goal: $e");
+    //     Get.snackbar("Error", "Failed to delete the goal");
+    //   }
+    // }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -243,11 +240,11 @@ class GoalProgress extends StatelessWidget {
                                         Row(
                                           children: [
                                             kidBackButton(
-                                              buttonHeight: 26.h,
-                                              buttonWidth: 26.h,
+                                              buttonHeight: 24.h,
+                                              buttonWidth: 24.h,
                                               backgroundColor:
                                                   AppColors.critical,
-                                              borderColor: Colors.white,
+                                              borderColor: Colors.red,
                                               svgAsset: "assets/Minus.svg",
                                               iconColor: Colors.white,
                                               svgHeight: 40.h,
@@ -350,11 +347,12 @@ class GoalProgress extends StatelessWidget {
                                               },
                                             ),
                                             kidBackButton(
-                                              buttonHeight: 26.h,
-                                              buttonWidth: 26.h,
+                                              buttonHeight: 24.h,
+                                              buttonWidth: 24.h,
                                               backgroundColor:
                                                   AppColors.currencyStroke,
-                                              borderColor: Colors.white,
+                                              borderColor:
+                                                  AppColors.addIconBorderColor,
                                               svgAsset: "assets/Add.svg",
                                               iconColor: Colors.white,
                                               svgHeight: 40.h,
@@ -462,8 +460,10 @@ class GoalProgress extends StatelessWidget {
                                                         "Delete Goal", // The title of the dialog
                                                     subLabel:
                                                         "Are you sure you want to delete this goal?", // The subtitle
-                                                    YesonTap:
-                                                        onDeleteGoal, // The action to take on "Yes" button click
+                                                    YesonTap: () async {
+                                                      await kidGoalController
+                                                          .deleteGoal(goalId);
+                                                    }, // The action to take on "Yes" button click
                                                   );
                                                 },
                                               ),
@@ -478,7 +478,7 @@ class GoalProgress extends StatelessWidget {
                                               showSuffix: true,
                                               width: 128.w,
                                               suffixSvg:
-                                                  "assets/kidRoleIcons/kidTickButton.svg",
+                                                  AppAssets.kidTickButton,
                                               onTap: () async {
                                                 final kidSnapshot =
                                                     await FirebaseFirestore

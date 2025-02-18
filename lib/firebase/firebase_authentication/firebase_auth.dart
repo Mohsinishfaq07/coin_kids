@@ -1,9 +1,12 @@
 // signup_controller.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/dialogues/custom_dialogues.dart';
 import 'package:coin_kids/features/databse_helper/databse_helper.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
+import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/signup_model.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
 import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
@@ -18,6 +21,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirebaseAuthController extends GetxController {
   final ParentController homeController = Get.put(ParentController());
+  final AddChildController _addChildController = Get.put(AddChildController());
   final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
@@ -89,6 +93,58 @@ class FirebaseAuthController extends GetxController {
       Get.log(e.toString());
     }
   }
+  // Future<void> signUpWithEmail(SignupModel signupData) async {
+  //   try {
+  //     isEmailLoading.value = true;
+
+  //     showDialog(
+  //       context: Get.context!,
+  //       builder: (context) => LoadingProgressDialogueWidget(
+  //         title: "Sign up..",
+  //       ),
+  //     );
+
+  //     final credential =
+  //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //       email: signupData.email,
+  //       password: signupData.password,
+  //     );
+
+  //     await saveParentInfo(signupData);
+  //   //  saveInfoLocally(signupData.email, signupData.password);
+
+  //     Get.back(); // Stop loading
+  //     Get.off(() => RoleSelectionScreen());
+  //   } on FirebaseAuthException catch (e) {
+  //     Get.back();
+  //     isEmailLoading.value = false;
+  //     ToastUtil.showToast("$e");
+  //   } catch (e) {
+  //     Get.back();
+  //     isEmailLoading.value = false;
+  //     Get.log(e.toString());
+  //   }
+  // }
+
+  // Future<void> saveParentInfo(SignupModel signupData) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('parents')
+  //         .doc(signupData.email)
+  //         .set({
+  //       'username': signupData.username,
+  //       'email': signupData.email,
+  //       'password': signupData.password,
+  //       'gender': signupData.gender,
+  //       'birthday': signupData.birthday,
+  //       'created_at': DateTime.now().toIso8601String(),
+  //     }, SetOptions(merge: true));
+
+  //     ToastUtil.showToast("Account created");
+  //   } catch (e) {
+  //     Get.log(e.toString());
+  //   }
+  // }
 
   // save user info
   Future<void> saveParentInfo(
@@ -126,7 +182,7 @@ class FirebaseAuthController extends GetxController {
 
   // signup with google
 
-  // Method to handle Google Sign-In
+  //Method to handle Google Sign-In
   Future<void> signUpWithGoogle() async {
     try {
       isGoogleLoading.value = true; // Show loading state
@@ -321,23 +377,37 @@ class FirebaseAuthController extends GetxController {
 
   Future<void> logout() async {
     try {
+      // Show loading indicator before starting the logout process
+      firebaseAuthController.isNormalLoading.value = true;
+      showDialog(
+        context: Get.context!,
+        builder: (context) => LoadingProgressDialogueWidget(
+          title: "Logging out...",
+        ),
+      );
+
       // Ensure the current user is not null before logging out
       if (FirebaseAuth.instance.currentUser != null) {
+        // Sign out the current user
         await FirebaseAuth.instance.signOut();
         await clearCredentials(); // Clear local credentials
-        // isEmailLoading.value = false;
-        // isGoogleLoading.value = false;
-        // isAppleLoading.value = false;
+        _addChildController.childName.value = "";
+        _addChildController.kidImagePath.value = "";
+
+        // Navigate to the Login Screen after successful logout
         Get.offAll(() => LoginScreen());
       } else {
         ToastUtil.showToast("No user is logged in");
       }
     } catch (e) {
+      // Handle any errors during logout
       ToastUtil.showToast("An error occurred during logout: $e");
+    } finally {
+      // Hide the loading indicator after the process is complete
+      firebaseAuthController.isNormalLoading.value = false;
+      Get.back(); // Close the loading dialog
     }
   }
-
-  
 
   Future<bool> checkIfParent(String email) async {
     try {

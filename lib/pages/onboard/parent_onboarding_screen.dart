@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/onboard/onboard_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/parent_signup_screen.dart';
+import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/signup_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/components/AppButton.dart';
 import 'package:coin_kids/theme/components/AppIconButton.dart';
@@ -85,10 +85,9 @@ class ParentOnboardingScreen extends StatelessWidget {
                     return _controller.pageIndex.value == pages.length - 1
                         ? AppButton(
                             onPressed: () {
-                              Get.off(() => SignupParentScreen());
+                              Get.off(() => SignupScreen());
                             },
                             text: "Get Started")
-                        
                         : Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Row(

@@ -6,6 +6,7 @@ import '../kid_market/product_model.dart';
 
 class GoalService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<List<GoalModel>> fetchGoals(String kidId) async {
@@ -35,26 +36,38 @@ class GoalService {
     }
   }
 
-  Future<void> deleteGoal(String goalId) async {
-    try {
-      await _firestore
-          .collection('goals')
-          .doc(goalId)
-          .update({'deleted': true});
-    } catch (e) {
-      throw Exception('Failed to delete goal: ${e.toString()}');
-    }
-  }
+  // Future<void> deleteGoal(String goalId) async {
+  //   try {
+  //     await _firestore
+  //         .collection('goals')
+  //         .doc(goalId)
+  //         .update({'deleted': true});
+  //   } catch (e) {
+  //     throw Exception('Failed to delete goal: ${e.toString()}');
+  //   }
+  // }
 
   Future<void> addToGoals(ProductModel product) async {
     try {
-      final String kidId = _auth.currentUser?.uid ?? 'L7oiYyQUhT2aBRbmfUEP';
-      if (kidId.isEmpty) {
+      final String parentId = _auth.currentUser?.uid ?? 'L7oiYyQUhT2aBRbmfUEP';
+      if (parentId.isEmpty) {
         throw Exception('User not authenticated');
       }
+      Get.log('Adding new goal for kid with parent ID: $parentId');
+      QuerySnapshot kidSnapshot = await _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: parentId) // Match parentId
+          .get();
+      if (kidSnapshot.docs.isEmpty) {
+        // Handle error if no kid document is found for the given parentId
+        throw Exception("No kid document found for this parent ID");
+      }
+
+      DocumentSnapshot kidDoc = kidSnapshot.docs.first;
+      DocumentReference kidRef = kidDoc.reference;
 
       final goalRef = _firestore.collection('goals').doc();
-      final goalModel = GoalModel.fromProduct(kidId, product, goalRef.id);
+      final goalModel = GoalModel.fromProduct(kidRef.id, product, goalRef.id);
 
       await goalRef.set(goalModel.toJson());
     } catch (e) {

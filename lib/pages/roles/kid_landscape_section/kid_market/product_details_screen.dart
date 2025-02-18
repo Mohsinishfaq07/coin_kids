@@ -1,3 +1,5 @@
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
@@ -16,6 +18,7 @@ class ProductDetailsScreen extends StatelessWidget {
   Future<void> _addToGoals() async {
     try {
       await _goalService.addToGoals(product);
+      Get.off(KidHomeScreen());
 
       Get.snackbar(
         'Success',
@@ -38,6 +41,7 @@ class ProductDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     landscapeOrientation();
+    KidGoalsController kidGoalsController = Get.put(KidGoalsController());
 
     return Scaffold(
       appBar: AppBar(

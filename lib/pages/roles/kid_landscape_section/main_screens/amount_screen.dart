@@ -2,26 +2,26 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/add_money.dart';
 import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class AmountScreen extends StatefulWidget {
+class JarAmountScreen extends StatefulWidget {
   Color jarColor;
   RxBool isSpending;
-  AmountScreen({required this.isSpending, required this.jarColor, Key? key})
+  JarAmountScreen({required this.isSpending, required this.jarColor, Key? key})
       : super(key: key);
 
   @override
-  State<AmountScreen> createState() => _AmountScreenState();
+  State<JarAmountScreen> createState() => _JarAmountScreenState();
 }
 
-class _AmountScreenState extends State<AmountScreen> {
+class _JarAmountScreenState extends State<JarAmountScreen> {
   final parentController = Get.put(ParentController());
   @override
   void initState() {
@@ -62,6 +62,7 @@ class _AmountScreenState extends State<AmountScreen> {
               Text("Enter the amount 💸💰", style: AppTextStyle.headingLarge),
               SizedBox(height: 20.h),
               KidCustomTextField(
+                  maxlength: 4,
                   keyboardType: TextInputType.number,
                   hintText: "e.g 10.50 €",
                   onChange: (val) {
@@ -72,6 +73,7 @@ class _AmountScreenState extends State<AmountScreen> {
                   child: Align(
                       alignment: Alignment.bottomRight,
                       child: GreenNextButton(
+                          showSuffix: true,
                           onTap: () async {
                             // Validate and parse the entered amount safely
                             String enteredAmountString =
@@ -80,14 +82,7 @@ class _AmountScreenState extends State<AmountScreen> {
                             if (enteredAmountString.isEmpty ||
                                 double.tryParse(enteredAmountString) == null) {
                               // Show a toast message for invalid input
-                              Fluttertoast.showToast(
-                                msg: "Please enter a valid amount",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor: AppColors.textHighlighted,
-                                textColor: AppColors.textOnPrimary,
-                                fontSize: 16.0.sp,
-                              );
+                              ToastUtil.showToast("Pleae add Valid amount");
                               return; // Stop further execution
                             }
 
@@ -96,14 +91,9 @@ class _AmountScreenState extends State<AmountScreen> {
 
                             if (enteredAmount <= 0) {
                               // Show a toast message for invalid amount
-                              Fluttertoast.showToast(
-                                msg: "Amount must be greater than 0",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor: AppColors.textHighlighted,
-                                textColor: AppColors.textOnPrimary,
-                                fontSize: 16.0.sp,
-                              );
+                              ToastUtil.showToast(
+                                  "Amount must be greater than 0");
+
                               return; // Stop further execution
                             }
 

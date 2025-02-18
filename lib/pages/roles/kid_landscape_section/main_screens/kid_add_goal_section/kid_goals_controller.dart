@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
+  var isImageRemoved = false.obs;
   var isLoading = false.obs;
   var isEditMode = false.obs;
   var goalCurrentAmount = 0.0.obs;
@@ -430,5 +432,95 @@ class KidGoalsController extends GetxController {
       Get.back();
       Get.log("Error transferring funds: $e");
     }
+  }
+
+  Future<void> deleteGoal(String goalId) async {
+    try {
+      isLoading.value = true;
+      final kidSnapshot = await FirebaseFirestore.instance
+          .collection('kids')
+          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (kidSnapshot.docs.isEmpty) {
+        print("[DEBUG] No kids found");
+        return;
+      }
+
+      final kidId = kidSnapshot.docs.first.id;
+
+      // Get the goal document to check current amount
+      DocumentSnapshot goalSnapshot =
+          await _firebaseFirestore.collection('goals').doc(goalId).get();
+
+      if (!goalSnapshot.exists) {
+        ToastUtil.showToast("Goal not found");
+        return;
+      }
+
+      // Get the current amount from the goal
+      double currentGoalAmount =
+          (goalSnapshot.data() as Map<String, dynamic>)['currentAmount']
+                  ?.toDouble() ??
+              0.0;
+
+      // If there's any amount in the goal, transfer it to spendings
+      if (currentGoalAmount > 0) {
+        // Get the kid's document
+        DocumentReference kidDocRef =
+            _firebaseFirestore.collection('kids').doc(kidId);
+        DocumentSnapshot kidSnapshot = await kidDocRef.get();
+
+        if (kidSnapshot.exists) {
+          // Get current spending amount
+          double currentSpending = (kidSnapshot.data()
+                      as Map<String, dynamic>)['spendings']?['amount']
+                  ?.toDouble() ??
+              0.0;
+
+          // Add goal amount to spendings
+          double updatedSpending = currentSpending + currentGoalAmount;
+
+          // Update kid's spendings
+          await kidDocRef.update({
+            'spendings.amount': updatedSpending,
+          });
+        }
+      }
+
+      // Now proceed with the original delete operation
+      await _firebaseFirestore.collection('goals').doc(goalId).update({
+        'deleted': true,
+      });
+      await FirebaseFirestore.instance.collection('goals').doc(goalId).delete();
+
+      // Remove the image from SharedPreferences
+      await removeImageFromPrefs(goalId);
+
+      ToastUtil.showToast("Goal deleted successfully");
+      isLoading.value = false;
+      Get.off(KidHomeScreen());
+    } catch (e) {
+      isLoading.value = false;
+      ToastUtil.showToast("Failed to delete goal: $e");
+      print("Error deleting goal: $e");
+    }
+  }
+
+  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
+
+  void fetchGoals(String kidId) {
+    FirebaseFirestore.instance
+        .collection('goals')
+        .where('kidId', isEqualTo: kidId)
+        .where('deleted', isEqualTo: false)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
+      } else {
+        goalsList.clear();
+      }
+    });
   }
 }

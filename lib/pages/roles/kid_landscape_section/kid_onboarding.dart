@@ -6,6 +6,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_text_field.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/orange_skip_button.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
 import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
@@ -114,10 +115,11 @@ class KidSectionOnboarding extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: GreenNextButton(
+                                  showSuffix: true,
                                   onTap: () {
                                     if (_addChildController
                                         .childName.value.isEmpty) {
-                                      showToast(
+                                      ToastUtil.showToast(
                                           "Please enter your name"); // Show toast if empty
                                     } else {
                                       kidOnboardingController
@@ -256,13 +258,14 @@ class KidSectionOnboarding extends StatelessWidget {
                             onTap: () {
                               if (kidOnboardingController
                                   .selectedAge.value.isEmpty) {
-                                showToast(
+                                ToastUtil.showToast(
                                     "Please enter your Age"); // Show toast if empty
                               } else {
                                 kidOnboardingController.increaseSpotLightIndex(
                                     index: 2);
                               }
                             },
+                            showSuffix: true,
                             buttonText: 'Next',
                           )),
                     ),
@@ -309,7 +312,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                   itemCount:
                                       kidOnboardingController.avatars.length,
                                   itemBuilder: (context, index) {
-                                    final avatarIndex = index - 1;
+                                    final avatarIndex = index;
 
                                     return Obx(() => GestureDetector(
                                           onTap: () {
@@ -378,7 +381,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                           .parentFirebaseFunctions
                                           .addKidAndUpdateParent();
                                     }
-                                    Get.off(() =>  KidHomeScreen());
+                                    Get.off(() => KidHomeScreen());
                                   },
                                 ),
                                 Padding(
@@ -388,8 +391,9 @@ class KidSectionOnboarding extends StatelessWidget {
                                     onTap: () async {
                                       if (_addChildController
                                               .selectedAvatar.value ==
-                                          0.obs) {
-                                        showToast("Please select an avatar");
+                                          -1) {
+                                        ToastUtil.showToast(
+                                            "Please select an avatar");
                                         return;
                                       }
                                       if (!firebaseAuthController
@@ -400,7 +404,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                             .parentFirebaseFunctions
                                             .addKidAndUpdateParent();
                                       }
-                                      Get.off(() =>  KidHomeScreen());
+                                      Get.off(() => KidHomeScreen());
                                     },
                                   ),
                                 ),
@@ -415,17 +419,6 @@ class KidSectionOnboarding extends StatelessWidget {
           );
         }),
       ),
-    );
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: AppColors.iconPrimary,
-      textColor: Colors.white,
-      fontSize: 16.0,
     );
   }
 }
