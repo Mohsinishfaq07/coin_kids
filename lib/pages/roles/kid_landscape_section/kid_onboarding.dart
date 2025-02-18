@@ -101,6 +101,7 @@ class KidSectionOnboarding extends StatelessWidget {
                               height: 6.h,
                             ),
                             KidCustomTextField(
+                                maxlength: 10,
                                 hintText: "“Enter your name” e.g. Alex",
                                 onChange: (value) {
                                   _addChildController.childName.value =

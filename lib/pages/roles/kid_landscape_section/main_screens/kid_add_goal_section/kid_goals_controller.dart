@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/product_model.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/models/goal_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -403,7 +405,7 @@ class KidGoalsController extends GetxController {
         return; // Prevent further processing if goal amount is exceeded
       }
 
-      // Update goal amount
+      // Update goal amounthor
       double updatedGoalAmount = currentGoalAmount + enteredAmount;
       int completionPercentage =
           ((updatedGoalAmount / goalAmount) * 100).toInt();

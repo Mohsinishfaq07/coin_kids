@@ -34,7 +34,10 @@ class ControllerBindings extends Bindings {
       fenix: true,
     );
     Get.lazyPut<WishlistService>(() => WishlistService(), fenix: true);
-    Get.lazyPut<VerticalNavBarController>(() => VerticalNavBarController(),
-        fenix: true);
+    // Get.lazyPut<VerticalNavBarController>(() => VerticalNavBarController(),
+    //     fenix: true);
+    Get.put<VerticalNavBarController>(VerticalNavBarController(),
+        permanent: true);
+    Get.put<MarketController>(MarketController(), permanent: true);
   }
 }

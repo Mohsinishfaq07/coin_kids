@@ -1,5 +1,6 @@
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/kid_goals_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/vertical_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
@@ -9,6 +10,7 @@ import 'product_model.dart';
 class ProductDetailsScreen extends StatelessWidget {
   final ProductModel product;
   final GoalService _goalService = GoalService();
+  final verticalNavBarController = Get.find<VerticalNavBarController>();
 
   ProductDetailsScreen({
     Key? key,
@@ -17,8 +19,22 @@ class ProductDetailsScreen extends StatelessWidget {
 
   Future<void> _addToGoals() async {
     try {
-      await _goalService.addToGoals(product);
-      Get.off(KidHomeScreen());
+      // Show loading indicator
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      // Add goal to database
+      await _goalService.addToGoalsWithModel(product);
+
+      // Get the VerticalNavBarController instance
+
+      // Set the navigation to goals tab (index 1)
+      verticalNavBarController.currentItem.value = 1;
+
+      // Navigate back to KidHomeScreen with replacement
+      Get.offAll(() => KidHomeScreen());
 
       Get.snackbar(
         'Success',

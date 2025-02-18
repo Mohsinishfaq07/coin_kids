@@ -40,46 +40,6 @@ class GoalProgress extends StatelessWidget {
 
     final kidGoalController =
         Get.find<KidGoalsController>(); // Using Get.find to access controller
-    // void onDeleteGoal() async {
-    //   try {
-    //     // Get the current kid's id and goalId
-    //     final kidSnapshot = await FirebaseFirestore.instance
-    //         .collection('kids')
-    //         .where('parentId',
-    //             isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-    //         .get();
-
-    //     if (kidSnapshot.docs.isEmpty) {
-    //       print("[DEBUG] No kids found");
-    //       return;
-    //     }
-
-    //     final kidId = kidSnapshot.docs.first.id;
-    //     print("[DEBUG] Found Kid ID: $kidId");
-
-    //     final goalSnapshot = await FirebaseFirestore.instance
-    //         .collection('goals')
-    //         .where('kidId', isEqualTo: kidId)
-    //         .where('goalId', isEqualTo: goalId) // Using the goalId
-    //         .get();
-
-    //     if (goalSnapshot.docs.isEmpty) {
-    //       print("[DEBUG] No goal found");
-    //       return;
-    //     }
-
-    //     // Get the goal document reference
-    //     final goalDocRef = goalSnapshot.docs.first.reference;
-    //     await goalDocRef.delete(); // Delete the goal document
-
-    //     // Optionally, show a confirmation message or navigate
-    //     Get.snackbar("Success", "Goal deleted successfully");
-    //     Get.off(KidHomeScreen()); // Redirect to the home screen or another page
-    //   } catch (e) {
-    //     print("[ERROR] Error deleting goal: $e");
-    //     Get.snackbar("Error", "Failed to delete the goal");
-    //   }
-    // }
 
     return Scaffold(
       extendBodyBehindAppBar: true,

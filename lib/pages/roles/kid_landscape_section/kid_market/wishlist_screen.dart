@@ -80,7 +80,7 @@ class KidWishlistScreen extends StatelessWidget {
                     width: 20.w,
                   ),
                   Text(
-                    "My WishList",
+                    "My wishList",
                     style: AppTextStyle.headingLarge,
                   ),
                 ],

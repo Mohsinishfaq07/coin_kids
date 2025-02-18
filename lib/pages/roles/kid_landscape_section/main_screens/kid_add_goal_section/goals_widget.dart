@@ -111,6 +111,12 @@ class GoalCard extends StatelessWidget {
   final File? imageFile;
 
   GoalCard({required this.goal, this.imageFile});
+  String _truncateGoalName(String name) {
+    if (name.length > 10) {
+      return name.substring(0, 10) + "...";
+    }
+    return name;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +146,7 @@ class GoalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    goal['name'] ?? 'No Name',
+                    _truncateGoalName(goal['name'] ?? 'No Name'),
                     style: AppTextStyle.headingMedium
                         .copyWith(color: AppColors.iconPrimary),
                     textAlign: TextAlign.center,

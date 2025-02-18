@@ -4,6 +4,7 @@ import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_h
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_shop_appbar.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/kids_market_screen.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/wishlist_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_add_goal_section/goals_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/models/wishlist_model.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/services/wishlist_service.dart';
@@ -24,6 +25,7 @@ class KidHomeScreen extends StatelessWidget {
   KidHomeScreen({super.key});
 
   final MarketController marketController = Get.put(MarketController());
+
   final VerticalNavBarController verticalNavBarController =
       Get.find<VerticalNavBarController>();
   final WishlistService _wishlistService = Get.put(WishlistService());
@@ -113,24 +115,12 @@ class KidHomeScreen extends StatelessWidget {
                     Obx(() {
                       final currentIndex =
                           verticalNavBarController.currentItem.value;
-                      // int newIndex =
-                      //     verticalNavBarController.currentItem.value == 0
-                      //         ? 1
-                      //         : 0;
-                      // if (currentIndex != newIndex) {
-                      //   verticalNavBarController.updateCurrentIndex(
-                      //       newIndex); // Update only if necessary
-                      // }
+
                       if (currentIndex == 0 || currentIndex == 1) {
                         return KidDefaultAppBar();
-                      } else if (currentIndex == 2) {
-                        if (spendingJarColor.isEmpty) {
-                          return KidDefaultAppBar();
-                        } else {
-                          return CustomShopAppBar();
-                        }
+                      } else {
+                        return CustomShopAppBar();
                       }
-                      return SizedBox.shrink();
                     }),
                     Stack(children: [
                       Row(
@@ -175,7 +165,6 @@ class KidHomeScreen extends StatelessWidget {
                                 return AddGoalWidget();
                               }
                             } else {
-                              // ToastUtil.showToast("Add Spending jar First");
                               return SizedBox.shrink();
                             }
                           }),
@@ -199,19 +188,19 @@ class KidHomeScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   VerticalNavBar(),
-                                  // Check if spendingJarColor is empty
-                                  if (spendingJarColor.isEmpty)
-                                    SizedBox.shrink()
-                                  else
-                                    // If spendingJarColor is not empty, display KidsMarketScreen
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        width: 600.w,
-                                        child: KidsMarketScreen(),
-                                      ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      width: 600.w,
+                                      child: KidsMarketScreen(),
                                     ),
+                                  ),
+                                  // Check if spendingJarColor is empty
+                                  // if (spendingJarColor.isEmpty)
+                                  //   SizedBox.shrink()
+                                  // else
+                                  //   // If spendingJarColor is not empty, display KidsMarketScreen
                                 ],
                               )),
                         );
@@ -256,33 +245,42 @@ class KidHomeScreen extends StatelessWidget {
                                   bottom: 0.h,
                                   // left: 0.w,
                                   right: 0.w,
-                                  child: Transform.rotate(
-                                      angle: 270 * 3.14159 / 180, //
-                                      child: StreamBuilder<List<WishlistModel>>(
-                                        stream: _wishlistService
-                                            .getWishlistStream(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return CircularProgressIndicator();
-                                          }
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(KidWishlistScreen());
+                                    },
+                                    child: Transform.rotate(
+                                        angle: 270 * 3.14159 / 180, //
+                                        child:
+                                            StreamBuilder<List<WishlistModel>>(
+                                          stream: _wishlistService
+                                              .getWishlistStream(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
 
-                                          if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          }
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            }
 
-                                          final wishlistCount = snapshot
-                                                  .data?.length ??
-                                              0; // Get the count of wishlist items
-                                          return Center(
-                                            child: Text(
-                                              'Wishlist $wishlistCount',
-                                              style: AppTextStyle.headingMedium,
-                                            ),
-                                          );
-                                        },
-                                      )),
+                                            final wishlistCount = snapshot
+                                                    .data?.length ??
+                                                0; // Get the count of wishlist items
+                                            return Center(
+                                              child: Text(
+                                                'Wishlist $wishlistCount',
+                                                style: AppTextStyle
+                                                    .headingMedium
+                                                    .copyWith(
+                                                        color: Colors.white),
+                                              ),
+                                            );
+                                          },
+                                        )),
+                                  ),
                                 )
                               ],
                             ),

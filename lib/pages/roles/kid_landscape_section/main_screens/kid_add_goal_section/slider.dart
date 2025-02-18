@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +10,12 @@ class GoalCard extends StatelessWidget {
   final File? imageFile; // Image File
 
   GoalCard({required this.goal, this.imageFile});
+  String _truncateGoalName(String name) {
+    if (name.length > 10) {
+      return name.substring(0, 10) + "...";
+    }
+    return name;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class GoalCard extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 4.h),
                         child: Text(
-                          goal['name'] ?? 'No Name',
+                          _truncateGoalName(goal['name'] ?? 'No Name'),
                           style: AppTextStyle.headingMedium
                               .copyWith(color: AppColors.iconPrimary),
                           textAlign: TextAlign.center,
