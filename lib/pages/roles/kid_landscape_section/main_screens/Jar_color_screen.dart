@@ -8,11 +8,13 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class AddJarColorScreen extends StatelessWidget {
   RxBool isSpending;
+  final GlobalKey _colorGridKey = GlobalKey();
+  final GlobalKey _nextButtonKey = GlobalKey();
 
   AddJarColorScreen({
     required this.isSpending,
@@ -36,8 +38,19 @@ class AddJarColorScreen extends StatelessWidget {
 
   final parentController = Get.put(ParentController());
 
+  void _startShowCase(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShowCaseWidget.of(context).startShowCase([
+        _colorGridKey,
+        _nextButtonKey,
+      ]);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _startShowCase(context);
+
     return Scaffold(
       extendBody: true,
       body: Container(
@@ -69,72 +82,82 @@ class AddJarColorScreen extends StatelessWidget {
                 child: Text("Select Jar Color🎨🖌️",
                     style: AppTextStyle.headingLarge),
               ),
-              SizedBox(
-                height: 80.h,
-                width: 399.w,
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6, // 6 items per row
-                    crossAxisSpacing: 30.w,
-                    mainAxisSpacing: 10.h,
+              Showcase(
+                key: _colorGridKey,
+                description: 'Choose your favorite color for your jar!',
+                child: SizedBox(
+                  height: 80.h,
+                  width: 399.w,
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 6, // 6 items per row
+                      crossAxisSpacing: 30.w,
+                      mainAxisSpacing: 10.h,
+                    ),
+                    itemCount: colors.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          parentController.selectedColorIndex.value = index;
+                        },
+                        child: Obx(() {
+                          bool isSelected =
+                              parentController.selectedColorIndex.value ==
+                                  index;
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 42.h,
+                                width: 42.w,
+                                decoration: BoxDecoration(
+                                  color: colors[index],
+                                  shape: BoxShape.circle,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: Colors.white, width: 3.w)
+                                      : null,
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 24.sp, // Size of the check icon
+                                ),
+                            ],
+                          );
+                        }),
+                      );
+                    },
                   ),
-                  itemCount: colors.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        parentController.selectedColorIndex.value = index;
-                      },
-                      child: Obx(() {
-                        bool isSelected =
-                            parentController.selectedColorIndex.value == index;
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: 42.h,
-                              width: 42.w,
-                              decoration: BoxDecoration(
-                                color: colors[index],
-                                shape: BoxShape.circle,
-                                border: isSelected
-                                    ? Border.all(
-                                        color: Colors.white, width: 3.w)
-                                    : null,
-                              ),
-                            ),
-                            if (isSelected)
-                              Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 24.sp, // Size of the check icon
-                              ),
-                          ],
-                        );
-                      }),
-                    );
-                  },
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(right: 20.w),
-                child: Align(
+              Showcase(
+                key: _nextButtonKey,
+                description: 'Tap next after selecting your jar color',
+                child: Padding(
+                  padding: EdgeInsets.only(right: 20.w),
+                  child: Align(
                     alignment: Alignment.bottomRight,
                     child: GreenNextButton(
-                        showSuffix: true,
-                        onTap: () {
-                          if (parentController.selectedColorIndex.value == -1) {
-                            // Show a toast message
-                            ToastUtil.showToast("Please Select Jar Color");
-                          } else {
-                            Color selectedColor = colors[
-                                parentController.selectedColorIndex.value];
-                            Get.to(() => JarAmountScreen(
-                                  isSpending: isSpending,
-                                  jarColor: selectedColor,
-                                ));
-                          }
-                        },
-                        buttonText: "Next")),
+                      showSuffix: true,
+                      onTap: () {
+                        if (parentController.selectedColorIndex.value == -1) {
+                          ToastUtil.showToast("Please Select Jar Color");
+                        } else {
+                          Color selectedColor =
+                              colors[parentController.selectedColorIndex.value];
+                          Get.to(() => JarAmountScreen(
+                                isSpending: isSpending,
+                                jarColor: selectedColor,
+                              ));
+                        }
+                      },
+                      buttonText: "Next",
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

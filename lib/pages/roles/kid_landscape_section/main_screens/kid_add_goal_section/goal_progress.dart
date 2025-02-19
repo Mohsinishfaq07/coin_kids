@@ -199,6 +199,98 @@ class GoalProgress extends StatelessWidget {
                                         SizedBox(height: 20.h),
                                         Row(
                                           children: [
+                                            // kidBackButton(
+                                            //   buttonHeight: 24.h,
+                                            //   buttonWidth: 24.h,
+                                            //   backgroundColor:
+                                            //       AppColors.critical,
+                                            //   borderColor: Colors.red,
+                                            //   svgAsset: "assets/Minus.svg",
+                                            //   iconColor: Colors.white,
+                                            //   svgHeight: 40.h,
+                                            //   onTap: () async {
+                                            //     kidGoalController
+                                            //         .isMinus.value = true;
+                                            //     final kidSnapshot =
+                                            //         await FirebaseFirestore
+                                            //             .instance
+                                            //             .collection('kids')
+                                            //             .where('parentId',
+                                            //                 isEqualTo:
+                                            //                     FirebaseAuth
+                                            //                         .instance
+                                            //                         .currentUser!
+                                            //                         .uid)
+                                            //             .get();
+
+                                            //     if (kidSnapshot.docs.isEmpty) {
+                                            //       print(
+                                            //           "[DEBUG] No kids found");
+                                            //       return;
+                                            //     }
+
+                                            //     final kidId =
+                                            //         kidSnapshot.docs.first.id;
+                                            //     final goalSnapshot =
+                                            //         await FirebaseFirestore
+                                            //             .instance
+                                            //             .collection('goals')
+                                            //             .where('kidId',
+                                            //                 isEqualTo: kidId)
+                                            //             .where('goalId',
+                                            //                 isEqualTo: goalId)
+                                            //             .get();
+                                            //     if (goalSnapshot.docs.isEmpty) {
+                                            //       print(
+                                            //           "[DEBUG] No goal found");
+                                            //       return;
+                                            //     }
+                                            //     final goalDoc =
+                                            //         goalSnapshot.docs.first;
+                                            //     final goalData = goalDoc.data();
+                                            //     // double currentAmount = goalData
+                                            //     //         .containsKey(
+                                            //     //             'currentAmount')
+                                            //     //     ? (goalData[
+                                            //     //             'currentAmount'] ??
+                                            //     //         0.0)
+                                            //     //     : 0.0;
+                                            //     double currentAmount = goalData
+                                            //             .containsKey(
+                                            //                 'currentAmount')
+                                            //         ? (goalData['currentAmount']
+                                            //                 is int
+                                            //             ? (goalData['currentAmount']
+                                            //                     as int)
+                                            //                 .toDouble() // Convert if it's an int
+                                            //             : goalData[
+                                            //                     'currentAmount'] ??
+                                            //                 0.0) // If it's already a double
+                                            //         : 0.0;
+
+                                            //     double currentSliderValue =
+                                            //         kidGoalController
+                                            //             .sliderValue.value;
+                                            //     if (currentSliderValue == 0.0) {
+                                            //       currentSliderValue =
+                                            //           currentAmount;
+                                            //     }
+                                            //     if (currentSliderValue < 0 ||
+                                            //         currentAmount < 0) {
+                                            //       ToastUtil.showToast(
+                                            //           "Value cannot be less than 0");
+                                            //       return;
+                                            //     } else {
+                                            //       double newSliderValue =
+                                            //           currentSliderValue - 0.25;
+                                            //       kidGoalController.updateValue(
+                                            //           newSliderValue);
+                                            //       print(
+                                            //           "[DEBUG] Slider decrement to: $newSliderValue");
+                                            //     }
+                                            //   },
+                                            // ),
+
                                             kidBackButton(
                                               buttonHeight: 24.h,
                                               buttonWidth: 24.h,
@@ -251,9 +343,13 @@ class GoalProgress extends StatelessWidget {
                                                 double currentAmount = goalData
                                                         .containsKey(
                                                             'currentAmount')
-                                                    ? (goalData[
-                                                            'currentAmount'] ??
-                                                        0.0)
+                                                    ? (goalData['currentAmount'] is int
+                                                        ? (goalData['currentAmount']
+                                                                as int)
+                                                            .toDouble()
+                                                        : goalData[
+                                                                'currentAmount'] ??
+                                                            0.0)
                                                     : 0.0;
 
                                                 double currentSliderValue =
@@ -261,14 +357,15 @@ class GoalProgress extends StatelessWidget {
                                                         .sliderValue.value;
                                                 if (currentSliderValue == 0.0) {
                                                   currentSliderValue =
-                                                      currentAmount;
+                                                      currentAmount; // Set to current amount if it's zero
                                                 }
                                                 double newSliderValue =
                                                     currentSliderValue - 0.25;
                                                 kidGoalController.updateValue(
                                                     newSliderValue);
+
                                                 print(
-                                                    "[DEBUG] Slider incremented to: $newSliderValue");
+                                                    "[DEBUG] Slider decremented to: $newSliderValue");
                                               },
                                             ),
                                             StreamBuilder<QuerySnapshot>(
@@ -423,6 +520,9 @@ class GoalProgress extends StatelessWidget {
                                                     YesonTap: () async {
                                                       await kidGoalController
                                                           .deleteGoal(goalId);
+
+                                                      Get.offAll(
+                                                          KidHomeScreen());
                                                     }, // The action to take on "Yes" button click
                                                   );
                                                 },
@@ -480,13 +580,6 @@ class GoalProgress extends StatelessWidget {
                                                     goalSnapshot.docs.first;
                                                 final goalData = goalDoc.data();
 
-                                                // double currentAmount = goalData
-                                                //         .containsKey(
-                                                //             'currentAmount')
-                                                //     ? (goalData[
-                                                //             'currentAmount'] ??
-                                                //         0.0)
-                                                //     : 0.0;
                                                 double currentAmount = goalData
                                                         .containsKey(
                                                             'currentAmount')
@@ -507,35 +600,60 @@ class GoalProgress extends StatelessWidget {
                                                 // Calculate only the newly added amount
                                                 if (kidGoalController
                                                         .isMinus.value ==
-                                                    true) {
+                                                    true.obs.value) {
                                                   double addedAmount =
                                                       currentAmount -
                                                           sliderValue;
+                                                  // sliderValue -
+                                                  //     currentAmount;
+
                                                   kidGoalController
                                                       .GoalsTOSpending(
                                                     goalId: goalId,
                                                     kidId: kidId,
                                                     enteredAmount: addedAmount,
                                                   );
-                                                  print(
-                                                      "[DEBUG] Firestore updated with added amount: $addedAmount");
+                                                  kidGoalController
+                                                          .isMinus.value ==
+                                                      false;
+                                                  return;
+
+                                                  // if (addedAmount <= 0) {
+                                                  //   Get.offAll(KidHomeScreen());
+                                                  //   return;
+                                                  // } else {
+                                                  // kidGoalController
+                                                  //     .GoalsTOSpending(
+                                                  //   goalId: goalId,
+                                                  //   kidId: kidId,
+                                                  //   enteredAmount:
+                                                  //       addedAmount,
+                                                  // );
+                                                  // }
+                                                  //  return;
                                                 } else {
                                                   double addedAmount =
                                                       sliderValue -
                                                           currentAmount;
+
                                                   if (addedAmount <= 0) {
-                                                    ToastUtil.showToast(
-                                                        "Please add or remove funds");
+                                                    Get.offAll(KidHomeScreen());
                                                     return;
+                                                  } else {
+                                                    kidGoalController
+                                                        .SpendingTOGoals(
+                                                      goalId: goalId,
+                                                      kidId: kidId,
+                                                      enteredAmount:
+                                                          addedAmount,
+                                                    );
                                                   }
-                                                  kidGoalController
-                                                      .SpendingTOGoals(
-                                                    goalId: goalId,
-                                                    kidId: kidId,
-                                                    enteredAmount: addedAmount,
-                                                  );
+
                                                   print(
                                                       "[DEBUG] Firestore updated with added amount: $addedAmount");
+                                                  kidGoalController
+                                                          .isMinus.value ==
+                                                      false;
                                                 }
                                                 Get.offAll(KidHomeScreen());
                                               },

@@ -38,4 +38,5 @@ class AppAssets {
   static const dialogueBGSvg = "assets/bottomSheetIcons/bottomSheetBg.svg";
   static const crossWithDoubleBorderSvg =
       'assets/bottomSheetIcons/closeButton.svg';
+  static const String crossSvg = 'assets/cross.svg';
 }

@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/kid_market/product_model.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/models/goal_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +13,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
+  var sliderValue = 0.0.obs; // .obs makes it reactive
+  RxBool isMinus = false.obs;
+
   var isImageRemoved = false.obs;
   var isLoading = false.obs;
   var isEditMode = false.obs;
@@ -27,6 +28,14 @@ class KidGoalsController extends GetxController {
   RxDouble goalAmount = 0.0.obs;
   RxString goalImage = ''.obs;
   RxBool isPickingImage = false.obs; // Add flag
+  var initialSliderValue = 0.0;
+  void setInitialSliderValue(double value) {
+    initialSliderValue = value;
+  }
+
+  double getInitialSliderValue() {
+    return initialSliderValue;
+  }
 
   void setGoalCurrentAmount(double amount) {
     goalCurrentAmount.value = amount;
@@ -250,12 +259,10 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  var sliderValue = 0.0.obs; // .obs makes it reactive
-  RxBool isMinus = false.obs;
-
   // Function to update slider value
   void updateValue(double value) {
     sliderValue.value = value;
+    initialSliderValue = value;
   }
 
   // Function to set the goal amount (max value)

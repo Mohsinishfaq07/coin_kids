@@ -57,7 +57,6 @@ class SliderWidget extends StatelessWidget {
 
         kidGoalController.setGoalAmount(maxAmount);
 
-        final currentSliderValue = kidGoalController.sliderValue.value;
         final completed = goal?['completed'] ?? false;
 
         if (completed) {
@@ -70,8 +69,8 @@ class SliderWidget extends StatelessWidget {
         }
 
         return Obx(() {
-          double initialSliderValue =
-              0.0; // Store initial position before sliding
+          // double initialSliderValue =
+          //     0.0; // Store initial position before sliding
 
           return SfSliderTheme(
             data: SfSliderThemeData(
@@ -102,7 +101,7 @@ class SliderWidget extends StatelessWidget {
                 max: maxAmount,
                 stepSize: 0.1,
                 onChangeStart: (dynamic value) {
-                  initialSliderValue = value.toDouble();
+                  kidGoalController.initialSliderValue = value.toDouble();
                 },
                 onChangeEnd: (dynamic value) async {
                   double newValue = value.toDouble();
@@ -110,13 +109,17 @@ class SliderWidget extends StatelessWidget {
                 },
                 onChanged: (dynamic value) {
                   double newValue = value.toDouble();
-
-                  if (newValue > initialSliderValue) {
+                  // if (newValue < 0) {
+                  //   // Prevent slider from going below 0
+                  //   kidGoalController.updateValue(0);
+                  //   ToastUtil.showToast("Value cannot be less than 0");
+                  // } else
+                  if (newValue > kidGoalController.initialSliderValue) {
                     print("[DEBUG] Moving Right → Increasing Value");
                     kidGoalController.isMinus.value = false;
                     kidGoalController.updateValue(newValue);
                     print("newValue is $newValue");
-                  } else if (newValue < initialSliderValue) {
+                  } else if (newValue < kidGoalController.initialSliderValue) {
                     print("[DEBUG] Moving Left → Decreasing Value");
                     kidGoalController.isMinus.value = true; // Decrease
                     kidGoalController.updateValue(newValue);

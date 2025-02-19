@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'firebase_options.dart';
 import 'pages/splash_screen/splash_screen.dart';
 
@@ -31,7 +32,9 @@ void main() async {
     ),
   );
 
-  runApp(const MyApp());
+  runApp(ShowCaseWidget(
+    builder: (context) => MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,19 +49,17 @@ class MyApp extends StatelessWidget {
         landscapeOrientation();
       }
       return ScreenUtilInit(
-        designSize: orientation == Orientation.portrait
-            ? const Size(360, 800)
-            : const Size(800, 360),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        child: GetMaterialApp(
-          theme: CustomThemeData.getThemeData(),
-          debugShowCheckedModeBanner: false,
-          initialBinding: ControllerBindings(),
-          home: SplashScreen(),
-          // home: KidsMarketScreen(),
-        ),
-      );
+          designSize: orientation == Orientation.portrait
+              ? const Size(360, 800)
+              : const Size(800, 360),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          child: GetMaterialApp(
+            theme: CustomThemeData.getThemeData(),
+            debugShowCheckedModeBanner: false,
+            initialBinding: ControllerBindings(),
+            home: SplashScreen(),
+          ));
     });
   }
 }

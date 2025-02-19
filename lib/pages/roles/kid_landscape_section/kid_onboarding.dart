@@ -15,12 +15,36 @@ import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
-class KidSectionOnboarding extends StatelessWidget {
+class KidSectionOnboarding extends StatefulWidget {
   KidSectionOnboarding({super.key});
+
+  @override
+  State<KidSectionOnboarding> createState() => _KidSectionOnboardingState();
+}
+
+class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
   final _addChildController = Get.put(AddChildController());
+
+  final GlobalKey _buttonKey = GlobalKey();
+
+  final GlobalKey _textFieldKey = GlobalKey();
+  final GlobalKey _ageListKey = GlobalKey();
+
+  bool _isShowcasing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start showcase after the widgets are built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() => _isShowcasing = true);
+      ShowCaseWidget.of(context)
+          .startShowCase([_buttonKey, _textFieldKey, _ageListKey]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +53,6 @@ class KidSectionOnboarding extends StatelessWidget {
     landscapeOrientation();
     return Scaffold(
       extendBodyBehindAppBar: false,
-      // appBar: kidsAppBar(
-      //     leadingWidget: Padding(
-      //   padding: EdgeInsets.only(left: 20.w),
-      //   child: kidBackButton(
-      //     onTap: () {
-      //       kidSectionOnboardingController.decreaseSpotLightIndex();
-      //     },
-      //   ),
-      // )),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -65,11 +80,16 @@ class KidSectionOnboarding extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(left: 20.w),
-                          child: kidBackButton(
-                            onTap: () {
-                              Get.to(RoleSelectionScreen());
-                              kidOnboardingController.decreaseSpotLightIndex();
-                            },
+                          child: Showcase(
+                            key: _buttonKey,
+                            description: "This is a button. Tap to proceed.",
+                            child: kidBackButton(
+                              onTap: () {
+                                Get.to(RoleSelectionScreen());
+                                kidOnboardingController
+                                    .decreaseSpotLightIndex();
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -86,9 +106,6 @@ class KidSectionOnboarding extends StatelessWidget {
                         height: MediaQuery.of(context).size.height *
                             0.05.h, // 5% of screen height
                       ),
-                      // SizedBox(
-                      //   height: 40.h,
-                      // ),
                       SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,13 +117,17 @@ class KidSectionOnboarding extends StatelessWidget {
                             SizedBox(
                               height: 6.h,
                             ),
-                            KidCustomTextField(
-                                maxlength: 10,
-                                hintText: "“Enter your name” e.g. Alex",
-                                onChange: (value) {
-                                  _addChildController.childName.value =
-                                      value.trim();
-                                }),
+                            Showcase(
+                              key: _textFieldKey,
+                              description: "This is a text field. Tap to type.",
+                              child: KidCustomTextField(
+                                  maxlength: 10,
+                                  hintText: "“Enter your name” e.g. Alex",
+                                  onChange: (value) {
+                                    _addChildController.childName.value =
+                                        value.trim();
+                                  }),
+                            ),
                             SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.03.h, // 5% of screen height
@@ -174,78 +195,95 @@ class KidSectionOnboarding extends StatelessWidget {
                       "How old are you?",
                       style: AppTextStyle.headingMedium,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 130.w),
-                      child: SizedBox(
-                        height: 50.h,
-                        // width: double.infinity,
-                        child: ListView.builder(
-                            itemCount: kidOnboardingController.ageList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Obx(() {
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      kidOnboardingController
-                                              .selectedAge.value =
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              'assets/textfield_spotLightbg.png'), // Path to your image
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Showcase(
+                        key: _ageListKey,
+                        description: 'Select your age by tapping on a number',
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 130.w),
+                          child: SizedBox(
+                            height: 50.h,
+                            // width: double.infinity,
+                            child: ListView.builder(
+                                itemCount:
+                                    kidOnboardingController.ageList.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Obx(() {
+                                    return Align(
+                                      alignment: Alignment.center,
+                                      child: GestureDetector(
+                                        onTap: () {
                                           kidOnboardingController
-                                              .ageList[index];
+                                                  .selectedAge.value =
+                                              kidOnboardingController
+                                                  .ageList[index];
 
-                                      // Store the same value in _addChildController.childAge
-                                      _addChildController.childAge.value =
-                                          kidOnboardingController
-                                              .ageList[index];
+                                          // Store the same value in _addChildController.childAge
+                                          _addChildController.childAge.value =
+                                              kidOnboardingController
+                                                  .ageList[index];
 
-                                      // Set the selected age in kidSectionOnboardingController
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Container(
-                                        height: 50,
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                          color: kidOnboardingController
-                                                      .selectedAge.value ==
-                                                  kidOnboardingController
-                                                      .ageList[index]
-                                              ? AppColors.textPrimary
-                                              : AppColors.textOnPrimary,
-                                          borderRadius:
-                                              BorderRadius.circular(50.r),
-                                          border: Border.all(
-                                            color: kidOnboardingController
-                                                        .selectedAge.value ==
-                                                    kidOnboardingController
-                                                        .ageList[index]
-                                                ? AppColors.textOnPrimary
-                                                : AppColors.textPrimary,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            kidOnboardingController
-                                                .ageList[index],
-                                            style: AppTextStyle.headingMedium
-                                                .copyWith(
-                                                    color: kidOnboardingController
-                                                                .selectedAge
-                                                                .value ==
-                                                            kidOnboardingController
-                                                                .ageList[index]
-                                                        ? AppColors
-                                                            .textOnPrimary
-                                                        : AppColors
-                                                            .textPrimary),
+                                          // Set the selected age in kidSectionOnboardingController
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                              color: kidOnboardingController
+                                                          .selectedAge.value ==
+                                                      kidOnboardingController
+                                                          .ageList[index]
+                                                  ? AppColors.textPrimary
+                                                  : AppColors.textOnPrimary,
+                                              borderRadius:
+                                                  BorderRadius.circular(50.r),
+                                              border: Border.all(
+                                                color: kidOnboardingController
+                                                            .selectedAge
+                                                            .value ==
+                                                        kidOnboardingController
+                                                            .ageList[index]
+                                                    ? AppColors.textOnPrimary
+                                                    : AppColors.textPrimary,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                kidOnboardingController
+                                                    .ageList[index],
+                                                style: AppTextStyle
+                                                    .headingMedium
+                                                    .copyWith(
+                                                        color: kidOnboardingController
+                                                                    .selectedAge
+                                                                    .value ==
+                                                                kidOnboardingController
+                                                                        .ageList[
+                                                                    index]
+                                                            ? AppColors
+                                                                .textOnPrimary
+                                                            : AppColors
+                                                                .textPrimary),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              });
-                            }),
+                                    );
+                                  });
+                                }),
+                          ),
+                        ),
                       ),
                     ),
                     //],

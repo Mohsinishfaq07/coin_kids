@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
+import 'package:coin_kids/dialogues/delete_dialogue.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
@@ -124,8 +125,20 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                 Row(children: [
                                   kidBackButton(
                                     onTap: () {
-                                      addMoneyController.totalValue.value = 0.0;
-                                      Get.back();
+                                      showDeleteGoalDialog(
+                                        imageAsset: "assets/clap.png",
+
+                                        context,
+                                        label:
+                                            "Cancel transfer", // The title of the dialog
+                                        subLabel:
+                                            "Do you want to cancel Transfer?", // The subtitle
+                                        YesonTap: () async {
+                                          addMoneyController.totalValue.value =
+                                              0.0;
+                                          Get.back();
+                                        }, // The action to take on "Yes" button click
+                                      );
                                     },
                                   ),
                                   SizedBox(width: 20.w),
@@ -585,98 +598,95 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                                       )
                                                     ],
                                                   ),
-                                                  child:
-                                                      addMoneyController
-                                                                  .totalValue
-                                                                  .value >
-                                                              0
-                                                          ? Marquee(
-                                                              text:
-                                                                  '${addMoneyController.totalValue.value}',
-                                                              decelerationDuration:
-                                                                  Duration(
-                                                                      milliseconds:
-                                                                          300), // Shortened
-                                                              decelerationCurve:
-                                                                  Curves
-                                                                      .easeOut,
-                                                              velocity:
-                                                                  60.0, // Slower velocity
-                                                              accelerationDuration:
-                                                                  Duration(
-                                                                      milliseconds:
-                                                                          300), // Shortened
-                                                              accelerationCurve:
-                                                                  Curves.linear,
-                                                              pauseAfterRound:
-                                                                  Duration(
-                                                                      seconds:
-                                                                          1),
-                                                              blankSpace: 10.0,
-                                                              style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF015486),
-                                                                fontSize:
-                                                                    15.83.sp,
-                                                                fontFamily:
-                                                                    'Open Sans',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w800,
-                                                              ),
-                                                            )
-                                                          : Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text.rich(
+                                                  child: addMoneyController
+                                                              .totalValue
+                                                              .value >
+                                                          0
+                                                      ? Marquee(
+                                                          text:
+                                                              '${addMoneyController.totalValue.value}€',
+                                                          decelerationDuration:
+                                                              Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                          decelerationCurve:
+                                                              Curves.easeOut,
+                                                          velocity: 10.0,
+                                                          accelerationDuration:
+                                                              Duration(
+                                                                  seconds: 1),
+                                                          accelerationCurve:
+                                                              Curves.linear,
+                                                          pauseAfterRound:
+                                                              Duration(
+                                                                  seconds: 1),
+                                                          blankSpace: 7 *
+                                                              15.83.sp *
+                                                              0.6,
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xFF015486),
+                                                            fontSize: 15.83.sp,
+                                                            fontFamily:
+                                                                'Open Sans',
+                                                            fontWeight:
+                                                                FontWeight.w800,
+                                                          ),
+                                                        )
+                                                      : Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
                                                                   TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${addMoneyController.totalValue.value}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Color(0xFF015486),
-                                                                          fontSize:
-                                                                              15.83.sp,
-                                                                          fontFamily:
-                                                                              'Open Sans',
-                                                                          fontWeight:
-                                                                              FontWeight.w800,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '€',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Color(0xFF015486),
-                                                                          fontSize:
-                                                                              15.83.sp,
-                                                                          fontFamily:
-                                                                              'Open Sans',
-                                                                          fontWeight:
-                                                                              FontWeight.w700,
-                                                                        ),
-                                                                      ),
-                                                                    ],
+                                                                    text:
+                                                                        '${addMoneyController.totalValue.value}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xFF015486),
+                                                                      fontSize:
+                                                                          15.83
+                                                                              .sp,
+                                                                      fontFamily:
+                                                                          'Open Sans',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w800,
+                                                                    ),
                                                                   ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              ],
+                                                                  TextSpan(
+                                                                    text: '€',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xFF015486),
+                                                                      fontSize:
+                                                                          15.83
+                                                                              .sp,
+                                                                      fontFamily:
+                                                                          'Open Sans',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
+                                                          ],
+                                                        ),
                                                 ),
                                               )),
                                         ]),

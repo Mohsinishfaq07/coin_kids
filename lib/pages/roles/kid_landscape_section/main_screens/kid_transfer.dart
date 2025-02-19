@@ -104,68 +104,6 @@ class KidTransferScreen extends StatelessWidget {
                                     style: AppTextStyle.headingLarge,
                                   )
                                 ]),
-                                // GestureDetector(
-                                //     onTap: () {},
-                                //     child: CircleAvatar(
-                                //       backgroundColor: AppColors.buttonPrimary,
-                                //       maxRadius: 26.w,
-                                //       child: Container(
-                                //         width: 35,
-                                //         height: 35,
-                                //         clipBehavior: Clip.antiAlias,
-                                //         decoration: BoxDecoration(
-                                //           color: const Color(0xFFFF9E29),
-                                //           borderRadius: BorderRadius.circular(
-                                //               30.r), // Rounded corners
-                                //           border: Border.all(
-                                //             width: 2.22.w,
-                                //             color: const Color(0xFFD67513),
-                                //           ),
-                                //         ),
-                                //         child: Stack(
-                                //           children: [
-                                //             Positioned(
-                                //               left: 5.w,
-                                //               top: 4.h,
-                                //               // bottom: 4.h,
-                                //               child: Center(
-                                //                 child: Container(
-                                //                   decoration: BoxDecoration(
-                                //                     color: Colors
-                                //                         .transparent, // Background color (optional)
-                                //                     boxShadow: [
-                                //                       BoxShadow(
-                                //                         color: Colors.black
-                                //                             .withOpacity(
-                                //                                 0.2), // Shadow color
-                                //                         blurRadius:
-                                //                             10, // Blur radius for the shadow
-                                //                         offset: Offset(2,
-                                //                             4), // Shadow position (x, y)
-                                //                       ),
-                                //                     ],
-                                //                     shape: BoxShape
-                                //                         .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
-                                //                   ),
-                                //                   child: SvgPicture.asset(
-                                //                     AppAssets.kidCrossIcons,
-                                //                     fit: BoxFit.cover,
-                                //                     height: 10.h,
-                                //                   ),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //             Positioned(
-                                //                 left: 0.1.w,
-                                //                 top: 0.1.h,
-                                //                 child: Image.asset(
-                                //                   "assets/Button_shadow.png",
-                                //                   height: 5.h,
-                                //                 )),
-                                //           ],
-                                //         ),
-                                //       ),
-                                //     ))
                               ],
                             ),
                           ),

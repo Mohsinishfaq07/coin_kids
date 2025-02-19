@@ -38,60 +38,11 @@ class GoalService {
     }
   }
 
-  // Future<void> addToGoals(ProductModel product) async {
-  //   try {
-  //     final String parentId = _auth.currentUser?.uid ?? 'L7oiYyQUhT2aBRbmfUEP';
-  //     if (parentId.isEmpty) {
-  //       throw Exception('User not authenticated');
-  //     }
-  //     Get.log('Adding new goal for kid with parent ID: $parentId');
-  //     QuerySnapshot kidSnapshot = await _firestore
-  //         .collection('kids')
-  //         .where('parentId', isEqualTo: parentId) // Match parentId
-  //         .get();
-  //     if (kidSnapshot.docs.isEmpty) {
-  //       // Handle error if no kid document is found for the given parentId
-  //       throw Exception("No kid document found for this parent ID");
-  //     }
+  Future<void> addToGoals(ProductModel product) async {
+    // Implementation for adding product to goals
+    // This should create a new goal from the product details
+  }
 
-  //     DocumentSnapshot kidDoc = kidSnapshot.docs.first;
-  //     DocumentReference kidRef = kidDoc.reference;
-
-  //     final goalRef = _firestore.collection('goals').doc();
-  //     final goalModel = GoalModel.fromProduct(kidRef.id, product, goalRef.id);
-  //      final Map<String, dynamic> kidData = {
-  //       'goals': FieldValue.arrayUnion(
-  //           [goalRef]), // Add goal reference to goalsReference field
-  //     };
-  //       await _firestore.runTransaction((transaction) async {
-  //       try {
-  //         // Log the data you are passing to Firestore
-  //         Get.log('Setting goal data: $goalData');
-
-  //         // Set goal data
-  //         transaction.set(goalRef, goalData);
-
-  //         // Update kid document
-  //         transaction.update(kidRef, kidData);
-
-  //         // final String localPath =
-  //         //     await saveImageLocally(File(goalImage.value), goalRef.id);
-  //         // goalImage.value = localPath;
-  //         await saveImageToPrefs(goalRef.id, File(goalImage.value));
-  //         await saveGoalIdToPrefs(goalRef.id);
-  //       } catch (e) {
-  //         Get.log('Error in Firestore transaction: $e');
-  //         rethrow; // Re-throw exception to be caught outside
-  //       }
-  //     }).timeout(const Duration(seconds: 20), onTimeout: () {
-  //       throw TimeoutException("Firestore transaction timed out");
-  //     });
-
-  //     await goalRef.set(goalModel.toJson());
-  //   } catch (e) {
-  //     throw Exception('Failed to add to goals: ${e.toString()}');
-  //   }
-  // }
   Future<void> addToGoalsWithModel(ProductModel product) async {
     try {
       final String parentId = _auth.currentUser?.uid ?? 'L7oiYyQUhT2aBRbmfUEP';

@@ -1,6 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/dialogues/delete_dialogue.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/spending_card_container.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/green_next_button.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/kid_back_button.dart';
@@ -91,8 +92,8 @@ class _TransferByDragState extends State<TransferByDrag> {
                   decoration: const BoxDecoration(
                     gradient: AppColors.background,
                     image: DecorationImage(
-                      image: AssetImage(AppAssets.kidSectionBG),
-                    ),
+                        image: AssetImage(AppAssets.kidSectionBG),
+                        fit: BoxFit.cover),
                   ),
                   child: SingleChildScrollView(
                     child: Column(
@@ -108,9 +109,21 @@ class _TransferByDragState extends State<TransferByDrag> {
                                 Row(children: [
                                   kidBackButton(
                                     onTap: () {
-                                      addMoneyController.resetJar();
-                                      addMoneyController.totalValue.value = 0.0;
-                                      Get.back();
+                                      showDeleteGoalDialog(
+                                        imageAsset: "assets/clap.png",
+
+                                        context,
+                                        label:
+                                            "Cancel transfer", // The title of the dialog
+                                        subLabel:
+                                            "Do you want to cancel Transfer?", // The subtitle
+                                        YesonTap: () async {
+                                          addMoneyController.resetJar();
+                                          addMoneyController.totalValue.value =
+                                              0.0;
+                                          Get.back();
+                                        }, // The action to take on "Yes" button click
+                                      );
                                     },
                                   ),
                                   SizedBox(width: 20.w),
