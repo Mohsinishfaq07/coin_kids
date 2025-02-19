@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>557180709877-aj3krtl0nd15kmkedta0aks8tsb8r355.apps.googleusercontent.com</string>
+	<string>132663123215-lsq3barps38onmbhdu1f32kc9u676i7q.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.557180709877-aj3krtl0nd15kmkedta0aks8tsb8r355</string>
+	<string>com.googleusercontent.apps.132663123215-lsq3barps38onmbhdu1f32kc9u676i7q</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>557180709877-phch5bapibji6i6ekv53tj778ta7nc41.apps.googleusercontent.com</string>
+	<string>132663123215-goqti42t82dqpn9l2kbnuk00logc4a13.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDSwYzi0ACD-sKSn-JCyIb6x5JLwHSNNAM</string>
+	<string>AIzaSyDWC962lMXQDpO2Rrvwxdz8JYb3K9duT7w</string>
 	<key>GCM_SENDER_ID</key>
-	<string>557180709877</string>
+	<string>132663123215</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.app.coinkids</string>
 	<key>PROJECT_ID</key>
-	<string>coinkids-75fcd</string>
+	<string>coinkids</string>
 	<key>STORAGE_BUCKET</key>
-	<string>coinkids-75fcd.firebasestorage.app</string>
+	<string>coinkids.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:557180709877:ios:7ea31add07cdb0092f0ebc</string>
+	<string>1:132663123215:ios:b3604c9591c047c39eb27a</string>
 </dict>
 </plist>

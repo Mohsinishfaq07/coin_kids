@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "557180709877",
-    "project_id": "coinkids-75fcd",
-    "storage_bucket": "coinkids-75fcd.firebasestorage.app"
+    "project_number": "132663123215",
+    "project_id": "coinkids",
+    "storage_bucket": "coinkids.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:557180709877:android:19da149011fd94ad2f0ebc",
+        "mobilesdk_app_id": "1:132663123215:android:30e45d10bc3060969eb27a",
         "android_client_info": {
           "package_name": "com.app.coinkids"
         }
       },
       "oauth_client": [
         {
-          "client_id": "557180709877-t1lgngnrgt3uj92kgk0l49idrfooh2h0.apps.googleusercontent.com",
+          "client_id": "132663123215-n3orko625lnf1ksbobueu9l1ptjfr6mo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCuluCudvnJfSy28WoLqprQAlflhsboVjM"
+          "current_key": "AIzaSyA-XsuWFVY58ULngZ3wKDY6dhv43NnA6WU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "557180709877-t1lgngnrgt3uj92kgk0l49idrfooh2h0.apps.googleusercontent.com",
+              "client_id": "132663123215-n3orko625lnf1ksbobueu9l1ptjfr6mo.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "557180709877-2p6nk7pj8i11gqs61g357ujhlk8p0dlb.apps.googleusercontent.com",
+              "client_id": "132663123215-4ju2ivc03ejvareg7rd302u1e09g6386.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.coinKids"
+                "bundle_id": "com.example.coinkids"
               }
             }
           ]

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/constants/constants.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
@@ -14,42 +17,20 @@ import 'package:coin_kids/pages/roles/role_selection_screen.dart';
 import 'package:coin_kids/theme/color_theme.dart';
 import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class KidSectionOnboarding extends StatefulWidget {
+class KidSectionOnboarding extends StatelessWidget {
   KidSectionOnboarding({super.key});
 
-  @override
-  State<KidSectionOnboarding> createState() => _KidSectionOnboardingState();
-}
-
-class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
   final _addChildController = Get.put(AddChildController());
-
-  final GlobalKey _buttonKey = GlobalKey();
-
-  final GlobalKey _textFieldKey = GlobalKey();
-  final GlobalKey _ageListKey = GlobalKey();
-
-  bool _isShowcasing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Start showcase after the widgets are built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() => _isShowcasing = true);
-      ShowCaseWidget.of(context)
-          .startShowCase([_buttonKey, _textFieldKey, _ageListKey]);
-    });
-  }
+  final KidsOnBoardingController kidOnboardingController =
+      Get.put(KidsOnBoardingController());
 
   @override
   Widget build(BuildContext context) {
-    final KidsOnBoardingController kidOnboardingController =
-        Get.put(KidsOnBoardingController());
     landscapeOrientation();
     return Scaffold(
       extendBodyBehindAppBar: false,
@@ -80,16 +61,10 @@ class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(left: 20.w),
-                          child: Showcase(
-                            key: _buttonKey,
-                            description: "This is a button. Tap to proceed.",
-                            child: kidBackButton(
-                              onTap: () {
-                                Get.to(RoleSelectionScreen());
-                                kidOnboardingController
-                                    .decreaseSpotLightIndex();
-                              },
-                            ),
+                          child: kidBackButton(
+                            onTap: () {
+                              Get.to(RoleSelectionScreen());
+                            },
                           ),
                         ),
                       ),
@@ -111,18 +86,28 @@ class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "What’s your name?",
+                              "What's your name?",
                               style: AppTextStyle.headingMedium,
                             ),
                             SizedBox(
                               height: 6.h,
                             ),
                             Showcase(
-                              key: _textFieldKey,
+                              key: kidOnboardingController.textFieldKey,
                               description: "This is a text field. Tap to type.",
+                              overlayColor: Colors.black.withOpacity(0.5),
+                              overlayOpacity: 0.5,
+                              targetShapeBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              tooltipBackgroundColor: AppColors.textPrimary,
+                              descTextStyle: AppTextStyle.headingMedium.copyWith(
+                                color: AppColors.textOnPrimary,
+                              ),
+                              tooltipPadding: EdgeInsets.all(8.w),
                               child: KidCustomTextField(
                                   maxlength: 10,
-                                  hintText: "“Enter your name” e.g. Alex",
+                                  hintText: "Enter your name",
                                   onChange: (value) {
                                     _addChildController.childName.value =
                                         value.trim();
@@ -195,94 +180,92 @@ class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
                       "How old are you?",
                       style: AppTextStyle.headingMedium,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'assets/textfield_spotLightbg.png'), // Path to your image
-                          fit: BoxFit.cover,
-                        ),
+                    Showcase(
+                      key: kidOnboardingController.ageListKey,
+                      description: 'How old are you?',
+                      overlayColor: Colors.black.withOpacity(0.5),
+                      overlayOpacity: 0.5,
+                      targetShapeBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Showcase(
-                        key: _ageListKey,
-                        description: 'Select your age by tapping on a number',
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 130.w),
-                          child: SizedBox(
-                            height: 50.h,
-                            // width: double.infinity,
-                            child: ListView.builder(
-                                itemCount:
-                                    kidOnboardingController.ageList.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  return Obx(() {
-                                    return Align(
-                                      alignment: Alignment.center,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          kidOnboardingController
-                                                  .selectedAge.value =
-                                              kidOnboardingController
-                                                  .ageList[index];
+                      tooltipBackgroundColor: AppColors.textPrimary,
+                      descTextStyle: AppTextStyle.headingMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                      ),
+                      tooltipPadding: EdgeInsets.all(8.w),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 130.w),
+                        child: SizedBox(
+                          height: 50.h,
+                          // width: double.infinity,
+                          child: ListView.builder(
+                              itemCount: kidOnboardingController.ageList.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return Obx(() {
+                                  return Align(
+                                    alignment: Alignment.center,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        kidOnboardingController
+                                                .selectedAge.value =
+                                            kidOnboardingController
+                                                .ageList[index];
 
-                                          // Store the same value in _addChildController.childAge
-                                          _addChildController.childAge.value =
-                                              kidOnboardingController
-                                                  .ageList[index];
+                                        // Store the same value in _addChildController.childAge
+                                        _addChildController.childAge.value =
+                                            kidOnboardingController
+                                                .ageList[index];
 
-                                          // Set the selected age in kidSectionOnboardingController
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Container(
-                                            height: 50,
-                                            width: 50,
-                                            decoration: BoxDecoration(
+                                        // Set the selected age in kidSectionOnboardingController
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                            color: kidOnboardingController
+                                                        .selectedAge.value ==
+                                                    kidOnboardingController
+                                                        .ageList[index]
+                                                ? AppColors.textPrimary
+                                                : AppColors.textOnPrimary,
+                                            borderRadius:
+                                                BorderRadius.circular(50.r),
+                                            border: Border.all(
                                               color: kidOnboardingController
                                                           .selectedAge.value ==
                                                       kidOnboardingController
                                                           .ageList[index]
-                                                  ? AppColors.textPrimary
-                                                  : AppColors.textOnPrimary,
-                                              borderRadius:
-                                                  BorderRadius.circular(50.r),
-                                              border: Border.all(
-                                                color: kidOnboardingController
-                                                            .selectedAge
-                                                            .value ==
-                                                        kidOnboardingController
-                                                            .ageList[index]
-                                                    ? AppColors.textOnPrimary
-                                                    : AppColors.textPrimary,
-                                              ),
+                                                  ? AppColors.textOnPrimary
+                                                  : AppColors.textPrimary,
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                kidOnboardingController
-                                                    .ageList[index],
-                                                style: AppTextStyle
-                                                    .headingMedium
-                                                    .copyWith(
-                                                        color: kidOnboardingController
-                                                                    .selectedAge
-                                                                    .value ==
-                                                                kidOnboardingController
-                                                                        .ageList[
-                                                                    index]
-                                                            ? AppColors
-                                                                .textOnPrimary
-                                                            : AppColors
-                                                                .textPrimary),
-                                              ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              kidOnboardingController
+                                                  .ageList[index],
+                                              style: AppTextStyle.headingMedium
+                                                  .copyWith(
+                                                      color: kidOnboardingController
+                                                                  .selectedAge
+                                                                  .value ==
+                                                              kidOnboardingController
+                                                                      .ageList[
+                                                                  index]
+                                                          ? AppColors
+                                                              .textOnPrimary
+                                                          : AppColors
+                                                              .textPrimary),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    );
-                                  });
-                                }),
-                          ),
+                                    ),
+                                  );
+                                });
+                              }),
                         ),
                       ),
                     ),
@@ -336,64 +319,79 @@ class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
                                 style: AppTextStyle.headingLarge,
                               ),
                               SizedBox(height: 10.h),
-                              SizedBox(
-                                height: 120.h,
-                                width: 440.w,
-                                child: GridView.builder(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 10.w),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5,
-                                    crossAxisSpacing: 26.w,
-                                    mainAxisSpacing: 16.h,
-                                  ),
-                                  itemCount:
-                                      kidOnboardingController.avatars.length,
-                                  itemBuilder: (context, index) {
-                                    final avatarIndex = index;
+                              Showcase(
+                                key: kidOnboardingController.avatarListKey,
+                                description: 'Choose an avatar',
+                                overlayColor: Colors.black.withOpacity(0.5),
+                                overlayOpacity: 0.5,
+                                targetShapeBorder: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                tooltipBackgroundColor: AppColors.textPrimary,
+                                descTextStyle: AppTextStyle.headingMedium.copyWith(
+                                  color: AppColors.textOnPrimary,
+                                ),
+                                tooltipPadding: EdgeInsets.all(8.w),
+                                child: SizedBox(
+                                  height: 120.h,
+                                  width: 440.w,
+                                  child: GridView.builder(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10.w),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 5,
+                                      crossAxisSpacing: 26.w,
+                                      mainAxisSpacing: 16.h,
+                                    ),
+                                    itemCount:
+                                        kidOnboardingController.avatars.length,
+                                    itemBuilder: (context, index) {
+                                      final avatarIndex = index;
 
-                                    return Obx(() => GestureDetector(
-                                          onTap: () {
-                                            _addChildController
-                                                .selectAvatar(avatarIndex);
-                                          },
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 30.r,
-                                                backgroundColor:
-                                                    Colors.grey[200],
-                                                backgroundImage: AssetImage(
-                                                    kidOnboardingController
-                                                        .avatars[index]),
-                                              ),
-                                              if (_addChildController
-                                                      .selectedAvatar.value ==
-                                                  avatarIndex)
-                                                Positioned(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(60.r),
-                                                        color: Colors.black38,
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.white)),
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      color: Colors.white,
-                                                      size: 24
-                                                          .sp, // Size of the check icon
+                                      return Obx(() => GestureDetector(
+                                            onTap: () {
+                                              _addChildController
+                                                  .selectAvatar(avatarIndex);
+                                            },
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 30.r,
+                                                  backgroundColor:
+                                                      Colors.grey[200],
+                                                  backgroundImage: AssetImage(
+                                                      kidOnboardingController
+                                                          .avatars[index]),
+                                                ),
+                                                if (_addChildController
+                                                        .selectedAvatar.value ==
+                                                    avatarIndex)
+                                                  Positioned(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      60.r),
+                                                          color: Colors.black38,
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .white)),
+                                                      child: Icon(
+                                                        Icons.check,
+                                                        color: Colors.white,
+                                                        size: 24
+                                                            .sp, // Size of the check icon
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                            ],
-                                          ),
-                                        ));
-                                  },
+                                              ],
+                                            ),
+                                          ));
+                                    },
+                                  ),
                                 ),
                               )
                             ],
@@ -459,5 +457,50 @@ class _KidSectionOnboardingState extends State<KidSectionOnboarding> {
         }),
       ),
     );
+  }
+}
+
+/// Custom Tooltip Decoration with Background Image
+class CustomTooltipDecoration extends ShapeBorder {
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(10)));
+  }
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
+    return Path()
+      ..addRRect(RRect.fromRectAndRadius(rect.deflate(1), Radius.circular(10)));
+  }
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) async {
+    final paint = Paint();
+
+    final ui.Image image = await loadImage("assets/background_image.png");
+
+    paint.shader = ImageShader(
+      image,
+      TileMode.clamp,
+      TileMode.clamp,
+      Matrix4.identity().storage,
+    );
+
+    canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(10)), paint);
+  }
+
+  @override
+  ShapeBorder scale(double t) => this;
+
+  /// Helper function to load an image asynchronously
+  Future<ui.Image> loadImage(String asset) async {
+    final ByteData data = await rootBundle.load(asset);
+    final Uint8List bytes = data.buffer.asUint8List();
+    final Completer<ui.Image> completer = Completer();
+    ui.decodeImageFromList(bytes, (ui.Image img) => completer.complete(img));
+    return completer.future;
   }
 }

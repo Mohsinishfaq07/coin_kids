@@ -1,5 +1,6 @@
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_with_money.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/jar_without_money.dart';
+import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/Jar_color_screen.dart';
 import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_transfer.dart';
 import 'package:coin_kids/theme/color_theme.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class KidFinanceWidgets extends StatelessWidget {
   final String spendingJarColor;
@@ -15,7 +17,7 @@ class KidFinanceWidgets extends StatelessWidget {
   final double savingAmount;
   final List<dynamic> kidsData;
 
-  const KidFinanceWidgets({
+    KidFinanceWidgets({
     Key? key,
     required this.spendingJarColor,
     required this.spendingAmount,
@@ -23,7 +25,7 @@ class KidFinanceWidgets extends StatelessWidget {
     required this.savingAmount,
     required this.kidsData,
   }) : super(key: key);
-
+  final KidsOnBoardingController kidOnboardingController = Get.put(KidsOnBoardingController());
   @override
   Widget build(BuildContext context) {
     if (kidsData.isEmpty) return SizedBox.shrink();
@@ -51,7 +53,11 @@ class KidFinanceWidgets extends StatelessWidget {
         onTap: () {
           Get.to(AddJarColorScreen(isSpending: true.obs));
         },
-        child: Image.asset("assets/jars/jar.png"),
+        child: Showcase(
+            key: kidOnboardingController.spendingJarKey,
+            description: 'Create a jar to store money',
+
+            child: Image.asset("assets/jars/jar.png")),
       );
     } else if (spendingAmount != 0.0) {
       return JarWithMoneyTitle(
@@ -135,7 +141,11 @@ class KidFinanceWidgets extends StatelessWidget {
               onTap: () {
                 Get.to(AddJarColorScreen(isSpending: false.obs));
               },
-              child: Image.asset("assets/jars/jar.png"),
+              child: Showcase(
+
+                  key: kidOnboardingController.savingsJarKey,
+                  description: 'Create a jar to store money',
+                  child: Image.asset("assets/jars/jar.png")),
             );
     } else if (savingAmount != 0.0) {
       return JarWithMoneyTitle(

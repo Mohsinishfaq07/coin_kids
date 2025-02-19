@@ -15,8 +15,7 @@ import 'pages/splash_screen/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions
-        .currentPlatform, // Automatically generated options
+    options: DefaultFirebaseOptions.currentPlatform, // Automatically generated options
   );
   controllerAndClassInitialization();
 

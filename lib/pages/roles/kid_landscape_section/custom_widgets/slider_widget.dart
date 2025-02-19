@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+
 class SliderWidget extends StatelessWidget {
   final String goalId;
   final String kidId;

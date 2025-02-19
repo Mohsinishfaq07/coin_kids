@@ -23,10 +23,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -50,20 +47,31 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDYS61fOQ7BdwZTUk2uo4nlE70C41cjbqI',
-    appId: '1:557180709877:web:cc565e1c798c5ac52f0ebc',
-    messagingSenderId: '557180709877',
-    projectId: 'coinkids-75fcd',
-    authDomain: 'coinkids-75fcd.firebaseapp.com',
-    storageBucket: 'coinkids-75fcd.firebasestorage.app',
-    measurementId: 'G-V8QHW8VY1L',
+    apiKey: 'AIzaSyCUq1lK8jKx4ZqL9pYEgVsn5H3i9CMBekg',
+    appId: '1:132663123215:web:397f8b96bb753e789eb27a',
+    messagingSenderId: '132663123215',
+    projectId: 'coinkids',
+    authDomain: 'coinkids.firebaseapp.com',
+    storageBucket: 'coinkids.appspot.com',
+    measurementId: 'G-8J6Y3CB33X',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCuluCudvnJfSy28WoLqprQAlflhsboVjM',
-    appId: '1:557180709877:android:19da149011fd94ad2f0ebc',
-    messagingSenderId: '557180709877',
-    projectId: 'coinkids-75fcd',
-    storageBucket: 'coinkids-75fcd.firebasestorage.app',
+    apiKey: 'AIzaSyA-XsuWFVY58ULngZ3wKDY6dhv43NnA6WU',
+    appId: '1:132663123215:android:30e45d10bc3060969eb27a',
+    messagingSenderId: '132663123215',
+    projectId: 'coinkids',
+    storageBucket: 'coinkids.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDWC962lMXQDpO2Rrvwxdz8JYb3K9duT7w',
+    appId: '1:132663123215:ios:b3604c9591c047c39eb27a',
+    messagingSenderId: '132663123215',
+    projectId: 'coinkids',
+    storageBucket: 'coinkids.appspot.com',
+    androidClientId: '132663123215-goqti42t82dqpn9l2kbnuk00logc4a13.apps.googleusercontent.com',
+    iosClientId: '132663123215-lsq3barps38onmbhdu1f32kc9u676i7q.apps.googleusercontent.com',
+    iosBundleId: 'com.app.coinkids',
   );
 }

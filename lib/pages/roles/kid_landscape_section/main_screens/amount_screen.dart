@@ -10,6 +10,7 @@ import 'package:coin_kids/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class JarAmountScreen extends StatefulWidget {
   Color jarColor;
@@ -23,15 +24,25 @@ class JarAmountScreen extends StatefulWidget {
 
 class _JarAmountScreenState extends State<JarAmountScreen> {
   final parentController = Get.put(ParentController());
-  @override
+  final GlobalKey _amountTextFieldKey = GlobalKey();
+   @override
   void initState() {
     super.initState();
     parentController.fetchParentDetails();
     parentController.fetchKids();
   }
+  void _startShowCase(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShowCaseWidget.of(context).startShowCase([
+        _amountTextFieldKey,
+
+      ]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    _startShowCase(context);
     return Scaffold(
       extendBody: true,
       body: Container(
@@ -61,13 +72,17 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
               SizedBox(height: 16.h),
               Text("Enter the amount 💸💰", style: AppTextStyle.headingLarge),
               SizedBox(height: 20.h),
-              KidCustomTextField(
-                  maxlength: 4,
-                  keyboardType: TextInputType.number,
-                  hintText: "e.g 10.50 €",
-                  onChange: (val) {
-                    parentController.amount.value = val;
-                  }),
+              Showcase(
+                key: _amountTextFieldKey,
+                description: 'Choose your favorite color for your jar!',
+                child: KidCustomTextField(
+                    maxlength: 4,
+                    keyboardType: TextInputType.number,
+                    hintText: "e.g 10.50 €",
+                    onChange: (val) {
+                      parentController.amount.value = val;
+                    }),
+              ),
               Padding(
                   padding: EdgeInsets.only(right: 20.w, top: 16.h),
                   child: Align(
