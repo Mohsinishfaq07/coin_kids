@@ -8,6 +8,7 @@ class ParentModel {
   final DateTime createdAt;
   final DateTime dob;
   final String gender;
+  final String imageUrl;
 
   ParentModel({
     required this.email,
@@ -17,6 +18,7 @@ class ParentModel {
     required this.createdAt,
     required this.dob,
     required this.gender,
+    this.imageUrl = '',
   });
 
   factory ParentModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class ParentModel {
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dob: (json['dob'] as Timestamp?)?.toDate() ?? DateTime.now(),
       gender: json['gender'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 
@@ -40,6 +43,7 @@ class ParentModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'dob': Timestamp.fromDate(dob),
       'gender': gender,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -53,6 +57,7 @@ class ParentModel {
     DateTime? createdAt,
     DateTime? dob,
     String? gender,
+    String? imageUrl,
   }) {
     return ParentModel(
       email: email ?? this.email,
@@ -62,6 +67,7 @@ class ParentModel {
       createdAt: createdAt ?? this.createdAt,
       dob: dob ?? this.dob,
       gender: gender ?? this.gender,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 } 

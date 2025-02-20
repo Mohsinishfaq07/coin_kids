@@ -38,7 +38,65 @@ class ParentController extends GetxController {
   RxString message = ''.obs;
   RxString amountValidation = ''.obs;
 
+  final RxString customAvatarPath = ''.obs;
+  final RxString networkImageUrl = ''.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    loadImageFromPreferences();
+  }
+
+  Future<void> loadImageFromPreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final localPath = prefs.getString('profileImagePath');
+      final networkUrl = prefs.getString('profileImageUrl');
+
+      if (localPath != null && localPath.isNotEmpty) {
+        // Check if local file exists
+        if (await File(localPath).exists()) {
+          customAvatarPath.value = localPath;
+        }
+      }
+      
+      if (networkUrl != null && networkUrl.isNotEmpty) {
+        networkImageUrl.value = networkUrl;
+      }
+    } catch (e) {
+      print('Error loading image from preferences: $e');
+    }
+  }
+
+  Future<void> saveImageToPreferences({String? localPath, String? networkUrl}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      if (localPath != null) {
+        await prefs.setString('profileImagePath', localPath);
+        customAvatarPath.value = localPath;
+      }
+      
+      if (networkUrl != null) {
+        await prefs.setString('profileImageUrl', networkUrl);
+        networkImageUrl.value = networkUrl;
+      }
+    } catch (e) {
+      print('Error saving image to preferences: $e');
+    }
+  }
+
+  Future<void> clearStoredImages() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('profileImagePath');
+      await prefs.remove('profileImageUrl');
+      customAvatarPath.value = '';
+      networkImageUrl.value = '';
+    } catch (e) {
+      print('Error clearing stored images: $e');
+    }
+  }
 
   Future<bool> fetchKids() async {
     // Get.log('kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
@@ -170,11 +228,6 @@ class ParentController extends GetxController {
     }
   }
 
-
-
-
-
-
   var currentIndex = 0.obs;
   var toggleValue = true.obs;
   var toggleValue1 = true.obs;
@@ -186,24 +239,13 @@ class ParentController extends GetxController {
     //KidZoneScreen(),
   ];
 
-  Future<void> loadAvatarFromPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedPath = prefs.getString('profileImagePath');
-
-    if (storedPath != null && storedPath.isNotEmpty) {
-      customAvatarPath.value = storedPath;
-    }
-  }
-
   var selectedAvatar = 0.obs;
-
-  var customAvatarPath = ''.obs;
 
   final selectedAvatarPath = ''.obs;
 
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> pickUpFromGallery() async {
+  Future<File?> pickUpFromGallery() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -211,31 +253,19 @@ class ParentController extends GetxController {
       );
 
       if (pickedFile != null) {
-        final String localPath = await saveImageLocally(File(pickedFile.path));
-        // customAvatarPath.value = localPath;
-        // selectedAvatarPath.value = '';
-        customAvatarPath.value = localPath;
-
-        // Save the image path in Firestore
-        // await FirebaseFirestore.instance
-        //     .collection('parent') // Parent collection
-        //     .doc(firebaseAuthController
-        //         .email.value) // Replace with actual user ID
-        //     .update({'image': localPath});
-
-        // Save the image path in SQLite
-        // await DatabaseHelper.instance.insertImage(localPath);
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('profileImagePath', localPath);
-
-        ToastUtil.showToast("Image saved locally.");
-      } else {}
+        final File imageFile = File(pickedFile.path);
+        final String localPath = await saveImageLocally(imageFile);
+        await saveImageToPreferences(localPath: localPath);
+        return imageFile;
+      }
+      return null;
     } catch (e) {
-      ToastUtil.showToast("Failed to pick and save image: $e");
+      ToastUtil.showToast("Failed to pick image: $e");
+      return null;
     }
   }
 
-  Future<void> pickFromCamera() async {
+  Future<File?> pickFromCamera() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.camera,
@@ -243,15 +273,15 @@ class ParentController extends GetxController {
       );
 
       if (pickedFile != null) {
-        final String localPath = await saveImageLocally(File(pickedFile.path));
-        customAvatarPath.value = localPath;
-
-        // Save the image path in SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('profileImagePath', localPath);
+        final File imageFile = File(pickedFile.path);
+        final String localPath = await saveImageLocally(imageFile);
+        await saveImageToPreferences(localPath: localPath);
+        return imageFile;
       }
+      return null;
     } catch (e) {
-      ToastUtil.showToast("Failed to capture and save image: $e");
+      ToastUtil.showToast("Failed to capture image: $e");
+      return null;
     }
   }
 

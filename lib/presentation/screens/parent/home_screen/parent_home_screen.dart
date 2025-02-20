@@ -35,7 +35,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       parentController.fetchKids();
-      parentController.loadAvatarFromPreferences();
+      parentController.loadImageFromPreferences();
     });
   }
 

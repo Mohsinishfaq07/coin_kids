@@ -4,14 +4,17 @@ import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 class ParentDrawer extends StatefulWidget {
   @override
@@ -23,11 +26,71 @@ class _ParentDrawerState extends State<ParentDrawer> {
       Get.put(ParentController());
   final ParentService _parentService = Get.find<ParentService>();
   final RxBool isLoading = false.obs;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   @override
   void initState() {
     super.initState();
-    parentController.loadAvatarFromPreferences();
+    parentController.loadImageFromPreferences();
+  }
+
+  Future<void> uploadImageToFirebase(File imageFile, ParentModel parentData) async {
+    try {
+      isLoading.value = true;
+      
+      // Show loading indicator
+      showDialog(
+        context: Get.context!,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      
+      // Create a unique file name
+      String fileName = 'parent_profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
+      
+      // Create a reference to the file location in Firebase Storage
+      Reference ref = _storage.ref().child('parent_profiles').child(fileName);
+      
+      // Create upload task
+      UploadTask uploadTask = ref.putFile(imageFile);
+      
+      // Listen to upload progress and handle errors
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        print('Upload progress: $progress%');
+      }, onError: (error) {
+        Get.back(); // Close loading dialog
+        ToastUtil.showToast("Upload failed: $error");
+        throw error;
+      });
+      
+      // Wait for upload to complete
+      TaskSnapshot taskSnapshot = await uploadTask;
+      
+      // Get the download URL
+      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      
+      // Update the parent model with the new image URL
+      final updatedParent = parentData.copyWith(imageUrl: downloadUrl);
+      await _parentService.updateParent(updatedParent);
+      
+      // Save both local path and network URL
+      await parentController.saveImageToPreferences(
+        localPath: imageFile.path,
+        networkUrl: downloadUrl
+      );
+      
+      Get.back(); // Close loading dialog
+      ToastUtil.showToast("Profile image updated successfully");
+      
+    } catch (e) {
+      Get.back(); // Close loading dialog if open
+      print("Error uploading image: $e");
+      ToastUtil.showToast("Failed to upload image. Please try again.");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override
@@ -112,39 +175,25 @@ class _ParentDrawerState extends State<ParentDrawer> {
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      Obx(() {
-                        if (parentController
-                            .customAvatarPath.value.isNotEmpty) {
-                          return Container(
-                            height: 100.h,
-                            width: 100.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: FileImage(File(
-                                    parentController
-                                        .customAvatarPath.value)),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return SvgPicture.asset(
-                            AppAssets.drawerIconSvg,
-                            height: 100.h,
-                            width: 100.w,
-                          );
-                        }
-                      }),
+                      _buildProfileImage(parentData),
                       GestureDetector(
                         onTap: () async {
-                          showImageSourceBottomSheet(onCameraTap: () {
-                            Get.back();
-                            parentController.pickFromCamera();
-                          }, onGalleryTap: () {
-                            Get.back();
-                            parentController.pickUpFromGallery();
-                          });
+                          showImageSourceBottomSheet(
+                            onCameraTap: () async {
+                              Get.back();
+                              final File? imageFile = await parentController.pickFromCamera();
+                              if (imageFile != null) {
+                                await uploadImageToFirebase(imageFile, parentData);
+                              }
+                            },
+                            onGalleryTap: () async {
+                              Get.back();
+                              final File? imageFile = await parentController.pickUpFromGallery();
+                              if (imageFile != null) {
+                                await uploadImageToFirebase(imageFile, parentData);
+                              }
+                            },
+                          );
                         },
                         child: CircleAvatar(
                           radius: 15.r,
@@ -516,6 +565,47 @@ class _ParentDrawerState extends State<ParentDrawer> {
         ),
       ),
     );
+  }
+
+  Widget _buildProfileImage(ParentModel parentData) {
+    return Obx(() {
+      // First try to show local image
+      if (parentController.customAvatarPath.value.isNotEmpty) {
+        return Container(
+          height: 100.h,
+          width: 100.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: FileImage(File(parentController.customAvatarPath.value)),
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      }
+      // Then try to show network image
+      else if (parentController.networkImageUrl.value.isNotEmpty) {
+        return Container(
+          height: 100.h,
+          width: 100.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: NetworkImage(parentController.networkImageUrl.value),
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      }
+      // Finally, show default image
+      else {
+        return SvgPicture.asset(
+          AppAssets.drawerIconSvg,
+          height: 100.h,
+          width: 100.w,
+        );
+      }
+    });
   }
 }
 
