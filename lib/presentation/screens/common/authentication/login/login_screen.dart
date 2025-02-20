@@ -1,18 +1,20 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/light_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/portrait_orientation.dart';
+import 'package:coin_kids/presentation/components/common/AppButton.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/signup_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../../app_assets.dart';
-import '../../../../../core/theme/color_theme.dart';
-import '../../../../../core/theme/light_theme.dart';
-import '../../../../../core/theme/text_theme.dart';
-import '../../../../../core/utils/portrait_orientation.dart';
-import '../../../../components/common/AppButton.dart';
-import '../../../../components/parent/custom_text_field.dart';
-import '../parent_signup/signup_screen.dart';
+
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -119,19 +121,16 @@ class LoginScreen extends StatelessWidget {
                     // Login Button
                     AppButton(
                       backgroundColor: AppColors.buttonPrimary,
-                      // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-
-                      // color: firebaseAuthController.isButtonEnabled.value
-                      //     ? CustomThemeData().primaryButtonColor
-                      //     : Colors.grey,
-                      text: 'Login',
+                      text: firebaseAuthController.isEmailLoading.value ? 'Logging in...' : 'Login',
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
-                          await firebaseAuthController.loginWithEmail();
-
-                          // Form is valid
+                          try {
+                            await firebaseAuthController.loginWithEmail();
+                          } catch (e) {
+                            ToastUtil.showToast("Login failed: $e");
+                          }
                         } else {
-                          Get.log("Form has errors");
+                          ToastUtil.showToast("Please fill all required fields correctly");
                         }
                       },
                     ),
@@ -143,7 +142,7 @@ class LoginScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Don’t have account? ",
+                          "Don't have account? ",
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!

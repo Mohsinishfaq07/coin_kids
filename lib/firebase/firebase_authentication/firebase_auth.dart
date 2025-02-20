@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
 import 'package:coin_kids/data/local_services/databse_helper.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +16,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../presentation/controllers/parent/add_child_controller.dart';
- import '../../presentation/screens/common/authentication/login/login_screen.dart';
+import '../../presentation/screens/common/authentication/login/login_screen.dart';
 import '../../presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
 import '../../presentation/screens/parent/home_screen/parent_home_screen.dart';
 
@@ -209,11 +211,31 @@ class FirebaseAuthController extends GetxController {
                 title: "loading..",
               ));
 
+      // First authenticate with Firebase
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: email.value, password: password.value);
 
-      Get.offAll(RoleSelectionScreen());
+      if (credential.user != null) {
+        // Fetch parent data using ParentService
+        final ParentService _parentService = Get.find<ParentService>();
+        final ParentModel? parent = await _parentService.fetchParentData();
+
+        if (parent != null) {
+          // Update controller values
+          parentName.value = parent.name;
+          birthday.value = DateFormat('d MMM, y').format(parent.dob);
+          selectedGender.value = parent.gender;
+
+          // Save credentials locally
+          await saveInfoLocally(email.value, password.value);
+
+          Get.offAll(RoleSelectionScreen());
+        } else {
+          Get.back();
+          ToastUtil.showToast("No parent profile found.");
+        }
+      }
     } on FirebaseAuthException catch (e) {
       isEmailLoading.value = false;
       if (e.code == 'user-not-found') {
@@ -240,6 +262,8 @@ class FirebaseAuthController extends GetxController {
       ToastUtil.showToast(
         "Failed to login. Please try again later.",
       );
+    } finally {
+      isEmailLoading.value = false;
     }
   }
 
