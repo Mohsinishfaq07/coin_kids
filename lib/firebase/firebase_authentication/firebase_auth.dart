@@ -1,23 +1,21 @@
-// signup_controller.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/dialogues/custom_dialogues.dart';
-import 'package:coin_kids/features/databse_helper/databse_helper.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/main_screens/kid_home_screen.dart';
-import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/parent_signup/signup_model.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/pages/roles/parents/authentication/login/login_screen.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_screen.dart';
-import 'package:coin_kids/pages/roles/role_selection_screen.dart';
+import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
+import 'package:coin_kids/data/local_services/databse_helper.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
+import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import '../../presentation/controllers/parent/add_child_controller.dart';
+import '../../presentation/controllers/parent/parent_home_controller.dart';
+import '../../presentation/screens/common/authentication/login/login_screen.dart';
+import '../../presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
+import '../../presentation/screens/parent/home_screen/parent_home_screen.dart';
 
 class FirebaseAuthController extends GetxController {
   final ParentController homeController = Get.put(ParentController());

@@ -1,21 +1,19 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/dialogues/custom_dialogues.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/custom_widgets/toast_widget.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/kid_controller.dart';
-import 'package:coin_kids/pages/roles/parents/add_child/add_child_controller.dart';
-import 'package:coin_kids/pages/roles/parents/bottom_navigationbar/home_screen/parent_home_controller.dart';
-import 'package:coin_kids/theme/color_theme.dart';
+import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '../../dialogues/transfer_dialog.dart';
+import '../../presentation/controllers/parent/add_child_controller.dart';
+import '../../presentation/controllers/parent/parent_home_controller.dart';
+import '../../presentation/dialogs/kid/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();

@@ -1,8 +1,9 @@
-import 'package:coin_kids/bindings/controller_bindings.dart';
-import 'package:coin_kids/constants/constants.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/landscape_orientation.dart';
-import 'package:coin_kids/pages/roles/kid_landscape_section/common_funcitons.dart/portrait_orientation.dart';
-import 'package:coin_kids/theme/light_theme.dart';
+import 'package:coin_kids/core/utils/portrait_orientation.dart';
+import 'package:coin_kids/di/controller_bindings.dart';
+import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/core/utils/landscape_orientation.dart';
+import 'package:coin_kids/core/theme/light_theme.dart';
+import 'package:coin_kids/presentation/screens/common/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'firebase_options.dart';
-import 'pages/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
