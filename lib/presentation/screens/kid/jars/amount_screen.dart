@@ -3,7 +3,7 @@ import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+ import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/jars/add_money.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -28,7 +28,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
    @override
   void initState() {
     super.initState();
-    parentController.fetchParentDetails();
+    //parentController.fetchParentDetails();
     parentController.fetchKids();
   }
   void _startShowCase(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+ import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';

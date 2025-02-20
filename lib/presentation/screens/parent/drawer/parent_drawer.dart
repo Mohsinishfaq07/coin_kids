@@ -3,14 +3,15 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/presentation/controllers/parent/bottom_navigationbar_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/update_profile.dart';
-
+import 'package:coin_kids/data/remote_services/parent_service.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
 
 class ParentDrawer extends StatefulWidget {
   @override
@@ -18,14 +19,16 @@ class ParentDrawer extends StatefulWidget {
 }
 
 class _ParentDrawerState extends State<ParentDrawer> {
+  final parentController =
+      Get.put(ParentController());
+  final ParentService _parentService = Get.find<ParentService>();
+  final RxBool isLoading = false.obs;
+
   @override
   void initState() {
     super.initState();
-    bottomNavigationBarController.loadAvatarFromPreferences();
+    parentController.loadAvatarFromPreferences();
   }
-
-  final bottomNavigationBarController =
-      Get.put(ParentNavigationBarController());
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +44,12 @@ class _ParentDrawerState extends State<ParentDrawer> {
             padding: EdgeInsets.only(top: 46.h),
             child: SvgPicture.asset(
               AppAssets.cloudImageSvg,
-              // height: 252.h,
               width: 360.w,
             ),
           ),
         ),
-        StreamBuilder(
-            stream:
-                firestoreOperations.parentFirebaseFunctions.fetchParentData(),
+        FutureBuilder<ParentModel?>(
+            future: _parentService.fetchParentData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -62,18 +63,17 @@ class _ParentDrawerState extends State<ParentDrawer> {
                 return const Center(child: Text('No data found.'));
               }
 
-              Map<String, dynamic> data = snapshot.data!;
-              firebaseAuthController.username.value = data['name'];
-              firebaseAuthController.birthday.value = data['dob'];
-              firebaseAuthController.selectedGender.value = data['gender'];
-              return drawerWidget(parentData: data);
+              final ParentModel parentData = snapshot.data!;
+              return drawerWidget(parentData: parentData);
             }),
       ]),
     ));
   }
 
   // after data fetched widget
-  drawerWidget({required Map<String, dynamic> parentData}) {
+  Widget drawerWidget({required ParentModel parentData}) {
+    final String formattedDob = DateFormat('d MMM, y').format(parentData.dob);
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -86,9 +86,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 30.h,
-                  ),
+                  SizedBox(height: 30.h),
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
@@ -103,7 +101,6 @@ class _ParentDrawerState extends State<ParentDrawer> {
                             color: AppColors.textPrimary,
                           ),
                           margin: EdgeInsets.all(12.r),
-                          // padding: EdgeInsets.all(12.r),
                           child: const Center(
                             child: Icon(
                               Icons.logout,
@@ -116,9 +113,8 @@ class _ParentDrawerState extends State<ParentDrawer> {
                     alignment: Alignment.bottomRight,
                     children: [
                       Obx(() {
-                        if (bottomNavigationBarController
+                        if (parentController
                             .customAvatarPath.value.isNotEmpty) {
-                          // Show the selected image
                           return Container(
                             height: 100.h,
                             width: 100.w,
@@ -126,14 +122,13 @@ class _ParentDrawerState extends State<ParentDrawer> {
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                 image: FileImage(File(
-                                    bottomNavigationBarController
+                                    parentController
                                         .customAvatarPath.value)),
                                 fit: BoxFit.cover,
                               ),
                             ),
                           );
                         } else {
-                          // Show the default SVG
                           return SvgPicture.asset(
                             AppAssets.drawerIconSvg,
                             height: 100.h,
@@ -144,11 +139,11 @@ class _ParentDrawerState extends State<ParentDrawer> {
                       GestureDetector(
                         onTap: () async {
                           showImageSourceBottomSheet(onCameraTap: () {
-                            Get.back(); // Close the bottom sheet
-                            bottomNavigationBarController.pickFromCamera();
+                            Get.back();
+                            parentController.pickFromCamera();
                           }, onGalleryTap: () {
-                            Get.back(); // Close the bottom sheet
-                            bottomNavigationBarController.pickUpFromGallery();
+                            Get.back();
+                            parentController.pickUpFromGallery();
                           });
                         },
                         child: CircleAvatar(
@@ -161,7 +156,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "${parentData['name']}",
+                    parentData.name,
                     style: AppTextStyle.headingLarge.copyWith(
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
@@ -174,7 +169,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
 
             // My Profile Section
             _buildSectionHeader("My Profile", onEdit: () {
-              Get.to(() => ParentUpdateProfileScreen(
+              Get.to(() => UpdateParentProfile(
                     parentData: parentData,
                   ));
             }),
@@ -200,17 +195,13 @@ class _ParentDrawerState extends State<ParentDrawer> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildProfileRow("Full name", "${parentData['name']}",
+                    _buildProfileRow("Full name", parentData.name,
                         "assets/drawer_svgs/3p.svg"),
-                    SizedBox(
-                      height: 26.h,
-                    ),
-                    _buildProfileRow("Date of birth", "${parentData['dob']}",
+                    SizedBox(height: 26.h),
+                    _buildProfileRow("Date of birth", formattedDob,
                         "assets/drawer_svgs/calendar_month.svg"),
-                    SizedBox(
-                      height: 26.h,
-                    ),
-                    _buildProfileRow("Gender", "${parentData['gender']}",
+                    SizedBox(height: 26.h),
+                    _buildProfileRow("Gender", parentData.gender,
                         "assets/drawer_svgs/wc.svg"),
                   ],
                 ),
@@ -284,13 +275,13 @@ class _ParentDrawerState extends State<ParentDrawer> {
                     _buildToggleRow(
                       "Goal Achievement",
                       "assets/drawer_svgs/flag_check.svg",
-                      bottomNavigationBarController
+                      parentController
                           .toggleValue, // Reactive state
                     ),
                     _buildToggleRow(
                       "Money Request",
                       "assets/drawer_svgs/euro.svg",
-                      bottomNavigationBarController
+                      parentController
                           .toggleValue1, // Reactive state
                     ),
                   ],

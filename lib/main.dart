@@ -11,11 +11,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'firebase_options.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // Automatically generated options
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   controllerAndClassInitialization();
 
@@ -32,7 +35,7 @@ void main() async {
   );
 
   runApp(ShowCaseWidget(
-    builder: (context) => MyApp(),
+    builder: (context) => const MyApp(),
   ));
 }
 

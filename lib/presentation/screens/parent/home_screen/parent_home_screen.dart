@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
-import 'package:coin_kids/presentation/controllers/parent/bottom_navigationbar_controller.dart';
+import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:coin_kids/presentation/screens/parent/add_child/add_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/all_childs/all_children_page.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer.dart';
-
 import 'package:coin_kids/presentation/screens/parent/kid_profile_management_page.dart';
 import 'package:coin_kids/presentation/components/common/App_small_button.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
@@ -17,7 +17,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-  
+
+
 class ParentsHomeScreen extends StatefulWidget {
   const ParentsHomeScreen({super.key});
 
@@ -26,20 +27,19 @@ class ParentsHomeScreen extends StatefulWidget {
 }
 
 class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
-  final   parentController =
-      Get.put(ParentController());
+  final ParentController parentController = Get.put(ParentController());
+  final ParentService _parentService = Get.find<ParentService>();
 
-  final bottomNavigationBarController =
-      Get.put(ParentNavigationBarController());
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      parentController.fetchParentDetails();
       parentController.fetchKids();
-      bottomNavigationBarController.loadAvatarFromPreferences();
+      parentController.loadAvatarFromPreferences();
     });
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
         appBar: AppBar(
           toolbarHeight: 60.h,
           systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor:
-                Colors.transparent, // Make the status bar transparent
+            statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.dark,
           ),
           elevation: 0,
@@ -61,30 +60,24 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                 onTap: () {
                   Get.to(
                     ParentDrawer(),
-                    transition:
-                        Transition.leftToRightWithFade, // Custom transition
-                    duration:
-                        const Duration(milliseconds: 300), // Animation duration
+                    transition: Transition.leftToRightWithFade,
+                    duration: const Duration(milliseconds: 300),
                   );
                 },
                 child: Obx(() {
-                  if (bottomNavigationBarController
-                      .customAvatarPath.value.isNotEmpty) {
-                    // Show the selected image
+                  if (parentController.customAvatarPath.value.isNotEmpty) {
                     return Container(
                       height: 40.h,
                       width: 40.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: FileImage(File(bottomNavigationBarController
-                              .customAvatarPath.value)),
+                          image: FileImage(File(parentController.customAvatarPath.value)),
                           fit: BoxFit.cover,
                         ),
                       ),
                     );
                   } else {
-                    // Show the default SVG
                     return SvgPicture.asset(
                       AppAssets.drawerIconSvg,
                       height: 40.h,
@@ -97,15 +90,40 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() => Text(
-                        parentController.parentName.value,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge!
-                            .copyWith(fontSize: 18.sp),
-                      )),
-                  Text("Welcome 👋",
-                      style: Theme.of(context).textTheme.bodySmall)
+                  Obx(() {
+                    if (parentController.isLoading.value) {
+                      return Text('Loading...', 
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp)
+                      );
+                    }
+                    return FutureBuilder<ParentModel?>(
+                      future: _parentService.fetchParentData(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text('Loading...', 
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp)
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Error loading name', 
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp)
+                          );
+                        }
+                        final parent = snapshot.data;
+                        // Update the controller's parent name
+                        if (parent != null) {
+                          parentController.parentName.value = parent.name;
+                        }
+                        return Text(
+                          parentController.parentName.value.isNotEmpty 
+                            ? parentController.parentName.value 
+                            : parent?.name ?? 'Welcome',
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
+                        );
+                      },
+                    );
+                  }),
+                  Text("Welcome 👋", style: Theme.of(context).textTheme.bodySmall)
                 ],
               ),
             ],

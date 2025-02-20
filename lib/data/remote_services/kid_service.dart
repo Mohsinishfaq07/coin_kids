@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 import '../models/kid_model.dart';
 
 class KidService {
@@ -10,8 +9,9 @@ class KidService {
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
     try {
-      final DocumentSnapshot doc = await _firestore.collection('kids').doc(kidId).get();
-      
+      final DocumentSnapshot doc =
+          await _firestore.collection('kids').doc(kidId).get();
+
       if (!doc.exists) {
         return null;
       }
@@ -104,7 +104,7 @@ class KidService {
 
       final kidData = kidDoc.data() as Map<String, dynamic>;
       final wallet = kidData['wallet'] as Map<String, dynamic>;
-      
+
       // Get current balances
       final fromBalance = (wallet[fromJar]?['balance'] ?? 0.0) as double;
       final toBalance = (wallet[toJar]?['balance'] ?? 0.0) as double;
@@ -156,4 +156,4 @@ class KidService {
       throw Exception('Failed to update grade: ${e.toString()}');
     }
   }
-} 
+}

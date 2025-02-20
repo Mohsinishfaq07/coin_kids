@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
+ import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
@@ -6,26 +7,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../controllers/parent/bottom_navigationbar_controller.dart'; // Adjust this import as needed
 
 class ParentBottomNavigationBar extends StatelessWidget {
   ParentBottomNavigationBar({super.key});
-  final controller = Get.put(ParentNavigationBarController());
+  final parentController = Get.put(ParentController());
 
   @override
   Widget build(BuildContext context) {
     PortraitOrientation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.currentIndex.value != 0) {
-        controller.currentIndex.value = 0;
+      if (parentController.currentIndex.value != 0) {
+        parentController.currentIndex.value = 0;
       }
     });
 
     return WillPopScope(
       onWillPop: () async {
-        if (controller.currentIndex.value != 0) {
-          controller.currentIndex.value = 0;
+        if (parentController.currentIndex.value != 0) {
+          parentController.currentIndex.value = 0;
 
           return false;
         }
@@ -39,12 +39,12 @@ class ParentBottomNavigationBar extends StatelessWidget {
               gradient: AppColors.background,
             ),
             child:
-                Obx(() => controller.screens[controller.currentIndex.value])),
+                Obx(() => parentController.screens[parentController.currentIndex.value])),
         bottomNavigationBar: Obx(() {
           return BottomNavigationBar(
             backgroundColor: Colors.white,
             elevation: 15,
-            currentIndex: controller.currentIndex.value,
+            currentIndex: parentController.currentIndex.value,
             onTap: (index) {
               if (index == 3) {
                 showKidsZoneDialog(
@@ -56,7 +56,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
                   subLabel: 'Lets start your kids financial journey',
                 );
               } else {
-                controller.currentIndex.value = index;
+                parentController.currentIndex.value = index;
               }
             },
             type: BottomNavigationBarType.fixed,
@@ -102,7 +102,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
         height: 24.h,
         color: index == 3 // Check if it's the Kid Zone index
             ? null // No color assigned for Kid Zone icon
-            : (controller.currentIndex.value == index
+            : (parentController.currentIndex.value == index
                 ? Colors.purple
                 : Colors.grey),
       ),

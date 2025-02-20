@@ -1,36 +1,44 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/components/parent/message_placeholder_screen.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/shop/shop.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
-import '../../screens/parent/home_screen/parent_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParentController extends GetxController {
-  var parentId = ''
-      .obs; // Parent ID (can be passed dynamically or fetched from authentication)
-  var kidsList = [].obs; // List to store kids data
-  var isLoading = true.obs;
-  var parentName = ''.obs; // Observable to hold the parent's name
-  var kidName = ''.obs; //
+
+  final RxBool isLoading = false.obs;
+  final ParentService _parentService = ParentService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  
+  var parentId = ''.obs;
+  var kidsList = [].obs;
+  var parentName = ''.obs;
+  var kidName = ''.obs;
+  
+  Rx<ParentModel?> currentParent = Rx<ParentModel?>(null);
+  
   RxString selectedChildIdForQuickTransfer = ''.obs;
   RxString selectedChildNameForQuickTransfer = ''.obs;
 
-  // controller values  for parent quick transfer
+  // controller values for parent quick transfer
   RxString amount = ''.obs;
   RxString message = ''.obs;
   RxString amountValidation = ''.obs;
 
-  // Add any controller logic if needed (e.g., API calls, navigation)
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchParentDetails();
-    // fetchKids();
-  }
 
   Future<bool> fetchKids() async {
     // Get.log('kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
@@ -81,61 +89,30 @@ class ParentController extends GetxController {
     }
   }
 
-  void fetchParentDetails() async {
+  Future<void> updateParentProfile({required ParentModel originalParent}) async {
     try {
-      isLoading.value = true; // Start loading
+      isLoading.value = true;
 
-      // Get the currently logged-in user's email
-      final email = FirebaseAuth.instance.currentUser?.email;
+      final updatedParent = originalParent.copyWith(
+        name: firebaseAuthController.parentName.value,
+        dob: DateFormat('d MMM, y').parse(firebaseAuthController.birthday.value),
+        gender: firebaseAuthController.selectedGender.value,
+      );
 
-      if (email != null) {
-        // Fetch parent document from Firestore
-        final parentDoc =
-            await _firestore.collection('parents').doc(email).get();
-
-        if (parentDoc.exists) {
-          final parent = ParentModelClass.fromFirestore(parentDoc);
-          parentName.value = parent.name ?? 'Guest';
-        } else {
-          parentName.value = 'Guest';
-        }
-      }
+      await _parentService.updateParent(updatedParent);
+      
+      // Update the current parent data
+      currentParent.value = updatedParent;
+      parentName.value = updatedParent.name;
+      
+      ToastUtil.showToast('Profile updated successfully');
+      Get.back();
     } catch (e) {
-      ToastUtil.showToast("Failed to fetch parent details: $e");
+      ToastUtil.showToast('Failed to update profile: $e');
     } finally {
-      isLoading.value = false; // Stop loading
+      isLoading.value = false;
     }
   }
-
-  // void fetchKidDetails() async {
-  //   try {
-  //     isLoading.value = true; // Start loading
-  //
-  //     // Get the currently logged-in user's email
-  //     final email = FirebaseAuth.instance.currentUser?.email;
-  //
-  //     if (email != null) {
-  //       // Fetch kid document from Firestore
-  //       final kidDoc = await _firestore.collection('kids').doc(email).get();
-  //
-  //       if (kidDoc.exists && kidDoc.data() != null) {
-  //         // Convert Firestore document to KidModelClass
-  //         final kidDetails = KidModelClass.fromMap(kidDoc.data()!);
-  //
-  //         kidName.value = kidDetails.name;
-  //       } else {
-  //         // Document does not exist or is null
-  //         kidName.value = 'Kid';
-  //       }
-  //     } else {
-  //       ToastUtil.showToast("User is not logged in");
-  //     }
-  //   } catch (e) {
-  //     ToastUtil.showToast("Failed to fetch kid details: $e");
-  //   } finally {
-  //     isLoading.value = false; // Stop loading
-  //   }
-  // }
 
   var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
@@ -193,45 +170,101 @@ class ParentController extends GetxController {
     }
   }
 
-// Future<void> getParentDataForKidGoals(String parentId) async {
-//   try {
-//     // Fetch the parent document
-//     DocumentSnapshot parentDoc = await FirebaseFirestore.instance
-//         .collection('parents')
-//         .doc(parentId)
-//         .get();
 
-//     if (parentDoc.exists) {
-//       Map<String, dynamic> parentData = parentDoc.data() as Map<String, dynamic>;
 
-//       // Get the 'kids' field which is a list of references
-//       List kidsReferences = parentData['kids'];
 
-//       // Get the first kid reference (or handle if there are multiple)
-//       if (kidsReferences.isNotEmpty) {
-//         DocumentReference kidRef = kidsReferences[0];
 
-//         // Fetch the kid document using the reference
-//         DocumentSnapshot kidDoc = await kidRef.get();
-//         if (kidDoc.exists) {
-//           Map<String, dynamic> kidData = kidDoc.data() as Map<String, dynamic>;
 
-//           // Now you can pass the kid data further
-//           String kidId = kidDoc.id; // Kid ID
-//           String kidName = kidData['name']; // Example of passing kid's name
+  var currentIndex = 0.obs;
+  var toggleValue = true.obs;
+  var toggleValue1 = true.obs;
 
-//           print('Kid ID: $kidId, Kid Name: $kidName');
-//         } else {
-//           print('Kid document not found');
-//         }
-//       } else {
-//         print('No kids found in the parent data');
-//       }
-//     } else {
-//       print('Parent document not found');
-//     }
-//   } catch (e) {
-//     print('Error: $e');
-//   }
-// }
+  final List<Widget> screens = [
+    const ParentsHomeScreen(),
+    const MessagePlaceholderScreen(),
+    ShopScreen(),
+    //KidZoneScreen(),
+  ];
+
+  Future<void> loadAvatarFromPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedPath = prefs.getString('profileImagePath');
+
+    if (storedPath != null && storedPath.isNotEmpty) {
+      customAvatarPath.value = storedPath;
+    }
+  }
+
+  var selectedAvatar = 0.obs;
+
+  var customAvatarPath = ''.obs;
+
+  final selectedAvatarPath = ''.obs;
+
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickUpFromGallery() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (pickedFile != null) {
+        final String localPath = await saveImageLocally(File(pickedFile.path));
+        // customAvatarPath.value = localPath;
+        // selectedAvatarPath.value = '';
+        customAvatarPath.value = localPath;
+
+        // Save the image path in Firestore
+        // await FirebaseFirestore.instance
+        //     .collection('parent') // Parent collection
+        //     .doc(firebaseAuthController
+        //         .email.value) // Replace with actual user ID
+        //     .update({'image': localPath});
+
+        // Save the image path in SQLite
+        // await DatabaseHelper.instance.insertImage(localPath);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profileImagePath', localPath);
+
+        ToastUtil.showToast("Image saved locally.");
+      } else {}
+    } catch (e) {
+      ToastUtil.showToast("Failed to pick and save image: $e");
+    }
+  }
+
+  Future<void> pickFromCamera() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+
+      if (pickedFile != null) {
+        final String localPath = await saveImageLocally(File(pickedFile.path));
+        customAvatarPath.value = localPath;
+
+        // Save the image path in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profileImagePath', localPath);
+      }
+    } catch (e) {
+      ToastUtil.showToast("Failed to capture and save image: $e");
+    }
+  }
+
+  // Save the image locally
+  Future<String> saveImageLocally(File image) async {
+    try {
+      final Directory appDir = await getApplicationDocumentsDirectory();
+      final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final File localImage = await image.copy('${appDir.path}/$fileName.jpg');
+      return localImage.path; // Return the local path
+    } catch (e) {
+      ToastUtil.showToast("Failed to save image locally: $e");
+      rethrow;
+    }
+  }
 }

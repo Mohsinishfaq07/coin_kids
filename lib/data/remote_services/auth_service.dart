@@ -1,9 +1,9 @@
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:get/get.dart';
 import 'parent_service.dart';
-import '../models/parent_model.dart';
 
 class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -45,7 +45,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
     super.initState();
     addMoneyController.fetchSpendingAmount();
     addMoneyController.fetchSavingAmount();
-    parentController.fetchParentDetails();
+   // parentController.fetchParentDetails();
     parentController.fetchKids();
   }
 
@@ -541,9 +541,9 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                 width: 20.w,
                               ),
                               DragTarget<String>(
-                                onAccept: (data) {
+                                onAcceptWithDetails: (data) {
                                   addMoneyController.onNoteDropped(
-                                      data); // Update total value
+                                      data.data); // Update total value
                                 },
                                 builder:
                                     (context, candidateData, rejectedData) {

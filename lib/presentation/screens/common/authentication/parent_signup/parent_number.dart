@@ -67,7 +67,7 @@ class ParentNumber extends StatelessWidget {
               CustomTextField(
                 hintText: 'Username',
                 onChanged: (value) =>
-                    firebaseAuthController.username.value = value,
+                    firebaseAuthController.parentName.value = value,
                 titleText: 'Username',
               ),
               const SizedBox(height: 20),

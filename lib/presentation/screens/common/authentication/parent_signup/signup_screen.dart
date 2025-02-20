@@ -4,17 +4,13 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/signup_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
-
 
 class SignupScreen extends StatelessWidget {
   SignupScreen({super.key});
@@ -28,7 +24,7 @@ class SignupScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        appBar:  CustomAppBar(
+        appBar: CustomAppBar(
           backgroundColor: Color(0xFFCAF0FF),
           title: "Let's Get Start!",
           showBackButton: false,
@@ -51,7 +47,7 @@ class SignupScreen extends StatelessWidget {
                     CustomTextField(
                       hintText: 'Full Name',
                       onChanged: (value) {
-                        firebaseAuthController.username.value = value.trim();
+                        firebaseAuthController.parentName.value = value.trim();
                         firebaseAuthController
                             .signUpCheckField(); // Check fields on change
                       },
@@ -95,7 +91,7 @@ class SignupScreen extends StatelessWidget {
                       return CustomTextField(
                         hintText: 'Password',
                         onChanged: (value) {
-                          firebaseAuthController.pin.value = value.trim();
+                          firebaseAuthController.password.value = value.trim();
                           firebaseAuthController
                               .signUpCheckField(); // Check fields on change
                         },
@@ -123,7 +119,7 @@ class SignupScreen extends StatelessWidget {
                         child: CustomTextField(
                             hintText: 'Confirm Password',
                             onChanged: (value) {
-                              firebaseAuthController.confirmPin.value =
+                              firebaseAuthController.confirmPassword.value =
                                   value.trim();
                               firebaseAuthController
                                   .signUpCheckField(); // Check fields on change
@@ -145,7 +141,8 @@ class SignupScreen extends StatelessWidget {
                               if (value == null || value.isEmpty) {
                                 return "Confirm Password is required";
                               }
-                              if (value != firebaseAuthController.pin.value) {
+                              if (value !=
+                                  firebaseAuthController.password.value) {
                                 return "Passwords do not match";
                               }
                               if (value.length < 6) {
@@ -165,16 +162,6 @@ class SignupScreen extends StatelessWidget {
                           if (_formKey.currentState?.validate() ?? false) {
                             // If the form is valid, proceed with the signup action
                             try {
-                              // ParentModel signupData = ParentModel(
-                              //   name: firebaseAuthController.username.value,
-                              //   email: firebaseAuthController.email.value,
-                              //   password: firebaseAuthController.pin.value,
-                              //   gender:
-                              //       firebaseAuthController.selectedGender.value,
-                              //   dob: firebaseAuthController.birthday.value,
-                              //   kids: [],
-                              //   createdAt: '',
-                              // );
                               firebaseAuthController.signUpWithEmail();
                             } catch (e) {
                               print("Error: $e");

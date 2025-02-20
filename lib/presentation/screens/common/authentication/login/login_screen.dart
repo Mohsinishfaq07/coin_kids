@@ -75,7 +75,7 @@ class LoginScreen extends StatelessWidget {
                       return CustomTextField(
                         hintText: 'Password',
                         onChanged: (value) {
-                          firebaseAuthController.pin.value = value.trim();
+                          firebaseAuthController.password.value = value.trim();
                           firebaseAuthController
                               .checkFields(); // Check fields on change
                         },
@@ -92,6 +92,7 @@ class LoginScreen extends StatelessWidget {
                           if (value == null || value.isEmpty) {
                             return "Password is required";
                           }
+                          return null;
                         },
                         titleText: 'Password',
                       );

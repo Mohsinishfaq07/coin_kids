@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
@@ -12,8 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../presentation/controllers/parent/add_child_controller.dart';
-import '../../presentation/controllers/parent/parent_home_controller.dart';
-import '../../presentation/dialogs/kid/transfer_dialog.dart';
+ import '../../presentation/dialogs/kid/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
@@ -31,29 +31,29 @@ class ParentFirebaseFunctions {
   final KidsOnBoardingController kidsOnBoardingController =
       Get.put(KidsOnBoardingController());
   // fetch the details of parent
-  Stream<Map<String, dynamic>?> fetchParentData() {
-    try {
-      String? userEmail = FirebaseAuth.instance.currentUser?.email;
+  // Stream<Map<String, dynamic>?> fetchParentData() {
+  //   try {
+  //     String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
-      if (userEmail == null) {
-        return Stream.value(null);
-      }
+  //     if (userEmail == null) {
+  //       return Stream.value(null);
+  //     }
 
-      DocumentReference parentDocRef =
-          FirebaseFirestore.instance.collection('parents').doc(userEmail);
+  //     DocumentReference parentDocRef =
+  //         FirebaseFirestore.instance.collection('parents').doc(userEmail);
 
-      return parentDocRef.snapshots().map((docSnapshot) {
-        if (docSnapshot.exists) {
-          return docSnapshot.data() as Map<String, dynamic>?;
-        } else {
-          return null;
-        }
-      });
-    } catch (e) {
-      Get.log('Error fetching document fields: $e');
-      return Stream.value(null); // Return an empty stream on error
-    }
-  }
+  //     return parentDocRef.snapshots().map((docSnapshot) {
+  //       if (docSnapshot.exists) {
+  //         return docSnapshot.data() as Map<String, dynamic>?;
+  //       } else {
+  //         return null;
+  //       }
+  //     });
+  //   } catch (e) {
+  //     Get.log('Error fetching document fields: $e');
+  //     return Stream.value(null); // Return an empty stream on error
+  //   }
+  // }
 
   Stream<Map<String, dynamic>?> fetchKidData() {
     try {
@@ -106,13 +106,14 @@ class ParentFirebaseFunctions {
             .collection('parents')
             .doc(user.email)
             .update({
-          'name': firebaseAuthController.username.value,
+          'name': firebaseAuthController.parentName.value,
           'dob': firebaseAuthController.birthday.value,
           'gender': firebaseAuthController.selectedGender.value.isNotEmpty
               ? firebaseAuthController.selectedGender.value
               : 'Not specified',
         });
-        homeController.parentName.value = firebaseAuthController.username.value;
+        homeController.parentName.value =
+            firebaseAuthController.parentName.value;
         Get.back();
         ToastUtil.showToast(
           "Profile updated successfully!",

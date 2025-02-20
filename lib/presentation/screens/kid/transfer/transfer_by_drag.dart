@@ -536,9 +536,9 @@ class _TransferByDragState extends State<TransferByDrag> {
                                 width: 20.w,
                               ),
                               DragTarget<String>(
-                                onAccept: (data) {
+                                onAcceptWithDetails: (data) {
                                   addMoneyController.onNoteDropped(
-                                      data); // Update total value
+                                      data.data); // Update total value
                                 },
                                 builder:
                                     (context, candidateData, rejectedData) {

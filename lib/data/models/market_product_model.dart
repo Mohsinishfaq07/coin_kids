@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class MarketProductModel {
   final String? id; // Optional for new products
   final String name;
@@ -86,10 +84,10 @@ class MarketProductModel {
   String get ratingStars {
     final fullStars = rating.floor();
     final hasHalfStar = (rating - fullStars) >= 0.5;
-    
+
     String stars = '★' * fullStars;
     if (hasHalfStar) stars += '½';
-    
+
     return stars;
   }
-} 
+}

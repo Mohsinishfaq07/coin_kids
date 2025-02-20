@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/data/local_services/databse_helper.dart';
 import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/screens/common/intro/intro_screen.dart';
+import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
+import 'package:coin_kids/presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../screens/common/intro/intro_screen.dart';
-import '../../screens/kid/home/kid_home_screen.dart';
-import '../../screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
-import '../../screens/parent/home_screen/parent_home_screen.dart';
-import '../parent/parent_home_controller.dart';
 
 class SplashController extends GetxController {
   final FirebaseAuthController firebaseAuthController =
@@ -34,70 +34,70 @@ class SplashController extends GetxController {
   }
 
   void _checkLoginStatus() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // Simulate a splash screen delay (3 seconds)
-  await Future.delayed(const Duration(seconds: 2));
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Simulate a splash screen delay (3 seconds)
+    await Future.delayed(const Duration(seconds: 2));
 
-  // Check if user is already logged in with Firebase
-  final user = FirebaseAuth.instance.currentUser;
-  
-  if (user != null) {
-    // Proceed with the user logic if user is logged in
-    final kidSnapshot = await FirebaseFirestore.instance
-        .collection('kids')
-        .where('parentId', isEqualTo: user.uid)
-        .get();
+    // Check if user is already logged in with Firebase
+    final user = FirebaseAuth.instance.currentUser;
 
-    int? loginAsParent = prefs.getInt("LoggedInAsParent") ?? 0;
-    if (loginAsParent == 1) {
-      bool parentHasKids = await parentController.fetchKids();
-      if (parentHasKids) {
-        Get.off(() => ParentBottomNavigationBar());
-      } else {
-        Get.off(() => const ParentsHomeScreen());
-      }
-    } else if (loginAsParent == 2) {
-      if (kidSnapshot.docs.isNotEmpty) {
-        Get.off(() =>  KidHomeScreen());
+    if (user != null) {
+      // Proceed with the user logic if user is logged in
+      final kidSnapshot = await FirebaseFirestore.instance
+          .collection('kids')
+          .where('parentId', isEqualTo: user.uid)
+          .get();
+
+      int? loginAsParent = prefs.getInt("LoggedInAsParent") ?? 0;
+      if (loginAsParent == 1) {
+        bool parentHasKids = await parentController.fetchKids();
+        if (parentHasKids) {
+          Get.off(() => ParentBottomNavigationBar());
+        } else {
+          Get.off(() => const ParentsHomeScreen());
+        }
+      } else if (loginAsParent == 2) {
+        if (kidSnapshot.docs.isNotEmpty) {
+          Get.off(() => KidHomeScreen());
+        } else {
+          Get.off(() => KidSectionOnboarding());
+        }
       } else {
         Get.off(() => KidSectionOnboarding());
       }
     } else {
-      Get.off(() => KidSectionOnboarding());
-    }
-  } else {
-    // Handle the case where the user is not logged in
-    await firebaseAuthController.loadCredentials();
-    if (firebaseAuthController.email.isNotEmpty &&
-        firebaseAuthController.pin.isNotEmpty) {
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: firebaseAuthController.email.value,
-          password: firebaseAuthController.pin.value,
-        );
-        // Fetch user role and navigate accordingly after auto-login
-        final isParent =
-            await _checkIfParent(firebaseAuthController.email.value);
-        if (isParent) {
-          if (parentController.kidsList.isNotEmpty) {
-            Get.off(() => ParentBottomNavigationBar());
+      // Handle the case where the user is not logged in
+      await firebaseAuthController.loadCredentials();
+      if (firebaseAuthController.email.isNotEmpty &&
+          firebaseAuthController.password.isNotEmpty) {
+        try {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: firebaseAuthController.email.value,
+            password: firebaseAuthController.password.value,
+          );
+          // Fetch user role and navigate accordingly after auto-login
+          final isParent =
+              await _checkIfParent(firebaseAuthController.email.value);
+          if (isParent) {
+            if (parentController.kidsList.isNotEmpty) {
+              Get.off(() => ParentBottomNavigationBar());
+            } else {
+              Get.off(() => const ParentsHomeScreen());
+            }
           } else {
-            Get.off(() => const ParentsHomeScreen());
+            Get.off(() => KidHomeScreen());
           }
-        } else {
-          Get.off(() =>  KidHomeScreen());
+        } catch (e) {
+          Get.log("Auto-login failed: $e");
+          // Navigate to the Login Screen if auto-login fails
+          Get.off(() => IntroScreen());
         }
-      } catch (e) {
-        Get.log("Auto-login failed: $e");
-        // Navigate to the Login Screen if auto-login fails
+      } else {
+        // Navigate to the Login Screen if no saved credentials
         Get.off(() => IntroScreen());
       }
-    } else {
-      // Navigate to the Login Screen if no saved credentials
-      Get.off(() => IntroScreen());
     }
   }
-}
 
   Future<bool> _checkIfParent(String email) async {
     try {

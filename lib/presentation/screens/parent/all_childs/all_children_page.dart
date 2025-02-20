@@ -6,9 +6,9 @@ import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/components/parent/quick_transfer_text_field.dart';
-
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
 import 'package:coin_kids/data/local_services/databse_helper.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
@@ -12,25 +14,26 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../presentation/controllers/parent/add_child_controller.dart';
-import '../../presentation/controllers/parent/parent_home_controller.dart';
-import '../../presentation/screens/common/authentication/login/login_screen.dart';
+ import '../../presentation/screens/common/authentication/login/login_screen.dart';
 import '../../presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
 import '../../presentation/screens/parent/home_screen/parent_home_screen.dart';
 
 class FirebaseAuthController extends GetxController {
   final ParentController homeController = Get.put(ParentController());
   final AddChildController _addChildController = Get.put(AddChildController());
+  final AuthService _authService = Get.put(AuthService());
   final email = ''.obs;
   final number = ''.obs;
   final birthday = ''.obs;
-  final username = ''.obs;
-  final pin = ''.obs;
-  final confirmPin = "".obs;
+  final parentName = ''.obs;
+  final password = ''.obs;
+  final confirmPassword = "".obs;
   final selectedGender = ''.obs; // "Male" or "Female"
   final isEmailLoading = false.obs;
   final isGoogleLoading = false.obs;
   final isAppleLoading = false.obs;
   final isNormalLoading = false.obs;
+  final parentPin = 0.obs;
   // Reactive state for tracking if fields are filled
   final isButtonEnabled = false.obs;
   final showPassword = true.obs;
@@ -38,15 +41,15 @@ class FirebaseAuthController extends GetxController {
 
   // Update button state whenever a field changes
   void checkFields() {
-    isButtonEnabled.value = email.value.isNotEmpty && pin.value.isNotEmpty;
+    isButtonEnabled.value = email.value.isNotEmpty && password.value.isNotEmpty;
   }
 
   void signUpCheckField() {
-    isButtonEnabled.value = username.isNotEmpty &&
+    isButtonEnabled.value = parentName.isNotEmpty &&
         email.isNotEmpty &&
-        pin.isNotEmpty &&
-        confirmPin.isNotEmpty &&
-        pin == confirmPin;
+        password.isNotEmpty &&
+        confirmPassword.isNotEmpty &&
+        password == confirmPassword;
   }
 
   void setBirthday(DateTime date) {
@@ -61,90 +64,48 @@ class FirebaseAuthController extends GetxController {
 
   Future<void> signUpWithEmail() async {
     try {
-      isEmailLoading.value = true;
+      // Validate only required fields
+      if (email.value.isEmpty ||
+          password.value.isEmpty ||
+          parentName.value.isEmpty) {
+        ToastUtil.showToast('Please fill in email, username, and password');
+        return;
+      }
 
+      isEmailLoading.value = true;
       showDialog(
           context: Get.context!,
           builder: (context) => LoadingProgressDialogueWidget(
                 title: "Sign up..",
               ));
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+
+      // Use AuthService for signup
+      final credential = await _authService.signUpWithEmailPassword(
         email: email.value,
-        password: pin.value,
+        password: password.value,
+        name: parentName.value,
+        dob: DateTime.now(), // Default date, can be updated later
+        gender: selectedGender.value.isEmpty ? '' : selectedGender.value,
+        pin: parentPin.value,
       );
 
-      await saveParentInfo(fieldName: 'email', fieldValue: email.value);
-      saveInfoLocally(email.value, pin.value);
-      // saveUserInfo(fieldName: 'email', fieldValue: email.value);
-      // await saveParentInfoLocally(email.value, pin.value);
-      Get.back(); // Stop loading
-      Get.off(() => RoleSelectionScreen());
-      // Get.offAll(() => BottomNavigationBarScreen());
-    } on FirebaseAuthException catch (e) {
-      Get.back();
-      isEmailLoading.value = false;
-      ToastUtil.showToast("$e");
+      if (credential.user != null) {
+        // Save credentials locally
+        await saveInfoLocally(email.value, password.value);
+
+        ToastUtil.showToast("Account created successfully");
+        Get.back();
+        Get.off(() => RoleSelectionScreen());
+      }
     } catch (e) {
       Get.back();
-      isEmailLoading.value = false;
+      ToastUtil.showToast(e.toString());
       Get.log(e.toString());
+    } finally {
+      isEmailLoading.value = false;
     }
   }
-  // Future<void> signUpWithEmail(SignupModel signupData) async {
-  //   try {
-  //     isEmailLoading.value = true;
 
-  //     showDialog(
-  //       context: Get.context!,
-  //       builder: (context) => LoadingProgressDialogueWidget(
-  //         title: "Sign up..",
-  //       ),
-  //     );
-
-  //     final credential =
-  //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //       email: signupData.email,
-  //       password: signupData.password,
-  //     );
-
-  //     await saveParentInfo(signupData);
-  //   //  saveInfoLocally(signupData.email, signupData.password);
-
-  //     Get.back(); // Stop loading
-  //     Get.off(() => RoleSelectionScreen());
-  //   } on FirebaseAuthException catch (e) {
-  //     Get.back();
-  //     isEmailLoading.value = false;
-  //     ToastUtil.showToast("$e");
-  //   } catch (e) {
-  //     Get.back();
-  //     isEmailLoading.value = false;
-  //     Get.log(e.toString());
-  //   }
-  // }
-
-  // Future<void> saveParentInfo(SignupModel signupData) async {
-  //   try {
-  //     await FirebaseFirestore.instance
-  //         .collection('parents')
-  //         .doc(signupData.email)
-  //         .set({
-  //       'username': signupData.username,
-  //       'email': signupData.email,
-  //       'password': signupData.password,
-  //       'gender': signupData.gender,
-  //       'birthday': signupData.birthday,
-  //       'created_at': DateTime.now().toIso8601String(),
-  //     }, SetOptions(merge: true));
-
-  //     ToastUtil.showToast("Account created");
-  //   } catch (e) {
-  //     Get.log(e.toString());
-  //   }
-  // }
-
-  // save user info
   Future<void> saveParentInfo(
       {required String fieldName, required String fieldValue}) async {
     try {
@@ -153,9 +114,11 @@ class FirebaseAuthController extends GetxController {
           .doc(fieldValue)
           .set({
         fieldName: fieldValue,
-        'name': username.value.isNotEmpty ? username.value : 'Not specified',
+        'name':
+            parentName.value.isNotEmpty ? parentName.value : 'Not specified',
         'dob': birthday.value.isNotEmpty ? birthday.value : 'Not specified',
-        'password': pin.value.isNotEmpty ? pin.value : 'Not specified',
+        'password':
+            password.value.isNotEmpty ? password.value : 'Not specified',
         'gender': selectedGender.value.isNotEmpty
             ? selectedGender.value
             : 'Not specified',
@@ -247,7 +210,8 @@ class FirebaseAuthController extends GetxController {
               ));
 
       final UserCredential credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email.value, password: pin.value);
+          .signInWithEmailAndPassword(
+              email: email.value, password: password.value);
 
       Get.offAll(RoleSelectionScreen());
     } on FirebaseAuthException catch (e) {
@@ -337,7 +301,7 @@ class FirebaseAuthController extends GetxController {
       final credentials = await DatabaseHelper.instance.fetchCredentials();
       if (credentials != null) {
         email.value = credentials['email']!;
-        pin.value = credentials['password']!;
+        password.value = credentials['password']!;
       }
     } catch (e) {
       Get.log("Error loading credentials: $e");

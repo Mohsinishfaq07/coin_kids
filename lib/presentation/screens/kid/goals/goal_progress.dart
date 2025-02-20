@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
@@ -8,7 +7,6 @@ import 'package:coin_kids/presentation/components/kid/goal_completed_screen.dart
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/slider_widget.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/edit_goal.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';

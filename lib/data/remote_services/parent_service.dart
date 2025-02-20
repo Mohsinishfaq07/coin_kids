@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import '../models/parent_model.dart';
 
 class ParentService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -15,8 +14,9 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
-      final DocumentSnapshot doc = await _firestore.collection('parents').doc(userId).get();
-      
+      final DocumentSnapshot doc =
+          await _firestore.collection('parents').doc(userId).get();
+
       if (!doc.exists) {
         return null;
       }
@@ -49,13 +49,14 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
-      await _firestore.collection('parents').doc(userId).update(parent.toJson());
+      await _firestore
+          .collection('parents')
+          .doc(userId)
+          .update(parent.toJson());
     } catch (e) {
       throw Exception('Failed to update parent: ${e.toString()}');
     }
   }
-
-
 
   // Update parent PIN
   Future<void> updatePin(int newPin) async {
@@ -65,9 +66,10 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
-      await _firestore.collection('parents').doc(userId).update({
-        'pin': newPin
-      });
+      await _firestore
+          .collection('parents')
+          .doc(userId)
+          .update({'pin': newPin});
     } catch (e) {
       throw Exception('Failed to update PIN: ${e.toString()}');
     }
@@ -81,7 +83,8 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
-      final DocumentSnapshot doc = await _firestore.collection('parents').doc(userId).get();
+      final DocumentSnapshot doc =
+          await _firestore.collection('parents').doc(userId).get();
       if (!doc.exists) {
         return false;
       }
@@ -92,4 +95,5 @@ class ParentService {
       throw Exception('Failed to verify PIN: ${e.toString()}');
     }
   }
-} 
+
+}

@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final String titleText; // Required title for the field
   final String hintText; // Placeholder for the text field
   final TextEditingController? controller;
+  final String? initialValue;
   final Function(String)? onChanged;
   final IconData? prefixIcon; // Optional prefix icon
   final VoidCallback? onPrefixTap; // Optional callback for prefix icon tap
@@ -26,6 +27,7 @@ class CustomTextField extends StatelessWidget {
     this.isOptional = false,
     required this.titleText, // Title for the field is now required
     required this.hintText,
+    this.initialValue,
     this.prefixIcon,
     this.onPrefixTap,
     this.suffixIcon,
@@ -39,7 +41,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixSvgPath,
     this.nextFocusNode,
     super.key,
-  });
+  }) : assert(controller == null || initialValue == null, 'Cannot provide both a controller and an initialValue');
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +61,7 @@ class CustomTextField extends StatelessWidget {
           // ),
           // const SizedBox(height: 8), // Spacing between title and text field
           TextFormField(
+              initialValue: initialValue,
               textInputAction: nextFocusNode != null
                   ? TextInputAction.next
                   : TextInputAction.done,
