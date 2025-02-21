@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
@@ -14,33 +13,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-class IntroScreen extends StatelessWidget {
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
-  final IntroController _controller = Get.put(IntroController());
-
+class IntroScreen extends GetView<IntroController> {
   IntroScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     PortraitOrientation();
-    const List<Widget> pages = [
-      OnboardingPage(
-        title: "Earn",
-        description: "Give Kids Financial Superpowers",
-        imagePath: 'assets/on_board/anim_onboard_earn.json',
-      ),
-      OnboardingPage(
-        title: "Save",
-        description: "Give Kids Financial Superpowers",
-        imagePath: 'assets/on_board/anim_onboard_save.json',
-      ),
-      OnboardingPage(
-        title: "Spend",
-        description: "Give Kids Financial Superpowers",
-        imagePath: 'assets/on_board/anim_onboard_spend.json',
-      ),
-    ];
 
     return Scaffold(
       body: Container(
@@ -62,15 +40,15 @@ class IntroScreen extends StatelessWidget {
             ),
             Center(
               child: CarouselSlider(
-                items: pages,
-                carouselController: _carouselController,
+                items: controller.pages,
+                carouselController: controller.carouselController,
                 options: CarouselOptions(
                   aspectRatio: 1.0,
                   enableInfiniteScroll: false,
                   enlargeCenterPage: true,
                   viewportFraction: 1.0,
                   onPageChanged: (index, reason) {
-                    _controller.updatePageIndex(index);
+                    controller.updatePageIndex(index);
                   },
                 ),
               ),
@@ -83,7 +61,7 @@ class IntroScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Obx(() {
-                    return _controller.pageIndex.value == pages.length - 1
+                    return controller.pageIndex.value == controller.pages.length - 1
                         ? AppButton(
                             onPressed: () {
                               Get.off(() => SignupScreen());
@@ -96,41 +74,29 @@ class IntroScreen extends StatelessWidget {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _carouselController.animateToPage(
-                                      pages.length - 1,
-                                      duration:
-                                          const Duration(milliseconds: 500),
+                                    controller.carouselController.animateToPage(
+                                      controller.pages.length - 1,
+                                      duration: const Duration(milliseconds: 500),
                                       curve: Curves.ease,
                                     );
                                   },
                                   child: Text(
                                     "Skip",
-                                    style: AppTextStyle.bodyLarge.copyWith(
-                                        color: AppColors.textSecondary),
+                                    style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
                                   ),
                                 ),
                                 Obx(() {
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children:
-                                        List.generate(pages.length, (index) {
+                                    children: List.generate(controller.pages.length, (index) {
                                       return AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4.0),
-                                        width:
-                                            _controller.pageIndex.value == index
-                                                ? 10
-                                                : 10,
+                                        duration: const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        width: controller.pageIndex.value == index ? 10 : 10,
                                         height: 10,
                                         decoration: BoxDecoration(
-                                          color: _controller.pageIndex.value ==
-                                                  index
-                                              ? AppColors.iconPrimary
-                                              : AppColors.iconDisabled,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          color: controller.pageIndex.value == index ? AppColors.iconPrimary : AppColors.iconDisabled,
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
                                       );
                                     }),
@@ -138,10 +104,9 @@ class IntroScreen extends StatelessWidget {
                                 }),
                                 AppIconButton(
                                   onPressed: () {
-                                    _carouselController.animateToPage(
-                                      _controller.pageIndex.value + 1,
-                                      duration:
-                                          const Duration(milliseconds: 500),
+                                    controller.carouselController.animateToPage(
+                                      controller.pageIndex.value + 1,
+                                      duration: const Duration(milliseconds: 500),
                                       curve: Curves.ease,
                                     );
                                   },
@@ -187,16 +152,13 @@ class OnboardingPage extends StatelessWidget {
           SizedBox(height: 15.h),
           Text(
             title,
-            style: AppTextStyle.headingLarge.copyWith(
-                fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+            style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary),
           ),
           SizedBox(height: 11.h),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: AppTextStyle.headingMedium.copyWith(
-                fontWeight: MyFontWeight.Regular.fontWeight,
-                color: AppColors.textSecondary),
+            style: AppTextStyle.headingMedium.copyWith(fontWeight: MyFontWeight.Regular.fontWeight, color: AppColors.textSecondary),
           ),
         ],
       ),

@@ -1,5 +1,4 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -8,6 +7,7 @@ import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/signup_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -15,8 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends GetView<SignInController> {
   final _formKey = GlobalKey<FormState>();
 
   LoginScreen({super.key});
@@ -55,16 +54,13 @@ class LoginScreen extends StatelessWidget {
                       hintText: 'Email',
                       titleText: 'Email',
                       onChanged: (value) {
-                        firebaseAuthController.email.value = value.trim();
-                        firebaseAuthController
-                            .checkFields(); // Check fields on change
+                        controller.email.value = value.trim();
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Email is required";
                         }
-                        if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
-                            .hasMatch(value)) {
+                        if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(value)) {
                           return "Enter a valid email";
                         }
                         return null;
@@ -77,18 +73,13 @@ class LoginScreen extends StatelessWidget {
                       return CustomTextField(
                         hintText: 'Password',
                         onChanged: (value) {
-                          firebaseAuthController.password.value = value.trim();
-                          firebaseAuthController
-                              .checkFields(); // Check fields on change
+                          controller.password.value = value.trim();
                         },
-                        obscureText: firebaseAuthController.showPassword.value,
+                        obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: firebaseAuthController.showPassword.value
-                            ? "assets/eye.svg"
-                            : "assets/hide_eye.svg",
+                        suffixSvgPath: controller.showPassword.value ? "assets/eye.svg" : "assets/hide_eye.svg",
                         onSuffixTap: () {
-                          firebaseAuthController.showPassword.value =
-                              !firebaseAuthController.showPassword.value;
+                          controller.showPassword.value = !controller.showPassword.value;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -121,11 +112,11 @@ class LoginScreen extends StatelessWidget {
                     // Login Button
                     AppButton(
                       backgroundColor: AppColors.buttonPrimary,
-                      text: firebaseAuthController.isEmailLoading.value ? 'Logging in...' : 'Login',
+                      text: controller.isEmailLoading.value ? 'Logging in...' : 'Login',
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
                           try {
-                            await firebaseAuthController.loginWithEmail();
+                            await controller.signInWithEmail();
                           } catch (e) {
                             ToastUtil.showToast("Login failed: $e");
                           }
@@ -143,12 +134,7 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         Text(
                           "Don't have account? ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: CustomThemeData().primaryTextColor,
-                                  fontSize: 12.sp),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12.sp),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -156,9 +142,7 @@ class LoginScreen extends StatelessWidget {
                           },
                           child: Text(
                             "SignUp",
-                            style: AppTextStyle.labelLarge.copyWith(
-                                fontSize: 14.sp,
-                                color: AppColors.buttonPrimary),
+                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp, color: AppColors.buttonPrimary),
                           ),
                         ),
                       ],
@@ -166,11 +150,10 @@ class LoginScreen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
                       child: Text("OR",
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: CustomThemeData().disabledIconColor,
-                                    fontWeight: FontWeight.w800,
-                                  )),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                color: CustomThemeData().disabledIconColor,
+                                fontWeight: FontWeight.w800,
+                              )),
                     ),
 
                     // Google Login Button
@@ -180,46 +163,36 @@ class LoginScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        fixedSize:
-                            Size(screenWidth * 0.8, 50), // Responsive width
+                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () async {
                         try {
-                          await firebaseAuthController.loginWithGoogle();
+                          // await controller.loginWithGoogle();
                         } catch (e) {
                           print("Error: $e");
                         }
                       },
                       child: Obx(() {
-                        return firebaseAuthController.isGoogleLoading.value
+                        return controller.isGoogleLoading.value
                             ? const Center(
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                 ),
                               )
                             : Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(
-                                        AppAssets.googleIconSvg,
-                                        height: 24),
+                                    padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(AppAssets.googleIconSvg, height: 24),
                                   ),
                                   Text(
                                     "Sign in with Google",
-                                    style: AppTextStyle.labelLarge
-                                        .copyWith(fontSize: 14.sp),
+                                    style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(
-                                        AppAssets.appleIconSvg,
-                                        color: Colors.transparent,
-                                        height: 10),
+                                    padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(AppAssets.appleIconSvg, color: Colors.transparent, height: 10),
                                   ),
                                 ],
                               );
@@ -234,42 +207,33 @@ class LoginScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        fixedSize:
-                            Size(screenWidth * 0.8, 50), // Responsive width
+                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () {
-                        firebaseAuthController.signinWithApple();
+                        // controller.signinWithApple();
                       },
                       child: Obx(
                         () {
-                          return firebaseAuthController.isAppleLoading.value
+                          return controller.isAppleLoading.value
                               ? const Center(
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
                                   ),
                                 )
                               : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(right: 10.w),
-                                      child: SvgPicture.asset(
-                                          AppAssets.appleIconSvg,
-                                          height: 24),
+                                      child: SvgPicture.asset(AppAssets.appleIconSvg, height: 24),
                                     ),
                                     Text(
                                       "Sign in with Apple",
-                                      style: AppTextStyle.labelLarge
-                                          .copyWith(fontSize: 14.sp),
+                                      style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
                                     ),
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 10.0),
-                                      child: SvgPicture.asset(
-                                          AppAssets.appleIconSvg,
-                                          color: Colors.transparent,
-                                          height: 10),
+                                      padding: const EdgeInsets.only(right: 10.0),
+                                      child: SvgPicture.asset(AppAssets.appleIconSvg, color: Colors.transparent, height: 10),
                                     ),
                                   ],
                                 );

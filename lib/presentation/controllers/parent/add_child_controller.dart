@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/data/local_services/databse_helper.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,13 +16,15 @@ class AddChildController extends GetxController {
   var childName = ''.obs;
   var kidGoalName = ''.obs;
   var childAge = ''.obs;
-  var selectedGrade = ''.obs;
   var selectedAvatar = (-1).obs;
   var kidImagePath = ''.obs; // Path for custom uploaded avatar
   final selectedAvatarPath = ''.obs;
   var parentId = ''.obs; // Observable for parentId
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final KidService _kidService = KidService();
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final isLoading = false.obs;
 
   final List<String> avatars = [
     "assets/child_avatar_image_pngs/Frame 1.png",
@@ -130,10 +135,6 @@ class AddChildController extends GetxController {
     }
   }
 
-  void setGrade(String grade) {
-    selectedGrade.value = grade;
-  }
-
   void deselectAvatar() {
     selectedAvatar.value = -1; // Deselect by setting to -1 or any invalid value
   }
@@ -148,5 +149,71 @@ class AddChildController extends GetxController {
     Get.log('selected avatar path: ${selectedAvatarPath.value}');
   }
 
-  // Add new child and update parent reference
+  // Method to create a new kid
+  Future<void> createKid() async {
+    try {
+      if (childName.value.isEmpty) {
+        ToastUtil.showToast("Please enter child name");
+        return;
+      }
+
+      if (childAge.value.isEmpty) {
+        ToastUtil.showToast("Please enter child age");
+        return;
+      }
+
+      if (kidImagePath.value.isEmpty && selectedAvatarPath.value.isEmpty) {
+        ToastUtil.showToast("Please select an avatar or upload an image");
+        return;
+      }
+
+      isLoading.value = true;
+
+      String avatarUrl = selectedAvatarPath.value;
+
+      // If a custom image was uploaded, upload it to Firebase Storage
+      if (kidImagePath.value.isNotEmpty) {
+        final File imageFile = File(kidImagePath.value);
+        final String fileName =
+            'kid_avatars/${DateTime.now().millisecondsSinceEpoch}${imageFile.path.split('.').last}';
+        final Reference ref = _storage.ref().child(fileName);
+
+        final UploadTask uploadTask = ref.putFile(imageFile);
+        final TaskSnapshot snapshot = await uploadTask;
+        avatarUrl = await snapshot.ref.getDownloadURL();
+      }
+
+      // Create initial wallet with empty jars
+      final wallet = Wallet(
+        savingJar: WalletJar(balance: 0.0, color: '#000000'),
+        spendingJar: WalletJar(balance: 0.0, color: '#000000'),
+      );
+
+      // Create kid model with a unique kidId
+      final KidModel kid = KidModel(
+        name: childName.value,
+        age: int.parse(childAge.value),
+        avatar: avatarUrl,
+        parentId: FirebaseAuth.instance.currentUser!.uid,
+        wallet: wallet,
+        coinKidsBalance: 0.0,
+        createdAt: DateTime.now(),
+        kidId: '', // Placeholder for now
+      );
+
+      // Add kid to Firestore and get the document reference
+      final DocumentReference docRef = await _kidService.createKid(kid);
+
+      // Set the kidId to the generated document ID
+      final kidId = docRef.id;
+      await _kidService.updateKid(kidId, kid.copyWith(kidId: kidId));
+
+      ToastUtil.showToast("Child added successfully");
+      Get.back();
+    } catch (e) {
+      ToastUtil.showToast("Failed to add child: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

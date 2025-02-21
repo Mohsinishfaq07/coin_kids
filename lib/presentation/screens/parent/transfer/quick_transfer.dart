@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
@@ -14,17 +14,19 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/theme/color_theme.dart';
-import '../../../controllers/parent/parent_home_controller.dart';
+import '../../../controllers/parent/parent_base_controller.dart';
 
 class QuickTransferPage extends StatelessWidget {
   final dynamic docData;
   final String kidId;
-  const QuickTransferPage(
-      {super.key, required this.docData, required this.kidId});
+
+  QuickTransferPage({super.key, required this.docData, required this.kidId});
+
+  final authController = Get.find<AuthenticationController>();
 
   @override
   Widget build(BuildContext context) {
-      final parentController = Get.put(ParentController());
+    final parentController = Get.put(ParentBaseController());
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -61,8 +63,7 @@ class QuickTransferPage extends StatelessWidget {
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
 
-                              color: AppColors
-                                  .textHighlighted, // Default color for non-bold text
+                              color: AppColors.textHighlighted, // Default color for non-bold text
                             ),
                             children: [
                               const TextSpan(
@@ -77,16 +78,13 @@ class QuickTransferPage extends StatelessWidget {
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
 
-                                  color: AppColors
-                                      .textHighlighted, // Purple color for "remove"
+                                  color: AppColors.textHighlighted, // Purple color for "remove"
                                 ),
                               ),
                               TextSpan(
-                                text:
-                                    'money\nfrom your ${docData['name']}\'s account',
+                                text: 'money\nfrom your ${docData['name']}\'s account',
                                 style: const TextStyle(
-                                  color: Colors
-                                      .black, // Default color for the remaining text
+                                  color: Colors.black, // Default color for the remaining text
                                 ),
                               ),
                             ],
@@ -98,11 +96,7 @@ class QuickTransferPage extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Text(
                         'Enter amount',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                                fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 12.h),
@@ -119,20 +113,14 @@ class QuickTransferPage extends StatelessWidget {
                       child: Text.rich(
                         TextSpan(
                           text: 'Leave a Message ', // Default text
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium!
-                              .copyWith(
+                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                 fontSize: 14.h,
                                 fontWeight: FontWeight.bold,
                               ),
                           children: [
                             TextSpan(
                               text: '(Optional)', // Optional in gray color
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(
+                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                     fontSize: 14.h,
                                     fontFamily: 'Open Sans',
                                     color: AppColors.textSecondary,
@@ -160,26 +148,15 @@ class QuickTransferPage extends StatelessWidget {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '- Remove',
-                            backgroundColor:
-                                parentController.amount.value.isNotEmpty
-                                    ? AppColors.buttonPrimary
-                                    : AppColors.buttonDisabled,
+                            backgroundColor: parentController.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
                               if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value =
-                                    'Enter valid amount';
+                                parentController.amountValidation.value = 'Enter valid amount';
                               } else {
-                                double enteredAmount =
-                                    double.parse(parentController.amount.value);
+                                double enteredAmount = double.parse(parentController.amount.value);
 
-                                await firestoreOperations
-                                    .parentFirebaseFunctions
-                                    .updateKidSpending(
-                                        kidId: kidId,
-                                        enteredAmount: enteredAmount,
-                                        save: false,
-                                        spendingJarColor: AppColors.textPrimary
-                                        );
+                                // await firestoreOperations.parentFirebaseFunctions.updateKidSpending(
+                                //     kidId: kidId, enteredAmount: enteredAmount, save: false, spendingJarColor: AppColors.textPrimary);
                                 // parentController.amount.value = "";
                               }
                             },
@@ -189,29 +166,16 @@ class QuickTransferPage extends StatelessWidget {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '+ Send',
-                            backgroundColor:
-                                parentController.amount.value.isNotEmpty
-                                    ? AppColors.buttonPrimary
-                                    : AppColors.buttonDisabled,
+                            backgroundColor: parentController.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
                               if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value =
-                                    'Enter valid amount';
+                                parentController.amountValidation.value = 'Enter valid amount';
                               } else {
                                 try {
-                                  double enteredAmount = double.parse(
-                                      parentController.amount.value);
+                                  double enteredAmount = double.parse(parentController.amount.value);
 
-                                  await firestoreOperations
-                                      .parentFirebaseFunctions
-                                      .updateKidSpending(
-                                          kidId: kidId,
-                                          enteredAmount: enteredAmount,
-                                          save: true,
-                                          
-                                          
-                                          spendingJarColor: AppColors.textPrimary
-                                          );
+                                  // await firestoreOperations.parentFirebaseFunctions.updateKidSpending(
+                                  //     kidId: kidId, enteredAmount: enteredAmount, save: true, spendingJarColor: AppColors.textPrimary);
                                 } on Exception catch (e) {
                                   print("Exception $e");
                                 }
@@ -246,9 +210,11 @@ quickTransferFields({
     keyboardType: keyboardType,
     decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white38, // Background color for the text field
+        fillColor: Colors.white38,
+        // Background color for the text field
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey), // Hint text color
+        hintStyle: const TextStyle(color: Colors.grey),
+        // Hint text color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(
@@ -283,10 +249,7 @@ quickTransferFields({
 
 Widget quickTransferChildGeneralDetailWidget({required String childId}) {
   return StreamBuilder<DocumentSnapshot>(
-    stream: FirebaseFirestore.instance
-        .collection('kids')
-        .doc(childId)
-        .snapshots(), // Stream for the specific child document
+    stream: FirebaseFirestore.instance.collection('kids').doc(childId).snapshots(), // Stream for the specific child document
     builder: (context, snapshot) {
       // Loading State
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -345,8 +308,7 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
                     radius: 30,
                     backgroundImage: docData['avatar'].startsWith('/')
                         ? FileImage(File(docData['avatar']))
-                        : (docData['avatar'].startsWith('assets') &&
-                                !docData['avatar'].endsWith('.svg'))
+                        : (docData['avatar'].startsWith('assets') && !docData['avatar'].endsWith('.svg'))
                             ? AssetImage(docData['avatar'])
                             : docData['avatar'].startsWith('http')
                                 ? NetworkImage(docData['avatar'])
@@ -368,10 +330,7 @@ Widget quickTransferChildGeneralDetailWidget({required String childId}) {
                   SizedBox(height: 6.h),
                   Text(
                     '\$ $savings',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium!
-                        .copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

@@ -1,35 +1,42 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/message_placeholder_screen.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/shop/shop.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ParentController extends GetxController {
+class ParentBaseController extends GetxController {
+  final _kidService = Get.find<KidService>();
+  final _authService = Get.find<AuthService>();
+  final _parentService = Get.find<ParentService>();
+
+  Rx<ParentModel?> parent = Rx<ParentModel?>(null);
+
+  final showNavBar = false.obs;
 
   final RxBool isLoading = false.obs;
-  final ParentService _parentService = ParentService();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   var parentId = ''.obs;
-  var kidsList = [].obs;
+  var kidsList = <KidModel>[].obs;
   var parentName = ''.obs;
   var kidName = ''.obs;
-  
+
+  final authController = Get.find<AuthenticationController>();
+
   Rx<ParentModel?> currentParent = Rx<ParentModel?>(null);
-  
+
   RxString selectedChildIdForQuickTransfer = ''.obs;
   RxString selectedChildNameForQuickTransfer = ''.obs;
 
@@ -42,9 +49,31 @@ class ParentController extends GetxController {
   final RxString networkImageUrl = ''.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     loadImageFromPreferences();
+
+    _parentService.streamParentData().listen((parentData) {
+      parent.value = parentData; // Update the observable with new data
+    });
+  }
+
+  void fetchParentData() async {
+    _parentService.streamParentData().listen((parentData) {
+      parent.value = parentData; // Update the observable with new data
+    });
+  }
+
+  void isKidInDb() async {
+    final parentId = _authService.user.value?.uid;
+    if (parentId == null) return;
+
+    final isKidInDb = await _kidService.fetchKidsByParentId(parentId);
+    if (isKidInDb.isEmpty) {
+      showNavBar.value = false;
+    } else {
+      showNavBar.value = true;
+    }
   }
 
   Future<void> loadImageFromPreferences() async {
@@ -59,7 +88,7 @@ class ParentController extends GetxController {
           customAvatarPath.value = localPath;
         }
       }
-      
+
       if (networkUrl != null && networkUrl.isNotEmpty) {
         networkImageUrl.value = networkUrl;
       }
@@ -71,12 +100,12 @@ class ParentController extends GetxController {
   Future<void> saveImageToPreferences({String? localPath, String? networkUrl}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       if (localPath != null) {
         await prefs.setString('profileImagePath', localPath);
         customAvatarPath.value = localPath;
       }
-      
+
       if (networkUrl != null) {
         await prefs.setString('profileImageUrl', networkUrl);
         networkImageUrl.value = networkUrl;
@@ -98,79 +127,59 @@ class ParentController extends GetxController {
     }
   }
 
-  Future<bool> fetchKids() async {
-    // Get.log('kids app parent id in starting:${FirebaseAuth.instance.currentUser!.uid}');
-    try {
-      isLoading.value = true; // Start loading
+  // Future<bool> fetchKids() async {
+  //   try {
+  //     isLoading.value = true;
+  //
+  //     final QuerySnapshot initialSnapshot =
+  //         await _firestore.collection('kids').where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get();
+  //
+  //     kidsList.value = initialSnapshot.docs.map((doc) {
+  //       return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: doc.id);
+  //     }).toList();
+  //
+  //     // Listen to updates for real-time changes
+  //     _firestore.collection('kids').where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots().listen((QuerySnapshot snapshot) {
+  //       kidsList.value = snapshot.docs.map((doc) {
+  //         return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: doc.id);
+  //       }).toList();
+  //
+  //       isLoading.value = false;
+  //     });
+  //
+  //     isLoading.value = false;
+  //     return kidsList.isNotEmpty;
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     ToastUtil.showToast("Failed to fetch kids: $e");
+  //     return false;
+  //   }
+  // }
 
-      // Fetch the initial snapshot
-      final QuerySnapshot initialSnapshot = await _firestore
-          .collection('kids')
-          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      // Process the initial data
-      kidsList.value = initialSnapshot.docs.map((doc) {
-        var docData = doc.data() as Map<String, dynamic>?;
-        if (docData != null) {
-          docData['id'] = doc.id;
-          Get.log('kids app doc id: ${doc.id}');
-        }
-        return docData ?? {};
-      }).toList();
-
-      // Listen to updates for real-time changes
-      _firestore
-          .collection('kids')
-          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .snapshots()
-          .listen((QuerySnapshot snapshot) {
-        kidsList.value = snapshot.docs.map((doc) {
-          var docData = doc.data() as Map<String, dynamic>?;
-          if (docData != null) {
-            docData['id'] = doc.id;
-            Get.log('kids app doc id: ${doc.id}');
-          }
-          return docData ?? {};
-        }).toList();
-
-        isLoading.value = false;
-        Get.log('kids app kid list status: ${kidsList.isNotEmpty}');
-      });
-
-      isLoading.value = false; // Stop loading
-      return kidsList.isNotEmpty; // Return whether kidsList has data
-    } catch (e) {
-      isLoading.value = false; // Ensure loading is stopped on error
-      ToastUtil.showToast("Failed to fetch kids: $e");
-      return false; // Return false in case of an error
-    }
-  }
-
-  Future<void> updateParentProfile({required ParentModel originalParent}) async {
-    try {
-      isLoading.value = true;
-
-      final updatedParent = originalParent.copyWith(
-        name: firebaseAuthController.parentName.value,
-        dob: DateFormat('d MMM, y').parse(firebaseAuthController.birthday.value),
-        gender: firebaseAuthController.selectedGender.value,
-      );
-
-      await _parentService.updateParent(updatedParent);
-      
-      // Update the current parent data
-      currentParent.value = updatedParent;
-      parentName.value = updatedParent.name;
-      
-      ToastUtil.showToast('Profile updated successfully');
-      Get.back();
-    } catch (e) {
-      ToastUtil.showToast('Failed to update profile: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Future<void> updateParentProfile({required ParentModel originalParent}) async {
+  //   try {
+  //     isLoading.value = true;
+  //
+  //     final updatedParent = originalParent.copyWith(
+  //       name: authController.parentName.value,
+  //       dob: DateFormat('d MMM, y').parse(authController.birthday.value).millisecondsSinceEpoch,
+  //       gender: authController.selectedGender.value,
+  //     );
+  //
+  //     await parentService.updateParent(updatedParent);
+  //
+  //     // Update the current parent data
+  //     currentParent.value = updatedParent;
+  //     parentName.value = updatedParent.name;
+  //
+  //     ToastUtil.showToast('Profile updated successfully');
+  //     Get.back();
+  //   } catch (e) {
+  //     ToastUtil.showToast('Failed to update profile: $e');
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
@@ -191,15 +200,12 @@ class ParentController extends GetxController {
       // );
 
       // Reference to the kid's document
-      DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(childId);
+      DocumentReference kidDocRef = FirebaseFirestore.instance.collection('kids').doc(childId);
       DocumentSnapshot snapshot = await kidDocRef.get();
 
       if (snapshot.exists) {
         // Convert color to a string value (Hex or RGBA)
-        String colorHex = spendingJarColor.value
-            .toRadixString(16)
-            .padLeft(8, '0'); // Converts to hex format
+        String colorHex = spendingJarColor.value.toRadixString(16).padLeft(8, '0'); // Converts to hex format
 
         if (save) {
           // Save the updated spending jar color as a hex string

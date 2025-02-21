@@ -1,11 +1,11 @@
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,17 +15,19 @@ import 'package:intl/intl.dart';
 
 class UpdateParentProfile extends StatelessWidget {
   final ParentModel parentData;
-  final ParentController _parentController = Get.find<ParentController>();
+  final ParentBaseController _parentController = Get.find<ParentBaseController>();
   final ParentService _parentService = Get.find<ParentService>();
+
+  final authController = Get.find<AuthenticationController>();
 
   UpdateParentProfile({super.key, required this.parentData});
 
   @override
   Widget build(BuildContext context) {
     // Initialize the controller values with current parent data
-    firebaseAuthController.parentName.value = parentData.name;
-    firebaseAuthController.birthday.value = DateFormat('d MMM, y').format(parentData.dob);
-    firebaseAuthController.selectedGender.value = parentData.gender;
+    authController.parentName.value = parentData.name;
+    authController.birthday.value = DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(parentData.dob));
+    authController.selectedGender.value = parentData.gender;
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -59,28 +61,25 @@ class UpdateParentProfile extends StatelessWidget {
                     SizedBox(height: 20.h),
                     Text(
                       "Birthday",
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700),
+                      style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
                     ),
                     SizedBox(height: 12.h),
                     Obx(() {
                       return CustomTextField(
-                        hintText: firebaseAuthController.birthday.value.isEmpty
-                            ? DateFormat('d MMM, y').format(parentData.dob)
-                            : firebaseAuthController.birthday.value,
+                        hintText: authController.birthday.value.isEmpty
+                            ? DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(parentData.dob))
+                            : authController.birthday.value,
                         titleText: 'Birthday',
                         suffixIcon: Icons.calendar_month,
                         onSuffixTap: () async {
                           DateTime? pickedDate = await showDatePicker(
                             context: context,
-                            initialDate: parentData.dob,
+                            initialDate: DateTime.fromMillisecondsSinceEpoch(parentData.dob),
                             firstDate: DateTime(1900),
                             lastDate: DateTime.now(),
                           );
                           if (pickedDate != null) {
-                            firebaseAuthController.setBirthday(pickedDate);
+                            authController.setBirthday(pickedDate);
                           }
                         },
                       );
@@ -88,18 +87,15 @@ class UpdateParentProfile extends StatelessWidget {
                     SizedBox(height: 25.h),
                     Text(
                       "Full Name",
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700),
+                      style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
                     ),
                     SizedBox(height: 12.h),
                     CustomTextField(
                       titleText: 'Full name',
                       hintText: parentData.name,
                       onChanged: (value) {
-                        firebaseAuthController.parentName.value = value.trim();
-                        firebaseAuthController.checkFields();
+                        authController.parentName.value = value.trim();
+                        authController.checkFields();
                       },
                     ),
                     SizedBox(height: 23.h),
@@ -116,7 +112,7 @@ class UpdateParentProfile extends StatelessWidget {
                           child: Obx(
                             () => GestureDetector(
                                 onTap: () {
-                                  firebaseAuthController.selectGender("Male");
+                                  authController.selectGender("Male");
                                 },
                                 child: Container(
                                   height: 48.h,
@@ -128,9 +124,7 @@ class UpdateParentProfile extends StatelessWidget {
                                     bottom: 13.33,
                                   ),
                                   decoration: ShapeDecoration(
-                                    color: firebaseAuthController.selectedGender.value == "Male"
-                                        ? AppColors.buttonPrimary
-                                        : Colors.white54,
+                                    color: authController.selectedGender.value == "Male" ? AppColors.buttonPrimary : Colors.white54,
                                     shape: RoundedRectangleBorder(
                                       side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
                                       borderRadius: BorderRadius.circular(12.r),
@@ -140,9 +134,7 @@ class UpdateParentProfile extends StatelessWidget {
                                     "assets/man_3.svg",
                                     height: 24.h,
                                     width: 24.w,
-                                    color: firebaseAuthController.selectedGender.value == "Male"
-                                        ? Colors.white
-                                        : AppColors.textPrimary,
+                                    color: authController.selectedGender.value == "Male" ? Colors.white : AppColors.textPrimary,
                                   ),
                                 )),
                           ),
@@ -152,7 +144,7 @@ class UpdateParentProfile extends StatelessWidget {
                           child: Obx(
                             () => GestureDetector(
                                 onTap: () {
-                                  firebaseAuthController.selectGender("Female");
+                                  authController.selectGender("Female");
                                 },
                                 child: Container(
                                   height: 48.h,
@@ -164,9 +156,7 @@ class UpdateParentProfile extends StatelessWidget {
                                     bottom: 13.33,
                                   ),
                                   decoration: ShapeDecoration(
-                                    color: firebaseAuthController.selectedGender.value == "Female"
-                                        ? AppColors.buttonPrimary
-                                        : Colors.white54,
+                                    color: authController.selectedGender.value == "Female" ? AppColors.buttonPrimary : Colors.white54,
                                     shape: RoundedRectangleBorder(
                                       side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
                                       borderRadius: BorderRadius.circular(12.r),
@@ -176,9 +166,7 @@ class UpdateParentProfile extends StatelessWidget {
                                     "assets/woman.svg",
                                     height: 24.h,
                                     width: 24.w,
-                                    color: firebaseAuthController.selectedGender.value == "Female"
-                                        ? Colors.white
-                                        : AppColors.textPrimary,
+                                    color: authController.selectedGender.value == "Female" ? Colors.white : AppColors.textPrimary,
                                   ),
                                 )),
                           ),
@@ -188,23 +176,23 @@ class UpdateParentProfile extends StatelessWidget {
                     SizedBox(height: 40.h),
                     Center(
                       child: Obx(() => AppButton(
-                        backgroundColor: AppColors.buttonPrimary,
-                        text: _parentController.isLoading.value ? 'Updating...' : 'Update profile',
-                        onPressed: () {
-                          if (_parentController.isLoading.value) return;
-                          
-                          if (isButtonEnabled()) {
-                            _parentController.updateParentProfile(originalParent: parentData).then((_) {
-                              // Handle successful update
-                              Get.back(); // Return to previous screen after successful update
-                            }).catchError((error) {
-                              ToastUtil.showToast('Error updating profile: $error');
-                            });
-                          } else {
-                            ToastUtil.showToast('No changes made');
-                          }
-                        },
-                      )),
+                            backgroundColor: AppColors.buttonPrimary,
+                            text: _parentController.isLoading.value ? 'Updating...' : 'Update profile',
+                            onPressed: () {
+                              if (_parentController.isLoading.value) return;
+                              //
+                              // if (isButtonEnabled()) {
+                              //   _parentController.updateParentProfile(originalParent: parentData).then((_) {
+                              //     // Handle successful update
+                              //     Get.back(); // Return to previous screen after successful update
+                              //   }).catchError((error) {
+                              //     ToastUtil.showToast('Error updating profile: $error');
+                              //   });
+                              // } else {
+                              //   ToastUtil.showToast('No changes made');
+                              // }
+                            },
+                          )),
                     ),
                   ],
                 ),
@@ -217,8 +205,8 @@ class UpdateParentProfile extends StatelessWidget {
   }
 
   bool isButtonEnabled() {
-    return parentData.name != firebaseAuthController.parentName.value ||
-           DateFormat('d MMM, y').format(parentData.dob) != firebaseAuthController.birthday.value ||
-           parentData.gender != firebaseAuthController.selectedGender.value;
+    return parentData.name != authController.parentName.value ||
+        DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(parentData.dob)) != authController.birthday.value ||
+        parentData.gender != authController.selectedGender.value;
   }
 }

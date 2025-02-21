@@ -1,5 +1,5 @@
-import 'package:coin_kids/core/constants/constants.dart';
 
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,7 +7,9 @@ import '../../../../components/parent/custom_button.dart';
 import '../../../../components/parent/custom_text_field.dart';
 
 class ParentGoogleSignup extends StatelessWidget {
-  const ParentGoogleSignup({super.key});
+  ParentGoogleSignup({super.key});
+
+  final authController = Get.find<AuthenticationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,9 @@ class ParentGoogleSignup extends StatelessWidget {
               // Birthday Picker
               Obx(
                 () => CustomTextField(
-                  hintText: firebaseAuthController.birthday.value.isEmpty
+                  hintText: authController.birthday.value.isEmpty
                       ? "Date"
-                      : firebaseAuthController.birthday.value,
+                      : authController.birthday.value,
                   suffixIcon: Icons.calendar_month,
                   onSuffixTap: () async {
                     DateTime? date = await showDatePicker(
@@ -47,7 +49,7 @@ class ParentGoogleSignup extends StatelessWidget {
                       lastDate: DateTime.now(),
                     );
                     if (date != null) {
-                      firebaseAuthController.setBirthday(date);
+                      authController.setBirthday(date);
                     }
                   },
                   titleText: "Birthday",
@@ -60,7 +62,7 @@ class ParentGoogleSignup extends StatelessWidget {
               CustomTextField(
                 hintText: 'Username',
                 onChanged: (value) =>
-                    firebaseAuthController.parentName.value = value,
+                    authController.parentName.value = value,
                 titleText: 'Username',
               ),
               const SizedBox(height: 20),
@@ -80,14 +82,14 @@ class ParentGoogleSignup extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () =>
-                            firebaseAuthController.selectGender("Female"),
+                            authController.selectGender("Female"),
                         child: Container(
                           width: 160,
                           padding: const EdgeInsets.symmetric(
                               vertical: 16, horizontal: 32),
                           decoration: BoxDecoration(
                             color:
-                                firebaseAuthController.selectedGender.value ==
+                                authController.selectedGender.value ==
                                         "Female"
                                     ? Colors.amber
                                     : Colors.white,
@@ -97,7 +99,7 @@ class ParentGoogleSignup extends StatelessWidget {
                           child: Icon(
                             Icons.female,
                             color:
-                                firebaseAuthController.selectedGender.value ==
+                                authController.selectedGender.value ==
                                         "Female"
                                     ? Colors.white
                                     : Colors.black54,
@@ -106,14 +108,14 @@ class ParentGoogleSignup extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () =>
-                            firebaseAuthController.selectGender("Male"),
+                            authController.selectGender("Male"),
                         child: Container(
                           width: 160,
                           padding: const EdgeInsets.symmetric(
                               vertical: 16, horizontal: 32),
                           decoration: BoxDecoration(
                             color:
-                                firebaseAuthController.selectedGender.value ==
+                                authController.selectedGender.value ==
                                         "Male"
                                     ? Colors.purple
                                     : Colors.white,
@@ -123,7 +125,7 @@ class ParentGoogleSignup extends StatelessWidget {
                           child: Icon(
                             Icons.male,
                             color:
-                                firebaseAuthController.selectedGender.value ==
+                                authController.selectedGender.value ==
                                         "Male"
                                     ? Colors.white
                                     : Colors.black54,
@@ -162,8 +164,7 @@ class ParentGoogleSignup extends StatelessWidget {
                 child: CustomButton(
                   text: 'Sign up',
                   onPressed: () {
-                    firebaseAuthController
-                        .signUpWithGoogle(); // Call signup method
+                    //todo: Add Google Signin
                   },
                 ),
               ),

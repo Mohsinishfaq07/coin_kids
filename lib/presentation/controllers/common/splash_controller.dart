@@ -1,128 +1,55 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/data/local_services/databse_helper.dart';
-import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
 import 'package:coin_kids/presentation/screens/common/intro/intro_screen.dart';
+import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
-import 'package:coin_kids/presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:coin_kids/presentation/screens/parent/bottom_navigation/parent_base_screen.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 
 class SplashController extends GetxController {
-  final FirebaseAuthController firebaseAuthController =
-      Get.put(FirebaseAuthController());
-  final parentController = Get.put(ParentController());
+  final _authService = Get.find<AuthService>();
+  final _kidService = Get.find<KidService>();
 
   @override
   void onInit() {
     super.onInit();
-    loadSavedEmail();
     _checkLoginStatus();
   }
 
-  Future<void> loadSavedEmail() async {
-    String? savedEmail = await DatabaseHelper.instance.getSavedEmail();
-    if (savedEmail != null) {
-      Get.log("Saved Email: $savedEmail");
-    } else {
-      Get.log("No email found.");
-    }
-  }
-
   void _checkLoginStatus() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Simulate a splash screen delay (3 seconds)
     await Future.delayed(const Duration(seconds: 2));
 
-    // Check if user is already logged in with Firebase
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _authService.user.value;
 
-    if (user != null) {
-      // Proceed with the user logic if user is logged in
-      final kidSnapshot = await FirebaseFirestore.instance
-          .collection('kids')
-          .where('parentId', isEqualTo: user.uid)
-          .get();
-
-      int? loginAsParent = prefs.getInt("LoggedInAsParent") ?? 0;
-      if (loginAsParent == 1) {
-        bool parentHasKids = await parentController.fetchKids();
-        if (parentHasKids) {
-          Get.off(() => ParentBottomNavigationBar());
-        } else {
-          Get.off(() => const ParentsHomeScreen());
-        }
-      } else if (loginAsParent == 2) {
-        if (kidSnapshot.docs.isNotEmpty) {
-          Get.off(() => KidHomeScreen());
-        } else {
-          Get.off(() => KidSectionOnboarding());
-        }
+    if (user == null) {
+      final isEverLoggedIn = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isEverLoggedIn) ?? false;
+      if (isEverLoggedIn) {
+        Get.off(() => LoginScreen());
       } else {
-        Get.off(() => KidSectionOnboarding());
-      }
-    } else {
-      // Handle the case where the user is not logged in
-      await firebaseAuthController.loadCredentials();
-      if (firebaseAuthController.email.isNotEmpty &&
-          firebaseAuthController.password.isNotEmpty) {
-        try {
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: firebaseAuthController.email.value,
-            password: firebaseAuthController.password.value,
-          );
-          // Fetch user role and navigate accordingly after auto-login
-          final isParent =
-              await _checkIfParent(firebaseAuthController.email.value);
-          if (isParent) {
-            if (parentController.kidsList.isNotEmpty) {
-              Get.off(() => ParentBottomNavigationBar());
-            } else {
-              Get.off(() => const ParentsHomeScreen());
-            }
-          } else {
-            Get.off(() => KidHomeScreen());
-          }
-        } catch (e) {
-          Get.log("Auto-login failed: $e");
-          // Navigate to the Login Screen if auto-login fails
-          Get.off(() => IntroScreen());
-        }
-      } else {
-        // Navigate to the Login Screen if no saved credentials
         Get.off(() => IntroScreen());
       }
-    }
-  }
+    } else {
+      // await SharedPreferencesHelper.saveString('lastLoggedInRole', UserRole.CHILD.name);
+      final String role = await SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.NONE.name;
 
-  Future<bool> _checkIfParent(String email) async {
-    try {
-      final parentSnapshot = await FirebaseFirestore.instance
-          .collection('parents')
-          .where('email', isEqualTo: email)
-          .get();
+      if (role == UserRole.NONE.name) {
+        Get.off(() => RoleSelectionScreen());
+      } else if (role == UserRole.PARENT.name) {
+        Get.off(() => ParentBaseScreen());
+      } else {
+        final isKidOnboarded = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isKidOnboarded) ?? false;
+        final isKidInDb = await _kidService.fetchKidsByParentId(_authService.user.value!.uid);
 
-      if (parentSnapshot.docs.isNotEmpty) {
-        return true; // User is a parent
+        if (!isKidOnboarded || isKidInDb.isEmpty) {
+          Get.offAll(() => KidSectionOnboarding());
+        } else {
+          Get.offAll(() => KidHomeScreen());
+        }
       }
-
-      // If not found in parents collection, check in kids collection
-      final kidSnapshot = await FirebaseFirestore.instance
-          .collection('kids')
-          .where('email', isEqualTo: email)
-          .get();
-
-      if (kidSnapshot.docs.isNotEmpty) {
-        return false; // User is a kid
-      }
-    } catch (e) {
-      Get.log("Error checking user role: $e");
     }
-
-    return false; // Default to kid if no matching document is found
   }
 }

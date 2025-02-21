@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/green_done_button.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
@@ -29,6 +29,8 @@ class KidSectionOnboarding extends StatelessWidget {
   final _addChildController = Get.put(AddChildController());
   final KidsOnBoardingController kidOnboardingController =
       Get.put(KidsOnBoardingController());
+
+  final authController = Get.find<AuthenticationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -411,13 +413,13 @@ class KidSectionOnboarding extends StatelessWidget {
                               children: [
                                 OrangeSkipButton(
                                   onTap: () async {
-                                    if (!firebaseAuthController
+                                    if (!authController
                                         .isNormalLoading.value) {
-                                      firebaseAuthController
+                                      authController
                                           .isNormalLoading.value = true;
-                                      await firestoreOperations
-                                          .parentFirebaseFunctions
-                                          .addKidAndUpdateParent();
+                                      // await authController
+                                      //     .parentFirebaseFunctions
+                                      //     .addKidAndUpdateParent();
                                     }
                                     Get.off(() => KidHomeScreen());
                                   },
@@ -434,13 +436,13 @@ class KidSectionOnboarding extends StatelessWidget {
                                             "Please select an avatar");
                                         return;
                                       }
-                                      if (!firebaseAuthController
+                                      if (!authController
                                           .isNormalLoading.value) {
-                                        firebaseAuthController
+                                        authController
                                             .isNormalLoading.value = true;
-                                        await firestoreOperations
-                                            .parentFirebaseFunctions
-                                            .addKidAndUpdateParent();
+                                        // await authController
+                                        //     .parentFirebaseFunctions
+                                        //     .addKidAndUpdateParent();
                                       }
                                       Get.off(() => KidHomeScreen());
                                     },

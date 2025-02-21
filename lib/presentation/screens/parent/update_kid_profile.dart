@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/add_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/edit_profile_controller.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/bottom_navigation/parent_base_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,18 +15,16 @@ import 'package:get/get.dart';
 
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 
-
 class UpdateKidProfile extends StatelessWidget {
   final String childId;
   final String childAge;
-  final String childGrade;
+
   final String childAvatar;
   final String childName;
   const UpdateKidProfile(
       {super.key,
       required this.childId,
       required this.childAge,
-      required this.childGrade,
       required this.childAvatar,
       required this.childName});
 
@@ -268,7 +267,6 @@ class UpdateKidProfile extends StatelessWidget {
                                         .childNameController.value.text,
                                     age: editProfileController
                                         .childAgeController.value.text,
-                                    grade: 'Grade 1',
                                     avatarPath: avatarUrl);
                               }
                             },
@@ -289,25 +287,34 @@ class UpdateKidProfile extends StatelessWidget {
     required String childId,
     required String name,
     required String age,
-    required String grade,
     required String avatarPath,
   }) async {
-    final EditProfileController editProfileController =
-        Get.put(EditProfileController(childAge: age, childName: name));
-    editProfileController.childUpdate.value = true;
-    Get.log('avatar path:$avatarPath');
+    final KidService kidService =
+        KidService(); // Create an instance of KidService
     try {
-      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-      await firebaseFirestore.collection('kids').doc(childId).set(
-        {'grade': grade, 'name': name, 'age': age, 'avatar': avatarPath},
-        SetOptions(merge: true),
+      // Create a KidModel instance with the updated data
+      KidModel updatedKid = KidModel(
+        kidId: childId,
+        name: name,
+        age: int.parse(age), // Ensure age is an integer
+        avatar: avatarPath,
+        parentId: '', // Set the parentId if needed
+        wallet: Wallet(
+          savingJar: WalletJar(balance: 0.0, color: '#000000'),
+          spendingJar: WalletJar(balance: 0.0, color: '#000000'),
+        ),
+        coinKidsBalance: 0.0,
+        createdAt: DateTime.now(), // Set the createdAt to now or keep it as is
       );
+
+      // Call the updateKid method from KidService
+      await kidService.updateKid(childId, updatedKid);
+
       ToastUtil.showToast('Child info updated');
-      Get.off(ParentBottomNavigationBar());
-      editProfileController.childUpdate.value = false;
+      Get.off(() => ParentBaseScreen());
     } catch (e) {
-      editProfileController.childUpdate.value = false;
-      Get.log('kid update error:${e.toString()}');
+      Get.log('Kid update error: ${e.toString()}');
+      ToastUtil.showToast('Failed to update child info: $e');
     }
   }
 }

@@ -1,26 +1,17 @@
+import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
-import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
- import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
-import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
-import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
+import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
 
 import 'package:coin_kids/core/theme/light_theme.dart';
-import 'package:coin_kids/presentation/screens/parent/bottom_navigation/bottom_navigationbar_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../app_assets.dart';
 
-class RoleSelectionScreen extends StatelessWidget {
+class RoleSelectionScreen extends GetView<RoleSelectionController> {
   RoleSelectionScreen({super.key});
-
-  final firebaseAuthController = Get.put(FirebaseAuthController());
-  final parentController = Get.put(ParentController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,27 +42,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     title: "I’m a Parent",
                     description: "Give allowances",
                     onTap: () async {
-                      final isParent = await firebaseAuthController
-                          .checkIfParent(firebaseAuthController.email.value);
-                      if (isParent) {
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.setInt("LoggedInAsParent", 1);
-
-                        bool parentHasKids = await parentController.fetchKids();
-                        if (parentHasKids) {
-                          Get.off(() => ParentBottomNavigationBar());
-                        } else {
-                          Get.off(() => const ParentsHomeScreen());
-                        }
-                        // Navigate to ParentBottomNavigationBar if user is a parent
-                      } else {
-                        Get.off(() => LoginScreen());
-                        // Navigate to KidMyMoney if user is a kid
-                        //  Get.off(() => const KidHomePage());
-                      }
-
-                      // Get.offAll(const ParentsHomeScreen());
+                      controller.finalizeRole(UserRole.PARENT);
                     },
                     description1: "Support your child's",
                     description2: "Financial journey  ",
@@ -82,26 +53,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     title: "I’m a Child",
                     description: "Receive Allowance",
                     onTap: () async {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.setInt("LoggedInAsParent", 2);
-                      final isParent = await firebaseAuthController
-                          .checkIfParent(firebaseAuthController.email.value);
-                      if (isParent) {
-                        bool parentHasKids = await parentController.fetchKids();
-                        if (parentHasKids) {
-                          Get.off(() => KidHomeScreen());
-                        } else {
-                          Get.to(() => KidSectionOnboarding());
-                        }
-                        // Navigate to ParentBottomNavigationBar if user is a parent
-                      } else {
-                        Get.off(() => LoginScreen());
-                        // Navigate to KidMyMoney if user is a kid
-                        //  Get.off(() => const KidHomePage());
-                      }
-
-                      //
+                      controller.finalizeRole(UserRole.CHILD);
                     },
                     description1: 'Set up saving goals',
                     description2: '',
@@ -148,7 +100,7 @@ class OptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -175,10 +127,7 @@ class OptionCard extends StatelessWidget {
                   SizedBox(height: 15.h),
                   Text(
                     title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontSize: 18.sp),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
                   ),
                   SizedBox(height: 9.h),
                   Row(
@@ -190,12 +139,7 @@ class OptionCard extends StatelessWidget {
                       ),
                       SizedBox(width: 10.w),
                       Text(description,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: CustomThemeData().primaryTextColor,
-                                  fontSize: 14)),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
                     ],
                   ),
                   SizedBox(height: 8.h),
@@ -208,12 +152,7 @@ class OptionCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(description1,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: CustomThemeData().primaryTextColor,
-                                  fontSize: 14)),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -224,12 +163,7 @@ class OptionCard extends StatelessWidget {
                         color: Colors.transparent,
                       ),
                       const SizedBox(width: 12),
-                      Text(description2,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: CustomThemeData().primaryTextColor)),
+                      Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)),
                     ],
                   ),
                 ],

@@ -1,5 +1,5 @@
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
- import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
@@ -8,24 +8,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class ParentBottomNavigationBar extends StatelessWidget {
-  ParentBottomNavigationBar({super.key});
-  final parentController = Get.put(ParentController());
+class ParentBaseScreen extends GetView<ParentBaseController> {
+  ParentBaseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     PortraitOrientation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (parentController.currentIndex.value != 0) {
-        parentController.currentIndex.value = 0;
+      controller.isKidInDb();
+      controller.fetchParentData();
+
+      if (controller.currentIndex.value != 0) {
+        controller.currentIndex.value = 0;
       }
     });
 
     return WillPopScope(
       onWillPop: () async {
-        if (parentController.currentIndex.value != 0) {
-          parentController.currentIndex.value = 0;
+        if (controller.currentIndex.value != 0) {
+          controller.currentIndex.value = 0;
 
           return false;
         }
@@ -35,55 +37,60 @@ class ParentBottomNavigationBar extends StatelessWidget {
       },
       child: Scaffold(
         body: Container(
-            decoration: const BoxDecoration(
-              gradient: AppColors.background,
-            ),
-            child:
-                Obx(() => parentController.screens[parentController.currentIndex.value])),
+          decoration: const BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Obx(
+            () => controller.screens[controller.currentIndex.value],
+          ),
+        ),
         bottomNavigationBar: Obx(() {
-          return BottomNavigationBar(
-            backgroundColor: Colors.white,
-            elevation: 15,
-            currentIndex: parentController.currentIndex.value,
-            onTap: (index) {
-              if (index == 3) {
-                showKidsZoneDialog(
-                  context,
-                  coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
-                  greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
-                  tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
-                  label: 'Go To Kids Zone!',
-                  subLabel: 'Lets start your kids financial journey',
-                );
-              } else {
-                parentController.currentIndex.value = index;
-              }
-            },
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.textHighlighted,
-            unselectedItemColor: Colors.grey,
-            items: [
-              _buildNavBarItem(
-                iconPath: 'assets/home_icon.svg',
-                label: 'Home',
-                index: 0,
-              ),
-              _buildNavBarItem(
-                iconPath: 'assets/messages_icon.svg',
-                label: 'Messages',
-                index: 1,
-              ),
-              _buildNavBarItem(
-                iconPath: 'assets/cart_icon.svg',
-                label: 'Shop',
-                index: 2,
-              ),
-              _buildNavBarItem(
-                iconPath: 'assets/Coin.svg',
-                label: 'Kids Zone',
-                index: 3,
-              ),
-            ],
+          return Visibility(
+            visible: controller.showNavBar.value,
+            child: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              elevation: 15,
+              currentIndex: controller.currentIndex.value,
+              onTap: (index) {
+                if (index == 3) {
+                  showKidsZoneDialog(
+                    context,
+                    coinIconPath: 'assets/bottomSheetIcons/kidZoneCoinIcon.svg',
+                    greenButtonBgPath: 'assets/bottomSheetIcons/okBtnBg.svg',
+                    tickIconPath: 'assets/bottomSheetIcons/tickIcon.svg',
+                    label: 'Go To Kids Zone!',
+                    subLabel: 'Lets start your kids financial journey',
+                  );
+                } else {
+                  controller.currentIndex.value = index;
+                }
+              },
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: AppColors.textHighlighted,
+              unselectedItemColor: Colors.grey,
+              items: [
+                _buildNavBarItem(
+                  iconPath: 'assets/home_icon.svg',
+                  label: 'Home',
+                  index: 0,
+                ),
+                _buildNavBarItem(
+                  iconPath: 'assets/messages_icon.svg',
+                  label: 'Messages',
+                  index: 1,
+                ),
+                _buildNavBarItem(
+                  iconPath: 'assets/cart_icon.svg',
+                  label: 'Shop',
+                  index: 2,
+                ),
+                _buildNavBarItem(
+                  iconPath: 'assets/Coin.svg',
+                  label: 'Kids Zone',
+                  index: 3,
+                ),
+              ],
+            ),
           );
         }),
       ),
@@ -102,9 +109,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
         height: 24.h,
         color: index == 3 // Check if it's the Kid Zone index
             ? null // No color assigned for Kid Zone icon
-            : (parentController.currentIndex.value == index
-                ? Colors.purple
-                : Colors.grey),
+            : (controller.currentIndex.value == index ? Colors.purple : Colors.grey),
       ),
       label: label,
     );
@@ -120,13 +125,11 @@ class ParentBottomNavigationBar extends StatelessWidget {
             ),
             title: Row(
               children: [
-                Icon(Icons.exit_to_app,
-                    color: AppColors.textPrimary, size: 28.sp),
+                Icon(Icons.exit_to_app, color: AppColors.textPrimary, size: 28.sp),
                 SizedBox(width: 8.w),
                 Text(
                   'Exit App',
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -151,8 +154,7 @@ class ParentBottomNavigationBar extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 ),
                 child: Text(
                   'Exit',

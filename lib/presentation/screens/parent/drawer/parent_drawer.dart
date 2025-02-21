@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,11 +22,11 @@ class ParentDrawer extends StatefulWidget {
 }
 
 class _ParentDrawerState extends State<ParentDrawer> {
-  final parentController =
-      Get.put(ParentController());
+  final parentController = Get.put(ParentBaseController());
   final ParentService _parentService = Get.find<ParentService>();
   final RxBool isLoading = false.obs;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final AuthService _authService = Get.find<AuthService>();
 
   @override
   void initState() {
@@ -34,10 +34,11 @@ class _ParentDrawerState extends State<ParentDrawer> {
     parentController.loadImageFromPreferences();
   }
 
-  Future<void> uploadImageToFirebase(File imageFile, ParentModel parentData) async {
+  Future<void> uploadImageToFirebase(
+      File imageFile, ParentModel parentData) async {
     try {
       isLoading.value = true;
-      
+
       // Show loading indicator
       showDialog(
         context: Get.context!,
@@ -45,45 +46,44 @@ class _ParentDrawerState extends State<ParentDrawer> {
           child: CircularProgressIndicator(),
         ),
       );
-      
+
       // Create a unique file name
-      String fileName = 'parent_profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
-      
+      String fileName =
+          'parent_profile_${DateTime.now().millisecondsSinceEpoch}${path.extension(imageFile.path)}';
+
       // Create a reference to the file location in Firebase Storage
       Reference ref = _storage.ref().child('parent_profiles').child(fileName);
-      
+
       // Create upload task
       UploadTask uploadTask = ref.putFile(imageFile);
-      
+
       // Listen to upload progress and handle errors
       uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-        double progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        double progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         print('Upload progress: $progress%');
       }, onError: (error) {
         Get.back(); // Close loading dialog
         ToastUtil.showToast("Upload failed: $error");
         throw error;
       });
-      
+
       // Wait for upload to complete
       TaskSnapshot taskSnapshot = await uploadTask;
-      
+
       // Get the download URL
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-      
+
       // Update the parent model with the new image URL
       final updatedParent = parentData.copyWith(imageUrl: downloadUrl);
       await _parentService.updateParent(updatedParent);
-      
+
       // Save both local path and network URL
       await parentController.saveImageToPreferences(
-        localPath: imageFile.path,
-        networkUrl: downloadUrl
-      );
-      
+          localPath: imageFile.path, networkUrl: downloadUrl);
+
       Get.back(); // Close loading dialog
       ToastUtil.showToast("Profile image updated successfully");
-      
     } catch (e) {
       Get.back(); // Close loading dialog if open
       print("Error uploading image: $e");
@@ -135,7 +135,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
 
   // after data fetched widget
   Widget drawerWidget({required ParentModel parentData}) {
-    final String formattedDob = DateFormat('d MMM, y').format(parentData.dob);
+    final String formattedDob = DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(parentData.dob));
 
     return SingleChildScrollView(
       child: Padding(
@@ -154,7 +154,7 @@ class _ParentDrawerState extends State<ParentDrawer> {
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
                       onTap: () async {
-                        await firebaseAuthController.logout();
+                        await _authService.signOut();
                       },
                       child: Container(
                           width: 54.w,
@@ -181,16 +181,20 @@ class _ParentDrawerState extends State<ParentDrawer> {
                           showImageSourceBottomSheet(
                             onCameraTap: () async {
                               Get.back();
-                              final File? imageFile = await parentController.pickFromCamera();
+                              final File? imageFile =
+                                  await parentController.pickFromCamera();
                               if (imageFile != null) {
-                                await uploadImageToFirebase(imageFile, parentData);
+                                await uploadImageToFirebase(
+                                    imageFile, parentData);
                               }
                             },
                             onGalleryTap: () async {
                               Get.back();
-                              final File? imageFile = await parentController.pickUpFromGallery();
+                              final File? imageFile =
+                                  await parentController.pickUpFromGallery();
                               if (imageFile != null) {
-                                await uploadImageToFirebase(imageFile, parentData);
+                                await uploadImageToFirebase(
+                                    imageFile, parentData);
                               }
                             },
                           );
@@ -324,14 +328,12 @@ class _ParentDrawerState extends State<ParentDrawer> {
                     _buildToggleRow(
                       "Goal Achievement",
                       "assets/drawer_svgs/flag_check.svg",
-                      parentController
-                          .toggleValue, // Reactive state
+                      parentController.toggleValue, // Reactive state
                     ),
                     _buildToggleRow(
                       "Money Request",
                       "assets/drawer_svgs/euro.svg",
-                      parentController
-                          .toggleValue1, // Reactive state
+                      parentController.toggleValue1, // Reactive state
                     ),
                   ],
                 ),
@@ -553,7 +555,8 @@ class _ParentDrawerState extends State<ParentDrawer> {
               ],
             ),
             Obx(() => Switch(
-                  value: toggleValue.value, // Use reactive value
+                  value: toggleValue.value,
+                  // Use reactive value
                   onChanged: (newValue) {
                     toggleValue.value = newValue; // Update the value reactively
                   },

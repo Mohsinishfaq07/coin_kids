@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +23,8 @@ class KidGoalsController extends GetxController {
   final ImagePicker picker = ImagePicker();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  final authController = Get.find<AuthenticationController>();
 
   RxString goalName = ''.obs;
   RxDouble goalAmount = 0.0.obs;
@@ -78,7 +80,7 @@ class KidGoalsController extends GetxController {
 
   Future<void> addKidGoal() async {
     try {
-      firebaseAuthController.isNormalLoading.value = true;
+      authController.isNormalLoading.value = true;
       Get.dialog(
         Center(child: CircularProgressIndicator()),
         barrierDismissible:
@@ -88,7 +90,7 @@ class KidGoalsController extends GetxController {
       final String? parentId = _firebaseAuth.currentUser?.uid;
       if (parentId == null) {
         ToastUtil.showToast("User not authenticated");
-        firebaseAuthController.isNormalLoading.value = false;
+        authController.isNormalLoading.value = false;
         return;
       }
 
@@ -160,7 +162,7 @@ class KidGoalsController extends GetxController {
       });
 
       // Success response
-      firebaseAuthController.isNormalLoading.value = false;
+      authController.isNormalLoading.value = false;
       goalImage.value = "";
       goalName.value = "";
       goalAmount.value = 0.0;
@@ -168,7 +170,7 @@ class KidGoalsController extends GetxController {
       Get.log('Added new goal for kid with parent ID: $parentId');
       goalImage.value = "";
     } catch (e) {
-      firebaseAuthController.isNormalLoading.value = false;
+      authController.isNormalLoading.value = false;
       Get.back();
 
       // Firestore timeout error handling
@@ -508,7 +510,7 @@ class KidGoalsController extends GetxController {
 
       ToastUtil.showToast("Goal deleted successfully");
       isLoading.value = false;
-      Get.off(KidHomeScreen());
+      Get.off(() => KidHomeScreen());
     } catch (e) {
       isLoading.value = false;
       ToastUtil.showToast("Failed to delete goal: $e");

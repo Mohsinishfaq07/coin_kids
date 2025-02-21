@@ -55,7 +55,7 @@
 //         // Save the image path in Firestore
 //         // await FirebaseFirestore.instance
 //         //     .collection('parent') // Parent collection
-//         //     .doc(firebaseAuthController
+//         //     .doc(authController
 //         //         .email.value) // Replace with actual user ID
 //         //     .update({'image': localPath});
 //

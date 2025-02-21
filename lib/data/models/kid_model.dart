@@ -69,11 +69,9 @@ class Wallet {
 }
 
 class KidModel {
+  final String kidId;
   final String name;
-  final String email;
-  final String password;
   final int age;
-  final String grade;
   final String avatar;
   final String parentId;
   final Wallet wallet;
@@ -81,11 +79,9 @@ class KidModel {
   final DateTime createdAt;
 
   KidModel({
+    required this.kidId,
     required this.name,
-    required this.email,
-    required this.password,
     required this.age,
-    required this.grade,
     required this.avatar,
     required this.parentId,
     required this.wallet,
@@ -93,13 +89,12 @@ class KidModel {
     required this.createdAt,
   });
 
-  factory KidModel.fromJson(Map<String, dynamic> json) {
+  factory KidModel.fromJson(Map<String, dynamic> json,
+      {String documentId = ''}) {
     return KidModel(
+      kidId: documentId,
       name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      password: json['password'] ?? '',
       age: json['age'] ?? 0,
-      grade: json['grade'] ?? '',
       avatar: json['avatar'] ?? '',
       parentId: json['parentId'] ?? '',
       wallet: Wallet.fromJson(json['wallet'] ?? {}),
@@ -110,11 +105,9 @@ class KidModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'kidId': kidId,
       'name': name,
-      'email': email,
-      'password': password,
       'age': age,
-      'grade': grade,
       'avatar': avatar,
       'parentId': parentId,
       'wallet': wallet.toJson(),
@@ -124,11 +117,9 @@ class KidModel {
   }
 
   KidModel copyWith({
+    String? kidId,
     String? name,
-    String? email,
-    String? password,
     int? age,
-    String? grade,
     String? avatar,
     String? parentId,
     Wallet? wallet,
@@ -136,11 +127,9 @@ class KidModel {
     DateTime? createdAt,
   }) {
     return KidModel(
+      kidId: kidId ?? this.kidId,
       name: name ?? this.name,
-      email: email ?? this.email,
-      password: password ?? this.password,
       age: age ?? this.age,
-      grade: grade ?? this.grade,
       avatar: avatar ?? this.avatar,
       parentId: parentId ?? this.parentId,
       wallet: wallet ?? this.wallet,

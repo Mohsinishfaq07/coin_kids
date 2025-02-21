@@ -128,7 +128,7 @@ class GoalProgress extends StatelessWidget {
                                             left: 26.w, top: 12.h),
                                         child: kidBackButton(
                                           onTap: () {
-                                            Get.off(KidHomeScreen());
+                                            Get.off(() => KidHomeScreen());
                                           },
                                         ),
                                       ),

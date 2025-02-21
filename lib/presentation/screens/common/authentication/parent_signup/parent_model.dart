@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ParentModel {
+  final String? id;
   final String email;
   final String password;
   final String name;
   final int pin;
   final DateTime createdAt;
-  final DateTime dob;
+  final int dob;
   final String gender;
   final String imageUrl;
 
   ParentModel({
+    this.id,
     required this.email,
     required this.password,
     required this.name,
@@ -28,7 +30,7 @@ class ParentModel {
       name: json['name'] ?? '',
       pin: json['pin'] ?? 0,
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      dob: (json['dob'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      dob: (json['dob']) ?? DateTime.now().millisecondsSinceEpoch,
       gender: json['gender'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
     );
@@ -41,7 +43,7 @@ class ParentModel {
       'name': name,
       'pin': pin,
       'createdAt': Timestamp.fromDate(createdAt),
-      'dob': Timestamp.fromDate(dob),
+      'dob': dob,
       'gender': gender,
       'imageUrl': imageUrl,
     };
@@ -55,7 +57,7 @@ class ParentModel {
     int? pin,
     List<String>? children,
     DateTime? createdAt,
-    DateTime? dob,
+    int? dob,
     String? gender,
     String? imageUrl,
   }) {
@@ -70,4 +72,4 @@ class ParentModel {
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }
-} 
+}

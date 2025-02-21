@@ -9,14 +9,13 @@ class KidService {
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
     try {
-      final DocumentSnapshot doc =
-          await _firestore.collection('kids').doc(kidId).get();
+      final DocumentSnapshot doc = await _firestore.collection('kids').doc(kidId).get();
 
       if (!doc.exists) {
         return null;
       }
 
-      return KidModel.fromJson(doc.data() as Map<String, dynamic>);
+      return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: kidId);
     } catch (e) {
       throw Exception('Failed to fetch kid data: ${e.toString()}');
     }

@@ -1,14 +1,17 @@
-import 'package:coin_kids/core/constants/constants.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/presentation/components/parent/custom_button.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 
 class ForgotPasswordScreen extends StatelessWidget {
   ForgotPasswordScreen({super.key});
+
+  final authController = Get.find<AuthenticationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +33,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                 hintText: 'Email',
                 titleText: 'Email',
                 onChanged: (value) {
-                  firebaseAuthController.email.value = value.trim();
-                  firebaseAuthController
+                  authController.email.value = value.trim();
+                  authController
                       .checkFields(); // Check fields on change
                 },
               ),
@@ -54,10 +57,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                 color: Colors.purple,
                 text: 'Send',
                 onPressed: () async {
-                  if (firebaseAuthController.email.value.isNotEmpty &&
-                      firebaseAuthController.email.value.contains('@')) {
-                    await firebaseAuthController
-                        .resetPassword(firebaseAuthController.email.value);
+                  if (authController.email.value.isNotEmpty &&
+                      authController.email.value.contains('@')) {
+                    // await authController
+                    //     .resetPassword(authController.email.value);
                   } else {
                     ToastUtil.showToast('Check your email');
                   }

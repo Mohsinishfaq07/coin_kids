@@ -435,7 +435,7 @@ class EditGoal extends StatelessWidget {
                                                   //   }
                                                 }
 
-                                                Get.off(KidHomeScreen());
+                                                Get.off(() => KidHomeScreen());
                                               },
                                               showSuffix: true,
                                               buttonText: 'Save',

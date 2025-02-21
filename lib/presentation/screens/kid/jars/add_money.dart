@@ -3,13 +3,12 @@ import 'dart:math';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:coin_kids/presentation/controllers/kid/add_money_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -38,7 +37,7 @@ class AddMoneyScreen extends StatefulWidget {
 
 class _AddMoneyScreenState extends State<AddMoneyScreen> {
   final addMoneyController = Get.put(AddMoneyController());
-  final parentController = Get.put(ParentController());
+  final parentController = Get.put(ParentBaseController());
 
   @override
   void initState() {
@@ -46,7 +45,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
     addMoneyController.fetchSpendingAmount();
     addMoneyController.fetchSavingAmount();
    // parentController.fetchParentDetails();
-    parentController.fetchKids();
+   //  parentController.fetchKids();
   }
 
   @override
@@ -709,15 +708,15 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                       if (addMoneyController.totalValue.value ==
                                           widget.amount) {
                                         print('Amounts match!');
-                                        await firestoreOperations
-                                            .parentFirebaseFunctions
-                                            .updateKidSpendingForJar(
-                                          save: true,
-                                          kidId: parentController.kidsList[0]
-                                              ['id'],
-                                          enteredAmount: widget.amount,
-                                          spendingJarColor: widget.jarColor,
-                                        );
+                                        // await authController
+                                        //     .parentFirebaseFunctions
+                                        //     .updateKidSpendingForJar(
+                                        //   save: true,
+                                        //   kidId: parentController.kidsList[0]
+                                        //       ['id'],
+                                        //   enteredAmount: widget.amount,
+                                        //   spendingJarColor: widget.jarColor,
+                                        // );
                                         addMoneyController.totalValue.value =
                                             0.0;
                                         Get.off(() => KidHomeScreen());
@@ -730,15 +729,16 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                       if (addMoneyController.totalValue.value ==
                                           widget.amount) {
                                         print('Amounts match!');
-                                        await firestoreOperations
-                                            .parentFirebaseFunctions
-                                            .kidSpendingToSavings(
-                                          save: false,
-                                          enteredAmount: widget.amount,
-                                          kidId: parentController.kidsList[0]
-                                              ['id'],
-                                          savingsJarColor: widget.jarColor,
-                                        );
+                                        // final kid = parentController.kidsList[0];
+                                        // await authController
+                                        //     .parentFirebaseFunctions
+                                        //     .kidSpendingToSavings(
+                                        //   save: false,
+                                        //   enteredAmount: widget.amount,
+                                        //   kidId: parentController.kidsList[0]
+                                        //       kid.parentId,
+                                        //   savingsJarColor: widget.jarColor,
+                                        // );
                                         addMoneyController.totalValue.value =
                                             0.0;
                                         Get.off(() => KidHomeScreen());

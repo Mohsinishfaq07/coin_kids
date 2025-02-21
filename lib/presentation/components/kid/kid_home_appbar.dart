@@ -1,4 +1,5 @@
-import 'package:coin_kids/firebase/firebase_authentication/firebase_auth.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/coin_kid_lock_container.dart';
 import 'package:coin_kids/presentation/components/kid/total_money_widget.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/kid_avatar_container.dart';
@@ -10,8 +11,7 @@ import 'package:get/get.dart';
 import '../../screens/common/authentication/login/login_screen.dart';
 
 class KidDefaultAppBar extends StatelessWidget {
-  final FirebaseAuthController firebaseAuthController =
-      Get.find<FirebaseAuthController>();
+  final AuthService _authService = Get.find<AuthService>();
 
   KidDefaultAppBar({Key? key}) : super(key: key);
 
@@ -28,7 +28,7 @@ class KidDefaultAppBar extends StatelessWidget {
           // Logout Button
           GestureDetector(
             onTap: () async {
-              await firebaseAuthController.logout();
+              await _authService.signOut();
               // Navigate to Login screen after logout
               Get.offAll(() => LoginScreen());
             },

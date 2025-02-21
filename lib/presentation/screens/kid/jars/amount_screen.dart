@@ -3,7 +3,7 @@ import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
- import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/jars/add_money.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -15,27 +15,28 @@ import 'package:showcaseview/showcaseview.dart';
 class JarAmountScreen extends StatefulWidget {
   Color jarColor;
   RxBool isSpending;
-  JarAmountScreen({required this.isSpending, required this.jarColor, Key? key})
-      : super(key: key);
+
+  JarAmountScreen({required this.isSpending, required this.jarColor, Key? key}) : super(key: key);
 
   @override
   State<JarAmountScreen> createState() => _JarAmountScreenState();
 }
 
 class _JarAmountScreenState extends State<JarAmountScreen> {
-  final parentController = Get.put(ParentController());
+  final parentController = Get.put(ParentBaseController());
   final GlobalKey _amountTextFieldKey = GlobalKey();
-   @override
+
+  @override
   void initState() {
     super.initState();
     //parentController.fetchParentDetails();
-    parentController.fetchKids();
+    // parentController.fetchKids();
   }
+
   void _startShowCase(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ShowCaseWidget.of(context).startShowCase([
         _amountTextFieldKey,
-
       ]);
     });
   }
@@ -91,23 +92,19 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                           showSuffix: true,
                           onTap: () async {
                             // Validate and parse the entered amount safely
-                            String enteredAmountString =
-                                parentController.amount.value;
+                            String enteredAmountString = parentController.amount.value;
 
-                            if (enteredAmountString.isEmpty ||
-                                double.tryParse(enteredAmountString) == null) {
+                            if (enteredAmountString.isEmpty || double.tryParse(enteredAmountString) == null) {
                               // Show a toast message for invalid input
                               ToastUtil.showToast("Pleae add Valid amount");
                               return; // Stop further execution
                             }
 
-                            double enteredAmount =
-                                double.parse(enteredAmountString);
+                            double enteredAmount = double.parse(enteredAmountString);
 
                             if (enteredAmount <= 0) {
                               // Show a toast message for invalid amount
-                              ToastUtil.showToast(
-                                  "Amount must be greater than 0");
+                              ToastUtil.showToast("Amount must be greater than 0");
 
                               return; // Stop further execution
                             }
@@ -115,7 +112,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                             // Perform the desired operation
 
                             if (widget.isSpending.value) {
-                              // await firestoreOperations.parentFirebaseFunctions
+                              // await authController.parentFirebaseFunctions
                               //     .updateKidSpendingForJar(
                               //   save: true,
                               //   kidId: parentController.kidsList[0]['id'],
@@ -128,7 +125,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                                     jarColor: widget.jarColor,
                                   ));
                             } else {
-                              // await firestoreOperations.parentFirebaseFunctions
+                              // await authController.parentFirebaseFunctions
                               //     .kidSpendingToSavings(
                               //   save: true,
                               //   childId: parentController.kidsList[0]['id'],

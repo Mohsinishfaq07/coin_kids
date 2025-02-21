@@ -23,24 +23,22 @@ class AuthService extends GetxController {
     required String email,
     required String password,
     required String name,
-    required DateTime dob,
+    int dob = 0,
     required String gender,
-    required int pin,
+    int pin = 0000,
   }) async {
     try {
       // Create user with email and password
-      final UserCredential credential =
-          await _auth.createUserWithEmailAndPassword(
+      final UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       if (credential.user != null) {
-        // Create parent document in Firestore
         final parent = ParentModel(
+          id: credential.user!.uid,
           email: email,
-          password: '',
-          // Don't store actual password
+          password: password,
           name: name,
           pin: pin,
           createdAt: DateTime.now(),
@@ -63,10 +61,12 @@ class AuthService extends GetxController {
     required String password,
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      return result;
     } catch (e) {
       throw _handleAuthException(e);
     }
@@ -83,8 +83,7 @@ class AuthService extends GetxController {
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -93,8 +92,7 @@ class AuthService extends GetxController {
       );
 
       // Sign in to Firebase with the Google credential
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
       // If this is a new user, create parent document
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
@@ -106,7 +104,7 @@ class AuthService extends GetxController {
           pin: 0000,
           // Default PIN
           createdAt: DateTime.now(),
-          dob: DateTime.now(),
+          dob: DateTime.now().millisecondsSinceEpoch,
           // Will need to be updated by user
           gender: '', // Will need to be updated by user
         );
@@ -145,15 +143,12 @@ class AuthService extends GetxController {
       );
 
       // Sign in to Firebase
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(oauthCredential);
+      final UserCredential userCredential = await _auth.signInWithCredential(oauthCredential);
 
       // If this is a new user, create parent document
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
         final String? email = userCredential.user?.email;
-        final String? name =
-            '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'
-                .trim();
+        final String? name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
 
         final parent = ParentModel(
           email: email ?? '',
@@ -163,7 +158,7 @@ class AuthService extends GetxController {
           pin: 0000,
           // Default PIN
           createdAt: DateTime.now(),
-          dob: DateTime.now(),
+          dob: DateTime.now().millisecondsSinceEpoch,
           // Will need to be updated by user
           gender: '', // Will need to be updated by user
         );

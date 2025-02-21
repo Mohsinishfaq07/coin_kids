@@ -1,18 +1,18 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
 import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends GetView<SignupController> {
   SignupScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
@@ -47,9 +47,7 @@ class SignupScreen extends StatelessWidget {
                     CustomTextField(
                       hintText: 'Full Name',
                       onChanged: (value) {
-                        firebaseAuthController.parentName.value = value.trim();
-                        firebaseAuthController
-                            .signUpCheckField(); // Check fields on change
+                        controller.name.value = value.trim();
                       },
                       titleText: 'Full Name',
                       validator: (value) {
@@ -66,9 +64,7 @@ class SignupScreen extends StatelessWidget {
                         hintText: 'Email',
                         keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
-                          firebaseAuthController.email.value = value.trim();
-                          firebaseAuthController
-                              .signUpCheckField(); // Check fields on change
+                          controller.email.value = value.trim();
                         },
                         titleText: 'Email',
                         validator: (value) {
@@ -76,9 +72,7 @@ class SignupScreen extends StatelessWidget {
                             return "Email is required";
                           }
                           // Validate email format
-                          if (!RegExp(
-                                  r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                              .hasMatch(value)) {
+                          if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
                             return "Enter a valid email address";
                           }
                           return null;
@@ -91,19 +85,14 @@ class SignupScreen extends StatelessWidget {
                       return CustomTextField(
                         hintText: 'Password',
                         onChanged: (value) {
-                          firebaseAuthController.password.value = value.trim();
-                          firebaseAuthController
-                              .signUpCheckField(); // Check fields on change
+                          controller.password.value = value.trim();
                         },
                         titleText: 'Password',
-                        obscureText: firebaseAuthController.showPassword.value,
+                        obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: firebaseAuthController.showPassword.value
-                            ? "assets/eye.svg"
-                            : "assets/hide_eye.svg",
+                        suffixSvgPath: controller.showPassword.value ? "assets/eye.svg" : "assets/hide_eye.svg",
                         onSuffixTap: () {
-                          firebaseAuthController.showPassword.value =
-                              !firebaseAuthController.showPassword.value;
+                          controller.showPassword.value = !controller.showPassword.value;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -119,30 +108,20 @@ class SignupScreen extends StatelessWidget {
                         child: CustomTextField(
                             hintText: 'Confirm Password',
                             onChanged: (value) {
-                              firebaseAuthController.confirmPassword.value =
-                                  value.trim();
-                              firebaseAuthController
-                                  .signUpCheckField(); // Check fields on change
+                              controller.confirmPassword.value = value.trim();
                             },
                             titleText: 'Confirm Password',
-                            obscureText: firebaseAuthController
-                                .showConfirmPassword.value,
+                            obscureText: controller.showPassword.value,
                             suffixIconColor: AppColors.textPrimary,
-                            suffixSvgPath:
-                                firebaseAuthController.showConfirmPassword.value
-                                    ? "assets/eye.svg"
-                                    : "assets/hide_eye.svg",
+                            suffixSvgPath: controller.showPassword.value ? "assets/eye.svg" : "assets/hide_eye.svg",
                             onSuffixTap: () {
-                              firebaseAuthController.showConfirmPassword.value =
-                                  !firebaseAuthController
-                                      .showConfirmPassword.value;
+                              controller.showPassword.value = !controller.showPassword.value;
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Confirm Password is required";
                               }
-                              if (value !=
-                                  firebaseAuthController.password.value) {
+                              if (value != controller.password.value) {
                                 return "Passwords do not match";
                               }
                               if (value.length < 6) {
@@ -156,13 +135,13 @@ class SignupScreen extends StatelessWidget {
                     Center(
                       child: AppButton(
                         backgroundColor: AppColors.buttonPrimary,
-                        // backgroundColor: firebaseAuthController.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                        // backgroundColor: controller.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                         text: 'Signup',
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
                             // If the form is valid, proceed with the signup action
                             try {
-                              firebaseAuthController.signUpWithEmail();
+                              controller.signUpWithEmail();
                             } catch (e) {
                               print("Error: $e");
                             }
@@ -179,12 +158,7 @@ class SignupScreen extends StatelessWidget {
                       children: [
                         Text(
                           "Already have an account? ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: CustomThemeData().primaryTextColor,
-                                  fontSize: 12.sp),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12.sp),
                         ),
                         GestureDetector(
                             onTap: () {
@@ -192,21 +166,13 @@ class SignupScreen extends StatelessWidget {
                             },
                             child: Text(
                               "LOGIN",
-                              style: AppTextStyle.labelLarge.copyWith(
-                                  fontSize: 14.sp,
-                                  color: AppColors.buttonPrimary),
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp, color: AppColors.buttonPrimary),
                             )),
                       ],
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 16.h, bottom: 24.h),
-                      child: Text("OR",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w800)),
+                      child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
                     ),
 
                     // Google Login Button
@@ -216,38 +182,32 @@ class SignupScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        fixedSize:
-                            Size(screenWidth * 0.8, 50), // Responsive width
+                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () async {
                         try {
-                          //     await firebaseAuthController.signUpWithGoogle();
+                          //     await controller.signUpWithGoogle();
                         } catch (e) {
                           print("Error: $e");
                         }
                       },
                       child: Obx(() {
-                        return firebaseAuthController.isGoogleLoading.value
+                        return controller.isGoogleLoading.value
                             ? const Center(
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                 ),
                               )
                             : Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(
-                                        AppAssets.googleIconSvg,
-                                        height: 24),
+                                    padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                                    child: SvgPicture.asset(AppAssets.googleIconSvg, height: 24),
                                   ),
                                   Text(
                                     "Sign in with Google",
-                                    style: AppTextStyle.labelLarge
-                                        .copyWith(fontSize: 14.sp),
+                                    style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
                                   ),
                                   SizedBox.shrink()
                                   // Padding(
@@ -271,34 +231,29 @@ class SignupScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        fixedSize:
-                            Size(screenWidth * 0.8, 50), // Responsive width
+                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                       ),
                       onPressed: () {
-                        firebaseAuthController.signinWithApple();
+                        // controller.signinWithApple();
                       },
                       child: Obx(
                         () {
-                          return firebaseAuthController.isAppleLoading.value
+                          return controller.isAppleLoading.value
                               ? const Center(
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
                                   ),
                                 )
                               : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(right: 10.w),
-                                      child: SvgPicture.asset(
-                                          AppAssets.appleIconSvg,
-                                          height: 24),
+                                      child: SvgPicture.asset(AppAssets.appleIconSvg, height: 24),
                                     ),
                                     Text(
                                       "Sign in with Apple",
-                                      style: AppTextStyle.labelLarge
-                                          .copyWith(fontSize: 14.sp),
+                                      style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
                                     ),
                                     SizedBox.shrink()
                                     // Padding(
@@ -318,15 +273,13 @@ class SignupScreen extends StatelessWidget {
                     SizedBox(height: 80.h),
                     // Terms and Signup Button
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 24.w, right: 24.w, bottom: 10.h),
+                      padding: EdgeInsets.only(left: 24.w, right: 24.w, bottom: 10.h),
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text:
-                                  "By clicking Sign Up, you are agreeing to the ",
+                              text: "By clicking Sign Up, you are agreeing to the ",
                               style: TextStyle(
                                 color: Colors.blue.shade900,
                                 fontWeight: FontWeight.normal,

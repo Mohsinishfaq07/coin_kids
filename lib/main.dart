@@ -1,6 +1,6 @@
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/di/controller_bindings.dart';
-import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/presentation/screens/common/splash/splash_screen.dart';
@@ -20,7 +20,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  controllerAndClassInitialization();
+
+  SharedPreferencesHelper.init();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

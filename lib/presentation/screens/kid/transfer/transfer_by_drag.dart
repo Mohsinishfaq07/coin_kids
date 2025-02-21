@@ -706,7 +706,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                         enteredAmount:
                                             addMoneyController.totalValue.value,
                                       );
-                                      Get.off(KidHomeScreen());
+                                      Get.off(() => KidHomeScreen());
                                     } else if (widget.isSpending.value ==
                                             false &&
                                         addMoneyController.totalValue.value <=
@@ -717,7 +717,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                         enteredAmount:
                                             addMoneyController.totalValue.value,
                                       );
-                                      Get.off(KidHomeScreen());
+                                      Get.off(() => KidHomeScreen());
                                     } else {
                                       Fluttertoast.showToast(
                                         msg:

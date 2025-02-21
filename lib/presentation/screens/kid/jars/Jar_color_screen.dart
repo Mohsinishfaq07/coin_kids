@@ -2,7 +2,7 @@ import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
  import 'package:coin_kids/presentation/screens/kid/jars/amount_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -36,7 +36,7 @@ class AddJarColorScreen extends StatelessWidget {
     const Color(0xFF3F51FC),
   ];
 
-  final parentController = Get.put(ParentController());
+  final parentController = Get.put(ParentBaseController());
 
   void _startShowCase(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {

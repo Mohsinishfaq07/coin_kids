@@ -14,8 +14,7 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
-      final DocumentSnapshot doc =
-          await _firestore.collection('parents').doc(userId).get();
+      final DocumentSnapshot doc = await _firestore.collection('parents').doc(userId).get();
 
       if (!doc.exists) {
         return null;
@@ -27,15 +26,26 @@ class ParentService {
     }
   }
 
+  // Stream to observe parent data updates
+  Stream<ParentModel?> streamParentData() {
+    final String userId = _auth.currentUser?.uid ?? '';
+    if (userId.isEmpty) {
+      return Stream.value(null); // Return a stream with null if user is not authenticated
+    }
+
+    return _firestore.collection('parents').doc(userId).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return ParentModel.fromJson(snapshot.data() as Map<String, dynamic>);
+      } else {
+        return null; // Return null if the document does not exist
+      }
+    });
+  }
+
   // Create new parent
   Future<void> createParent(ParentModel parent) async {
     try {
-      final String userId = _auth.currentUser?.uid ?? '';
-      if (userId.isEmpty) {
-        throw Exception('User not authenticated');
-      }
-
-      await _firestore.collection('parents').doc(userId).set(parent.toJson());
+      await _firestore.collection('parents').doc(parent.id).set(parent.toJson());
     } catch (e) {
       throw Exception('Failed to create parent: ${e.toString()}');
     }

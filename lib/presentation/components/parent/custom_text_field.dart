@@ -22,9 +22,10 @@ class CustomTextField extends StatelessWidget {
   final String? suffixSvgPath;
   final bool isOptional; // Flag for optional label
   final FocusNode? nextFocusNode;
-
+  final int? maxLength;
   const CustomTextField({
     this.isOptional = false,
+    this.maxLength,
     required this.titleText, // Title for the field is now required
     required this.hintText,
     this.initialValue,
@@ -61,6 +62,8 @@ class CustomTextField extends StatelessWidget {
           // ),
           // const SizedBox(height: 8), // Spacing between title and text field
           TextFormField(
+
+            maxLength: maxLength,
               initialValue: initialValue,
               textInputAction: nextFocusNode != null
                   ? TextInputAction.next
@@ -71,6 +74,7 @@ class CustomTextField extends StatelessWidget {
               keyboardType: keyboardType,
               validator: validator,
               decoration: InputDecoration(
+                counterText: "",
                 filled: true,
                 fillColor: Theme.of(context)
                     .inputDecorationTheme
