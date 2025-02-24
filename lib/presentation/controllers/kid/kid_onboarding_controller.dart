@@ -94,39 +94,6 @@ class KidsOnBoardingController extends GetxController {
     });
   }
 
-  // showOnBoarding2SpotLight() {
-  //   spotLightOn.value = true;
-  //   Get.log('showing spot light : $spotLightOn');
-  //   showDialog(
-  //     context: Get.context!,
-  //     builder: (BuildContext context) {
-  //       return const Dialog(
-  //         backgroundColor: Colors.transparent, // Make background transparent
-  //         child: SpotLight2DialogueBox(),
-  //       );
-  //     },
-  //   ).then((_) {
-  //     spotLightOn.value = false;
-  //     Get.log('spot light dismissed : $spotLightOn');
-  //   });
-  // }
-
-  // showOnBoarding3SpotLight() {
-  //   spotLightOn.value = true;
-  //   Get.log('showing spot light : $spotLightOn');
-  //   showDialog(
-  //     context: Get.context!,
-  //     builder: (BuildContext context) {
-  //       return const Dialog(
-  //         backgroundColor: Colors.transparent, // Make background transparent
-  //         child: SpotLight3DialogueBox(),
-  //       );
-  //     },
-  //   ).then((_) {
-  //     spotLightOn.value = false;
-  //     Get.log('spot light dismissed : $spotLightOn');
-  //   });
-  // }
 
   increaseSpotLightIndex({required int index}) {
     spotLightIndex.value = index;

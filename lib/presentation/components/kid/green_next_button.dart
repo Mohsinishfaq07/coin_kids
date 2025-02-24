@@ -124,7 +124,7 @@ class GreenNextButton extends StatelessWidget {
               left: 1,
               top: 1.29,
               child: Image.asset(
-                "assets/Button_shadow.png", // Shadow image
+                "assets/button_shadow.png", // Shadow image
                 height: 10.h,
               ),
             ),

@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
+import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 import 'package:coin_kids/presentation/components/kid/green_done_button.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
@@ -95,19 +96,16 @@ class KidSectionOnboarding extends StatelessWidget {
                             SizedBox(
                               height: 6.h,
                             ),
-                            Showcase(
-                              key: kidOnboardingController.textFieldKey,
-                              description: "This is a text field. Tap to type.",
-                              overlayColor: Colors.black.withOpacity(0.5),
-                              overlayOpacity: 0.5,
-                              targetShapeBorder: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              tooltipBackgroundColor: AppColors.textPrimary,
-                              descTextStyle: AppTextStyle.headingMedium.copyWith(
-                                color: AppColors.textOnPrimary,
-                              ),
-                              tooltipPadding: EdgeInsets.all(8.w),
+                            AppShowCaseWidget(
+                              showcaseKey: kidOnboardingController.textFieldKey,
+                              description: "What's your name? ✍️",
+                              backgroundImage: "assets/center_spot_light_background.png", // Custom background
+                              onTargetClick: () {
+                                kidOnboardingController.spotLightOn.value = false;
+                                if (_addChildController.childName.value.isNotEmpty) {
+                                  kidOnboardingController.increaseSpotLightIndex(index: 1);
+                                }
+                              },
                               child: KidCustomTextField(
                                   maxlength: 10,
                                   hintText: "Enter your name",
@@ -152,7 +150,6 @@ class KidSectionOnboarding extends StatelessWidget {
                           )),
                   ] else if (kidOnboardingController.spotLightIndex.value ==
                       1) ...[
-                    // if (!kidSectionOnboardingController.spotLightOn.value) ...[
                     SizedBox(
                       height: 16.h,
                     ),
@@ -183,19 +180,16 @@ class KidSectionOnboarding extends StatelessWidget {
                       "How old are you?",
                       style: AppTextStyle.headingMedium,
                     ),
-                    Showcase(
-                      key: kidOnboardingController.ageListKey,
-                      description: 'How old are you?',
-                      overlayColor: Colors.black.withOpacity(0.5),
-                      overlayOpacity: 0.5,
-                      targetShapeBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      tooltipBackgroundColor: AppColors.textPrimary,
-                      descTextStyle: AppTextStyle.headingMedium.copyWith(
-                        color: AppColors.textOnPrimary,
-                      ),
-                      tooltipPadding: EdgeInsets.all(8.w),
+                    AppShowCaseWidget(
+                      showcaseKey: kidOnboardingController.ageListKey,
+                      description: "What's your name? ✍️",
+                      backgroundImage: "assets/center_spot_light_background.png", // Custom background
+                      onTargetClick: () {
+                        if (_addChildController.childAge.value.isNotEmpty) {
+                          kidOnboardingController.increaseSpotLightIndex(index: 2);
+                        }
+                      },
+
                       child: Padding(
                         padding: EdgeInsets.only(left: 130.w),
                         child: SizedBox(
@@ -272,9 +266,6 @@ class KidSectionOnboarding extends StatelessWidget {
                         ),
                       ),
                     ),
-                    //],
-                    // if (kidSectionOnboardingController.spotLightOn.value)
-
                     Padding(
                       padding: EdgeInsets.only(right: 20.w),
                       child: Align(
@@ -287,7 +278,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                     "Please enter your Age"); // Show toast if empty
                               } else {
                                 kidOnboardingController.increaseSpotLightIndex(
-                                    index: 2);
+                                    index: 1);
                               }
                             },
                             showSuffix: true,
@@ -330,8 +321,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                 targetShapeBorder: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                tooltipBackgroundColor: AppColors.textPrimary,
-                                descTextStyle: AppTextStyle.headingMedium.copyWith(
+                                tooltipBackgroundColor: AppColors.textHighlighted,                                descTextStyle: AppTextStyle.headingMedium.copyWith(
                                   color: AppColors.textOnPrimary,
                                 ),
                                 tooltipPadding: EdgeInsets.all(8.w),

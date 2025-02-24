@@ -19,7 +19,7 @@ class RoleSelectionController extends GetxController {
     } else if (role == UserRole.CHILD) {
       final isKidOnboarded = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isKidOnboarded) ?? false;
       final isKidInDb = await _kidService.fetchKidsByParentId(_authService.user.value!.uid);
-
+print("$isKidInDb");
       if (!isKidOnboarded || isKidInDb.isEmpty) {
         Get.offAll(() => KidSectionOnboarding());
       } else {
