@@ -41,7 +41,7 @@ class AddChildController extends GetxController {
     }
   }
 
-  Future<void> pickKidImage({required ImageSource source}) async {
+  Future<void> pickImage({required ImageSource source}) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: source,

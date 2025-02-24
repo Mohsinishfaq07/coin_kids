@@ -245,4 +245,23 @@ class KidService {
         .snapshots()
         .map((snapshot) => snapshot.docs.isNotEmpty);
   }
+
+  // Stream single kid by parent ID
+  Stream<KidModel?> streamKidByParentId(String parentId) {
+    return _firestore
+        .collection('kids')
+        .where('parentId', isEqualTo: parentId)
+        .limit(1)  // Ensure we only get one kid
+        .snapshots()
+        .map((snapshot) {
+          if (snapshot.docs.isEmpty) {
+            return null;
+          }
+          final doc = snapshot.docs.first;
+          return KidModel.fromJson(
+            doc.data() as Map<String, dynamic>,
+            documentId: doc.id,
+          );
+        });
+  }
 }

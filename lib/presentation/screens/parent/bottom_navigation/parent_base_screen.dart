@@ -1,7 +1,7 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +16,6 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
     PortraitOrientation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchParentData();
-
       if (controller.currentIndex.value != 0) {
         controller.currentIndex.value = 0;
       }
@@ -45,7 +43,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
         ),
         bottomNavigationBar: Obx(() {
           return Visibility(
-            visible: controller.hasKids.value,
+            visible: controller.appState.hasKid.value,
             child: BottomNavigationBar(
               backgroundColor: Colors.white,
               elevation: 15,

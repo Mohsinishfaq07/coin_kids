@@ -121,25 +121,26 @@ class UpdateKidProfile extends StatelessWidget {
                           return Obx(
                             () => GestureDetector(
                               onTap: () async {
-                                showImageSourceBottomSheet(onCameraTap: () {
-                                  Get.back(); // Close the bottom sheet
-                                  //bottomNavigationBarController.pickFromCamera();
-                                }, onGalleryTap: () async {
-                                  if (addChildController.kidImagePath.value.isNotEmpty) {
-                                    await addChildController.pickKidImage(source: ImageSource.gallery);
-                                    Get.log("Custom Avatar Path: ${addChildController.kidImagePath.value}");
-                                  }
-                                  // Close the bottom sheet
-
-                                  Get.back();
-                                  // bottomNavigationBarController.pickUpFromGallery();
-                                });
-                                // await addChildController.pickCustomAvatar();
-                                // if (addChildController
-                                //     .customAvatarPath.value.isNotEmpty) {
-                                //   Get.log(
-                                //       "Custom Avatar Path: ${addChildController.customAvatarPath.value}");
-                                // }
+                                //TODO: Unblock
+                                // showImageSourceBottomSheet(onCameraTap: () {
+                                //   Get.back(); // Close the bottom sheet
+                                //   //bottomNavigationBarController.pickFromCamera();
+                                // }, onGalleryTap: () async {
+                                //   if (addChildController.kidImagePath.value.isNotEmpty) {
+                                //     await addChildController.pickImage(source: ImageSource.gallery);
+                                //     Get.log("Custom Avatar Path: ${addChildController.kidImagePath.value}");
+                                //   }
+                                //   // Close the bottom sheet
+                                //
+                                //   Get.back();
+                                //   // bottomNavigationBarController.pickUpFromGallery();
+                                // });
+                                // // await addChildController.pickCustomAvatar();
+                                // // if (addChildController
+                                // //     .customAvatarPath.value.isNotEmpty) {
+                                // //   Get.log(
+                                // //       "Custom Avatar Path: ${addChildController.customAvatarPath.value}");
+                                // // }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(6.0),

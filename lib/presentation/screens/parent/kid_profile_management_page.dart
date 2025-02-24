@@ -78,8 +78,8 @@ class KidProfileManagementPage extends StatelessWidget {
                         title: 'Quick\nTransfer',
                         assetPath: 'assets/kidManageIcons/quickTransfer.svg',
                         onTap: () => Get.to(() => QuickTransferPage(
-                              kidId: kidId,
-                              docData: kid.toJson(),
+                              // kidId: kidId,
+                              // docData: kid.toJson(),
                             )),
                       ),
                       kidMainButtons(

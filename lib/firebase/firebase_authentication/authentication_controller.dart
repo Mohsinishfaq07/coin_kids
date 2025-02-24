@@ -12,11 +12,9 @@ class AuthenticationController extends GetxController {
 
   final email = ''.obs;
   final number = ''.obs;
-  final birthday = ''.obs;
   final parentName = ''.obs;
   final password = ''.obs;
   final confirmPassword = "".obs;
-  final selectedGender = ''.obs; // "Male" or "Female"
   final isEmailLoading = false.obs;
   final isGoogleLoading = false.obs;
   final isAppleLoading = false.obs;
@@ -32,15 +30,4 @@ class AuthenticationController extends GetxController {
   void checkFields() {
     isButtonEnabled.value = email.value.isNotEmpty && password.value.isNotEmpty;
   }
-
-  void setBirthday(DateTime date) {
-    final DateFormat formatter = DateFormat('d MMM, y');
-
-    birthday.value = formatter.format(date);
-  }
-
-  void selectGender(String gender) {
-    selectedGender.value = gender;
-  }
-
 }

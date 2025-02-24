@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+
 import '../../../data/models/market_product_model.dart';
 
 enum FilterType { all, age, budget }
@@ -23,17 +24,11 @@ class MarketController extends GetxController {
   final Rx<FilterType> currentFilter = FilterType.all.obs;
 
   List<dynamic> get filteredProducts => products.where((product) {
-        final bool priceInRange =
-            product.price >= minPrice.value && product.price <= maxPrice.value;
-        final bool ratingInRange = product.rating >= minRating.value &&
-            product.rating <= maxRating.value;
-        final bool ageInRange =
-            product.minAge >= minAge.value && product.maxAge <= maxAge.value;
+        final bool priceInRange = product.price >= minPrice.value && product.price <= maxPrice.value;
+        final bool ratingInRange = product.rating >= minRating.value && product.rating <= maxRating.value;
+        final bool ageInRange = product.minAge >= minAge.value && product.maxAge <= maxAge.value;
 
-        final bool matchesSearch = searchQuery.isEmpty ||
-            product.name
-                .toLowerCase()
-                .contains(searchQuery.value.toLowerCase());
+        final bool matchesSearch = searchQuery.isEmpty || product.name.toLowerCase().contains(searchQuery.value.toLowerCase());
 
         return priceInRange && ratingInRange && ageInRange && matchesSearch;
       }).toList();
@@ -79,9 +74,7 @@ class MarketController extends GetxController {
       error.value = '';
 
       final snapshot = await _firestore.collection('products').get();
-      final productList = snapshot.docs
-          .map((doc) => MarketProductModel.fromJson(doc.data(), id: doc.id))
-          .toList();
+      final productList = snapshot.docs.map((doc) => MarketProductModel.fromJson(doc.data(), id: doc.id)).toList();
 
       products.value = productList;
     } catch (e) {

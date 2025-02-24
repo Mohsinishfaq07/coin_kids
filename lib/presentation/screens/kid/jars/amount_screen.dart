@@ -81,7 +81,8 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                     keyboardType: TextInputType.number,
                     hintText: "e.g 10.50 €",
                     onChange: (val) {
-                      parentController.amount.value = val;
+                      //todo: Add back
+                      // parentController.amount.value = val;
                     }),
               ),
               Padding(
@@ -91,53 +92,54 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                       child: GreenNextButton(
                           showSuffix: true,
                           onTap: () async {
-                            // Validate and parse the entered amount safely
-                            String enteredAmountString = parentController.amount.value;
-
-                            if (enteredAmountString.isEmpty || double.tryParse(enteredAmountString) == null) {
-                              // Show a toast message for invalid input
-                              ToastUtil.showToast("Pleae add Valid amount");
-                              return; // Stop further execution
-                            }
-
-                            double enteredAmount = double.parse(enteredAmountString);
-
-                            if (enteredAmount <= 0) {
-                              // Show a toast message for invalid amount
-                              ToastUtil.showToast("Amount must be greater than 0");
-
-                              return; // Stop further execution
-                            }
-
-                            // Perform the desired operation
-
-                            if (widget.isSpending.value) {
-                              // await authController.parentFirebaseFunctions
-                              //     .updateKidSpendingForJar(
-                              //   save: true,
-                              //   kidId: parentController.kidsList[0]['id'],
-                              //   enteredAmount: enteredAmount,
-                              //   spendingJarColor: widget.jarColor,
-                              // );
-                              Get.to(() => AddMoneyScreen(
-                                    isSpending: widget.isSpending,
-                                    amount: enteredAmount,
-                                    jarColor: widget.jarColor,
-                                  ));
-                            } else {
-                              // await authController.parentFirebaseFunctions
-                              //     .kidSpendingToSavings(
-                              //   save: true,
-                              //   childId: parentController.kidsList[0]['id'],
-                              //   enteredAmount: enteredAmount,
-                              //   savingsJarColor: widget.jarColor,
-                              // );
-                              Get.to(() => AddMoneyScreen(
-                                    isSpending: false.obs,
-                                    amount: enteredAmount,
-                                    jarColor: widget.jarColor,
-                                  ));
-                            }
+                            //Todo: Complete it
+                            // // Validate and parse the entered amount safely
+                            // String enteredAmountString = parentController.amount.value;
+                            //
+                            // if (enteredAmountString.isEmpty || double.tryParse(enteredAmountString) == null) {
+                            //   // Show a toast message for invalid input
+                            //   ToastUtil.showToast("Pleae add Valid amount");
+                            //   return; // Stop further execution
+                            // }
+                            //
+                            // double enteredAmount = double.parse(enteredAmountString);
+                            //
+                            // if (enteredAmount <= 0) {
+                            //   // Show a toast message for invalid amount
+                            //   ToastUtil.showToast("Amount must be greater than 0");
+                            //
+                            //   return; // Stop further execution
+                            // }
+                            //
+                            // // Perform the desired operation
+                            //
+                            // if (widget.isSpending.value) {
+                            //   // await authController.parentFirebaseFunctions
+                            //   //     .updateKidSpendingForJar(
+                            //   //   save: true,
+                            //   //   kidId: parentController.kidsList[0]['id'],
+                            //   //   enteredAmount: enteredAmount,
+                            //   //   spendingJarColor: widget.jarColor,
+                            //   // );
+                            //   Get.to(() => AddMoneyScreen(
+                            //         isSpending: widget.isSpending,
+                            //         amount: enteredAmount,
+                            //         jarColor: widget.jarColor,
+                            //       ));
+                            // } else {
+                            //   // await authController.parentFirebaseFunctions
+                            //   //     .kidSpendingToSavings(
+                            //   //   save: true,
+                            //   //   childId: parentController.kidsList[0]['id'],
+                            //   //   enteredAmount: enteredAmount,
+                            //   //   savingsJarColor: widget.jarColor,
+                            //   // );
+                            //   Get.to(() => AddMoneyScreen(
+                            //         isSpending: false.obs,
+                            //         amount: enteredAmount,
+                            //         jarColor: widget.jarColor,
+                            //       ));
+                            // }
                           },
                           buttonText: 'Next'))),
             ],

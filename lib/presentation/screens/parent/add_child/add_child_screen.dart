@@ -105,8 +105,8 @@ class AddChildScreen extends GetView<AddChildController> {
 
   void _showImagePicker(BuildContext context) {
     ImagePickerBottomSheet.show(
-      onCameraTap: () => controller.pickKidImage(source: ImageSource.camera),
-      onGalleryTap: () => controller.pickKidImage(source: ImageSource.gallery),
+      onCameraTap: () => controller.pickImage(source: ImageSource.camera),
+      onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
     );
   }
 
