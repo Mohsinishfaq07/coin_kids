@@ -1,16 +1,18 @@
 import 'dart:io';
+
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
+import 'package:coin_kids/presentation/components/common/AppButton.dart';
+import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
+import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/add_child_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class AddChildScreen extends StatelessWidget {
+class AddChildScreen extends GetView<AddChildController> {
   final AddChildController _addChildController = Get.put(AddChildController());
   final _formKey = GlobalKey<FormState>();
 
@@ -72,117 +74,23 @@ class AddChildScreen extends StatelessWidget {
                   // Avatar Selection Title
                   Text(
                     "Select Avatar",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
                   ),
                   SizedBox(height: 12.h),
 
                   // Avatar Selection
-                  SizedBox(
-                    height: 450.h,
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4, // Number of items per row
-                        crossAxisSpacing: 26.w, // Space between columns
-                        mainAxisSpacing: 16.h, // Space between rows
-                      ),
-                      itemCount: _addChildController.avatars.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          // First item: Custom Avatar Picker
-                          return Obx(
-                            () => GestureDetector(
-                              onTap: () async {
-                                await _addChildController.pickKidImage();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.all(4.h),
-                                child: CircleAvatar(
-                                  radius: 2,
-                                  backgroundColor: Colors.purple,
-                                  backgroundImage:
-                                      _addChildController.kidImagePath.value.isEmpty ? null : FileImage(File(_addChildController.kidImagePath.value)),
-                                  child: _addChildController.kidImagePath.value.isEmpty
-                                      ? Center(
-                                          child: Image.asset(
-                                            "assets/child_avatar_image_pngs/CameraIcon.png",
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          // Other items: Predefined Avatars
-                          final avatarIndex = index - 1; // Adjust index for predefined avatars
-                          return Obx(
-                            () => GestureDetector(
-                              onTap: () {
-                                _addChildController.selectAvatar(avatarIndex);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.all(4.h),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Avatar Image
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: _addChildController.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
-                                        ),
-                                        borderRadius: BorderRadius.circular(60.r),
-                                      ),
-                                      child: Image.asset(
-                                        _addChildController.avatars[avatarIndex],
-                                        height: 60.h, // Adjust the size of the avatar
-                                        width: 60.w,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    // Centered Check Icon (only when the avatar is selected)
-                                    if (_addChildController.selectedAvatar.value == avatarIndex)
-                                      Positioned(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(60.r),
-                                              color: Colors.black38,
-                                              border: Border.all(color: Colors.white)),
-                                          child: Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                            size: 24.sp, // Size of the check icon
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
+                  SizedBox(height: 450.h, child: _buildAvatarGrid(context)),
 
                   // Add Child Button
                   Center(
                     child: Obx(() => AppButton(
                           text: _addChildController.isLoading.value ? "Adding Child..." : "Add Child",
                           onPressed: () async {
-                            final controller = Get.find<ParentBaseController>();
-                            controller.showNavBar.value = true;
+                            if (_addChildController.isLoading.value) return;
 
-                            // if (_addChildController.isLoading.value) return;
-                            //
-                            // if (_formKey.currentState?.validate() ?? false) {
-                            //   await _addChildController.createKid();
-                            //
-                            // }
+                            if (_formKey.currentState?.validate() ?? false) {
+                              await _addChildController.createKid();
+                            }
                           },
                         )),
                   ),
@@ -193,5 +101,139 @@ class AddChildScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showImagePicker(BuildContext context) {
+    ImagePickerBottomSheet.show(
+      onCameraTap: () => controller.pickKidImage(source: ImageSource.camera),
+      onGalleryTap: () => controller.pickKidImage(source: ImageSource.gallery),
+    );
+  }
+
+  Widget _buildAvatarGrid(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoadingAvatars.value) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      return GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          crossAxisSpacing: 16.w,
+          mainAxisSpacing: 16.h,
+        ),
+        itemCount: controller.avatars.length + 1,
+        // +1 for camera option
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            // Camera/Gallery picker option
+            return Obx(() => GestureDetector(
+                  onTap: () => _showImagePicker(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: controller.kidImagePath.value.isNotEmpty ? Colors.purple : Colors.transparent,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(60.r),
+                    ),
+                    child: controller.kidImagePath.value.isNotEmpty
+                        ? Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(60.r),
+                                child: Image.file(
+                                  File(controller.kidImagePath.value),
+                                  height: 60.h,
+                                  width: 60.w,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              if (controller.selectedAvatar.value == -1)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(60.r),
+                                    color: Colors.black38,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 24.sp,
+                                  ),
+                                ),
+                            ],
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.iconPrimary,
+                              borderRadius: BorderRadius.circular(60.r),
+                            ),
+                            child: Icon(
+                              Icons.add_a_photo,
+                              color: Colors.white,
+                              size: 24.sp,
+                            ),
+                          ),
+                  ),
+                ));
+          }
+
+          // Predefined avatars
+          final avatarIndex = index - 1;
+          return Obx(
+            () => GestureDetector(
+              onTap: () => controller.selectAvatar(index - 1),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: controller.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(60.r),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(60.r),
+                      child: Image.network(
+                        controller.avatars[avatarIndex],
+                        height: 60.h,
+                        width: 60.w,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (controller.selectedAvatar.value == avatarIndex)
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.r),
+                          color: Colors.black38,
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 24.sp,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
   }
 }

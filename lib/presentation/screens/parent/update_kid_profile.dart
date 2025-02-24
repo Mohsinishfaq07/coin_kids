@@ -1,19 +1,20 @@
 import 'dart:io';
+
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/add_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/edit_profile_controller.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/presentation/screens/parent/bottom_navigation/parent_base_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UpdateKidProfile extends StatelessWidget {
   final String childId;
@@ -21,18 +22,13 @@ class UpdateKidProfile extends StatelessWidget {
 
   final String childAvatar;
   final String childName;
-  const UpdateKidProfile(
-      {super.key,
-      required this.childId,
-      required this.childAge,
-      required this.childAvatar,
-      required this.childName});
+
+  const UpdateKidProfile({super.key, required this.childId, required this.childAge, required this.childAvatar, required this.childName});
 
   @override
   Widget build(BuildContext context) {
     final AddChildController addChildController = Get.put(AddChildController());
-    final EditProfileController editProfileController = Get.put(
-        EditProfileController(childAge: childAge, childName: childName));
+    final EditProfileController editProfileController = Get.put(EditProfileController(childAge: childAge, childName: childName));
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -68,11 +64,9 @@ class UpdateKidProfile extends StatelessWidget {
                   return CustomTextField(
                       titleText: "Child name",
                       hintText: "Enter your child name",
-                      controller:
-                          editProfileController.childNameController.value,
+                      controller: editProfileController.childNameController.value,
                       onChanged: (val) {
-                        editProfileController.childNameController.value.text =
-                            val.trim();
+                        editProfileController.childNameController.value.text = val.trim();
                       });
                 }),
                 SizedBox(height: 28.h),
@@ -95,8 +89,7 @@ class UpdateKidProfile extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     controller: editProfileController.childAgeController.value,
                     onChanged: (value) {
-                      editProfileController.childAgeController.value.text =
-                          value.trim();
+                      editProfileController.childAgeController.value.text = value.trim();
                     },
                   );
                 }),
@@ -114,11 +107,9 @@ class UpdateKidProfile extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(6.w),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height *
-                        0.42.h, // Specify a fixed height
+                    height: MediaQuery.of(context).size.height * 0.42.h, // Specify a fixed height
                     child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4, // Number of items per row
                         crossAxisSpacing: 18, // Space between columns
                         mainAxisSpacing: 14, // Space between rows
@@ -134,11 +125,9 @@ class UpdateKidProfile extends StatelessWidget {
                                   Get.back(); // Close the bottom sheet
                                   //bottomNavigationBarController.pickFromCamera();
                                 }, onGalleryTap: () async {
-                                  if (addChildController
-                                      .kidImagePath.value.isNotEmpty) {
-                                    await addChildController.pickKidImage();
-                                    Get.log(
-                                        "Custom Avatar Path: ${addChildController.kidImagePath.value}");
+                                  if (addChildController.kidImagePath.value.isNotEmpty) {
+                                    await addChildController.pickKidImage(source: ImageSource.gallery);
+                                    Get.log("Custom Avatar Path: ${addChildController.kidImagePath.value}");
                                   }
                                   // Close the bottom sheet
 
@@ -157,13 +146,8 @@ class UpdateKidProfile extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 2,
                                   backgroundColor: Colors.purple,
-                                  backgroundImage: addChildController
-                                          .kidImagePath.value.isEmpty
-                                      ? null
-                                      : FileImage(File(addChildController
-                                          .kidImagePath.value)),
-                                  child: addChildController
-                                          .kidImagePath.value.isEmpty
+                                  backgroundImage: addChildController.kidImagePath.value.isEmpty ? null : FileImage(File(addChildController.kidImagePath.value)),
+                                  child: addChildController.kidImagePath.value.isEmpty
                                       ? Center(
                                           child: Image.asset(
                                             "assets/child_avatar_image_pngs/CameraIcon.png",
@@ -177,16 +161,13 @@ class UpdateKidProfile extends StatelessWidget {
                           );
                         } else {
                           // Other items: Predefined Avatars
-                          final avatarIndex =
-                              index - 1; // Adjust index for predefined avatars
+                          final avatarIndex = index - 1; // Adjust index for predefined avatars
                           return Obx(
                             () => GestureDetector(
                               onTap: () {
                                 addChildController.selectAvatar(avatarIndex);
-                                if (addChildController
-                                    .kidImagePath.value.isNotEmpty) {
-                                  Get.log(
-                                      "Custom Avatar Path: ${addChildController.selectedAvatarPath.value}");
+                                if (addChildController.kidImagePath.value.isNotEmpty) {
+                                  Get.log("Custom Avatar Path: ${addChildController.selectedAvatarPath.value}");
                                 }
                               },
                               child: Padding(
@@ -198,40 +179,26 @@ class UpdateKidProfile extends StatelessWidget {
                                     Container(
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color: addChildController
-                                                      .selectedAvatar.value ==
-                                                  avatarIndex
-                                              ? Colors.purple
-                                              : Colors.transparent,
+                                          color: addChildController.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(50.r),
+                                        borderRadius: BorderRadius.circular(50.r),
                                       ),
                                       child: Image.asset(
                                         addChildController.avatars[avatarIndex],
-                                        height: 70
-                                            .h, // Adjust the size of the avatar
+                                        height: 70.h, // Adjust the size of the avatar
                                         width: 70.w,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
                                     // Centered Check Icon (only when the avatar is selected)
-                                    if (addChildController
-                                            .selectedAvatar.value ==
-                                        avatarIndex)
+                                    if (addChildController.selectedAvatar.value == avatarIndex)
                                       Positioned(
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(100),
-                                              color: Colors.black38,
-                                              border: Border.all(
-                                                  color: Colors.white)),
+                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Colors.black38, border: Border.all(color: Colors.white)),
                                           child: Icon(
                                             Icons.check,
                                             color: Colors.white,
-                                            size:
-                                                24.sp, // Size of the check icon
+                                            size: 24.sp, // Size of the check icon
                                           ),
                                         ),
                                       ),
@@ -251,23 +218,13 @@ class UpdateKidProfile extends StatelessWidget {
                         ? const CircularProgressIndicator()
                         : AppButton(
                             onPressed: () async {
-                              if (editProfileController
-                                  .childNameController.value.text.isEmpty) {
+                              if (editProfileController.childNameController.value.text.isEmpty) {
                                 ToastUtil.showToast('name is required');
                               } else {
-                                final String avatarUrl = addChildController
-                                        .selectedAvatarPath.value.isEmpty
-                                    ? addChildController.kidImagePath.value
-                                    : addChildController
-                                        .selectedAvatarPath.value;
+                                final String avatarUrl = addChildController.selectedAvatarPath.value.isEmpty ? addChildController.kidImagePath.value : addChildController.selectedAvatarPath.value;
 
                                 updateChildData(
-                                    childId: childId,
-                                    name: editProfileController
-                                        .childNameController.value.text,
-                                    age: editProfileController
-                                        .childAgeController.value.text,
-                                    avatarPath: avatarUrl);
+                                    childId: childId, name: editProfileController.childNameController.value.text, age: editProfileController.childAgeController.value.text, avatarPath: avatarUrl);
                               }
                             },
                             text: 'Update Child',
@@ -289,16 +246,17 @@ class UpdateKidProfile extends StatelessWidget {
     required String age,
     required String avatarPath,
   }) async {
-    final KidService kidService =
-        KidService(); // Create an instance of KidService
+    final KidService kidService = KidService(); // Create an instance of KidService
     try {
       // Create a KidModel instance with the updated data
       KidModel updatedKid = KidModel(
         kidId: childId,
         name: name,
-        age: int.parse(age), // Ensure age is an integer
+        age: int.parse(age),
+        // Ensure age is an integer
         avatar: avatarPath,
-        parentId: '', // Set the parentId if needed
+        parentId: '',
+        // Set the parentId if needed
         wallet: Wallet(
           savingJar: WalletJar(balance: 0.0, color: '#000000'),
           spendingJar: WalletJar(balance: 0.0, color: '#000000'),

@@ -6,7 +6,7 @@ import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
 import 'package:coin_kids/presentation/components/common/AppIconButton.dart';
 import 'package:coin_kids/presentation/controllers/common/intro_controller.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/signup_screen.dart';
+import 'package:coin_kids/presentation/screens/common/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';

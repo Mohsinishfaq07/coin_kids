@@ -1,14 +1,13 @@
 import 'package:coin_kids/data/remote_services/auth_service.dart';
-import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/coin_kid_lock_container.dart';
 import 'package:coin_kids/presentation/components/kid/total_money_widget.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/kid_avatar_container.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../screens/common/authentication/login/login_screen.dart';
 
 class KidDefaultAppBar extends StatelessWidget {
   final AuthService _authService = Get.find<AuthService>();

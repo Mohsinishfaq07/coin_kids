@@ -6,7 +6,7 @@ import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/data/models/parent_model.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';

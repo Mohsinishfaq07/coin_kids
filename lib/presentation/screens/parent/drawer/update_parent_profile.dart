@@ -6,7 +6,7 @@ import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/data/models/parent_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';

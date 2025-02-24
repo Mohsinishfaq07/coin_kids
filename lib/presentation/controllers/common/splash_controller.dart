@@ -2,9 +2,9 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/login/login_screen.dart';
 import 'package:coin_kids/presentation/screens/common/intro/intro_screen.dart';
 import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
 import 'package:coin_kids/presentation/screens/parent/bottom_navigation/parent_base_screen.dart';
@@ -33,7 +33,6 @@ class SplashController extends GetxController {
         Get.off(() => IntroScreen());
       }
     } else {
-      // await SharedPreferencesHelper.saveString('lastLoggedInRole', UserRole.CHILD.name);
       final String role = await SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.NONE.name;
 
       if (role == UserRole.NONE.name) {

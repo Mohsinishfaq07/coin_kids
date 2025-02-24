@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/data/models/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ParentService {

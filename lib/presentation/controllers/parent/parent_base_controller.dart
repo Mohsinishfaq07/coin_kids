@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/models/parent_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/message_placeholder_screen.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/shop/shop.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,12 +25,9 @@ class ParentBaseController extends GetxController {
 
   Rx<ParentModel?> parent = Rx<ParentModel?>(null);
 
-  final showNavBar = false.obs;
-
-  final RxBool isLoading = false.obs;
+  final hasKids = false.obs;
 
   var parentId = ''.obs;
-  var kidsList = <KidModel>[].obs;
   var parentName = ''.obs;
   var kidName = ''.obs;
 
@@ -48,6 +46,8 @@ class ParentBaseController extends GetxController {
   final RxString customAvatarPath = ''.obs;
   final RxString networkImageUrl = ''.obs;
 
+  final isLoading = false.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -56,24 +56,22 @@ class ParentBaseController extends GetxController {
     _parentService.streamParentData().listen((parentData) {
       parent.value = parentData; // Update the observable with new data
     });
+
+    final parentId = _authService.user.value?.uid;
+    if (parentId == null) {
+      ToastUtil.showToast("user session expired, Login Again");
+      Get.offAll(() => LoginScreen());
+      return;
+    }
+
+    // Listen to has kids status
+    _kidService.streamHasKids(parentId).listen((hasAnyKids) => hasKids.value = hasAnyKids);
   }
 
   void fetchParentData() async {
     _parentService.streamParentData().listen((parentData) {
       parent.value = parentData; // Update the observable with new data
     });
-  }
-
-  void isKidInDb() async {
-    final parentId = _authService.user.value?.uid;
-    if (parentId == null) return;
-
-    final isKidInDb = await _kidService.fetchKidsByParentId(parentId);
-    if (isKidInDb.isEmpty) {
-      showNavBar.value = false;
-    } else {
-      showNavBar.value = true;
-    }
   }
 
   Future<void> loadImageFromPreferences() async {
@@ -126,60 +124,6 @@ class ParentBaseController extends GetxController {
       print('Error clearing stored images: $e');
     }
   }
-
-  // Future<bool> fetchKids() async {
-  //   try {
-  //     isLoading.value = true;
-  //
-  //     final QuerySnapshot initialSnapshot =
-  //         await _firestore.collection('kids').where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid).get();
-  //
-  //     kidsList.value = initialSnapshot.docs.map((doc) {
-  //       return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: doc.id);
-  //     }).toList();
-  //
-  //     // Listen to updates for real-time changes
-  //     _firestore.collection('kids').where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots().listen((QuerySnapshot snapshot) {
-  //       kidsList.value = snapshot.docs.map((doc) {
-  //         return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: doc.id);
-  //       }).toList();
-  //
-  //       isLoading.value = false;
-  //     });
-  //
-  //     isLoading.value = false;
-  //     return kidsList.isNotEmpty;
-  //   } catch (e) {
-  //     isLoading.value = false;
-  //     ToastUtil.showToast("Failed to fetch kids: $e");
-  //     return false;
-  //   }
-  // }
-
-  // Future<void> updateParentProfile({required ParentModel originalParent}) async {
-  //   try {
-  //     isLoading.value = true;
-  //
-  //     final updatedParent = originalParent.copyWith(
-  //       name: authController.parentName.value,
-  //       dob: DateFormat('d MMM, y').parse(authController.birthday.value).millisecondsSinceEpoch,
-  //       gender: authController.selectedGender.value,
-  //     );
-  //
-  //     await parentService.updateParent(updatedParent);
-  //
-  //     // Update the current parent data
-  //     currentParent.value = updatedParent;
-  //     parentName.value = updatedParent.name;
-  //
-  //     ToastUtil.showToast('Profile updated successfully');
-  //     Get.back();
-  //   } catch (e) {
-  //     ToastUtil.showToast('Failed to update profile: $e');
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
 
   var selectedColorIndex = (-1).obs; // Default to no selection
   RxBool isSelected = false.obs; //
@@ -239,7 +183,7 @@ class ParentBaseController extends GetxController {
   var toggleValue1 = true.obs;
 
   final List<Widget> screens = [
-    const ParentsHomeScreen(),
+    ParentsHomeScreen(),
     const MessagePlaceholderScreen(),
     ShopScreen(),
     //KidZoneScreen(),

@@ -1,3 +1,4 @@
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
@@ -12,13 +13,14 @@ import 'package:coin_kids/presentation/controllers/common/signup_controller.dart
 import 'package:coin_kids/presentation/controllers/common/splash_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/favorite_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:get/get.dart';
+
 import '../data/remote_services/wishlist_service.dart';
 import '../presentation/controllers/common/intro_controller.dart';
 import '../presentation/controllers/kid/add_money_controller.dart';
 import '../presentation/controllers/kid/market_controller.dart';
 import '../presentation/controllers/parent/add_child_controller.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 
 class ControllerBindings extends Bindings {
   @override
@@ -34,12 +36,13 @@ class ControllerBindings extends Bindings {
 
     //Controllers
     Get.put<SharedPreferencesHelper>(SharedPreferencesHelper(), permanent: true);
-    Get.lazyPut<SplashController>(() => SplashController());
-    Get.lazyPut<SignupController>(() => SignupController());
-    Get.lazyPut<SignInController>(() => SignInController());
+    Get.lazyPut<SplashController>(() => SplashController(), fenix: true);
+    Get.lazyPut<SignupController>(() => SignupController(), fenix: true);
+    Get.lazyPut<SignInController>(() => SignInController(), fenix: true);
     Get.lazyPut<RoleSelectionController>(() => RoleSelectionController());
     Get.put<AuthenticationController>(AuthenticationController(), permanent: true);
     Get.lazyPut<ParentBaseController>(() => ParentBaseController(), fenix: true);
+    Get.lazyPut<ParentHomeController>(() => ParentHomeController(), fenix: true);
     Get.lazyPut<AddChildController>(() => AddChildController(), fenix: true);
     Get.lazyPut<IntroController>(() => IntroController(), fenix: true);
     Get.lazyPut<FavoriteController>(() => FavoriteController(), fenix: true);

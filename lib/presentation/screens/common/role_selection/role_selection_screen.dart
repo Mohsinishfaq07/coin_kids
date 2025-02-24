@@ -1,10 +1,9 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
-
-import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -100,7 +99,7 @@ class OptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2),
+              color: Colors.grey.withOpacity(0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -138,8 +137,7 @@ class OptionCard extends StatelessWidget {
                         width: 20.w,
                       ),
                       SizedBox(width: 10.w),
-                      Text(description,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      Text(description, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
                     ],
                   ),
                   SizedBox(height: 8.h),
@@ -151,8 +149,7 @@ class OptionCard extends StatelessWidget {
                         width: 20.w,
                       ),
                       const SizedBox(width: 10),
-                      Text(description1,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      Text(description1, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
                     ],
                   ),
                   Row(

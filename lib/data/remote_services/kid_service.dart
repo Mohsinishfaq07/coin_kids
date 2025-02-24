@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 import '../models/kid_model.dart';
 
 class KidService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
@@ -24,26 +27,67 @@ class KidService {
   // Fetch kids by parent ID
   Future<List<KidModel>> fetchKidsByParentId(String parentId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection('kids')
-          .where('parentId', isEqualTo: parentId)
-          .get();
+      final QuerySnapshot snapshot = await _firestore.collection('kids').where('parentId', isEqualTo: parentId).get();
 
-      return snapshot.docs
-          .map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      return snapshot.docs.map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
     } catch (e) {
       throw Exception('Failed to fetch kids: ${e.toString()}');
     }
   }
 
-  // Create new kid
-  Future<DocumentReference> createKid(KidModel kid) async {
+  // Single method to create kid
+  Future<String> createKid({
+    required String name,
+    required int age,
+    required String parentId,
+    String? customImagePath,
+    String? selectedAvatarUrl,
+  }) async {
     try {
-      final docRef = await _firestore.collection('kids').add(kid.toJson());
-      return docRef;
+      String avatarUrl = selectedAvatarUrl ?? '';
+
+      // Create initial wallet
+      final wallet = Wallet(
+        savingJar: WalletJar(balance: 0.0, color: '#000000'),
+        spendingJar: WalletJar(balance: 0.0, color: '#000000'),
+      );
+
+      // Create kid model
+      final KidModel kid = KidModel(
+        name: name,
+        age: age,
+        avatar: avatarUrl,
+        parentId: parentId,
+        wallet: wallet,
+        coinKidsBalance: 0.0,
+        createdAt: DateTime.now(),
+        kidId: '', // Will be updated after creation
+      );
+
+      // Create kid document and get ID
+      final DocumentReference docRef = await _firestore.collection('kids').add(kid.toJson());
+      final String kidId = docRef.id;
+
+      // If custom image provided, upload it
+      if (customImagePath != null && customImagePath.isNotEmpty) {
+        final String fileName = 'user_avatars/kids/$kidId.${customImagePath.split('.').last}';
+        final Reference ref = _storage.ref().child(fileName);
+
+        final UploadTask uploadTask = ref.putFile(File(customImagePath));
+        final TaskSnapshot snapshot = await uploadTask;
+        avatarUrl = await snapshot.ref.getDownloadURL();
+      }
+
+      // Update kid with its ID and final avatar URL
+      final updatedKid = kid.copyWith(
+        kidId: kidId,
+        avatar: avatarUrl,
+      );
+      await _firestore.collection('kids').doc(kidId).update(updatedKid.toJson());
+
+      return kidId;
     } catch (e) {
-      throw Exception('Failed to create kid: ${e.toString()}');
+      throw Exception('Failed to create kid: $e');
     }
   }
 
@@ -154,5 +198,51 @@ class KidService {
     } catch (e) {
       throw Exception('Failed to update grade: ${e.toString()}');
     }
+  }
+
+  // Fetch all predefined avatars from Firebase Storage
+  Future<List<String>> fetchPredefinedAvatars() async {
+    try {
+      final ListResult result = await _storage.ref('avatars').listAll();
+      final List<String> urls = await Future.wait(
+        result.items.map((ref) => ref.getDownloadURL()),
+      );
+      return urls;
+    } catch (e) {
+      throw Exception('Failed to fetch avatars: $e');
+    }
+  }
+
+  // Upload custom avatar image and get URL
+  Future<String> uploadCustomAvatar(File imageFile) async {
+    try {
+      final String fileName = 'user_avatars/${DateTime.now().millisecondsSinceEpoch}${imageFile.path.split('.').last}';
+      final Reference ref = _storage.ref().child(fileName);
+
+      final UploadTask uploadTask = ref.putFile(imageFile);
+      final TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception('Failed to upload avatar: $e');
+    }
+  }
+
+  // Stream to count number of kids for a parent
+  Stream<int> streamKidsCount(String parentId) {
+    return _firestore
+        .collection('kids')
+        .where('parentId', isEqualTo: parentId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  // Stream to check if parent has any kids
+  Stream<bool> streamHasKids(String parentId) {
+    return _firestore
+        .collection('kids')
+        .where('parentId', isEqualTo: parentId)
+        .limit(1)  // More efficient than fetching all docs
+        .snapshots()
+        .map((snapshot) => snapshot.docs.isNotEmpty);
   }
 }

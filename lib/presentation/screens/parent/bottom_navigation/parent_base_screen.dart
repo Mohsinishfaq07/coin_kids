@@ -16,7 +16,6 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
     PortraitOrientation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.isKidInDb();
       controller.fetchParentData();
 
       if (controller.currentIndex.value != 0) {
@@ -46,7 +45,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
         ),
         bottomNavigationBar: Obx(() {
           return Visibility(
-            visible: controller.showNavBar.value,
+            visible: controller.hasKids.value,
             child: BottomNavigationBar(
               backgroundColor: Colors.white,
               elevation: 15,

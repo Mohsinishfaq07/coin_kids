@@ -1,42 +1,23 @@
 import 'dart:io';
+
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
-import 'package:coin_kids/data/remote_services/parent_service.dart';
+import 'package:coin_kids/presentation/components/common/App_small_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
-import 'package:coin_kids/presentation/screens/common/authentication/parent_signup/parent_model.dart';
+import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/add_child/add_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/all_childs/all_children_page.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer.dart';
 import 'package:coin_kids/presentation/screens/parent/kid_profile_management_page.dart';
-import 'package:coin_kids/presentation/components/common/App_small_button.dart';
-import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class ParentsHomeScreen extends StatefulWidget {
-  const ParentsHomeScreen({super.key});
-
-  @override
-  State<ParentsHomeScreen> createState() => _ParentsHomeScreenState();
-}
-
-class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
-  final parentController = Get.find<ParentBaseController>();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // parentController.fetchKids();
-      parentController.loadImageFromPreferences();
-    });
-  }
-
+class ParentsHomeScreen extends GetView<ParentHomeController> {
   @override
   Widget build(BuildContext context) {
     PortraitOrientation();
@@ -61,14 +42,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                   );
                 },
                 child: Obx(() {
-                  if (parentController.customAvatarPath.value.isNotEmpty) {
+                  if (controller.parentBaseController.parent.value?.imageUrl.isNotEmpty != null) {
                     return Container(
                       height: 40.h,
                       width: 40.w,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: FileImage(File(parentController.customAvatarPath.value)),
+                          image: NetworkImage(controller.parentBaseController.parent.value!.imageUrl),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -88,7 +69,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                 children: [
                   Obx(() {
                     return Text(
-                      parentController.parent.value?.name ?? "Null",
+                      controller.parentBaseController.parent.value?.name ?? "",
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
                     );
                   }),
@@ -104,14 +85,14 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
           ),
           child: Obx(
             () {
-              if (parentController.isLoading.value) {
+              if (controller.isLoading.value) {
                 // Show loading indicator
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              if (parentController.kidsList.isEmpty) {
+              if (controller.kidsList.isEmpty) {
                 // No kids available
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -141,18 +122,11 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Almost There!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                              Text("Almost There!", style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
                               const SizedBox(height: 10),
                               Text("Starting by adding your first child.",
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
                               SizedBox(height: 26.h),
                               AppSmallButton(
                                 onPressed: () {
@@ -206,15 +180,15 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.all(16),
-                        itemCount: parentController.kidsList.length + 1, // Add 1 for "Add" circle at the end
+                        itemCount: controller.kidsList.length + 1, // Add 1 for "Add" circle at the end
                         itemBuilder: (context, index) {
-                          if (index == parentController.kidsList.length) {
+                          if (index == controller.kidsList.length) {
                             // Last item: Add circle
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10.0),
                               child: GestureDetector(
                                 onTap: () {
-                                  if (parentController.kidsList.isNotEmpty) {
+                                  if (controller.kidsList.isNotEmpty) {
                                     ToastUtil.showToast("You have already added a child");
                                   } else {
                                     Get.to(() => AddChildScreen());
@@ -256,7 +230,7 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                             );
                           } else {
                             // Other items: Display kids' data
-                            final kid = parentController.kidsList[index];
+                            final kid = controller.kidsList[index];
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10.0),
                               child: GestureDetector(
@@ -336,29 +310,13 @@ class _ParentsHomeScreenState extends State<ParentsHomeScreen> {
                                     children: [
                                       TextSpan(
                                         text: 'Send ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
+                                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
                                       ),
-                                      TextSpan(
-                                          text: 'or ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                      TextSpan(
-                                          text: 'remove ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
+                                      TextSpan(text: 'or ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                      TextSpan(text: 'remove ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
                                       TextSpan(
                                           text: 'money from your child\'s account',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
                                     ],
                                   ),
                                 ),
