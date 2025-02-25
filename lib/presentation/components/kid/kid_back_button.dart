@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -62,7 +63,7 @@ Widget kidBackButton({
             left: 0.5,
             top: 0.29,
             child: Image.asset(
-              "assets/button_shadow.png",
+              AppAssets.button_shadow_png,
               height: 8.h,
             ),
           ),

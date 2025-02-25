@@ -27,9 +27,10 @@ class AppShowCaseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Showcase.withWidget(
+
       key: showcaseKey,
       targetShapeBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       tooltipPosition: TooltipPosition.top,
       disableBarrierInteraction: true,
@@ -39,7 +40,7 @@ class AppShowCaseWidget extends StatelessWidget {
       targetPadding: EdgeInsets.all(12),
       disableDefaultTargetGestures: false,
       container: Container(
-        alignment: Alignment.topCenter,
+        alignment: Alignment.center,
         width: width?.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
@@ -63,12 +64,17 @@ class AppShowCaseWidget extends StatelessWidget {
                 width: double.infinity,
               ),
             ),
-            Text(
-              description,
-              style: AppTextStyle.headingMedium.copyWith(
-                color: AppColors.textOnPrimary,
+            Positioned.fill(
+
+              child: Center(
+                child: Text(
+                  description,
+                  style: AppTextStyle.headingMedium.copyWith(
+                    color: AppColors.textOnPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

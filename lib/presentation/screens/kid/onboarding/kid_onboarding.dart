@@ -99,16 +99,20 @@ class KidSectionOnboarding extends StatelessWidget {
                             AppShowCaseWidget(
                               showcaseKey: kidOnboardingController.textFieldKey,
                               description: "What's your name? ✍️",
-                              backgroundImage: "assets/center_spot_light_background.png", // Custom background
+                              backgroundImage:
+                                  "assets/center_spot_light_background.png", // Custom background
                               onTargetClick: () {
-                                kidOnboardingController.spotLightOn.value = false;
-                                if (_addChildController.childName.value.isNotEmpty) {
-                                  kidOnboardingController.increaseSpotLightIndex(index: 1);
+                                kidOnboardingController.spotLightOn.value =
+                                    false;
+                                if (_addChildController
+                                    .childName.value.isNotEmpty) {
+                                  kidOnboardingController
+                                      .increaseSpotLightIndex(index: 1);
                                 }
                               },
                               child: KidCustomTextField(
                                   maxlength: 10,
-                                  hintText: "Enter your name",
+                                  hintText: "Enter your name eg. Alex",
                                   onChange: (value) {
                                     _addChildController.childName.value =
                                         value.trim();
@@ -128,10 +132,13 @@ class KidSectionOnboarding extends StatelessWidget {
                                     if (_addChildController
                                         .childName.value.isEmpty) {
                                       ToastUtil.showToast(
-                                          "Please enter your name"); // Show toast if empty
+                                          "Please enter your name");
                                     } else {
                                       kidOnboardingController
                                           .increaseSpotLightIndex(index: 1);
+                                      ShowCaseWidget.of(context).startShowCase([
+                                        kidOnboardingController.ageListKey,
+                                      ]);
                                     }
                                   },
                                   buttonText: 'Next',
@@ -182,14 +189,16 @@ class KidSectionOnboarding extends StatelessWidget {
                     ),
                     AppShowCaseWidget(
                       showcaseKey: kidOnboardingController.ageListKey,
-                      description: "What's your name? ✍️",
-                      backgroundImage: "assets/center_spot_light_background.png", // Custom background
+                      description: "How old are you? 🎂",
+                      backgroundImage:
+                          "assets/center_spot_light_background.png",
                       onTargetClick: () {
+                        kidOnboardingController.spotLightOn.value = false;
                         if (_addChildController.childAge.value.isNotEmpty) {
-                          kidOnboardingController.increaseSpotLightIndex(index: 2);
+                          kidOnboardingController.increaseSpotLightIndex(
+                              index: 2);
                         }
                       },
-
                       child: Padding(
                         padding: EdgeInsets.only(left: 130.w),
                         child: SizedBox(
@@ -274,11 +283,13 @@ class KidSectionOnboarding extends StatelessWidget {
                             onTap: () {
                               if (kidOnboardingController
                                   .selectedAge.value.isEmpty) {
-                                ToastUtil.showToast(
-                                    "Please enter your Age"); // Show toast if empty
+                                ToastUtil.showToast("Please enter your Age");
                               } else {
                                 kidOnboardingController.increaseSpotLightIndex(
-                                    index: 1);
+                                    index: 2);
+                                ShowCaseWidget.of(context).startShowCase([
+                                  kidOnboardingController.avatarListKey,
+                                ]);
                               }
                             },
                             showSuffix: true,
@@ -313,18 +324,23 @@ class KidSectionOnboarding extends StatelessWidget {
                                 style: AppTextStyle.headingLarge,
                               ),
                               SizedBox(height: 10.h),
-                              Showcase(
-                                key: kidOnboardingController.avatarListKey,
-                                description: 'Choose an avatar',
-                                overlayColor: Colors.black.withOpacity(0.5),
-                                overlayOpacity: 0.5,
-                                targetShapeBorder: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                tooltipBackgroundColor: AppColors.textHighlighted,                                descTextStyle: AppTextStyle.headingMedium.copyWith(
-                                  color: AppColors.textOnPrimary,
-                                ),
-                                tooltipPadding: EdgeInsets.all(8.w),
+                              AppShowCaseWidget(
+                                showcaseKey:
+                                    kidOnboardingController.avatarListKey,
+                                description:
+                                    "Choose an Avatar",
+                                backgroundImage:
+                                    "assets/center_spot_light_background.png",
+                                onTargetClick: () {
+                                  kidOnboardingController.spotLightOn.value =
+                                      false;
+                                  if (_addChildController
+                                          .selectedAvatar.value !=
+                                      -1) {
+                                    kidOnboardingController
+                                        .increaseSpotLightIndex(index: 3);
+                                  }
+                                },
                                 child: SizedBox(
                                   height: 120.h,
                                   width: 440.w,
@@ -403,10 +419,9 @@ class KidSectionOnboarding extends StatelessWidget {
                               children: [
                                 OrangeSkipButton(
                                   onTap: () async {
-                                    if (!authController
-                                        .isNormalLoading.value) {
-                                      authController
-                                          .isNormalLoading.value = true;
+                                    if (!authController.isNormalLoading.value) {
+                                      authController.isNormalLoading.value =
+                                          true;
                                       // await authController
                                       //     .parentFirebaseFunctions
                                       //     .addKidAndUpdateParent();
@@ -428,8 +443,8 @@ class KidSectionOnboarding extends StatelessWidget {
                                       }
                                       if (!authController
                                           .isNormalLoading.value) {
-                                        authController
-                                            .isNormalLoading.value = true;
+                                        authController.isNormalLoading.value =
+                                            true;
                                         // await authController
                                         //     .parentFirebaseFunctions
                                         //     .addKidAndUpdateParent();

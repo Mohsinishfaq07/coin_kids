@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +125,7 @@ class GreenNextButton extends StatelessWidget {
               left: 1,
               top: 1.29,
               child: Image.asset(
-                "assets/button_shadow.png", // Shadow image
+                AppAssets.button_shadow_png, // Shadow image
                 height: 10.h,
               ),
             ),
