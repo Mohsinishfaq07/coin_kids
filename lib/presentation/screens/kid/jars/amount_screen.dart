@@ -83,7 +83,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                     keyboardType: TextInputType.number,
                     hintText: "e.g 10.50 €",
                     onChange: (val) {
-                      parentController.amount.value = val;
+                      // parentController.amount.value = val;
                     }),
               ),
               Padding(
@@ -94,8 +94,8 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                       showSuffix: true,
                       onTap: () async {
                         // Validate and parse the entered amount safely
-                        String enteredAmountString =
-                            parentController.amount.value;
+                        //todo: change to original value
+                        String enteredAmountString = "";
 
                         if (enteredAmountString.isEmpty ||
                             double.tryParse(enteredAmountString) == null) {

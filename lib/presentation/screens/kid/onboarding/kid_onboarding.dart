@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
@@ -580,8 +578,8 @@ class KidSectionOnboarding extends GetView<AddChildController> {
   }
   void _showImagePicker(BuildContext context) {
     ImagePickerBottomSheet.show(
-      onCameraTap: () => controller.pickKidImage(source: ImageSource.camera),
-      onGalleryTap: () => controller.pickKidImage(source: ImageSource.gallery),
+      onCameraTap: () => controller.pickImage(source: ImageSource.camera),
+      onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
     );
   }
 }
