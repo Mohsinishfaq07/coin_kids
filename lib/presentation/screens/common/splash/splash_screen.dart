@@ -1,4 +1,3 @@
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/portrait_orientation.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/presentation/components/common/cloud.dart';

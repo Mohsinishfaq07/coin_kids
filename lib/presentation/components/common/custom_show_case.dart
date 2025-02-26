@@ -12,6 +12,9 @@ class AppShowCaseWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final String backgroundImage;
+  final TooltipPosition tooltipPosition;
+  final bool disposeOnTap;
+  final bool disableDefaultTargetGestures;
 
   const AppShowCaseWidget({
     super.key,
@@ -21,24 +24,27 @@ class AppShowCaseWidget extends StatelessWidget {
     this.onTargetClick,
     this.height = 90,
     this.width = 300,
-    this.backgroundImage = "assets/center_spot_light_background.png", // Default image
+    this.backgroundImage =
+        "assets/center_spot_light_background.png", // Default image
+    this.tooltipPosition = TooltipPosition.top,
+    this.disposeOnTap = false,
+    this.disableDefaultTargetGestures = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Showcase.withWidget(
-
       key: showcaseKey,
       targetShapeBorder: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.r),
       ),
-      tooltipPosition: TooltipPosition.top,
+      tooltipPosition: tooltipPosition,
       disableBarrierInteraction: true,
-      disposeOnTap: true,
+      disposeOnTap: disposeOnTap,
       onTargetClick: onTargetClick,
       enableAutoScroll: true,
       targetPadding: EdgeInsets.all(12),
-      disableDefaultTargetGestures: false,
+      disableDefaultTargetGestures: disableDefaultTargetGestures,
       container: Container(
         alignment: Alignment.center,
         width: width?.w,
@@ -64,7 +70,10 @@ class AppShowCaseWidget extends StatelessWidget {
                 width: double.infinity,
               ),
             ),
-            Positioned.fill(
+            Positioned(
+
+              top: 20.h,
+
 
               child: Center(
                 child: Text(

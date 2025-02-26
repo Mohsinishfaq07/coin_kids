@@ -26,27 +26,47 @@ class SplashController extends GetxController {
     final user = _authService.user.value;
 
     if (user == null) {
-      final isEverLoggedIn = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isEverLoggedIn) ?? false;
+      final isEverLoggedIn = await SharedPreferencesHelper.getBool(
+              SharedPreferencesHelper.isEverLoggedIn) ??
+          false;
       if (isEverLoggedIn) {
         Get.off(() => LoginScreen());
       } else {
         Get.off(() => IntroScreen());
       }
     } else {
-      final String role = await SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.NONE.name;
+      final String role = await SharedPreferencesHelper.getString(
+              SharedPreferencesHelper.lastLoggedInRole) ??
+          UserRole.NONE.name;
 
       if (role == UserRole.NONE.name) {
         Get.off(() => RoleSelectionScreen());
       } else if (role == UserRole.PARENT.name) {
         Get.off(() => ParentBaseScreen());
       } else {
-        final isKidOnboarded = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isKidOnboarded) ?? false;
-        final isKidInDb = await _kidService.fetchKidsByParentId(_authService.user.value!.uid);
+        try {
+          // First check if there are any kids associated with this parent
+          final kids = await _kidService.fetchKidsByParentId(user.uid);
 
-        if (!isKidOnboarded || isKidInDb.isEmpty) {
+          if (kids.isNotEmpty) {
+            // If kids exist, go to home screen
+            Get.offAll(() => KidHomeScreen());
+          } else {
+            // If no kids exist, check onboarding status
+            final isKidOnboarded = await SharedPreferencesHelper.getBool(
+                    SharedPreferencesHelper.isKidOnboarded) ??
+                false;
+            if (!isKidOnboarded) {
+              Get.offAll(() => KidSectionOnboarding());
+            } else {
+              // Even if onboarded but no kids in DB, go to onboarding
+              Get.offAll(() => KidSectionOnboarding());
+            }
+          }
+        } catch (e) {
+          print("Error checking kid status: $e");
+          // In case of error, default to onboarding
           Get.offAll(() => KidSectionOnboarding());
-        } else {
-          Get.offAll(() => KidHomeScreen());
         }
       }
     }

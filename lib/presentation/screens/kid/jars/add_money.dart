@@ -521,7 +521,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                                 left: 0.5,
                                                 top: 0.29,
                                                 child: Image.asset(
-                                                  "assets/Button_shadow.png",
+                                                  AppAssets.button_shadow_png,
                                                   height: 8.h,
                                                 )),
                                           ],

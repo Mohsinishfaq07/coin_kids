@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
-
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
+import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
 import 'package:coin_kids/presentation/components/kid/green_done_button.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/components/kid/orange_skip_button.dart';
-
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/add_child_controller.dart';
@@ -22,12 +22,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class KidSectionOnboarding extends StatelessWidget {
+class KidSectionOnboarding extends GetView<AddChildController> {
   KidSectionOnboarding({super.key});
 
-  final _addChildController = Get.put(AddChildController());
+  // final _addChildController = Get.put(AddChildController());
   final KidsOnBoardingController kidOnboardingController =
       Get.put(KidsOnBoardingController());
 
@@ -100,24 +101,16 @@ class KidSectionOnboarding extends StatelessWidget {
                               showcaseKey: kidOnboardingController.textFieldKey,
                               description: "What's your name? ✍️",
                               backgroundImage:
-                                  "assets/center_spot_light_background.png", // Custom background
-                              onTargetClick: () {
-                                kidOnboardingController.spotLightOn.value =
-                                    false;
-                                if (_addChildController
-                                    .childName.value.isNotEmpty) {
-                                  kidOnboardingController
-                                      .increaseSpotLightIndex(index: 1);
-                                }
-                              },
+                                  "assets/center_spot_light_background.png",
+                              tooltipPosition: TooltipPosition.top,
+                              disposeOnTap: false,
+                              disableDefaultTargetGestures: false,
                               child: KidCustomTextField(
                                   maxlength: 10,
-                                  hintText: "Enter your name eg. Alex",
-                                  onChange: (value) {
-                                    _addChildController.childName.value =
-                                        value.trim();
-                                  }),
-                            ),
+                                  keyboardType: TextInputType.name,
+                                  hintText: "Enter your name",
+                                  onChange: (value) => controller.childName.value = value.trim(),),
+                             ),
                             SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.03.h, // 5% of screen height
@@ -129,7 +122,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                 child: GreenNextButton(
                                   showSuffix: true,
                                   onTap: () {
-                                    if (_addChildController
+                                    if (controller
                                         .childName.value.isEmpty) {
                                       ToastUtil.showToast(
                                           "Please enter your name");
@@ -176,7 +169,7 @@ class KidSectionOnboarding extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        _addChildController.childName.value,
+                        controller.childName.value,
                         style: AppTextStyle.headingLarge,
                       ),
                     ),
@@ -191,14 +184,10 @@ class KidSectionOnboarding extends StatelessWidget {
                       showcaseKey: kidOnboardingController.ageListKey,
                       description: "How old are you? 🎂",
                       backgroundImage:
-                          "assets/center_spot_light_background.png",
-                      onTargetClick: () {
-                        kidOnboardingController.spotLightOn.value = false;
-                        if (_addChildController.childAge.value.isNotEmpty) {
-                          kidOnboardingController.increaseSpotLightIndex(
-                              index: 2);
-                        }
-                      },
+                      "assets/center_spot_light_background.png",
+                      tooltipPosition: TooltipPosition.top,
+                      disposeOnTap: false,
+                      disableDefaultTargetGestures: false,
                       child: Padding(
                         padding: EdgeInsets.only(left: 130.w),
                         child: SizedBox(
@@ -219,7 +208,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                                 .ageList[index];
 
                                         // Store the same value in _addChildController.childAge
-                                        _addChildController.childAge.value =
+                                        controller.childAge.value =
                                             kidOnboardingController
                                                 .ageList[index];
 
@@ -324,85 +313,83 @@ class KidSectionOnboarding extends StatelessWidget {
                                 style: AppTextStyle.headingLarge,
                               ),
                               SizedBox(height: 10.h),
-                              AppShowCaseWidget(
-                                showcaseKey:
-                                    kidOnboardingController.avatarListKey,
-                                description:
-                                    "Choose an Avatar",
-                                backgroundImage:
-                                    "assets/center_spot_light_background.png",
-                                onTargetClick: () {
-                                  kidOnboardingController.spotLightOn.value =
-                                      false;
-                                  if (_addChildController
-                                          .selectedAvatar.value !=
-                                      -1) {
-                                    kidOnboardingController
-                                        .increaseSpotLightIndex(index: 3);
-                                  }
-                                },
-                                child: SizedBox(
+                              // AppShowCaseWidget(
+                              //   showcaseKey:
+                              //       kidOnboardingController.avatarListKey,
+                              //   description: "Choose an Avatar",
+                              //   backgroundImage:
+                              //   "assets/center_spot_light_background.png",
+                              //   tooltipPosition: TooltipPosition.top,
+                              //   disposeOnTap: false,
+                              //   disableDefaultTargetGestures: false,
+                              //   child: SizedBox(
+                              //     height: 120.h,
+                              //     width: 440.w,
+                              //     child: GridView.builder(
+                              //       padding:
+                              //           EdgeInsets.symmetric(horizontal: 10.w),
+                              //       gridDelegate:
+                              //           SliverGridDelegateWithFixedCrossAxisCount(
+                              //         crossAxisCount: 5,
+                              //         crossAxisSpacing: 26.w,
+                              //         mainAxisSpacing: 16.h,
+                              //       ),
+                              //       itemCount:
+                              //           kidOnboardingController.avatars.length,
+                              //       itemBuilder: (context, index) {
+                              //         final avatarIndex = index;
+                              //
+                              //         return Obx(() => GestureDetector(
+                              //               onTap: () {
+                              //                 _addChildController
+                              //                     .selectAvatar(avatarIndex);
+                              //               },
+                              //               child: Stack(
+                              //                 alignment: Alignment.center,
+                              //                 children: [
+                              //                   CircleAvatar(
+                              //                     radius: 30.r,
+                              //                     backgroundColor:
+                              //                         Colors.grey[200],
+                              //                     backgroundImage: AssetImage(
+                              //                         kidOnboardingController
+                              //                             .avatars[index]),
+                              //                   ),
+                              //                   if (_addChildController
+                              //                           .selectedAvatar.value ==
+                              //                       avatarIndex)
+                              //                     Positioned(
+                              //                       child: Container(
+                              //                         decoration: BoxDecoration(
+                              //                             borderRadius:
+                              //                                 BorderRadius
+                              //                                     .circular(
+                              //                                         60.r),
+                              //                             color: Colors.black38,
+                              //                             border: Border.all(
+                              //                                 color: Colors
+                              //                                     .white)),
+                              //                         child: Icon(
+                              //                           Icons.check,
+                              //                           color: Colors.white,
+                              //                           size: 24
+                              //                               .sp, // Size of the check icon
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                 ],
+                              //               ),
+                              //             ));
+                              //       },
+                              //     ),
+                              //   ),
+                              // )
+                              //
+                              SizedBox(
                                   height: 120.h,
-                                  width: 440.w,
-                                  child: GridView.builder(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10.w),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 5,
-                                      crossAxisSpacing: 26.w,
-                                      mainAxisSpacing: 16.h,
-                                    ),
-                                    itemCount:
-                                        kidOnboardingController.avatars.length,
-                                    itemBuilder: (context, index) {
-                                      final avatarIndex = index;
+                                  width: 450.w, child: _buildAvatarGrid(context)),
 
-                                      return Obx(() => GestureDetector(
-                                            onTap: () {
-                                              _addChildController
-                                                  .selectAvatar(avatarIndex);
-                                            },
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: 30.r,
-                                                  backgroundColor:
-                                                      Colors.grey[200],
-                                                  backgroundImage: AssetImage(
-                                                      kidOnboardingController
-                                                          .avatars[index]),
-                                                ),
-                                                if (_addChildController
-                                                        .selectedAvatar.value ==
-                                                    avatarIndex)
-                                                  Positioned(
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      60.r),
-                                                          color: Colors.black38,
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .white)),
-                                                      child: Icon(
-                                                        Icons.check,
-                                                        color: Colors.white,
-                                                        size: 24
-                                                            .sp, // Size of the check icon
-                                                      ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-                                          ));
-                                    },
-                                  ),
-                                ),
-                              )
+
                             ],
                           ),
                         ),
@@ -422,9 +409,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                     if (!authController.isNormalLoading.value) {
                                       authController.isNormalLoading.value =
                                           true;
-                                      // await authController
-                                      //     .parentFirebaseFunctions
-                                      //     .addKidAndUpdateParent();
+                                      controller.createKid();
                                     }
                                     Get.off(() => KidHomeScreen());
                                   },
@@ -434,7 +419,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                       EdgeInsets.only(right: 20.w, left: 20.w),
                                   child: GreenDoneButton(
                                     onTap: () async {
-                                      if (_addChildController
+                                      if (controller
                                               .selectedAvatar.value ==
                                           -1) {
                                         ToastUtil.showToast(
@@ -445,6 +430,7 @@ class KidSectionOnboarding extends StatelessWidget {
                                           .isNormalLoading.value) {
                                         authController.isNormalLoading.value =
                                             true;
+                                        await controller.createKid();
                                         // await authController
                                         //     .parentFirebaseFunctions
                                         //     .addKidAndUpdateParent();
@@ -466,49 +452,138 @@ class KidSectionOnboarding extends StatelessWidget {
       ),
     );
   }
+  Widget _buildAvatarGrid(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoadingAvatars.value) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      return GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          crossAxisSpacing: 16.w,
+          mainAxisSpacing: 16.h,
+        ),
+        itemCount: controller.avatars.length + 1,
+        // +1 for camera option
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            // Camera/Gallery picker option
+            return Obx(() => GestureDetector(
+              onTap: () => _showImagePicker(context),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: controller.kidImagePath.value.isNotEmpty ? Colors.purple : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+                child: controller.kidImagePath.value.isNotEmpty
+                    ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30.r),
+                      child: Image.file(
+                        File(controller.kidImagePath.value),
+                        height: 30.h,
+                        width: 30.h,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    if (controller.selectedAvatar.value == -1)
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.r),
+                          color: Colors.black38,
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                      ),
+                  ],
+                )
+                    : Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.iconPrimary,
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                  child: Icon(
+                    Icons.add_a_photo,
+                    color: Colors.white,
+                    size: 30.sp,
+                  ),
+                ),
+              ),
+            ));
+          }
+
+          // Predefined avatars
+          final avatarIndex = index - 1;
+          return Obx(
+                () => GestureDetector(
+              onTap: () => controller.selectAvatar(index - 1),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: controller.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30.r),
+                      child: Image.network(
+                        controller.avatars[avatarIndex],
+                        height: 30.h,
+                        width: 30.h,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (controller.selectedAvatar.value == avatarIndex)
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.r),
+                          color: Colors.black38,
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 44.sp,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+  void _showImagePicker(BuildContext context) {
+    ImagePickerBottomSheet.show(
+      onCameraTap: () => controller.pickKidImage(source: ImageSource.camera),
+      onGalleryTap: () => controller.pickKidImage(source: ImageSource.gallery),
+    );
+  }
 }
 
 /// Custom Tooltip Decoration with Background Image
-class CustomTooltipDecoration extends ShapeBorder {
-  @override
-  EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
-
-  @override
-  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    return Path()..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(10)));
-  }
-
-  @override
-  Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
-    return Path()
-      ..addRRect(RRect.fromRectAndRadius(rect.deflate(1), Radius.circular(10)));
-  }
-
-  @override
-  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) async {
-    final paint = Paint();
-
-    final ui.Image image = await loadImage("assets/background_image.png");
-
-    paint.shader = ImageShader(
-      image,
-      TileMode.clamp,
-      TileMode.clamp,
-      Matrix4.identity().storage,
-    );
-
-    canvas.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(10)), paint);
-  }
-
-  @override
-  ShapeBorder scale(double t) => this;
-
-  /// Helper function to load an image asynchronously
-  Future<ui.Image> loadImage(String asset) async {
-    final ByteData data = await rootBundle.load(asset);
-    final Uint8List bytes = data.buffer.asUint8List();
-    final Completer<ui.Image> completer = Completer();
-    ui.decodeImageFromList(bytes, (ui.Image img) => completer.complete(img));
-    return completer.future;
-  }
-}

@@ -11,12 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 
 class JarAmountScreen extends StatefulWidget {
   Color jarColor;
   RxBool isSpending;
 
-  JarAmountScreen({required this.isSpending, required this.jarColor, Key? key}) : super(key: key);
+  JarAmountScreen({required this.isSpending, required this.jarColor, Key? key})
+      : super(key: key);
 
   @override
   State<JarAmountScreen> createState() => _JarAmountScreenState();
@@ -24,26 +26,23 @@ class JarAmountScreen extends StatefulWidget {
 
 class _JarAmountScreenState extends State<JarAmountScreen> {
   final parentController = Get.put(ParentBaseController());
-  final GlobalKey _amountTextFieldKey = GlobalKey();
+  final GlobalKey amountTextFieldKey = GlobalKey();
+  final GlobalKey nextButtonKey = GlobalKey();
 
-  @override
-  void initState() {
-    super.initState();
-    //parentController.fetchParentDetails();
-    // parentController.fetchKids();
-  }
 
-  void _startShowCase(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
-        _amountTextFieldKey,
-      ]);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    _startShowCase(context);
+    // Start showcase when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        ShowCaseWidget.of(context).startShowCase([
+          amountTextFieldKey,
+          nextButtonKey,
+        ]);
+      }
+    });
+
     return Scaffold(
       extendBody: true,
       body: Container(
@@ -73,9 +72,12 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
               SizedBox(height: 16.h),
               Text("Enter the amount 💸💰", style: AppTextStyle.headingLarge),
               SizedBox(height: 20.h),
-              Showcase(
-                key: _amountTextFieldKey,
-                description: 'Choose your favorite color for your jar!',
+              AppShowCaseWidget(
+                showcaseKey: amountTextFieldKey,
+                description: 'How much money do you want to add to your jar 💵',
+                backgroundImage: "assets/center_spot_light_background.png",
+                tooltipPosition: TooltipPosition.top,
+                disposeOnTap: false,
                 child: KidCustomTextField(
                     maxlength: 4,
                     keyboardType: TextInputType.number,
@@ -85,61 +87,67 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                     }),
               ),
               Padding(
-                  padding: EdgeInsets.only(right: 20.w, top: 16.h),
-                  child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: GreenNextButton(
-                          showSuffix: true,
-                          onTap: () async {
-                            // Validate and parse the entered amount safely
-                            String enteredAmountString = parentController.amount.value;
+                padding: EdgeInsets.only(right: 20.w, top: 16.h),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: GreenNextButton(
+                      showSuffix: true,
+                      onTap: () async {
+                        // Validate and parse the entered amount safely
+                        String enteredAmountString =
+                            parentController.amount.value;
 
-                            if (enteredAmountString.isEmpty || double.tryParse(enteredAmountString) == null) {
-                              // Show a toast message for invalid input
-                              ToastUtil.showToast("Pleae add Valid amount");
-                              return; // Stop further execution
-                            }
+                        if (enteredAmountString.isEmpty ||
+                            double.tryParse(enteredAmountString) == null) {
+                          // Show a toast message for invalid input
+                          ToastUtil.showToast("Please add Valid amount");
+                          return; // Stop further execution
+                        }
 
-                            double enteredAmount = double.parse(enteredAmountString);
+                        double enteredAmount =
+                            double.parse(enteredAmountString);
 
-                            if (enteredAmount <= 0) {
-                              // Show a toast message for invalid amount
-                              ToastUtil.showToast("Amount must be greater than 0");
+                        if (enteredAmount <= 0) {
+                          // Show a toast message for invalid amount
+                          ToastUtil.showToast(
+                              "Amount must be greater than 0");
 
-                              return; // Stop further execution
-                            }
+                          return; // Stop further execution
+                        }
 
-                            // Perform the desired operation
+                        // Perform the desired operation
 
-                            if (widget.isSpending.value) {
-                              // await authController.parentFirebaseFunctions
-                              //     .updateKidSpendingForJar(
-                              //   save: true,
-                              //   kidId: parentController.kidsList[0]['id'],
-                              //   enteredAmount: enteredAmount,
-                              //   spendingJarColor: widget.jarColor,
-                              // );
-                              Get.to(() => AddMoneyScreen(
-                                    isSpending: widget.isSpending,
-                                    amount: enteredAmount,
-                                    jarColor: widget.jarColor,
-                                  ));
-                            } else {
-                              // await authController.parentFirebaseFunctions
-                              //     .kidSpendingToSavings(
-                              //   save: true,
-                              //   childId: parentController.kidsList[0]['id'],
-                              //   enteredAmount: enteredAmount,
-                              //   savingsJarColor: widget.jarColor,
-                              // );
-                              Get.to(() => AddMoneyScreen(
-                                    isSpending: false.obs,
-                                    amount: enteredAmount,
-                                    jarColor: widget.jarColor,
-                                  ));
-                            }
-                          },
-                          buttonText: 'Next'))),
+                        if (widget.isSpending.value) {
+                          // await authController.parentFirebaseFunctions
+                          //     .updateKidSpendingForJar(
+                          //   save: true,
+                          //   kidId: parentController.kidsList[0]['id'],
+                          //   enteredAmount: enteredAmount,
+                          //   spendingJarColor: widget.jarColor,
+                          // );
+                          Get.to(() => AddMoneyScreen(
+                                isSpending: widget.isSpending,
+                                amount: enteredAmount,
+                                jarColor: widget.jarColor,
+                              ));
+                        } else {
+                          // await authController.parentFirebaseFunctions
+                          //     .kidSpendingToSavings(
+                          //   save: true,
+                          //   childId: parentController.kidsList[0]['id'],
+                          //   enteredAmount: enteredAmount,
+                          //   savingsJarColor: widget.jarColor,
+                          // );
+                          Get.to(() => AddMoneyScreen(
+                                isSpending: false.obs,
+                                amount: enteredAmount,
+                                jarColor: widget.jarColor,
+                              ));
+                        }
+                      },
+                      buttonText: 'Next'),
+                ),
+              ),
             ],
           ),
         ),

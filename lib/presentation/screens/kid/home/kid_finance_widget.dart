@@ -1,3 +1,4 @@
+import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 import 'package:coin_kids/presentation/components/kid/jar_with_money.dart';
 import 'package:coin_kids/presentation/components/kid/jar_without_money.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
@@ -17,7 +18,7 @@ class KidFinanceWidgets extends StatelessWidget {
   final double savingAmount;
   final List<dynamic> kidsData;
 
-    KidFinanceWidgets({
+  KidFinanceWidgets({
     Key? key,
     required this.spendingJarColor,
     required this.spendingAmount,
@@ -25,10 +26,22 @@ class KidFinanceWidgets extends StatelessWidget {
     required this.savingAmount,
     required this.kidsData,
   }) : super(key: key);
-  final KidsOnBoardingController kidOnboardingController = Get.put(KidsOnBoardingController());
+  final KidsOnBoardingController kidOnboardingController =
+      Get.put(KidsOnBoardingController());
   @override
   Widget build(BuildContext context) {
     if (kidsData.isEmpty) return SizedBox.shrink();
+
+    // Only show showcase when jars are empty
+    if (spendingJarColor == "#000000" || savingJarColor == "#000000") {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          ShowCaseWidget.of(context).startShowCase([
+            kidOnboardingController.jarKey,
+          ]);
+        }
+      });
+    }
 
     return SizedBox(
       height: 100.h,
@@ -53,11 +66,17 @@ class KidFinanceWidgets extends StatelessWidget {
         onTap: () {
           Get.to(AddJarColorScreen(isSpending: true.obs));
         },
-        child: Showcase(
-            key: kidOnboardingController.spendingJarKey,
-            description: 'Create a jar to store money',
-
-            child: Image.asset("assets/jars/jar.png")),
+        child: AppShowCaseWidget(
+          showcaseKey: kidOnboardingController.jarKey,
+          description: "Create your first jar! 💰",
+          backgroundImage: "assets/center_spot_light_background.png",
+          onTargetClick: () {
+            Get.to(AddJarColorScreen(isSpending: true.obs));
+          },
+          tooltipPosition: TooltipPosition.bottom,
+          disposeOnTap: false,
+          child: Image.asset("assets/jars/jar.png"),
+        ),
       );
     } else if (spendingAmount != 0.0) {
       return JarWithMoneyTitle(
@@ -141,11 +160,7 @@ class KidFinanceWidgets extends StatelessWidget {
               onTap: () {
                 Get.to(AddJarColorScreen(isSpending: false.obs));
               },
-              child: Showcase(
-
-                  key: kidOnboardingController.savingsJarKey,
-                  description: 'Create a jar to store money',
-                  child: Image.asset("assets/jars/jar.png")),
+              child: Image.asset("assets/jars/jar.png"),
             );
     } else if (savingAmount != 0.0) {
       return JarWithMoneyTitle(

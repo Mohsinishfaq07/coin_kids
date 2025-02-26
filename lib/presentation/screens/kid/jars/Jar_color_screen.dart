@@ -1,9 +1,10 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
- import 'package:coin_kids/presentation/screens/kid/jars/amount_screen.dart';
+import 'package:coin_kids/presentation/screens/kid/jars/amount_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ import 'package:showcaseview/showcaseview.dart';
 
 class AddJarColorScreen extends StatelessWidget {
   RxBool isSpending;
-  final GlobalKey _colorGridKey = GlobalKey();
-  final GlobalKey _nextButtonKey = GlobalKey();
+  final GlobalKey colorGridKey = GlobalKey();
+  final GlobalKey nextButtonKey = GlobalKey();
 
   AddJarColorScreen({
     required this.isSpending,
@@ -38,18 +39,17 @@ class AddJarColorScreen extends StatelessWidget {
 
   final parentController = Get.put(ParentBaseController());
 
-  void _startShowCase(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
-        _colorGridKey,
-        _nextButtonKey,
-      ]);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    _startShowCase(context);
+    // Start showcase when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        ShowCaseWidget.of(context).startShowCase([
+          colorGridKey,
+          nextButtonKey,
+        ]);
+      }
+    });
 
     return Scaffold(
       extendBody: true,
@@ -82,9 +82,12 @@ class AddJarColorScreen extends StatelessWidget {
                 child: Text("Select Jar Color🎨🖌️",
                     style: AppTextStyle.headingLarge),
               ),
-              Showcase(
-                key: _colorGridKey,
-                description: 'Choose your favorite color for your jar!',
+              AppShowCaseWidget(
+                showcaseKey: colorGridKey,
+                description: 'Choose your favorite color for your jar! 🎨',
+                backgroundImage: "assets/center_spot_light_background.png",
+                tooltipPosition: TooltipPosition.top,
+                disposeOnTap: false,
                 child: SizedBox(
                   height: 80.h,
                   width: 399.w,
@@ -133,29 +136,25 @@ class AddJarColorScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Showcase(
-                key: _nextButtonKey,
-                description: 'Tap next after selecting your jar color',
-                child: Padding(
-                  padding: EdgeInsets.only(right: 20.w),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: GreenNextButton(
-                      showSuffix: true,
-                      onTap: () {
-                        if (parentController.selectedColorIndex.value == -1) {
-                          ToastUtil.showToast("Please Select Jar Color");
-                        } else {
-                          Color selectedColor =
-                              colors[parentController.selectedColorIndex.value];
-                          Get.to(() => JarAmountScreen(
-                                isSpending: isSpending,
-                                jarColor: selectedColor,
-                              ));
-                        }
-                      },
-                      buttonText: "Next",
-                    ),
+              Padding(
+                padding: EdgeInsets.only(right: 20.w),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: GreenNextButton(
+                    showSuffix: true,
+                    onTap: () {
+                      if (parentController.selectedColorIndex.value == -1) {
+                        ToastUtil.showToast("Please Select Jar Color");
+                      } else {
+                        Color selectedColor =
+                            colors[parentController.selectedColorIndex.value];
+                        Get.to(() => JarAmountScreen(
+                              isSpending: isSpending,
+                              jarColor: selectedColor,
+                            ));
+                      }
+                    },
+                    buttonText: "Next",
                   ),
                 ),
               ),

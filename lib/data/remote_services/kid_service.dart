@@ -12,13 +12,15 @@ class KidService {
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
     try {
-      final DocumentSnapshot doc = await _firestore.collection('kids').doc(kidId).get();
+      final DocumentSnapshot doc =
+          await _firestore.collection('kids').doc(kidId).get();
 
       if (!doc.exists) {
         return null;
       }
 
-      return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: kidId);
+      return KidModel.fromJson(doc.data() as Map<String, dynamic>,
+          documentId: kidId);
     } catch (e) {
       throw Exception('Failed to fetch kid data: ${e.toString()}');
     }
@@ -27,9 +29,14 @@ class KidService {
   // Fetch kids by parent ID
   Future<List<KidModel>> fetchKidsByParentId(String parentId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore.collection('kids').where('parentId', isEqualTo: parentId).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: parentId)
+          .get();
 
-      return snapshot.docs.map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      return snapshot.docs
+          .map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch kids: ${e.toString()}');
     }
@@ -65,12 +72,14 @@ class KidService {
       );
 
       // Create kid document and get ID
-      final DocumentReference docRef = await _firestore.collection('kids').add(kid.toJson());
+      final DocumentReference docRef =
+          await _firestore.collection('kids').add(kid.toJson());
       final String kidId = docRef.id;
 
       // If custom image provided, upload it
       if (customImagePath != null && customImagePath.isNotEmpty) {
-        final String fileName = 'user_avatars/kids/$kidId.${customImagePath.split('.').last}';
+        final String fileName =
+            'user_avatars/kids/$kidId.${customImagePath.split('.').last}';
         final Reference ref = _storage.ref().child(fileName);
 
         final UploadTask uploadTask = ref.putFile(File(customImagePath));
@@ -83,7 +92,10 @@ class KidService {
         kidId: kidId,
         avatar: avatarUrl,
       );
-      await _firestore.collection('kids').doc(kidId).update(updatedKid.toJson());
+      await _firestore
+          .collection('kids')
+          .doc(kidId)
+          .update(updatedKid.toJson());
 
       return kidId;
     } catch (e) {
@@ -216,7 +228,8 @@ class KidService {
   // Upload custom avatar image and get URL
   Future<String> uploadCustomAvatar(File imageFile) async {
     try {
-      final String fileName = 'user_avatars/${DateTime.now().millisecondsSinceEpoch}${imageFile.path.split('.').last}';
+      final String fileName =
+          'user_avatars/${DateTime.now().millisecondsSinceEpoch}${imageFile.path.split('.').last}';
       final Reference ref = _storage.ref().child(fileName);
 
       final UploadTask uploadTask = ref.putFile(imageFile);
@@ -241,7 +254,7 @@ class KidService {
     return _firestore
         .collection('kids')
         .where('parentId', isEqualTo: parentId)
-        .limit(1)  // More efficient than fetching all docs
+        .limit(1) // More efficient than fetching all docs
         .snapshots()
         .map((snapshot) => snapshot.docs.isNotEmpty);
   }
