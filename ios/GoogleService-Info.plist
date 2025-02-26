@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>557180709877-aj3krtl0nd15kmkedta0aks8tsb8r355.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.557180709877-aj3krtl0nd15kmkedta0aks8tsb8r355</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>557180709877-phch5bapibji6i6ekv53tj778ta7nc41.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDSwYzi0ACD-sKSn-JCyIb6x5JLwHSNNAM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>557180709877</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.app.coinkids</string>
+	<key>PROJECT_ID</key>
+	<string>coinkids-75fcd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>coinkids-75fcd.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:557180709877:ios:7ea31add07cdb0092f0ebc</string>
+</dict>
+</plist>
