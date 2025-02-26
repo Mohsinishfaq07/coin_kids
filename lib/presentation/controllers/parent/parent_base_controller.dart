@@ -1,10 +1,10 @@
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/components/parent/message_placeholder_screen.dart';
 import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
 import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/parent_market/parent_market_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/messages_screen/messages_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/market/parent_market_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -40,7 +40,7 @@ class ParentBaseController extends GetxController {
 
   final List<Widget> screens = [
     ParentsHomeScreen(),
-    const MessagePlaceholderScreen(),
+    MessagesScreen(),
     ParentMarketScreen(),
   ];
 

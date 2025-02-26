@@ -259,7 +259,7 @@ class KidService {
           }
           final doc = snapshot.docs.first;
           return KidModel.fromJson(
-            doc.data() as Map<String, dynamic>,
+            doc.data(),
             documentId: doc.id,
           );
         });

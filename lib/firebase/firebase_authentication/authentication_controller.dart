@@ -1,11 +1,6 @@
 import 'package:coin_kids/data/remote_services/auth_service.dart';
-import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
-import 'package:coin_kids/data/local_services/databse_helper.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class AuthenticationController extends GetxController {
   final AuthService _authService = Get.find();

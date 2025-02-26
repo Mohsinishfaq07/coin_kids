@@ -2,9 +2,8 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SignupController extends GetxController {
@@ -24,7 +23,7 @@ class SignupController extends GetxController {
   Future<void> signUpWithEmail() async {
     try {
       isEmailLoading.value = true;
-      showDialog(context: Get.context!, builder: (context) => LoadingProgressDialogueWidget(title: "Signing up..."));
+      showLoadingDialog("Signing up...");
 
       // Use AuthService for signup
       final credential = await _authService.signUpWithEmailPassword(

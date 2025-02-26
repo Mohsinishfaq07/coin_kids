@@ -8,8 +8,8 @@ import 'package:coin_kids/presentation/components/common/App_small_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/add_child/add_child_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer.dart';
-import 'package:coin_kids/presentation/screens/parent/kid_profile_management_page.dart';
+import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/kids_profile/kid_profile_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -195,7 +195,6 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                       Get.to(() => AddChildScreen());
                                     }
                                   },
-
                                   child: Column(
                                     children: [
                                       Container(
@@ -235,9 +234,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Get.to(() => KidProfileManagementPage(
-                                          kidId: kid.kidId,
-                                        ));
+                                    Get.to(() => KidProfileScreen());
                                   },
                                   child: Column(
                                     children: [

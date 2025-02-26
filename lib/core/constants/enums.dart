@@ -9,3 +9,9 @@ enum UserGender {
   Male,
   Female,
 }
+
+enum KidProfileTabs {
+  Jars,
+  Notifications,
+  Goals,
+}

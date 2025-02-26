@@ -2,6 +2,8 @@ import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
+import 'package:coin_kids/utils/dummy_data_generator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class ParentHomeController extends GetxController {
@@ -18,6 +20,11 @@ class ParentHomeController extends GetxController {
 
     if (appState.hasKid.value) {
       fetchKidsList();
+    }
+
+    if (kDebugMode) {
+      //TODO: comment
+      insertTestData();
     }
   }
 
@@ -40,5 +47,13 @@ class ParentHomeController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void insertTestData() async {
+    final userId = Get.find<AuthService>().user.value?.uid;
+    if (userId != null) {
+      await DummyDataGenerator.insertDummyNotifications(userId);
+      await DummyDataGenerator.insertDummyGoals(appState.currentKid.value!.kidId);
+    }
   }
 }
