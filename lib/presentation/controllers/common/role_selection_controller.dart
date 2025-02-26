@@ -12,14 +12,18 @@ class RoleSelectionController extends GetxController {
   final _authService = Get.find<AuthService>();
 
   void finalizeRole(UserRole role) async {
-    await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, role.name);
+    await SharedPreferencesHelper.saveString(
+        SharedPreferencesHelper.lastLoggedInRole, role.name);
 
     if (role == UserRole.PARENT) {
       Get.offAll(() => ParentBaseScreen());
     } else if (role == UserRole.CHILD) {
-      final isKidOnboarded = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isKidOnboarded) ?? false;
-      final isKidInDb = await _kidService.fetchKidsByParentId(_authService.user.value!.uid);
-
+      final isKidOnboarded = await SharedPreferencesHelper.getBool(
+              SharedPreferencesHelper.isKidOnboarded) ??
+          false;
+      final isKidInDb =
+          await _kidService.fetchKidsByParentId(_authService.user.value!.uid);
+      print("$isKidInDb");
       if (!isKidOnboarded || isKidInDb.isEmpty) {
         Get.offAll(() => KidSectionOnboarding());
       } else {

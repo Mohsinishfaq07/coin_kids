@@ -12,8 +12,14 @@ class KidsOnBoardingController extends GetxController {
 
   void startShowcase(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context)
-          .startShowCase([textFieldKey, ageListKey, avatarListKey,jarKey,spendingJarKey,savingsJarKey]);
+      ShowCaseWidget.of(context).startShowCase([
+        textFieldKey,
+        ageListKey,
+        avatarListKey,
+        jarKey,
+        spendingJarKey,
+        savingsJarKey
+      ]);
     });
   }
 
@@ -22,6 +28,7 @@ class KidsOnBoardingController extends GetxController {
     super.onReady();
     startShowcase(Get.context!); // Call showcase after UI builds
   }
+
   RxBool spotLightOn = false.obs;
 
   RxInt spotLightIndex = 0.obs;
@@ -72,7 +79,7 @@ class KidsOnBoardingController extends GetxController {
   @override
   void onInit() {
     Future.delayed(const Duration(seconds: 1), () {
-     // showOnBoarding1SpotLight();
+      // showOnBoarding1SpotLight();
     });
     super.onInit();
   }
@@ -94,52 +101,19 @@ class KidsOnBoardingController extends GetxController {
     });
   }
 
-  // showOnBoarding2SpotLight() {
-  //   spotLightOn.value = true;
-  //   Get.log('showing spot light : $spotLightOn');
-  //   showDialog(
-  //     context: Get.context!,
-  //     builder: (BuildContext context) {
-  //       return const Dialog(
-  //         backgroundColor: Colors.transparent, // Make background transparent
-  //         child: SpotLight2DialogueBox(),
-  //       );
-  //     },
-  //   ).then((_) {
-  //     spotLightOn.value = false;
-  //     Get.log('spot light dismissed : $spotLightOn');
-  //   });
-  // }
-
-  // showOnBoarding3SpotLight() {
-  //   spotLightOn.value = true;
-  //   Get.log('showing spot light : $spotLightOn');
-  //   showDialog(
-  //     context: Get.context!,
-  //     builder: (BuildContext context) {
-  //       return const Dialog(
-  //         backgroundColor: Colors.transparent, // Make background transparent
-  //         child: SpotLight3DialogueBox(),
-  //       );
-  //     },
-  //   ).then((_) {
-  //     spotLightOn.value = false;
-  //     Get.log('spot light dismissed : $spotLightOn');
-  //   });
-  // }
-
   increaseSpotLightIndex({required int index}) {
     spotLightIndex.value = index;
+    spotLightOn.value = false; // Reset spotlight state
+
     if (spotLightIndex.value == 1) {
-      // show second spotlight
-      Future.delayed(const Duration(milliseconds: 200), () {
-        // showOnBoarding2SpotLight();
-      });
+      // Reset the shown flag for the next showcase
+      spotLightShown.value = false;
     } else if (spotLightIndex.value == 2) {
-      //show third spotlight
-      Future.delayed(const Duration(milliseconds: 200), () {
-        // showOnBoarding3SpotLight();
-      });
+      // Reset for avatar showcase
+      spotLightShown.value = false;
+    } else if (spotLightIndex.value == 3) {
+      // Handle completion of all showcases
+      spotLightShown.value = true;
     }
   }
 
@@ -149,4 +123,9 @@ class KidsOnBoardingController extends GetxController {
       spotLightIndex.value--;
     }
   }
+
+  final spotLightShown = false.obs;
+
+  // Optional: Add a method to check if all showcases are complete
+  bool get areAllShowcasesComplete => spotLightIndex.value >= 3;
 }
