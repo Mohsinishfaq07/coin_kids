@@ -499,7 +499,7 @@ class GoalProgress extends StatelessWidget {
                                                   iconPath:
                                                       "assets/pencil_svgrepo.com.svg",
                                                   label: 'Edit',
-                                                  onTap: () => Get.to(EditGoal(
+                                                  onTap: () => Get.to(() => EditGoal(
                                                         goalId: goalId,
                                                       ))),
                                               SizedBox(

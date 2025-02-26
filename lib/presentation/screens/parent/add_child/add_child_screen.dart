@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AddChildScreen extends GetView<AddChildController> {
   final AddChildController _addChildController = Get.put(AddChildController());
@@ -105,8 +106,8 @@ class AddChildScreen extends GetView<AddChildController> {
 
   void _showImagePicker(BuildContext context) {
     ImagePickerBottomSheet.show(
-      onCameraTap: () => controller.pickKidImage(source: ImageSource.camera),
-      onGalleryTap: () => controller.pickKidImage(source: ImageSource.gallery),
+      onCameraTap: () => controller.pickImage(source: ImageSource.camera),
+      onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
     );
   }
 
@@ -186,7 +187,7 @@ class AddChildScreen extends GetView<AddChildController> {
           final avatarIndex = index - 1;
           return Obx(
             () => GestureDetector(
-              onTap: () => controller.selectAvatar(index - 1),
+              onTap: () => controller.selectAvatar(avatarIndex),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -200,19 +201,28 @@ class AddChildScreen extends GetView<AddChildController> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(60.r),
-                      child: Image.network(
-                        controller.avatars[avatarIndex],
+                      child: CachedNetworkImage(
+                        imageUrl: controller.avatars[avatarIndex],
                         height: 60.h,
                         width: 60.w,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
-                            ),
-                          );
-                        },
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.buttonPrimary,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.iconPrimary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(60.r),
+                          ),
+                          child: Icon(
+                            Icons.error_outline,
+                            color: AppColors.iconPrimary,
+                            size: 24.sp,
+                          ),
+                        ),
                       ),
                     ),
                     if (controller.selectedAvatar.value == avatarIndex)

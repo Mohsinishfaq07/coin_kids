@@ -1,21 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum NotificationType {
-  money_request_response,
-  goal_completed,
-  reward_earned,
-  task_assigned,
-  task_completed
+  goal_milestone,    // Goal progress notifications
+  goal_completed,    // Goal completion
+  transaction_pending,    // New transaction needs approval
+  transaction_approved,   // Transaction was approved
+  transaction_rejected,   // Transaction was rejected
+  reward_earned,     // Kid earned a reward
+  task_completed,    // Task completion
+  task_assigned,     // New task assigned
+  balance_low,       // Low balance warning
+  balance_added,     // Money added to account
+  wishlist_added,    // Item added to wishlist
+  system_notification  // General system notifications
 }
 
 class NotificationModel {
   final String? id;
-  final String userId;
-  final String senderId;
+  final String userId;      // Recipient's ID
+  final String senderId;    // Sender's ID
   final NotificationType type;
   final String message;
   final DateTime timestamp;
   final bool isRead;
+  final Map<String, dynamic>? metadata;  // Additional data specific to notification type
+  final String? imageUrl;   // Optional image URL
+  final String? actionUrl; // Optional deep link or action URL
 
   NotificationModel({
     this.id,
@@ -24,7 +34,10 @@ class NotificationModel {
     required this.type,
     required this.message,
     required this.timestamp,
-    required this.isRead,
+    this.isRead = false,
+    this.metadata,
+    this.imageUrl,
+    this.actionUrl,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json, {String? id}) {
@@ -36,6 +49,9 @@ class NotificationModel {
       message: json['message'] ?? '',
       timestamp: (json['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isRead: json['isRead'] ?? false,
+      metadata: json['metadata'],
+      imageUrl: json['imageUrl'],
+      actionUrl: json['actionUrl'],
     );
   }
 
@@ -47,7 +63,33 @@ class NotificationModel {
       'message': message,
       'timestamp': Timestamp.fromDate(timestamp),
       'isRead': isRead,
+      if (metadata != null) 'metadata': metadata,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      if (actionUrl != null) 'actionUrl': actionUrl,
     };
+  }
+
+  static NotificationType _stringToNotificationType(String type) {
+    return NotificationType.values.firstWhere(
+      (e) => e.toString().split('.').last == type,
+      orElse: () => NotificationType.system_notification,
+    );
+  }
+
+  // Helper method to get relative time
+  String get timeAgo {
+    final difference = DateTime.now().difference(timestamp);
+    if (difference.inDays > 7) {
+      return timestamp.toString().split(' ')[0]; // Return date only
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
   }
 
   NotificationModel copyWith({
@@ -58,6 +100,9 @@ class NotificationModel {
     String? message,
     DateTime? timestamp,
     bool? isRead,
+    Map<String, dynamic>? metadata,
+    String? imageUrl,
+    String? actionUrl,
   }) {
     return NotificationModel(
       id: id ?? this.id,
@@ -67,23 +112,9 @@ class NotificationModel {
       message: message ?? this.message,
       timestamp: timestamp ?? this.timestamp,
       isRead: isRead ?? this.isRead,
+      metadata: metadata ?? this.metadata,
+      imageUrl: imageUrl ?? this.imageUrl,
+      actionUrl: actionUrl ?? this.actionUrl,
     );
   }
-
-  static NotificationType _stringToNotificationType(String type) {
-    switch (type.toLowerCase()) {
-      case 'money_request_response':
-        return NotificationType.money_request_response;
-      case 'goal_completed':
-        return NotificationType.goal_completed;
-      case 'reward_earned':
-        return NotificationType.reward_earned;
-      case 'task_assigned':
-        return NotificationType.task_assigned;
-      case 'task_completed':
-        return NotificationType.task_completed;
-      default:
-        return NotificationType.money_request_response;
-    }
-  }
-}
+} 

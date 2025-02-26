@@ -1,12 +1,13 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:get/get.dart';
 
 class TransferSuccessDialog extends StatelessWidget {
   final String receiverName;
   final String amount;
-  final String dateTime;
   final String title;
   final String transferType;
 
@@ -14,7 +15,6 @@ class TransferSuccessDialog extends StatelessWidget {
     super.key,
     required this.receiverName,
     required this.amount,
-    required this.dateTime,
     required this.title,
     required this.transferType,
   });
@@ -95,34 +95,14 @@ class TransferSuccessDialog extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Date & Time
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Time & date: ',
-                    style: TextStyle(
-                        fontSize: 15.sp,
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    dateTime,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textHighlighted,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
               // Close Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    Get.back();
+                    Get.off(() => ParentBaseScreen());
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,

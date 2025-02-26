@@ -29,6 +29,7 @@ class GoalService {
       final goal = GoalModel(
         userId: userId,
         title: product.name,
+        photo: product.imageUrl,
         targetAmount: product.price,
         savedAmount: 0,
         status: GoalStatus.in_progress,

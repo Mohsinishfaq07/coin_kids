@@ -66,46 +66,6 @@ class ParentFirebaseFunctions {
         .map((querySnapshot) => querySnapshot.docs);
   }
 
-  // update the profile of parent
-  Future<void> updateParentProfile() async {
-    try {
-      authController.isNormalLoading.value = true;
-      showDialog(
-          context: Get.context!,
-          builder: (context) =>
-              LoadingProgressDialogueWidget(
-                title: "updating..",
-              ));
-
-      // Update Firebase Firestore
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance.collection('parents').doc(user.email).update({
-          'name': authController.parentName.value,
-          'dob': authController.birthday.value,
-          'gender': authController.selectedGender.value.isNotEmpty ? authController.selectedGender.value : 'Not specified',
-        });
-        // homeController.parentName.value = authController.parentName.value;
-        Get.back();
-        ToastUtil.showToast(
-          "Profile updated successfully!",
-        );
-        Get.back(closeOverlays: true);
-        Get.log('profile updated');
-      } else {
-        ToastUtil.showToast(
-          "User not logged in. Please log in again.",
-        );
-      }
-    } catch (e) {
-      Get.back();
-      ToastUtil.showToast(
-        "Failed to update profile: $e",
-      );
-    } finally {
-      authController.isNormalLoading.value = false;
-    }
-  }
 
   // add child to parent
   // Future<void> addKidAndUpdateParent() async {

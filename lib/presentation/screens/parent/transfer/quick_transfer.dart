@@ -1,33 +1,23 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/components/parent/quick_transfer_text_field.dart';
-
+import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/transfer_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/theme/color_theme.dart';
-import '../../../controllers/parent/parent_base_controller.dart';
 
-class QuickTransferPage extends StatelessWidget {
-  final dynamic docData;
-  final String kidId;
-
-  QuickTransferPage({super.key, required this.docData, required this.kidId});
-
-  final authController = Get.find<AuthenticationController>();
-
+class QuickTransferPage extends GetView<QuickTransferController> {
   @override
   Widget build(BuildContext context) {
-    final parentController = Get.put(ParentBaseController());
-
     return Scaffold(
       appBar: const CustomAppBar(
         title: "Quick Transfer",
@@ -51,7 +41,9 @@ class QuickTransferPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20.h),
-                    quickTransferChildGeneralDetailWidget(childId: kidId),
+                    Obx(() {
+                      return quickTransferChildGeneralDetailWidget(kid: controller.appState.currentKid.value);
+                    }),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
@@ -82,7 +74,7 @@ class QuickTransferPage extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'money\nfrom your ${docData['name']}\'s account',
+                                // text: 'money\nfrom your ${docData['name']}\'s account',
                                 style: const TextStyle(
                                   color: Colors.black, // Default color for the remaining text
                                 ),
@@ -104,7 +96,7 @@ class QuickTransferPage extends StatelessWidget {
                         hintText: "0,00",
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
-                          parentController.amount.value = val;
+                          controller.amount.value = val;
                         },
                         prefix: SvgPicture.asset("assets/currency_euro.svg")),
                     SizedBox(height: 24.h),
@@ -148,16 +140,30 @@ class QuickTransferPage extends StatelessWidget {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '- Remove',
-                            backgroundColor: parentController.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                            backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value = 'Enter valid amount';
+                              if (controller.amount.value.isEmpty) {
+                                controller.amountValidation.value = 'Enter valid amount';
                               } else {
-                                double enteredAmount = double.parse(parentController.amount.value);
+                                try {
+                                  double enteredAmount = double.parse(controller.amount.value);
+                                  final kid = controller.appState.currentKid.value!;
+                                  var newBalance = kid.wallet.spendingJar.balance - enteredAmount;
 
-                                // await firestoreOperations.parentFirebaseFunctions.updateKidSpending(
-                                //     kidId: kidId, enteredAmount: enteredAmount, save: false, spendingJarColor: AppColors.textPrimary);
-                                // parentController.amount.value = "";
+                                  if (newBalance < 0) {
+                                    ToastUtil.showToast("Kid doesn't have enough money");
+                                    return;
+                                  }
+
+                                  await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
+
+                                  showDialog(
+                                    context: Get.context!,
+                                    builder: (context) => TransferSuccessDialog(receiverName: kid.name, amount: enteredAmount.toString(), title: 'Transfer Successful', transferType: 'received'),
+                                  );
+                                } catch (e) {
+                                  print(e);
+                                }
                               }
                             },
                           );
@@ -166,16 +172,22 @@ class QuickTransferPage extends StatelessWidget {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '+ Send',
-                            backgroundColor: parentController.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                            backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
-                              if (parentController.amount.value.isEmpty) {
-                                parentController.amountValidation.value = 'Enter valid amount';
+                              if (controller.amount.value.isEmpty) {
+                                controller.amountValidation.value = 'Enter valid amount';
                               } else {
                                 try {
-                                  double enteredAmount = double.parse(parentController.amount.value);
+                                  double enteredAmount = double.parse(controller.amount.value);
+                                  final kid = controller.appState.currentKid.value!;
+                                  var newBalance = kid.wallet.spendingJar.balance + enteredAmount;
 
-                                  // await firestoreOperations.parentFirebaseFunctions.updateKidSpending(
-                                  //     kidId: kidId, enteredAmount: enteredAmount, save: true, spendingJarColor: AppColors.textPrimary);
+                                  await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
+
+                                  showDialog(
+                                    context: Get.context!,
+                                    builder: (context) => TransferSuccessDialog(receiverName: kid.name, amount: enteredAmount.toString(), title: 'Transfer Successful', transferType: 'received'),
+                                  );
                                 } on Exception catch (e) {
                                   print("Exception $e");
                                 }
@@ -211,10 +223,8 @@ quickTransferFields({
     decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white38,
-        // Background color for the text field
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey),
-        // Hint text color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(
@@ -247,97 +257,51 @@ quickTransferFields({
   );
 }
 
-Widget quickTransferChildGeneralDetailWidget({required String childId}) {
-  return StreamBuilder<DocumentSnapshot>(
-    stream: FirebaseFirestore.instance.collection('kids').doc(childId).snapshots(), // Stream for the specific child document
-    builder: (context, snapshot) {
-      // Loading State
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
-      // Error State
-      if (snapshot.hasError) {
-        return const Center(child: Text('Error loading child details'));
-      }
-
-      // Check if document does not exist
-      if (!snapshot.hasData || !snapshot.data!.exists) {
-        return const Center(
-          child: Text(
-            'Child details not found!',
-            style: TextStyle(fontSize: 16),
-          ),
-        );
-      }
-
-      // Extract document data safely
-      var docData = snapshot.data!.data() as Map<String, dynamic>;
-
-      // Default values if fields are null
-      final name = docData['name'] ?? 'Unknown Name';
-      final savings = docData['spendings']?['amount']?.toString() ?? '0';
-
-      return Center(
-        child: Container(
-          width: 126.w,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.w),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Child Name
-                  Text(
-                    name,
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 14.sp,
-                      fontFamily: 'Open Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-
-                  // Child Avatar
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: docData['avatar'].startsWith('/')
-                        ? FileImage(File(docData['avatar']))
-                        : (docData['avatar'].startsWith('assets') && !docData['avatar'].endsWith('.svg'))
-                            ? AssetImage(docData['avatar'])
-                            : docData['avatar'].startsWith('http')
-                                ? NetworkImage(docData['avatar'])
-                                : null,
-                    child: docData['avatar'].endsWith('.svg')
-                        ? SvgPicture.asset(
-                            docData['avatar'],
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  SizedBox(height: 8.h),
-
-                  // Available Money
-                  Text(
-                    'Available Money',
-                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    '\$ $savings',
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
-                  ),
-                ],
+Widget quickTransferChildGeneralDetailWidget({required KidModel? kid}) {
+  if (kid == null) return SizedBox();
+  return Center(
+    child: Container(
+      width: 126.w,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.w),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Child Name
+              Text(
+                kid.name,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 14.sp,
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
+              SizedBox(height: 8.h),
+
+              // Child Avatar
+              CircleAvatar(radius: 30, backgroundImage: NetworkImage(kid.avatar)),
+              SizedBox(height: 8.h),
+
+              // Available Money
+              Text(
+                'Available Money',
+                style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+              ),
+              SizedBox(height: 6.h),
+              Text(
+                '\$ ${kid.wallet.spendingJar.balance}',
+                style: AppTextStyle.bodyMedium,
+              ),
+            ],
           ),
         ),
-      );
-    },
+      ),
+    ),
   );
 }

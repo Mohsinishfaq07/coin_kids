@@ -44,7 +44,7 @@ class MessagePlaceholderScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                             onTap: () {
-                              Get.to(MessagesScreen());
+                              Get.to(() => MessagesScreen());
                             },
                             child: SizedBox(
                               width: 312.w,

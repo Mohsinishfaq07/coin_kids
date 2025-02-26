@@ -4,7 +4,7 @@ import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/kid_onboarding.dart';
-import 'package:coin_kids/presentation/screens/parent/bottom_navigation/parent_base_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:get/get.dart';
 
 class RoleSelectionController extends GetxController {
