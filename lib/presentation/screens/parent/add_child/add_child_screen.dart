@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
@@ -11,10 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class AddChildScreen extends GetView<AddChildController> {
-  final AddChildController _addChildController = Get.put(AddChildController());
   final _formKey = GlobalKey<FormState>();
 
   AddChildScreen({super.key});
@@ -44,7 +43,7 @@ class AddChildScreen extends GetView<AddChildController> {
                     maxLength: 8,
                     titleText: "Child name",
                     hintText: "Enter your child name",
-                    onChanged: (value) => _addChildController.childName.value = value.trim(),
+                    onChanged: (value) => controller.childName.value = value.trim(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter child name';
@@ -59,7 +58,7 @@ class AddChildScreen extends GetView<AddChildController> {
                     titleText: "Age",
                     hintText: "Enter child's age",
                     keyboardType: TextInputType.number,
-                    onChanged: (value) => _addChildController.childAge.value = value.trim(),
+                    onChanged: (value) => controller.childAge.value = value.trim(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter child age';
@@ -85,12 +84,12 @@ class AddChildScreen extends GetView<AddChildController> {
                   // Add Child Button
                   Center(
                     child: Obx(() => AppButton(
-                          text: _addChildController.isLoading.value ? "Adding Child..." : "Add Child",
+                          text: controller.isLoading.value ? "Adding Child..." : "Add Child",
                           onPressed: () async {
-                            if (_addChildController.isLoading.value) return;
+                            if (controller.isLoading.value) return;
 
                             if (_formKey.currentState?.validate() ?? false) {
-                              await _addChildController.createKid();
+                              await controller.createKid();
                             }
                           },
                         )),

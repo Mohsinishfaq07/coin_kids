@@ -9,11 +9,13 @@ import 'package:coin_kids/data/remote_services/transaction_service.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/common/forgot_password_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/splash_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/DrawerController.dart';
+import 'package:coin_kids/presentation/controllers/parent/drawer_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/edit_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/favorite_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
@@ -54,11 +56,12 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<ParentHomeController>(() => ParentHomeController(), fenix: true);
     Get.lazyPut<AddChildController>(() => AddChildController(), fenix: true);
     Get.lazyPut<QuickTransferController>(() => QuickTransferController(), fenix: true);
+    Get.lazyPut<EditChildController>(() => EditChildController(), fenix: true);
     Get.lazyPut<ParentDrawerController>(() => ParentDrawerController(), fenix: true);
     Get.lazyPut<UpdateProfileController>(() => UpdateProfileController(), fenix: true);
+    Get.lazyPut<ForgotPasswordController>(() => ForgotPasswordController(), fenix: true);
     Get.lazyPut<MessagesController>(() => MessagesController(), fenix: true);
     Get.lazyPut<KidProfileController>(() => KidProfileController(), fenix: true);
-
     Get.lazyPut<IntroController>(() => IntroController(), fenix: true);
     Get.lazyPut<FavoriteController>(() => FavoriteController(), fenix: true);
     Get.lazyPut<AddMoneyController>(() => AddMoneyController(), fenix: true);

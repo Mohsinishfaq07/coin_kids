@@ -22,8 +22,13 @@ class ParentHomeController extends GetxController {
       fetchKidsList();
     }
 
+    ever(
+        appState.hasKid,
+        (hasKids) => {
+              if (hasKids) {fetchKidsList()}
+            });
+
     if (kDebugMode) {
-      //TODO: comment
       insertTestData();
     }
   }

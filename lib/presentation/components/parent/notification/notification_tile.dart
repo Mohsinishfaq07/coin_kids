@@ -2,6 +2,8 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
+import 'package:coin_kids/presentation/screens/parent/kids_profile/kid_profile_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,7 +13,6 @@ Widget buildNotificationTile(MessagesController controller, NotificationModel no
     final isSelected = controller.selectedNotifications.contains(notification.id);
 
     return ListTile(
-      tileColor: _getNotificationColor(notification.type),
       selected: isSelected,
       leading: Container(
         width: 40,
@@ -98,13 +99,13 @@ Widget buildNotificationTileCompact(KidProfileController controller, Notificatio
     ),
     trailing: !notification.isRead
         ? Container(
-      width: 8.w,
-      height: 8.h,
-      decoration: BoxDecoration(
-        color: AppColors.buttonPrimary,
-        shape: BoxShape.circle,
-      ),
-    )
+            width: 8.w,
+            height: 8.h,
+            decoration: BoxDecoration(
+              color: AppColors.buttonPrimary,
+              shape: BoxShape.circle,
+            ),
+          )
         : null,
   );
 }
@@ -117,10 +118,6 @@ IconData _getNotificationIcon(NotificationType type) {
       return Icons.emoji_events;
     case NotificationType.transaction_pending:
       return Icons.pending;
-    case NotificationType.transaction_approved:
-      return Icons.check_circle;
-    case NotificationType.transaction_rejected:
-      return Icons.cancel;
     case NotificationType.reward_earned:
       return Icons.star;
     case NotificationType.task_completed:
@@ -135,38 +132,12 @@ IconData _getNotificationIcon(NotificationType type) {
       return Icons.favorite;
     case NotificationType.system_notification:
       return Icons.notifications;
-  }
-}
-
-Color _getNotificationColor(NotificationType type) {
-  switch (type) {
-    case NotificationType.goal_milestone:
-    case NotificationType.goal_completed:
-      return AppColors.buttonPrimary;
-    case NotificationType.transaction_pending:
-      return Colors.orange;
-    case NotificationType.transaction_approved:
-      return Colors.green;
-    case NotificationType.transaction_rejected:
-      return Colors.red;
-    case NotificationType.reward_earned:
-      return Colors.purple;
-    case NotificationType.task_completed:
-    case NotificationType.task_assigned:
-      return Colors.indigo;
-    case NotificationType.balance_low:
-      return Colors.red;
-    case NotificationType.balance_added:
-      return Colors.green;
-    case NotificationType.wishlist_added:
-      return Colors.pink;
-    case NotificationType.system_notification:
-      return Colors.grey;
+    default:
+      return Icons.notifications;
   }
 }
 
 void _handleNotificationTap(NotificationModel notification) {
-  // Handle navigation based on notification type and metadata
   if (notification.actionUrl != null) {
     // Handle deep linking
   }
@@ -174,34 +145,15 @@ void _handleNotificationTap(NotificationModel notification) {
   switch (notification.type) {
     case NotificationType.goal_milestone:
     case NotificationType.goal_completed:
-      Get.toNamed('/goals', arguments: notification.metadata);
+      Get.to(() => KidProfileScreen());
       break;
+
     case NotificationType.transaction_pending:
-    case NotificationType.transaction_approved:
-    case NotificationType.transaction_rejected:
-      Get.toNamed('/transactions', arguments: notification.metadata);
+      Get.to(() => QuickTransferPage());
       break;
     // Add other cases as needed
     case NotificationType.reward_earned:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.task_completed:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.task_assigned:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.balance_low:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.balance_added:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.wishlist_added:
-      // TODO: Handle this case.
-      throw UnimplementedError();
-    case NotificationType.system_notification:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+    default:
+      print(notification);
   }
 }

@@ -3,6 +3,7 @@ import 'package:coin_kids/data/models/parent_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:coin_kids/utils/image_utils.dart';
 
 class ParentService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -135,12 +136,15 @@ class ParentService {
         throw Exception('User not authenticated');
       }
 
+      // Resize image before uploading
+      final File resizedFile = await ImageUtils.resizeImage(photoFile);
+
       // Create file path in storage
-      final String fileName = 'user_avatars/parents/$userId.${photoFile.path.split('.').last}';
+      final String fileName = 'user_avatars/parents/$userId.${resizedFile.path.split('.').last}';
       final Reference storageRef = _storage.ref().child(fileName);
 
-      // Upload file
-      final UploadTask uploadTask = storageRef.putFile(photoFile);
+      // Upload resized file
+      final UploadTask uploadTask = storageRef.putFile(resizedFile);
       final TaskSnapshot snapshot = await uploadTask;
 
       // Get download URL
@@ -151,6 +155,11 @@ class ParentService {
           .collection('parents')
           .doc(userId)
           .update({'imageUrl': downloadUrl});
+
+      // Clean up temporary resized file
+      if (resizedFile.path != photoFile.path) {
+        await resizedFile.delete();
+      }
 
       return downloadUrl;
     } catch (e) {

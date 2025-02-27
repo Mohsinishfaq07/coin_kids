@@ -13,4 +13,16 @@ class ToastUtil {
       fontSize: 16.0,
     );
   }
+
+  static void showExceptionToast(dynamic message) {
+    final error = message.toString().substring(11);
+    Fluttertoast.showToast(
+      msg: error,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: AppColors.iconPrimary,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
 }

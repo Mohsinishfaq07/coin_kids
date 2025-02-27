@@ -38,7 +38,7 @@ class SignupController extends GetxController {
         Get.offAll(() => RoleSelectionScreen());
       }
     } catch (e) {
-      ToastUtil.showToast(e.toString());
+      ToastUtil.showExceptionToast(e);
       Get.log(e.toString());
     } finally {
       isEmailLoading.value = false;

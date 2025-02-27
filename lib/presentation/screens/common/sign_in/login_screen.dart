@@ -8,6 +8,7 @@ import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dart';
+import 'package:coin_kids/presentation/screens/common/forgot_password.dart';
 import 'package:coin_kids/presentation/screens/common/signup/signup_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -90,24 +91,22 @@ class LoginScreen extends GetView<SignInController> {
                         titleText: 'Password',
                       );
                     }),
-                    SizedBox(height: 62.h),
-
-                    // Forgot Credentials
-                    // Align(
-                    //   alignment: Alignment.centerRight,
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       Get.to(() => ForgotPasswordScreen());
-                    //     },
-                    //     child: Text(
-                    //       "Forgot Credentials?",
-                    //       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    //           color: CustomThemeData().primaryTextColor,
-                    //           fontSize: 12),
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 40),
+                    SizedBox(height: 8.h),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(() => ForgotPasswordScreen());
+                        },
+                        child: Text(
+                          "Forgot Credentials?",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().primaryTextColor,
+                              fontSize: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
 
                     // Login Button
                     AppButton(

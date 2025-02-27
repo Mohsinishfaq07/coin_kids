@@ -64,6 +64,7 @@ dependencies:
   showcaseview: ^4.0.1
   firebase_storage: ^12.4.3
   pull_to_refresh: ^2.0.0
+  image: ^4.3.0
   
 
 dev_dependencies:

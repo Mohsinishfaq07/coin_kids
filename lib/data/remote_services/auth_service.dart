@@ -1,8 +1,12 @@
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/parent_model.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:get/get.dart';
+
 import 'parent_service.dart';
 
 class AuthService extends GetxController {
@@ -104,7 +108,9 @@ class AuthService extends GetxController {
           pin: 0000,
           // Default PIN
           createdAt: DateTime.now(),
-          dob: DateTime.now().millisecondsSinceEpoch,
+          dob: DateTime
+              .now()
+              .millisecondsSinceEpoch,
           // Will need to be updated by user
           gender: '', // Will need to be updated by user
         );
@@ -158,7 +164,9 @@ class AuthService extends GetxController {
           pin: 0000,
           // Default PIN
           createdAt: DateTime.now(),
-          dob: DateTime.now().millisecondsSinceEpoch,
+          dob: DateTime
+              .now()
+              .millisecondsSinceEpoch,
           // Will need to be updated by user
           gender: '', // Will need to be updated by user
         );
@@ -175,9 +183,10 @@ class AuthService extends GetxController {
   // Sign Out
   Future<void> signOut() async {
     try {
+      Get.offAll(() => LoginScreen());
+      await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.NONE.name);
       await Future.wait([
         _auth.signOut(),
-        _googleSignIn.signOut(),
       ]);
     } catch (e) {
       throw _handleAuthException(e);
@@ -224,8 +233,10 @@ class AuthService extends GetxController {
           return Exception('This user account has been disabled.');
         case 'requires-recent-login':
           return Exception('Please sign in again to complete this operation.');
+        case 'invalid-credential':
+          return Exception('Email and Password doesn\'t match');
         default:
-          return Exception(e.message ?? 'An unknown error occurred.');
+          return Exception("${e.code}: ${e.message}");
       }
     }
     return Exception('An unexpected error occurred.');

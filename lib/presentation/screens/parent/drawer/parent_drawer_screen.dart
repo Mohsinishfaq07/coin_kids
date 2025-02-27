@@ -1,8 +1,9 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
-import 'package:coin_kids/presentation/controllers/parent/DrawerController.dart';
+import 'package:coin_kids/presentation/controllers/parent/drawer_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -85,10 +86,12 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ],
                       ),
                       SizedBox(height: 12.h),
-                      Text(
-                        controller.appState.currentParent.value!.name,
-                        style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary, fontSize: 18.sp),
-                      ),
+                      Obx(() {
+                        return Text(
+                          controller.appState.currentParent.value!.name,
+                          style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary, fontSize: 18.sp),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -122,17 +125,23 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildProfileRow("Full name", controller.appState.currentParent.value!.name, "assets/drawer_svgs/3p.svg"),
+                        Obx(() {
+                          return _buildProfileRow("Full name", controller.appState.currentParent.value!.name, "assets/drawer_svgs/3p.svg");
+                        }),
                         SizedBox(height: 26.h),
-                        _buildProfileRow(
-                          "Date of birth",
-                          controller.appState.currentParent.value!.dob == 0
-                              ? "Not Specified"
-                              : DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob)),
-                          "assets/drawer_svgs/calendar_month.svg",
-                        ),
+                        Obx(() {
+                          return _buildProfileRow(
+                            "Date of birth",
+                            controller.appState.currentParent.value!.dob == 0
+                                ? "Not Specified"
+                                : DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob)),
+                            "assets/drawer_svgs/calendar_month.svg",
+                          );
+                        }),
                         SizedBox(height: 26.h),
-                        _buildProfileRow("Gender", controller.appState.currentParent.value!.gender, "assets/drawer_svgs/wc.svg"),
+                        Obx(() {
+                          return _buildProfileRow("Gender", controller.appState.currentParent.value!.gender, "assets/drawer_svgs/wc.svg");
+                        }),
                       ],
                     ),
                   ),
@@ -435,27 +444,12 @@ class ParentDrawer extends GetView<ParentDrawerController> {
 
   Widget _buildProfileImage() {
     return Obx(() {
-      // First try to show local image
-      if (controller.appState.currentParent.value!.imageUrl.isNotEmpty) {
-        return Container(
-          height: 100.h,
-          width: 100.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: NetworkImage(controller.appState.currentParent.value!.imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      } // Then try to show network image
-      else {
-        return SvgPicture.asset(
-          AppAssets.drawerIconSvg,
-          height: 100.h,
-          width: 100.w,
-        );
-      }
+      return CircleAvatarWidget(
+        imagePath: controller.appState.currentParent.value!.imageUrl,
+        imageType: ImageType.network,
+        backgroundColor: AppColors.iconPrimary,
+        size: 100.r,
+      );
     });
   }
 }

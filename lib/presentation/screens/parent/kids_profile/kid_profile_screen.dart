@@ -4,12 +4,12 @@ import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/kid_profile_threed_btn.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
+import 'package:coin_kids/presentation/screens/parent/edit_child/edit_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/basic_info_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/goals_tab_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/jars_tab_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/notification_tab_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
-import 'package:coin_kids/presentation/screens/parent/update_kid/update_kid_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -43,9 +43,9 @@ class KidProfileScreen extends GetView<KidProfileController> {
                       title: 'Quick\nTransfer',
                       assetPath: 'assets/kidManageIcons/quickTransfer.svg',
                       onTap: () => Get.to(() => QuickTransferPage(
-                        // kidId: kidId,
-                        // docData: kid.toJson(),
-                      )),
+                          // kidId: kidId,
+                          // docData: kid.toJson(),
+                          )),
                     ),
                     kidMainButtons(
                       title: 'Schedule\nAllowance',
@@ -57,7 +57,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
                     kidMainButtons(
                       title: 'Edit\nProfile',
                       assetPath: 'assets/kidManageIcons/editProfile.svg',
-                      onTap: () => Get.to(() => UpdateKidProfile()),
+                      onTap: () => Get.to(() => EditChildScreen()),
                     )
                   ],
                 ),

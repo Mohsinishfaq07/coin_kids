@@ -13,7 +13,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../presentation/controllers/parent/add_child_controller.dart';
-import '../../presentation/dialogs/kid/transfer_dialog.dart';
 
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();

@@ -7,7 +7,7 @@ import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
 import 'package:coin_kids/presentation/components/parent/quick_transfer_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
-import 'package:coin_kids/presentation/dialogs/kid/transfer_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -156,10 +156,19 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                                   }
 
                                   await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
-
                                   showDialog(
-                                    context: Get.context!,
-                                    builder: (context) => TransferSuccessDialog(receiverName: kid.name, amount: enteredAmount.toString(), title: 'Transfer Successful', transferType: 'received'),
+                                    context: context,
+                                    builder: (context) => AppParentDialog(
+                                      iconPath: "assets/succesful_dialog_icon.svg",
+                                      title: "Transfer Successful",
+                                      subtitle: "€${enteredAmount} transferred to ${kid.name}",
+                                      buttons: [
+                                        DialogButton(
+                                          text: "Close",
+                                          onPressed: () => Get.back(),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 } catch (e) {
                                   print(e);
@@ -185,8 +194,18 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                                   await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
 
                                   showDialog(
-                                    context: Get.context!,
-                                    builder: (context) => TransferSuccessDialog(receiverName: kid.name, amount: enteredAmount.toString(), title: 'Transfer Successful', transferType: 'received'),
+                                    context: context,
+                                    builder: (context) => AppParentDialog(
+                                      iconPath: "assets/succesful_dialog_icon.svg",
+                                      title: "Transfer Successful",
+                                      subtitle: "€${enteredAmount} deducted from ${kid.name}",
+                                      buttons: [
+                                        DialogButton(
+                                          text: "Close",
+                                          onPressed: () => Get.back(),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 } on Exception catch (e) {
                                   print("Exception $e");

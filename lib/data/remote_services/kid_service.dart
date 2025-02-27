@@ -1,13 +1,20 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/kid_model.dart';
 
 class KidService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  
+  // Cache keys
+  static const String _avatarCacheKey = 'cached_avatars';
+  static const String _avatarCacheTimestampKey = 'cached_avatars_timestamp';
+  static const Duration _cacheExpiration = Duration(days: 7); // Cache expires after 7 days
 
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
@@ -85,6 +92,9 @@ class KidService {
         final UploadTask uploadTask = ref.putFile(File(customImagePath));
         final TaskSnapshot snapshot = await uploadTask;
         avatarUrl = await snapshot.ref.getDownloadURL();
+        
+        // Cache the avatar locally
+        await _cacheAvatarImage(avatarUrl);
       }
 
       // Update kid with its ID and final avatar URL
@@ -196,6 +206,9 @@ class KidService {
       await _firestore.collection('kids').doc(kidId).update({
         'avatar': newAvatarUrl,
       });
+      
+      // Cache the new avatar
+      await _cacheAvatarImage(newAvatarUrl);
     } catch (e) {
       throw Exception('Failed to update avatar: ${e.toString()}');
     }
@@ -212,15 +225,36 @@ class KidService {
     }
   }
 
-  // Fetch all predefined avatars from Firebase Storage
-  Future<List<String>> fetchPredefinedAvatars() async {
+  // Fetch all predefined avatars from Firebase Storage with caching
+  Future<List<String>> fetchPredefinedAvatars({bool forceRefresh = false}) async {
     try {
+      // Check if we have cached avatars and they're not expired
+      if (!forceRefresh) {
+        final cachedAvatars = await _getCachedAvatars();
+        if (cachedAvatars.isNotEmpty) {
+          return cachedAvatars;
+        }
+      }
+      
+      // If no cache or force refresh, fetch from Firebase
       final ListResult result = await _storage.ref('avatars').listAll();
       final List<String> urls = await Future.wait(
         result.items.map((ref) => ref.getDownloadURL()),
       );
+      
+      // Cache the avatars
+      _cacheAvatarUrls(urls);
+
+      // Download and cache the actual images
+      _cacheAvatarImagesInBackground(urls);
+
       return urls;
     } catch (e) {
+      // If fetching fails, try to return cached avatars as fallback
+      final cachedAvatars = await _getCachedAvatars();
+      if (cachedAvatars.isNotEmpty) {
+        return cachedAvatars;
+      }
       throw Exception('Failed to fetch avatars: $e');
     }
   }
@@ -229,12 +263,17 @@ class KidService {
   Future<String> uploadCustomAvatar(File imageFile) async {
     try {
       final String fileName =
-          'user_avatars/${DateTime.now().millisecondsSinceEpoch}${imageFile.path.split('.').last}';
+          'user_avatars/${DateTime.now().millisecondsSinceEpoch}.${imageFile.path.split('.').last}';
       final Reference ref = _storage.ref().child(fileName);
 
       final UploadTask uploadTask = ref.putFile(imageFile);
       final TaskSnapshot snapshot = await uploadTask;
-      return await snapshot.ref.getDownloadURL();
+      final String url = await snapshot.ref.getDownloadURL();
+
+      // Cache the avatar
+      await _cacheAvatarImage(url);
+
+      return url;
     } catch (e) {
       throw Exception('Failed to upload avatar: $e');
     }
@@ -276,5 +315,127 @@ class KidService {
             documentId: doc.id,
           );
         });
+  }
+
+  // CACHING METHODS
+
+  // Cache avatar URLs in SharedPreferences
+  Future<void> _cacheAvatarUrls(List<String> urls) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_avatarCacheKey, urls);
+      await prefs.setInt(_avatarCacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
+    } catch (e) {
+      print('Failed to cache avatar URLs: $e');
+    }
+  }
+
+  // Cache avatar images in background without blocking
+  void _cacheAvatarImagesInBackground(List<String> urls) {
+    // Use Future.forEach to process in background without awaiting
+    Future.forEach(urls, (String url) async {
+      await _cacheAvatarImage(url);
+    });
+  }
+
+  // Get cached avatar URLs if not expired
+  Future<List<String>> _getCachedAvatars() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final timestamp = prefs.getInt(_avatarCacheTimestampKey) ?? 0;
+      final now = DateTime.now().millisecondsSinceEpoch;
+
+      // Check if cache is expired
+      if (now - timestamp > _cacheExpiration.inMilliseconds) {
+        return [];
+      }
+
+      return prefs.getStringList(_avatarCacheKey) ?? [];
+    } catch (e) {
+      print('Failed to get cached avatars: $e');
+      return [];
+    }
+  }
+
+  // Cache actual avatar image file
+  Future<void> _cacheAvatarImage(String url) async {
+    try {
+      // Create a unique filename based on the URL
+      final String filename = _getFilenameFromUrl(url);
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/avatars/$filename';
+
+      // Create directory if it doesn't exist
+      final dir = Directory('${directory.path}/avatars');
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+
+      // Check if file already exists
+      final file = File(filePath);
+      if (await file.exists()) {
+        return; // Already cached
+      }
+
+      // Download and save the image
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        await file.writeAsBytes(response.bodyBytes);
+      }
+    } catch (e) {
+      print('Failed to cache avatar image: $e');
+    }
+  }
+
+  // Get local path for a cached avatar
+  Future<String?> getLocalAvatarPath(String url) async {
+    try {
+      final String filename = _getFilenameFromUrl(url);
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/avatars/$filename';
+
+      final file = File(filePath);
+      if (await file.exists()) {
+        return filePath;
+      }
+
+      // If not cached, download and cache it
+      await _cacheAvatarImage(url);
+
+      // Check again after download attempt
+      if (await file.exists()) {
+        return filePath;
+      }
+
+      return null;
+    } catch (e) {
+      print('Failed to get local avatar path: $e');
+      return null;
+    }
+  }
+
+  // Generate a filename from URL
+  String _getFilenameFromUrl(String url) {
+    // Create a hash of the URL to use as filename
+    final bytes = utf8.encode(url);
+    final digest = base64Encode(bytes);
+    return digest.replaceAll('/', '_').replaceAll('+', '-') + '.jpg';
+  }
+
+  // Clear avatar cache
+  Future<void> clearAvatarCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_avatarCacheKey);
+      await prefs.remove(_avatarCacheTimestampKey);
+
+      final directory = await getApplicationDocumentsDirectory();
+      final dir = Directory('${directory.path}/avatars');
+      if (await dir.exists()) {
+        await dir.delete(recursive: true);
+      }
+    } catch (e) {
+      print('Failed to clear avatar cache: $e');
+    }
   }
 }

@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,13 +35,19 @@ class BasicInfoWidget extends GetView<KidProfileController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(controller.appState.currentKid.value!.name, style: AppTextStyle.bodyLarge),
+              Obx(() {
+                return Text(controller.appState.currentKid.value!.name, style: AppTextStyle.bodyLarge);
+              }),
               Padding(
                 padding: EdgeInsets.all(4.w),
-                child: CircleAvatar(
-                  radius: 30.r,
-                  backgroundImage: CachedNetworkImageProvider(controller.appState.currentKid.value!.avatar),
-                ),
+                child: Obx(() {
+                  return CircleAvatarWidget(
+                    imagePath: controller.appState.currentKid.value!.avatar,
+                    imageType: ImageType.network,
+                    backgroundColor: AppColors.iconPrimary,
+                    size: 50.r,
+                  );
+                }),
               ),
               Text(
                 'Available Money',
@@ -50,10 +58,12 @@ class BasicInfoWidget extends GetView<KidProfileController> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              Text(
-                "€${controller.appState.currentKid.value!.wallet.spendingJar.balance.toStringAsFixed(2)}",
-                style: AppTextStyle.bodyLarge,
-              ),
+              Obx(() {
+                return Text(
+                  "€${controller.appState.currentKid.value!.wallet.spendingJar.balance.toStringAsFixed(2)}",
+                  style: AppTextStyle.bodyLarge,
+                );
+              }),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,8 +15,7 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onPrefixTap; // Optional callback for prefix icon tap
   final IconData? suffixIcon; // Optional suffix icon
   final VoidCallback? onSuffixTap; // Optional callback for suffix icon tap
-  final bool
-      obscureText; // Whether the text should be obscured (e.g., password)
+  final bool obscureText; // Whether the text should be obscured (e.g., password)
   final TextInputType keyboardType; // Input type for the keyboard
   final String? Function(String?)? validator;
   final Color? suffixIconColor; // Custom color for suffix icon
@@ -23,10 +23,12 @@ class CustomTextField extends StatelessWidget {
   final bool isOptional; // Flag for optional label
   final FocusNode? nextFocusNode;
   final int? maxLength;
+  final bool enabled;
+
   const CustomTextField({
     this.isOptional = false,
     this.maxLength,
-    required this.titleText, // Title for the field is now required
+    this.titleText = "", // Title for the field is now required
     required this.hintText,
     this.initialValue,
     this.prefixIcon,
@@ -41,6 +43,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIconColor,
     this.suffixSvgPath,
     this.nextFocusNode,
+    this.enabled = true,
     super.key,
   }) : assert(controller == null || initialValue == null, 'Cannot provide both a controller and an initialValue');
 
@@ -49,8 +52,7 @@ class CustomTextField extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 400.w),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align title text to the left
+        crossAxisAlignment: CrossAxisAlignment.start, // Align title text to the left
         children: [
           // Text(
           //   titleText,
@@ -62,45 +64,35 @@ class CustomTextField extends StatelessWidget {
           // ),
           // const SizedBox(height: 8), // Spacing between title and text field
           TextFormField(
-
-            maxLength: maxLength,
+              maxLength: maxLength,
               initialValue: initialValue,
-              textInputAction: nextFocusNode != null
-                  ? TextInputAction.next
-                  : TextInputAction.done,
+              textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
               controller: controller,
               onChanged: onChanged,
               obscureText: obscureText,
               keyboardType: keyboardType,
               validator: validator,
+              enabled: enabled,
               decoration: InputDecoration(
                 counterText: "",
                 filled: true,
-                fillColor: Theme.of(context)
-                    .inputDecorationTheme
-                    .fillColor, // Background color for the text field
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                // Background color for the text field
                 hintText: hintText,
-                hintStyle: isOptional
-                    ? TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.normal)
-                    : null,
+                hintStyle: isOptional ? AppTextStyle.bodySmall : null,
 
                 // hintStyle: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700,color: CustomThemeData().primaryTextColor), // Hint text color
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: CustomThemeData()
-                        .borderColor, // Border color when unfocused
+                    color: CustomThemeData().borderColor, // Border color when unfocused
                     width: 1.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: CustomThemeData()
-                        .borderColor, // Border color when enabled
+                    color: CustomThemeData().borderColor, // Border color when enabled
                     width: 1.5,
                   ),
                 ),
@@ -117,7 +109,8 @@ class CustomTextField extends StatelessWidget {
                         onTap: onPrefixTap,
                         child: Icon(prefixIcon, color: Colors.grey),
                       )
-                    : null, // Show prefix icon if provided
+                    : null,
+                // Show prefix icon if provided
                 suffixIcon: suffixIcon != null
                     ? GestureDetector(
                         onTap: onSuffixTap,

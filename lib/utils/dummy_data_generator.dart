@@ -251,7 +251,7 @@ class DummyDataGenerator {
     for (var i = 0; i < 8; i++) {
       final template = goalTemplates[i];
       final targetAmount = template['targetAmount'] as double;
-      final progress = i % 4 * 0.25; // 0%, 25%, 50%, 75% progress
+      final progress = i % 4 * 0.13; // 0%, 25%, 50%, 75% progress
       final savedAmount = targetAmount * progress;
       
       // Determine status based on progress and index
@@ -291,8 +291,8 @@ class DummyDataGenerator {
 
   // Helper method to insert both notifications and goals
   static Future<void> insertAllDummyData(String userId) async {
-    await insertDummyGoals(userId);
-    await insertDummyNotifications(userId);
+    // await insertDummyGoals(userId);
+    // await insertDummyNotifications(userId);
     print('Successfully inserted all dummy data');
   }
 } 

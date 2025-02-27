@@ -26,18 +26,14 @@ class SplashController extends GetxController {
     final user = _authService.user.value;
 
     if (user == null) {
-      final isEverLoggedIn = await SharedPreferencesHelper.getBool(
-              SharedPreferencesHelper.isEverLoggedIn) ??
-          false;
+      final isEverLoggedIn = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isEverLoggedIn) ?? false;
       if (isEverLoggedIn) {
         Get.off(() => LoginScreen());
       } else {
         Get.off(() => IntroScreen());
       }
     } else {
-      final String role = await SharedPreferencesHelper.getString(
-              SharedPreferencesHelper.lastLoggedInRole) ??
-          UserRole.NONE.name;
+      final String role = await SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.NONE.name;
 
       if (role == UserRole.NONE.name) {
         Get.off(() => RoleSelectionScreen());
@@ -53,9 +49,7 @@ class SplashController extends GetxController {
             Get.offAll(() => KidHomeScreen());
           } else {
             // If no kids exist, check onboarding status
-            final isKidOnboarded = await SharedPreferencesHelper.getBool(
-                    SharedPreferencesHelper.isKidOnboarded) ??
-                false;
+            final isKidOnboarded = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.isKidOnboarded) ?? false;
             if (!isKidOnboarded) {
               Get.offAll(() => KidSectionOnboarding());
             } else {

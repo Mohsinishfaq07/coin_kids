@@ -21,11 +21,17 @@ class ParentDrawerController extends GetxController {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: source,
-        imageQuality: 80,
+        imageQuality: 85,
       );
 
       if (pickedFile != null) {
-        await _parentService.updateParentPhoto(File(pickedFile.path));
+        try {
+          await _parentService.updateParentPhoto(File(pickedFile.path));
+          ToastUtil.showToast("Uploading Image");
+        } catch (e) {
+          ToastUtil.showToast("Failed to upload Image: $e");
+          print(e);
+        }
       }
     } catch (e) {
       ToastUtil.showToast("Failed to pick image: $e");
