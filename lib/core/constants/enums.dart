@@ -15,3 +15,5 @@ enum KidProfileTabs {
   Notifications,
   Goals,
 }
+
+enum Jars { spendingJar, savingJar }

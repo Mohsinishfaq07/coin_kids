@@ -14,7 +14,6 @@ import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dar
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/splash_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/DrawerController.dart';
 import 'package:coin_kids/presentation/controllers/parent/favorite_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
@@ -28,6 +27,7 @@ import '../presentation/controllers/common/intro_controller.dart';
 import '../presentation/controllers/kid/add_money_controller.dart';
 import '../presentation/controllers/kid/market_controller.dart';
 import '../presentation/controllers/parent/add_child_controller.dart';
+import '../presentation/controllers/parent/drawer_controller.dart';
 
 class ControllerBindings extends Bindings {
   @override

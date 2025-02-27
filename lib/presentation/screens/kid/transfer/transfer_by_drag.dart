@@ -1,5 +1,8 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
@@ -9,8 +12,6 @@ import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/add_money_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +21,7 @@ import 'package:marquee/marquee.dart';
 
 class TransferByDrag extends StatefulWidget {
   final RxBool isSpending;
+
   TransferByDrag({required this.isSpending, super.key});
 
   @override
@@ -69,8 +71,7 @@ class _TransferByDragState extends State<TransferByDrag> {
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: AppColors.background,
-              image: DecorationImage(
-                  image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
+              image: DecorationImage(image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -101,9 +102,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                             ),
                             SizedBox(width: 20.w),
                             Text(
-                              widget.isSpending.value
-                                  ? "Transfer To Spendings"
-                                  : "Transfer To Savings",
+                              widget.isSpending.value ? "Transfer To Spendings" : "Transfer To Savings",
                               style: AppTextStyle.headingLarge,
                             )
                           ]),
@@ -125,8 +124,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                               height: 80.h,
                               decoration: ShapeDecoration(
                                 shape: OvalBorder(
-                                  side: BorderSide(
-                                      width: 2, color: Color(0xFFC0E1EB)),
+                                  side: BorderSide(width: 2, color: Color(0xFFC0E1EB)),
                                 ),
                               ),
                             ),
@@ -134,8 +132,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                               right: 0, // Aligns the child to the right corner
                               top: 0, // Aligns the child to the top
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .start, // Aligns buttons to the top
+                                mainAxisAlignment: MainAxisAlignment.start, // Aligns buttons to the top
                                 children: [
                                   // First Button
                                   GestureDetector(
@@ -143,34 +140,27 @@ class _TransferByDragState extends State<TransferByDrag> {
                                       addMoneyController.clickedIndex.value = 0;
                                     },
                                     child: Obx(() {
-                                      final isSelected = addMoneyController
-                                              .clickedIndex.value ==
-                                          0;
+                                      final isSelected = addMoneyController.clickedIndex.value == 0;
 
                                       return isSelected
                                           ? AvatarGlow(
                                               glowRadiusFactor: 0.3.r,
-                                              startDelay:
-                                                  const Duration(seconds: 2),
+                                              startDelay: const Duration(seconds: 2),
                                               repeat: true,
                                               glowCount: 2,
                                               glowShape: BoxShape.circle,
-                                              animate:
-                                                  true, // Glow only when selected
-                                              duration:
-                                                  const Duration(seconds: 2),
-                                              glowColor:
-                                                  AppColors.buttonPrimary,
+                                              animate: true,
+                                              // Glow only when selected
+                                              duration: const Duration(seconds: 2),
+                                              glowColor: AppColors.buttonPrimary,
                                               child: _buildButton(
                                                 isSelected,
-                                                assetPath:
-                                                    "assets/notes.svg", // Customize icon
+                                                assetPath: "assets/notes.svg", // Customize icon
                                               ),
                                             )
                                           : _buildButton(
                                               isSelected,
-                                              assetPath:
-                                                  "assets/notes.svg", // Customize icon
+                                              assetPath: "assets/notes.svg", // Customize icon
                                             );
                                     }),
                                   ),
@@ -182,34 +172,27 @@ class _TransferByDragState extends State<TransferByDrag> {
                                       addMoneyController.clickedIndex.value = 1;
                                     },
                                     child: Obx(() {
-                                      final isSelected = addMoneyController
-                                              .clickedIndex.value ==
-                                          1;
+                                      final isSelected = addMoneyController.clickedIndex.value == 1;
 
                                       return isSelected
                                           ? AvatarGlow(
                                               glowRadiusFactor: 0.3.r,
-                                              startDelay:
-                                                  const Duration(seconds: 2),
+                                              startDelay: const Duration(seconds: 2),
                                               repeat: true,
                                               glowCount: 2,
                                               glowShape: BoxShape.circle,
-                                              animate:
-                                                  true, // Glow only when selected
-                                              duration:
-                                                  const Duration(seconds: 2),
-                                              glowColor:
-                                                  AppColors.buttonPrimary,
+                                              animate: true,
+                                              // Glow only when selected
+                                              duration: const Duration(seconds: 2),
+                                              glowColor: AppColors.buttonPrimary,
                                               child: _buildButton(
                                                 isSelected,
-                                                assetPath:
-                                                    "assets/Coin.svg", // Customize icon
+                                                assetPath: "assets/Coin.svg", // Customize icon
                                               ),
                                             )
                                           : _buildButton(
                                               isSelected,
-                                              assetPath:
-                                                  "assets/Coin.svg", // Customize icon
+                                              assetPath: "assets/Coin.svg", // Customize icon
                                             );
                                     }),
                                   ),
@@ -228,24 +211,19 @@ class _TransferByDragState extends State<TransferByDrag> {
                               width: 150.w,
                               child: GridView.builder(
                                   shrinkWrap: true,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2, // Number of columns
                                     childAspectRatio: 2.w,
-                                    crossAxisSpacing:
-                                        6.h, // Space between columns
+                                    crossAxisSpacing: 6.h, // Space between columns
                                     mainAxisSpacing: 8.h, // Space between rows
                                   ),
                                   itemCount: addMoneyController.notesMap.length,
                                   itemBuilder: (context, index) {
                                     // Get the key-value pair from the map
-                                    var noteAsset = addMoneyController
-                                        .notesMap.keys
-                                        .elementAt(index);
+                                    var noteAsset = addMoneyController.notesMap.keys.elementAt(index);
 
                                     return Draggable<String>(
-                                      data:
-                                          noteAsset, // The data being dragged (asset path)
+                                      data: noteAsset, // The data being dragged (asset path)
                                       feedback: Material(
                                         color: Colors.transparent,
                                         child: Image.asset(
@@ -256,8 +234,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                       ),
                                       childWhenDragging: Opacity(
                                         opacity: 0.5,
-                                        child: Image.asset(
-                                            noteAsset), // Image when dragging
+                                        child: Image.asset(noteAsset), // Image when dragging
                                       ),
                                       child: Center(
                                         child: Image.asset(
@@ -269,8 +246,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                     );
                                   }),
                             );
-                          } else if (addMoneyController.clickedIndex.value ==
-                              1) {
+                          } else if (addMoneyController.clickedIndex.value == 1) {
                             return Center(
                               child: Container(
                                 color: Colors.red,
@@ -281,18 +257,14 @@ class _TransferByDragState extends State<TransferByDrag> {
                                     // First List
                                     GridView.builder(
                                       shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         childAspectRatio: 1.w,
                                         crossAxisSpacing: 14.w,
                                       ),
-                                      itemCount: addMoneyController
-                                          .firstCoinList.length,
+                                      itemCount: addMoneyController.firstCoinList.length,
                                       itemBuilder: (context, index) {
-                                        var coinAsset = addMoneyController
-                                            .firstCoinList.keys
-                                            .elementAt(index);
+                                        var coinAsset = addMoneyController.firstCoinList.keys.elementAt(index);
 
                                         return Draggable<String>(
                                           data: coinAsset,
@@ -321,19 +293,15 @@ class _TransferByDragState extends State<TransferByDrag> {
                                     // Second List
                                     GridView.builder(
                                       shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 3,
                                         childAspectRatio: 1.w,
                                         crossAxisSpacing: 4.h,
                                         // mainAxisSpacing: 8.h,
                                       ),
-                                      itemCount: addMoneyController
-                                          .secondCoinList.length,
+                                      itemCount: addMoneyController.secondCoinList.length,
                                       itemBuilder: (context, index) {
-                                        var secondCoinAsset = addMoneyController
-                                            .secondCoinList.keys
-                                            .elementAt(index);
+                                        var secondCoinAsset = addMoneyController.secondCoinList.keys.elementAt(index);
                                         return Draggable<String>(
                                           data: secondCoinAsset,
                                           feedback: Material(
@@ -361,18 +329,14 @@ class _TransferByDragState extends State<TransferByDrag> {
                                     // Third List
                                     GridView.builder(
                                       shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 3,
                                         childAspectRatio: 2.w,
                                         crossAxisSpacing: 0.w,
                                       ),
-                                      itemCount: addMoneyController
-                                          .thirdCoinList.length,
+                                      itemCount: addMoneyController.thirdCoinList.length,
                                       itemBuilder: (context, index) {
-                                        var thirdCoinAsset = addMoneyController
-                                            .thirdCoinList.keys
-                                            .elementAt(index);
+                                        var thirdCoinAsset = addMoneyController.thirdCoinList.keys.elementAt(index);
                                         return Draggable<String>(
                                           data: thirdCoinAsset,
                                           feedback: Material(
@@ -402,8 +366,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                               ),
                             );
                           } else {
-                            return SizedBox
-                                .shrink(); // If clickedIndex is not 1, return an empty widget.
+                            return SizedBox.shrink(); // If clickedIndex is not 1, return an empty widget.
                           }
                         }),
                         SizedBox(
@@ -421,8 +384,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                   clipBehavior: Clip.antiAlias,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFFF9E29),
-                                    borderRadius: BorderRadius.circular(
-                                        30.r), // Rounded corners
+                                    borderRadius: BorderRadius.circular(30.r), // Rounded corners
                                     border: Border.all(
                                       width: 2.22.w,
                                       color: const Color(0xFFD67513),
@@ -438,21 +400,15 @@ class _TransferByDragState extends State<TransferByDrag> {
                                         child: Center(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              color: Colors
-                                                  .transparent, // Background color (optional)
+                                              color: Colors.transparent, // Background color (optional)
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(
-                                                          0.2), // Shadow color
-                                                  blurRadius:
-                                                      10, // Blur radius for the shadow
-                                                  offset: const Offset(2,
-                                                      4), // Shadow position (x, y)
+                                                  color: Colors.black.withOpacity(0.2), // Shadow color
+                                                  blurRadius: 10, // Blur radius for the shadow
+                                                  offset: const Offset(2, 4), // Shadow position (x, y)
                                                 ),
                                               ],
-                                              shape: BoxShape
-                                                  .circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
+                                              shape: BoxShape.circle, // Optional: Change to BoxShape.rectangle for a rectangular shadow
                                             ),
                                             child: SvgPicture.asset(
                                               "assets/undo.svg",
@@ -486,8 +442,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                         ),
                         DragTarget<String>(
                           onAcceptWithDetails: (data) {
-                            addMoneyController
-                                .onNoteDropped(data.data); // Update total value
+                            addMoneyController.onNoteDropped(data.data); // Update total value
                           },
                           builder: (context, candidateData, rejectedData) {
                             return Obx(() {
@@ -496,14 +451,10 @@ class _TransferByDragState extends State<TransferByDrag> {
                                 children: [
                                   Stack(children: [
                                     Image.asset(
-                                      addMoneyController.totalValue.value > 0
-                                          ? "assets/filledJar.png"
-                                          : "assets/emptyJar.png",
+                                      addMoneyController.totalValue.value > 0 ? "assets/filledJar.png" : "assets/emptyJar.png",
                                       height: 100.h,
                                       width: 140.w,
-                                      color: candidateData.isNotEmpty
-                                          ? Colors.green.withOpacity(0.5)
-                                          : null, // Highlight effect when dragging over
+                                      color: candidateData.isNotEmpty ? Colors.green.withOpacity(0.5) : null, // Highlight effect when dragging over
                                     ),
                                     Positioned(
                                       bottom: 0.h,
@@ -512,18 +463,12 @@ class _TransferByDragState extends State<TransferByDrag> {
                                         child: Container(
                                           width: 90.w,
                                           height: 16.h,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.69.w,
-                                              vertical: 2.h),
+                                          padding: EdgeInsets.symmetric(horizontal: 12.69.w, vertical: 2.h),
                                           decoration: ShapeDecoration(
                                             color: Colors.white,
                                             shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  width: 1.53.w,
-                                                  color: Color(0xFF015486)),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      51.33.r),
+                                              side: BorderSide(width: 1.53.w, color: Color(0xFF015486)),
+                                              borderRadius: BorderRadius.circular(51.33.r),
                                             ),
                                             shadows: [
                                               BoxShadow(
@@ -534,29 +479,18 @@ class _TransferByDragState extends State<TransferByDrag> {
                                               )
                                             ],
                                           ),
-                                          child: addMoneyController
-                                                      .totalValue.value >
-                                                  0
+                                          child: addMoneyController.totalValue.value > 0
                                               ? Marquee(
-                                                  text: addMoneyController
-                                                      .totalValue.value
-                                                      .toString(),
-                                                  decelerationDuration:
-                                                      Duration(
-                                                          milliseconds:
-                                                              300), // Shortened
-                                                  decelerationCurve:
-                                                      Curves.easeOut,
-                                                  velocity:
-                                                      60.0, // Slower velocity
-                                                  accelerationDuration:
-                                                      Duration(
-                                                          milliseconds:
-                                                              300), // Shortened
-                                                  accelerationCurve:
-                                                      Curves.linear,
-                                                  pauseAfterRound:
-                                                      Duration(seconds: 1),
+                                                  text: addMoneyController.totalValue.value.toString(),
+                                                  decelerationDuration: Duration(milliseconds: 300),
+                                                  // Shortened
+                                                  decelerationCurve: Curves.easeOut,
+                                                  velocity: 60.0,
+                                                  // Slower velocity
+                                                  accelerationDuration: Duration(milliseconds: 300),
+                                                  // Shortened
+                                                  accelerationCurve: Curves.linear,
+                                                  pauseAfterRound: Duration(seconds: 1),
                                                   blankSpace: 10.0,
                                                   style: TextStyle(
                                                     color: Color(0xFF015486),
@@ -566,49 +500,34 @@ class _TransferByDragState extends State<TransferByDrag> {
                                                   ),
                                                 )
                                               : Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
                                                     Text.rich(
                                                       TextSpan(
                                                         children: [
                                                           TextSpan(
-                                                            text:
-                                                                '${addMoneyController.totalValue.value}',
+                                                            text: '${addMoneyController.totalValue.value}',
                                                             style: TextStyle(
-                                                              color: Color(
-                                                                  0xFF015486),
-                                                              fontSize:
-                                                                  15.83.sp,
-                                                              fontFamily:
-                                                                  'Open Sans',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
+                                                              color: Color(0xFF015486),
+                                                              fontSize: 15.83.sp,
+                                                              fontFamily: 'Open Sans',
+                                                              fontWeight: FontWeight.w800,
                                                             ),
                                                           ),
                                                           TextSpan(
                                                             text: '€',
                                                             style: TextStyle(
-                                                              color: Color(
-                                                                  0xFF015486),
-                                                              fontSize:
-                                                                  15.83.sp,
-                                                              fontFamily:
-                                                                  'Open Sans',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
+                                                              color: Color(0xFF015486),
+                                                              fontSize: 15.83.sp,
+                                                              fontFamily: 'Open Sans',
+                                                              fontWeight: FontWeight.w700,
                                                             ),
                                                           ),
                                                         ],
                                                       ),
-                                                      textAlign:
-                                                          TextAlign.center,
+                                                      textAlign: TextAlign.center,
                                                     ),
                                                   ],
                                                 ),
@@ -634,24 +553,25 @@ class _TransferByDragState extends State<TransferByDrag> {
                             try {
                               if (widget.isSpending.value) {
                                 // Transfer from savings to spending
-                                if (addMoneyController.totalValue.value <=
-                                    savingAmount) {
-                                  await _kidService
-                                      .transferFromSavingToSpending(
+                                if (addMoneyController.totalValue.value <= savingAmount) {
+                                  await _kidService.transferBetweenJars(
                                     kid.kidId,
+                                    Jars.savingJar.name,
+                                    Jars.spendingJar.name,
                                     addMoneyController.totalValue.value,
                                   );
+
                                   Get.off(() => KidHomeScreen());
                                 } else {
                                   ToastUtil.showToast('Not Enough Funds');
                                 }
                               } else {
                                 // Transfer from spending to saving
-                                if (addMoneyController.totalValue.value <=
-                                    spendingAmount) {
-                                  await _kidService
-                                      .transferFromSpendingToSaving(
+                                if (addMoneyController.totalValue.value <= spendingAmount) {
+                                  await _kidService.transferBetweenJars(
                                     kid.kidId,
+                                    Jars.spendingJar.name,
+                                    Jars.savingJar.name,
                                     addMoneyController.totalValue.value,
                                   );
                                   Get.off(() => KidHomeScreen());
@@ -680,21 +600,16 @@ class _TransferByDragState extends State<TransferByDrag> {
   Widget _buildButton(bool isSelected, {required String assetPath}) {
     return Container(
       decoration: BoxDecoration(
-        color:
-            isSelected ? AppColors.buttonPrimary : AppColors.primaryLightColor,
+        color: isSelected ? AppColors.buttonPrimary : AppColors.primaryLightColor,
         border: Border.all(
-          color: isSelected
-              ? AppColors.buttonPrimary
-              : AppColors.primaryLightColor,
+          color: isSelected ? AppColors.buttonPrimary : AppColors.primaryLightColor,
         ),
         borderRadius: BorderRadius.circular(30.r),
       ),
       child: Padding(
         padding: EdgeInsets.all(4.h),
         child: CircleAvatar(
-          backgroundColor: isSelected
-              ? AppColors.buttonPrimary
-              : AppColors.primaryLightColor,
+          backgroundColor: isSelected ? AppColors.buttonPrimary : AppColors.primaryLightColor,
           child: SvgPicture.asset(
             assetPath,
             height: 20.h,
