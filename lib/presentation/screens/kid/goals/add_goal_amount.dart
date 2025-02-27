@@ -5,10 +5,10 @@ import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
+import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'goal_image.dart';
 
@@ -29,15 +29,17 @@ class AddGoalAmount extends StatelessWidget {
           decoration: const BoxDecoration(
             gradient: AppColors.background,
             image: DecorationImage(
-              image: AssetImage(AppAssets.kidSectionBG),
-            ),
+                image: AssetImage(
+                  AppAssets.kidSectionBG,
+                ),
+                fit: BoxFit.cover),
           ),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(height: 16.h),
+                SizedBox(height: 10.h),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Row(
@@ -80,15 +82,8 @@ class AddGoalAmount extends StatelessWidget {
                       showSuffix: true,
                       onTap: () {
                         if (kidGoalsController.goalAmount.value == 0.0) {
-                          Fluttertoast.showToast(
-                            msg:
-                                'Goal Amount Could Not be empty ', // Message to display
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: AppColors.textHighlighted,
-                            textColor: Colors.white,
-                            fontSize: 16.sp,
-                          );
+                          ToastUtil.showToast(
+                              'Goal Amount Could Not be empty ');
                         } else {
                           kidGoalsController.goalAmount.value;
                           Get.to(() => AddGoalImage());

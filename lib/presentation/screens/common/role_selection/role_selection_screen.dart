@@ -126,7 +126,10 @@ class OptionCard extends StatelessWidget {
                   SizedBox(height: 15.h),
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontSize: 18.sp),
                   ),
                   SizedBox(height: 9.h),
                   Row(
@@ -137,7 +140,13 @@ class OptionCard extends StatelessWidget {
                         width: 20.w,
                       ),
                       SizedBox(width: 10.w),
-                      Text(description, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      Text(description,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor,
+                                  fontSize: 14)),
                     ],
                   ),
                   SizedBox(height: 8.h),
@@ -149,7 +158,13 @@ class OptionCard extends StatelessWidget {
                         width: 20.w,
                       ),
                       const SizedBox(width: 10),
-                      Text(description1, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      Text(description1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor,
+                                  fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -160,7 +175,12 @@ class OptionCard extends StatelessWidget {
                         color: Colors.transparent,
                       ),
                       const SizedBox(width: 12),
-                      Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)),
+                      Text(description2,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor)),
                     ],
                   ),
                 ],

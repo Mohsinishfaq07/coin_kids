@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,24 +8,30 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class KidAvatarContainer extends StatelessWidget {
   const KidAvatarContainer({Key? key}) : super(key: key);
+
   String getKidAvatar(String localPath) {
     return File(localPath).existsSync()
         ? localPath
-        : "assets/child_avatar_image_pngs/Frame 1.png"; // Fallback to default if the image does not exist locally
+        : "assets/child_avatar_image_pngs/Frame 1.png";
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> _kidsStream() {
+  Stream<QuerySnapshot<Map<String, dynamic>>>? _kidsStream() {
+    // Check if user is signed in
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return null; // Return null if no user is signed in
+    }
+
     return FirebaseFirestore.instance
         .collection('kids')
-        .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .snapshots(); // Using snapshots() for real-time updates
+        .where('parentId', isEqualTo: user.uid)
+        .snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 22.h,
-      // width: 130.w,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -45,9 +50,19 @@ class KidAvatarContainer extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.only(left: 12.w, right: 4.w),
-                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: _kidsStream(), // Using StreamBuilder for live updates
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>?>(
+                  stream: _kidsStream(),
                   builder: (context, snapshot) {
+                    // Handle null stream (user not signed in)
+                    if (_kidsStream() == null) {
+                      return Text(
+                        "Not Signed In",
+                        style: AppTextStyle.headingMedium.copyWith(
+                          color: AppColors.textOnPrimary,
+                        ),
+                      );
+                    }
+
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text(
                         "Loading...",
@@ -56,6 +71,7 @@ class KidAvatarContainer extends StatelessWidget {
                         ),
                       );
                     }
+
                     if (snapshot.hasError ||
                         !snapshot.hasData ||
                         snapshot.data!.docs.isEmpty) {
@@ -90,12 +106,22 @@ class KidAvatarContainer extends StatelessWidget {
           Positioned(
             top: -12.h,
             left: 0.w,
-            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>?>(
               stream: _kidsStream(),
               builder: (context, snapshot) {
+                // Handle null stream (user not signed in)
+                if (_kidsStream() == null) {
+                  return CircleAvatar(
+                    radius: 22.h,
+                    backgroundImage: AssetImage(
+                        "assets/child_avatar_image_pngs/Frame 1.png"),
+                  );
+                }
+
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 }
+
                 if (snapshot.hasError ||
                     !snapshot.hasData ||
                     snapshot.data!.docs.isEmpty) {
@@ -116,7 +142,7 @@ class KidAvatarContainer extends StatelessWidget {
                     image: DecorationImage(
                       image: kidAvatar.startsWith('http')
                           ? NetworkImage(kidAvatar) as ImageProvider
-                          : AssetImage(kidAvatar),
+                          : AssetImage(getKidAvatar(kidAvatar)),
                     ),
                     shape: BoxShape.circle,
                     border: Border.all(

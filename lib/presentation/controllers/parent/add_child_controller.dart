@@ -91,20 +91,26 @@ class AddChildController extends GetxController {
         return;
       }
 
+      // Handle the "14+" case
+      int age;
+      if (childAge.value == "14+") {
+        age = 14;
+      } else {
+        age = int.parse(childAge.value);
+      }
+
       await kidsService.createKid(
         name: childName.value,
-        age: int.parse(childAge.value),
+        age: age, // Use the parsed age
         parentId: parentId,
         customImagePath: kidImagePath.value,
         selectedAvatarUrl: selectedAvatarPath.value,
       );
 
-      // final controller = Get.find<ParentBaseController>();
-      // controller.showNavBar.value = true;
-
       ToastUtil.showToast("Child added successfully");
       Get.back();
     } catch (e) {
+      print("Failed to add child: $e");
       ToastUtil.showToast("Failed to add child: $e");
     } finally {
       isLoading.value = false;

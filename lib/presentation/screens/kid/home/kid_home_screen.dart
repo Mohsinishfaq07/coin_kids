@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
@@ -20,280 +19,217 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 
 class KidHomeScreen extends StatelessWidget {
   KidHomeScreen({super.key});
 
   final MarketController marketController = Get.put(MarketController());
-
   final VerticalNavBarController verticalNavBarController =
       Get.find<VerticalNavBarController>();
   final WishlistService _wishlistService = Get.put(WishlistService());
+  final KidService _kidService = Get.find<KidService>();
 
   @override
   Widget build(BuildContext context) {
     landscapeOrientation();
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      // User is not logged in, you should handle this case
-      return Center(child: Text("No user is logged in"));
+      return const Center(child: Text("No user is logged in"));
     }
+
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('kids')
-              .where('parentId', isEqualTo: user.uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return CircularProgressIndicator();
-            else if (snapshot.hasError)
-              return Text(snapshot.error.toString());
-            else {
-              final List<QueryDocumentSnapshot> kidsData = snapshot.data!.docs;
-              print("kidsdata is $kidsData");
-              if (kidsData.isEmpty) {
-                return Center(child: CircularProgressIndicator());
-              }
+      body: StreamBuilder<List<KidModel>>(
+        stream: _kidService.streamKids(user.uid),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              final Map<String, dynamic> kidData =
-                  kidsData[0].data() as Map<String, dynamic>;
-              final Map<String, dynamic> spendingData =
-                  kidData.containsKey('spendings')
-                      ? kidData['spendings'] as Map<String, dynamic>
-                      : {};
-              final double spendingAmount =
-                  (spendingData['amount'] ?? 0.0).toDouble();
-              final String spendingJarColor =
-                  (spendingData['color'] ?? "").toString();
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-              // Ensure "savings" field exists, otherwise provide default values
-              final Map<String, dynamic> savingsData =
-                  kidData.containsKey('savings')
-                      ? kidData['savings'] as Map<String, dynamic>
-                      : {};
-              print("$savingsData");
+          final List<KidModel> kids = snapshot.data!;
+          if (kids.isEmpty) {
+            return const Center(child: Text('No kid data found'));
+          }
 
-              final double savingAmount =
-                  (savingsData['amount'] ?? 0.0).toDouble();
-              final String savingJarColor =
-                  (savingsData['color'] ?? "#000000").toString();
+          final KidModel kid = kids.first;
+          final wallet = kid.wallet;
 
-              // Ensure "spendings" field exists, otherwise provide default values
-              final Map<String, dynamic> spendingsData =
-                  kidData.containsKey('spendings')
-                      ? kidData['spendings'] as Map<String, dynamic>
-                      : {};
-              final List<dynamic> goalsRefs = kidData['goals'] ?? [];
+          // Get spending jar data
+          final spendingAmount = wallet.spendingJar.balance;
+          final spendingJarColor = wallet.spendingJar.color;
 
-              List<String> goalIds = goalsRefs
-                  .map((ref) => (ref as DocumentReference).id)
-                  .toList();
+          // Get saving jar data
+          final savingAmount = wallet.savingJar.balance;
+          final savingJarColor = wallet.savingJar.color;
 
-              print("Goal IDs: $goalIds");
-
-              print("Spending jar color: $spendingJarColor");
-
-              print("Spending jar color: $spendingAmount");
-              print("Saving jar color: $savingJarColor");
-
-              return Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  gradient: AppColors.background,
-                  image: DecorationImage(
-                      image: AssetImage(AppAssets.kidSectionBG),
-                      fit: BoxFit.cover),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Obx(() {
-                      final currentIndex =
-                          verticalNavBarController.currentItem.value;
-
-                      if (currentIndex == 0 || currentIndex == 1) {
-                        return KidDefaultAppBar();
-                      } else {
-                        return CustomShopAppBar();
-                      }
-                    }),
-                    Stack(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          VerticalNavBar(),
-                          Obx(() {
-                            if (verticalNavBarController.currentItem.value ==
-                                0) {
-                              return KidFinanceWidgets(
-                                spendingJarColor: spendingJarColor,
-                                spendingAmount: spendingAmount,
-                                savingJarColor: savingJarColor,
-                                savingAmount: savingAmount,
-                                kidsData: kidsData,
-                              );
-                            } else if (verticalNavBarController
-                                    .currentItem.value ==
-                                1) {
-                              if (spendingJarColor.isEmpty) {
-                                ToastUtil.showToast(
-                                    "Spending Jar is required!");
-                                return KidFinanceWidgets(
-                                  // Keep user on the same screen
-                                  spendingJarColor: spendingJarColor,
-                                  spendingAmount: spendingAmount,
-                                  savingJarColor: savingJarColor,
-                                  savingAmount: savingAmount,
-                                  kidsData: kidsData,
-                                );
-                              }
-                              final String kidId = kidData.containsKey('kidId')
-                                  ? kidData['kidId'] as String
-                                  : "";
-
-                              if (kidData.containsKey('goals')) {
-                                final String currentKidId = kidId;
-                                print("$currentKidId");
-                                return GoalsWidget(currentKidId: currentKidId);
-                              } else {
-                                return AddGoalWidget();
-                              }
-                            } else {
-                              return SizedBox.shrink();
-                            }
-                          }),
-                          Obx(() {
-                            return verticalNavBarController.currentItem.value ==
-                                    0
-                                ? SizedBox
-                                    .shrink() // Return SizedBox.shrink() when the condition is met
-                                : Container(); // Or return any other widget based on the condition
-                          })
-                        ],
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              gradient: AppColors.background,
+              image: DecorationImage(
+                  image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Obx(() {
+                  final currentIndex =
+                      verticalNavBarController.currentItem.value;
+                  return currentIndex == 0 || currentIndex == 1
+                      ? KidDefaultAppBar()
+                      : CustomShopAppBar();
+                }),
+                Stack(children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      VerticalNavBar(),
+                      Obx(() {
+                        if (verticalNavBarController.currentItem.value == 0) {
+                          return KidFinanceWidgets(
+                            spendingJarColor: spendingJarColor,
+                            spendingAmount: spendingAmount,
+                            savingJarColor: savingJarColor,
+                            savingAmount: savingAmount,
+                            kid: kid,
+                          );
+                        } else if (verticalNavBarController.currentItem.value ==
+                            1) {
+                          if (spendingJarColor.isEmpty) {
+                            ToastUtil.showToast("Spending Jar is required!");
+                            return KidFinanceWidgets(
+                              spendingJarColor: spendingJarColor,
+                              spendingAmount: spendingAmount,
+                              savingJarColor: savingJarColor,
+                              savingAmount: savingAmount,
+                              kid: kid,
+                            );
+                          }
+                          return kid.kidId.isEmpty
+                              ? AddGoalWidget()
+                              : GoalsWidget(currentKidId: kid.kidId);
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        return verticalNavBarController.currentItem.value == 0
+                            ? SizedBox
+                                .shrink() // Return SizedBox.shrink() when the condition is met
+                            : Container(); // Or return any other widget based on the condition
+                      })
+                    ],
+                  ),
+                  Obx(() {
+                    return Visibility(
+                      visible: verticalNavBarController.currentItem.value == 2,
+                      child: Positioned(
+                          bottom: 0.h,
+                          left: 0.w,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              VerticalNavBar(),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  color: Colors.transparent,
+                                  width: 600.w,
+                                  child: KidsMarketScreen(),
+                                ),
+                              ),
+                            ],
+                          )),
+                    );
+                  }),
+                  Obx(() {
+                    return Visibility(
+                      visible: verticalNavBarController.currentItem.value == 0,
+                      child: Positioned(
+                        bottom: 0.h,
+                        right: 0.w,
+                        child: ParentZoneWidget(),
                       ),
-                      Obx(() {
-                        return Visibility(
-                          visible:
-                              verticalNavBarController.currentItem.value == 2,
-                          child: Positioned(
-                              bottom: 0.h,
-                              left: 0.w,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  VerticalNavBar(),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      width: 600.w,
-                                      child: KidsMarketScreen(),
-                                    ),
-                                  ),
-                                  // Check if spendingJarColor is empty
-                                  // if (spendingJarColor.isEmpty)
-                                  //   SizedBox.shrink()
-                                  // else
-                                  //   // If spendingJarColor is not empty, display KidsMarketScreen
-                                ],
-                              )),
-                        );
-                      }),
-                      Obx(() {
-                        return Visibility(
-                          visible:
-                              verticalNavBarController.currentItem.value == 0,
-                          child: Positioned(
-                            bottom: 0.h,
-                            right: 0.w,
-                            child: ParentZoneWidget(),
-                          ),
-                        );
-                      }),
-                      Obx(() {
-                        return Visibility(
-                          visible:
-                              verticalNavBarController.currentItem.value == 2,
-                          child: Positioned(
-                            bottom: 0.h,
-                            right: 0.w,
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: 80.w,
-                                  height: 120.h,
-                                  decoration: ShapeDecoration(
-                                    color: Color(0xFF015486),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.r),
-                                        bottomLeft: Radius.circular(20.r),
-                                      ),
-                                    ),
+                    );
+                  }),
+                  Obx(() {
+                    return Visibility(
+                      visible: verticalNavBarController.currentItem.value == 2,
+                      child: Positioned(
+                        bottom: 0.h,
+                        right: 0.w,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 80.w,
+                              height: 120.h,
+                              decoration: ShapeDecoration(
+                                color: Color(0xFF015486),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.r),
+                                    bottomLeft: Radius.circular(20.r),
                                   ),
                                 ),
-                                //show the wishlist count
-
-                                Positioned(
-                                  top: 0.h,
-                                  bottom: 0.h,
-                                  // left: 0.w,
-                                  right: 0.w,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.to(KidWishlistScreen());
-                                    },
-                                    child: Transform.rotate(
-                                        angle: 270 * 3.14159 / 180, //
-                                        child:
-                                            StreamBuilder<List<WishlistModel>>(
-                                          stream: _wishlistService
-                                              .getWishlistStream(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return CircularProgressIndicator();
-                                            }
-
-                                            if (snapshot.hasError) {
-                                              return Text(
-                                                  'Error: ${snapshot.error}');
-                                            }
-
-                                            final wishlistCount = snapshot
-                                                    .data?.length ??
-                                                0; // Get the count of wishlist items
-                                            return Center(
-                                              child: Text(
-                                                'Wishlist $wishlistCount',
-                                                style: AppTextStyle
-                                                    .headingMedium
-                                                    .copyWith(
-                                                        color: Colors.white),
-                                              ),
-                                            );
-                                          },
-                                        )),
-                                  ),
-                                )
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      }),
-                    ]),
-                  ],
-                ),
-              );
-            }
-          }),
+                            Positioned(
+                              top: 0.h,
+                              bottom: 0.h,
+                              right: 0.w,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.to(KidWishlistScreen());
+                                },
+                                child: Transform.rotate(
+                                    angle: 270 * 3.14159 / 180,
+                                    child: StreamBuilder<List<WishlistModel>>(
+                                      stream:
+                                          _wishlistService.getWishlistStream(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        }
+
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        }
+
+                                        final wishlistCount =
+                                            snapshot.data?.length ?? 0;
+                                        return Center(
+                                          child: Text(
+                                            'Wishlist $wishlistCount',
+                                            style: AppTextStyle.headingMedium
+                                                .copyWith(color: Colors.white),
+                                          ),
+                                        );
+                                      },
+                                    )),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ]),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

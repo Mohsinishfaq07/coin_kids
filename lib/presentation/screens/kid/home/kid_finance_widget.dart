@@ -1,7 +1,7 @@
-import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
+import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/presentation/components/kid/jar_with_money.dart';
 import 'package:coin_kids/presentation/components/kid/jar_without_money.dart';
-import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/jars/Jar_color_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/transfer/kid_transfer.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class KidFinanceWidgets extends StatelessWidget {
   final String spendingJarColor;
   final double spendingAmount;
   final String savingJarColor;
   final double savingAmount;
-  final List<dynamic> kidsData;
+  final KidModel kid;
+  // final KidsOnBoardingController kidOnboardingController;
 
   KidFinanceWidgets({
     Key? key,
@@ -24,24 +24,37 @@ class KidFinanceWidgets extends StatelessWidget {
     required this.spendingAmount,
     required this.savingJarColor,
     required this.savingAmount,
-    required this.kidsData,
-  }) : super(key: key);
-  final KidsOnBoardingController kidOnboardingController =
-      Get.put(KidsOnBoardingController());
+    required this.kid,
+  }) :
+        //kidOnboardingController = Get.find<KidsOnBoardingController>(),
+        super(key: key);
+
+  Color _parseColor(String colorString) {
+    if (colorString.startsWith('#')) {
+      return Color(
+          int.parse(colorString.substring(1, 7), radix: 16) + 0xFF000000);
+    } else {
+      // Handle numeric color value
+      return Color(int.parse(colorString));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (kidsData.isEmpty) return SizedBox.shrink();
+    // Use the color parsing method
+    _parseColor(spendingJarColor);
+    _parseColor(savingJarColor);
 
     // Only show showcase when jars are empty
-    if (spendingJarColor == "#000000" || savingJarColor == "#000000") {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) {
-          ShowCaseWidget.of(context).startShowCase([
-            kidOnboardingController.jarKey,
-          ]);
-        }
-      });
-    }
+    // if (spendingJarColor == "#000000" || savingJarColor == "#000000") {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     if (context.mounted) {
+    //       ShowCaseWidget.of(context).startShowCase([
+    //         kidOnboardingController.jarKey,
+    //       ]);
+    //     }
+    //   });
+    // }
 
     return SizedBox(
       height: 100.h,
@@ -60,23 +73,12 @@ class KidFinanceWidgets extends StatelessWidget {
   }
 
   Widget _buildSpendingJar() {
-    if (spendingJarColor == "#000000" ||
-        (spendingJarColor.isEmpty && spendingAmount == 0.0)) {
+    if (spendingJarColor == "#000000") {
       return GestureDetector(
         onTap: () {
           Get.to(AddJarColorScreen(isSpending: true.obs));
         },
-        child: AppShowCaseWidget(
-          showcaseKey: kidOnboardingController.jarKey,
-          description: "Create your first jar! 💰",
-          backgroundImage: "assets/center_spot_light_background.png",
-          onTargetClick: () {
-            Get.to(AddJarColorScreen(isSpending: true.obs));
-          },
-          tooltipPosition: TooltipPosition.bottom,
-          disposeOnTap: false,
-          child: Image.asset("assets/jars/jar.png"),
-        ),
+        child: Image.asset("assets/jars/jar.png"),
       );
     } else if (spendingAmount != 0.0) {
       return JarWithMoneyTitle(
@@ -139,7 +141,7 @@ class KidFinanceWidgets extends StatelessWidget {
                 left: 0.5,
                 top: 0.29,
                 child: Image.asset(
-                  "assets/Button_shadow.png",
+                  AppAssets.button_shadow_png,
                   height: 8.h,
                 ),
               ),
@@ -152,9 +154,8 @@ class KidFinanceWidgets extends StatelessWidget {
   }
 
   Widget _buildSavingJar() {
-    if (savingJarColor == "#000000" ||
-        (savingJarColor.isEmpty && savingAmount == 0.0)) {
-      return (spendingJarColor == "#000000" || spendingJarColor.isEmpty)
+    if (savingJarColor == "#000000") {
+      return (spendingJarColor == "#000000")
           ? SizedBox.shrink()
           : GestureDetector(
               onTap: () {

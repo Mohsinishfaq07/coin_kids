@@ -1,9 +1,7 @@
-import 'package:coin_kids/data/remote_services/auth_service.dart';
-
 import 'package:get/get.dart';
 
 class AuthenticationController extends GetxController {
-  final AuthService _authService = Get.find();
+  //final AuthService _authService = Get.find();
 
   final email = ''.obs;
   final number = ''.obs;
