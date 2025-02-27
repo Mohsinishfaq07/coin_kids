@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class KidsOnBoardingController extends GetxController {
-  final GlobalKey textFieldKey = GlobalKey();
-  final GlobalKey ageListKey = GlobalKey();
-  final GlobalKey avatarListKey = GlobalKey();
-  final GlobalKey jarKey = GlobalKey();
-  final GlobalKey spendingJarKey = GlobalKey();
-  final GlobalKey savingsJarKey = GlobalKey();
+  // final GlobalKey textFieldKey = GlobalKey();
+  // final GlobalKey ageListKey = GlobalKey();
+  // final GlobalKey avatarListKey = GlobalKey();
+  // final GlobalKey jarKey = GlobalKey();
+  // final GlobalKey spendingJarKey = GlobalKey();
+  // final GlobalKey savingsJarKey = GlobalKey();
 
-  void startShowcase(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
-        textFieldKey,
-        ageListKey,
-        avatarListKey,
-        jarKey,
-        spendingJarKey,
-        savingsJarKey
-      ]);
-    });
-  }
+  // void startShowcase(BuildContext context) {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     ShowCaseWidget.of(context).startShowCase([
+  //       textFieldKey,
+  //       ageListKey,
+  //       avatarListKey,
+  //       jarKey,
+  //       spendingJarKey,
+  //       savingsJarKey
+  //     ]);
+  //   });
+  // }
 
-  @override
-  void onReady() {
-    super.onReady();
-    startShowcase(Get.context!); // Call showcase after UI builds
-  }
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  //   startShowcase(Get.context!); // Call showcase after UI builds
+  // }
 
   RxBool spotLightOn = false.obs;
 

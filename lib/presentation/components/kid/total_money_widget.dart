@@ -1,12 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 Widget totalBalanceWidget() {
+  final KidService _kidService = Get.find<KidService>();
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) return const SizedBox.shrink();
+
   return Container(
     height: 27.h,
     // width: 120.w,
@@ -27,38 +34,49 @@ Widget totalBalanceWidget() {
             alignment: Alignment.center,
             child: Padding(
               padding: EdgeInsets.only(right: 12.w, left: 12.w),
-              child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                future: FirebaseFirestore.instance
-                    .collection('kids')
-                    .where('parentId',
-                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                    .get(),
+              child: StreamBuilder<List<KidModel>>(
+                stream: _kidService.streamKids(user.uid),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Placeholder while loading
+                  if (!snapshot.hasData) {
+                    return const SizedBox(
+                      height: 15,
+                      width: 15,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    );
                   }
 
-                  final data = snapshot.data!.docs.first.data();
+                  if (snapshot.hasError) {
+                    return Text(
+                      "Error",
+                      style: AppTextStyle.headingMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                      ),
+                    );
+                  }
 
-                  // Safely retrieve 'spendings' and 'savings' amounts, defaulting to 0.0 if not found
-                  final spendingAmount = (data['spendings'] != null &&
-                          data['spendings']['amount'] != null)
-                      ? double.tryParse(
-                              data['spendings']['amount'].toString()) ??
-                          0.0
-                      : 0.0;
-                  final savingsAmount = (data['savings'] != null &&
-                          data['savings']['amount'] != null)
-                      ? double.tryParse(data['savings']['amount'].toString()) ??
-                          0.0
-                      : 0.0;
+                  final List<KidModel> kids = snapshot.data!;
+                  if (kids.isEmpty) {
+                    return Text(
+                      "€0.00",
+                      style: AppTextStyle.headingMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                      ),
+                    );
+                  }
 
-                  final totalBalance = spendingAmount + savingsAmount;
+                  final KidModel kid = kids.first;
+                  final spendingAmount = kid.wallet.spendingJar.balance;
+                  final savingAmount = kid.wallet.savingJar.balance;
+                  final totalBalance = spendingAmount + savingAmount;
 
                   return Text(
-                    "€${totalBalance.toStringAsFixed(2)}", // Formatting to show two decimal places
-                    style: AppTextStyle.headingMedium
-                        .copyWith(color: AppColors.textOnPrimary),
+                    "€${totalBalance.toStringAsFixed(2)}",
+                    style: AppTextStyle.headingMedium.copyWith(
+                      color: AppColors.textOnPrimary,
+                    ),
                   );
                 },
               ),

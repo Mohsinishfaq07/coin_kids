@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/goal_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
@@ -21,7 +26,6 @@ class KidGoalsController extends GetxController {
   var isEditMode = false.obs;
   var goalCurrentAmount = 0.0.obs;
   final ImagePicker picker = ImagePicker();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   final authController = Get.find<AuthenticationController>();
@@ -42,6 +46,10 @@ class KidGoalsController extends GetxController {
   void setGoalCurrentAmount(double amount) {
     goalCurrentAmount.value = amount;
   }
+
+  final GoalService _goalService = Get.find<GoalService>();
+  final KidService _kidService = Get.find<KidService>();
+  final AuthService _authService = Get.find<AuthService>();
 
   Future<void> pickFromGallery() async {
     try {
@@ -83,104 +91,81 @@ class KidGoalsController extends GetxController {
       authController.isNormalLoading.value = true;
       Get.dialog(
         Center(child: CircularProgressIndicator()),
-        barrierDismissible:
-            true, // Prevent dialog from being dismissed by tapping outside
+        barrierDismissible: true,
       );
-      // Ensure user is authenticated
-      final String? parentId = _firebaseAuth.currentUser?.uid;
-      if (parentId == null) {
+
+      // Get current user ID
+      final user = _authService.user.value;
+      if (user == null) {
         ToastUtil.showToast("User not authenticated");
         authController.isNormalLoading.value = false;
         return;
       }
 
-      Get.log('Adding new goal for kid with parent ID: $parentId');
-      QuerySnapshot kidSnapshot = await _firebaseFirestore
-          .collection('kids')
-          .where('parentId', isEqualTo: parentId) // Match parentId
-          .get();
-      if (kidSnapshot.docs.isEmpty) {
-        // Handle error if no kid document is found for the given parentId
-        throw Exception("No kid document found for this parent ID");
+      // Get current kid using parent ID
+      final kids = await _kidService.fetchKidsByParentId(user.uid);
+      if (kids.isEmpty) {
+        ToastUtil.showToast("No kid found");
+        authController.isNormalLoading.value = false;
+        return;
       }
 
-      // Firestore reference for goal
-      DocumentReference goalRef =
-          _firebaseFirestore.collection('goals').doc(); // New goal document
-      DocumentSnapshot kidDoc = kidSnapshot.docs.first;
-      DocumentReference kidRef = kidDoc.reference;
-      final String avatarUrl = goalImage.value.isEmpty || goalImage.value == ""
-          ? 'assets/logo.png'
-          : goalImage.value;
+      final KidModel currentKid = kids.first;
+      final targetAmount = goalAmount.value;
+      final spendingBalance = currentKid.wallet.spendingJar.balance;
 
-      //locally store the image
+      // Validate spending jar balance
+      if (spendingBalance < targetAmount) {
+        ToastUtil.showToast("Not enough funds in spending jar");
+        authController.isNormalLoading.value = false;
+        return;
+      }
 
-      // Firestore goal data
-      final Map<String, dynamic> goalData = {
-        'currentAmount': 0.0,
-        'amount': goalAmount.value,
-        'kidId': kidRef.id,
-        'completed': false,
-        'deleted': false,
-        'image': avatarUrl,
-        'name': goalName.value,
-        'progress': 0,
-        'goalId': goalRef.id,
-      };
+      // Create a new goal model with initial amount from spending
+      final goal = GoalModel(
+        userId: currentKid.kidId,
+        title: goalName.value,
+        photo: goalImage.value.isEmpty ? 'assets/logo.png' : goalImage.value,
+        targetAmount: targetAmount,
+        savedAmount: 0, // Initial amount same as target amount
+        status: GoalStatus.in_progress,
+        createdAt: DateTime.now(),
+      );
 
-      // Firestore kid data to update (Add new goal reference to 'goalsReference' field)
-      final Map<String, dynamic> kidData = {
-        'goals': FieldValue.arrayUnion(
-            [goalRef]), // Add goal reference to goalsReference field
-      };
+      // Create the goal using GoalService which will also deduct from spending
+      final goalRef = await _goalService.createGoal(goal);
+      final goalId = goalRef.id;
 
-      // Find the kid document where parentId matches
-
-      // Use Firestore transaction for atomic operation
-      await _firebaseFirestore.runTransaction((transaction) async {
-        try {
-          // Log the data you are passing to Firestore
-          Get.log('Setting goal data: $goalData');
-
-          // Set goal data
-          transaction.set(goalRef, goalData);
-
-          // Update kid document
-          transaction.update(kidRef, kidData);
-
-          // final String localPath =
-          //     await saveImageLocally(File(goalImage.value), goalRef.id);
-          // goalImage.value = localPath;
-          await saveImageToPrefs(goalRef.id, File(goalImage.value));
-          await saveGoalIdToPrefs(goalRef.id);
-        } catch (e) {
-          Get.log('Error in Firestore transaction: $e');
-          rethrow; // Re-throw exception to be caught outside
+      if (goalId.isNotEmpty) {
+        // Save image if exists
+        if (goalImage.value.isNotEmpty) {
+          await saveImageToPrefs(goalId, File(goalImage.value));
         }
-      }).timeout(const Duration(seconds: 20), onTimeout: () {
-        throw TimeoutException("Firestore transaction timed out");
-      });
+        await saveGoalIdToPrefs(goalId);
 
-      // Success response
+        // Reset values
+        goalImage.value = "";
+        goalName.value = "";
+        goalAmount.value = 0.0;
+
+        authController.isNormalLoading.value = false;
+        ToastUtil.showToast("Goal added successfully");
+        // Get.back(); // Remove loading dialog
+      } else {
+        authController.isNormalLoading.value = false;
+        Get.back(); // Remove loading dialog
+        ToastUtil.showToast("Failed to create goal");
+      }
+    } on TimeoutException catch (e) {
       authController.isNormalLoading.value = false;
-      goalImage.value = "";
-      goalName.value = "";
-      goalAmount.value = 0.0;
-      ToastUtil.showToast("Goal added for kid successfully");
-      Get.log('Added new goal for kid with parent ID: $parentId');
-      goalImage.value = "";
+      Get.back();
+      ToastUtil.showToast("Operation timed out. Please try again.");
+      print("Timeout error: $e");
     } catch (e) {
       authController.isNormalLoading.value = false;
       Get.back();
-
-      // Firestore timeout error handling
-      if (e is TimeoutException) {
-        ToastUtil.showToast("Firestore operation timed out. Please try again.");
-      } else {
-        ToastUtil.showToast("Failed to add goal: $e");
-      }
-
-      Get.log('Error adding goal: $e');
+      ToastUtil.showToast(e.toString());
+      print("Error adding goal: $e");
     }
   }
 
@@ -518,20 +503,20 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
+//  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
 
-  void fetchGoals(String kidId) {
-    FirebaseFirestore.instance
-        .collection('goals')
-        .where('kidId', isEqualTo: kidId)
-        .where('deleted', isEqualTo: false)
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
-      } else {
-        goalsList.clear();
-      }
-    });
-  }
+  // void fetchGoals(String kidId) {
+  //   FirebaseFirestore.instance
+  //       .collection('goals')
+  //       .where('kidId', isEqualTo: kidId)
+  //       .where('deleted', isEqualTo: false)
+  //       .snapshots()
+  //       .listen((snapshot) {
+  //     if (snapshot.docs.isNotEmpty) {
+  //       goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
+  //     } else {
+  //       goalsList.clear();
+  //     }
+  //   });
+  // }
 }

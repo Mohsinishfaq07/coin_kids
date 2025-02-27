@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import '../models/kid_model.dart';
 
 class KidService {
@@ -122,22 +120,72 @@ class KidService {
   }
 
   // Update saving jar balance
-  Future<void> updateSavingJarBalance(String kidId, double newBalance) async {
+  Future<void> updateSavingJarBalance(String kidId, double newBalance,
+      {dynamic color}) async {
     try {
-      await _firestore.collection('kids').doc(kidId).update({
-        'wallet.savingJar.balance': newBalance,
-      });
+      // Get current kid data to validate
+      final kidDoc = await _firestore.collection('kids').doc(kidId).get();
+      if (!kidDoc.exists) {
+        throw Exception('Kid not found');
+      }
+
+      final kidData = KidModel.fromJson(
+        kidDoc.data() as Map<String, dynamic>,
+        documentId: kidDoc.id,
+      );
+
+      // Calculate the difference to be transferred from spending
+      final transferAmount = newBalance - kidData.wallet.savingJar.balance;
+
+      // If it's a transfer from spending, validate spending balance
+      if (transferAmount > 0) {
+        final currentSpendingBalance = kidData.wallet.spendingJar.balance;
+        if (currentSpendingBalance < transferAmount) {
+          throw Exception('Insufficient funds in spending jar');
+        }
+
+        // Update both jars in a single transaction
+        await _firestore.runTransaction((transaction) async {
+          transaction.update(
+            _firestore.collection('kids').doc(kidId),
+            {
+              'wallet.savingJar.balance': newBalance,
+              'wallet.spendingJar.balance':
+                  currentSpendingBalance - transferAmount,
+              if (color != null) 'wallet.savingJar.color': color,
+            },
+          );
+        });
+      } else {
+        // If it's not a transfer (direct update), just update saving jar
+        final Map<String, dynamic> updateData = {
+          'wallet.savingJar.balance': newBalance,
+        };
+
+        if (color != null) {
+          updateData['wallet.savingJar.color'] = color;
+        }
+
+        await _firestore.collection('kids').doc(kidId).update(updateData);
+      }
     } catch (e) {
       throw Exception('Failed to update saving jar balance: ${e.toString()}');
     }
   }
 
   // Update spending jar balance
-  Future<void> updateSpendingJarBalance(String kidId, double newBalance) async {
+  Future<void> updateSpendingJarBalance(String kidId, double newBalance,
+      {dynamic color}) async {
     try {
-      await _firestore.collection('kids').doc(kidId).update({
+      final Map<String, dynamic> updateData = {
         'wallet.spendingJar.balance': newBalance,
-      });
+      };
+
+      if (color != null) {
+        updateData['wallet.spendingJar.color'] = color;
+      }
+
+      await _firestore.collection('kids').doc(kidId).update(updateData);
     } catch (e) {
       throw Exception('Failed to update spending jar balance: ${e.toString()}');
     }
@@ -264,17 +312,113 @@ class KidService {
     return _firestore
         .collection('kids')
         .where('parentId', isEqualTo: parentId)
-        .limit(1)  // Ensure we only get one kid
+        .limit(1) // Ensure we only get one kid
         .snapshots()
         .map((snapshot) {
-          if (snapshot.docs.isEmpty) {
-            return null;
-          }
-          final doc = snapshot.docs.first;
+      if (snapshot.docs.isEmpty) {
+        return null;
+      }
+      final doc = snapshot.docs.first;
+      return KidModel.fromJson(
+        doc.data(),
+        documentId: doc.id,
+      );
+    });
+  }
+
+  Stream<List<KidModel>> streamKids(String parentId) {
+    try {
+      return _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: parentId)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs.map((doc) {
           return KidModel.fromJson(
             doc.data(),
             documentId: doc.id,
           );
-        });
+        }).toList();
+      });
+    } catch (e) {
+      print("Error streaming kids: $e");
+      return Stream.value([]);
+    }
+  }
+
+  // Transfer from spending to saving jar
+  Future<void> transferFromSpendingToSaving(String kidId, double amount) async {
+    try {
+      // Get current kid data
+      final kidDoc = await _firestore.collection('kids').doc(kidId).get();
+      if (!kidDoc.exists) {
+        throw Exception('Kid not found');
+      }
+
+      final kidData = KidModel.fromJson(
+        kidDoc.data() as Map<String, dynamic>,
+        documentId: kidDoc.id,
+      );
+
+      // Validate spending jar has enough balance
+      if (kidData.wallet.spendingJar.balance < amount) {
+        throw Exception('Insufficient funds in spending jar');
+      }
+
+      // Calculate new balances
+      final newSpendingBalance = kidData.wallet.spendingJar.balance - amount;
+      final newSavingBalance = kidData.wallet.savingJar.balance + amount;
+
+      // Update both jars in a single transaction
+      await _firestore.runTransaction((transaction) async {
+        transaction.update(
+          _firestore.collection('kids').doc(kidId),
+          {
+            'wallet.spendingJar.balance': newSpendingBalance,
+            'wallet.savingJar.balance': newSavingBalance,
+          },
+        );
+      });
+    } catch (e) {
+      throw Exception('Failed to transfer to savings: ${e.toString()}');
+    }
+  }
+
+  // Transfer from saving to spending jar
+  Future<void> transferFromSavingToSpending(String kidId, double amount) async {
+    try {
+      // Get current kid data
+      final kidDoc = await _firestore.collection('kids').doc(kidId).get();
+      if (!kidDoc.exists) {
+        throw Exception('Kid not found');
+      }
+
+      final kidData = KidModel.fromJson(
+        kidDoc.data() as Map<String, dynamic>,
+        documentId: kidDoc.id,
+      );
+
+      // Validate saving jar has enough balance
+      if (kidData.wallet.savingJar.balance < amount) {
+        throw Exception('Insufficient funds in saving jar');
+      }
+
+      // Calculate new balances
+      final newSavingBalance = kidData.wallet.savingJar.balance - amount;
+      final newSpendingBalance = kidData.wallet.spendingJar.balance + amount;
+
+      // Update both jars in a single transaction
+      await _firestore.runTransaction((transaction) async {
+        transaction.update(
+          _firestore.collection('kids').doc(kidId),
+          {
+            'wallet.savingJar.balance': newSavingBalance,
+            'wallet.spendingJar.balance': newSpendingBalance,
+          },
+        );
+      });
+    } catch (e) {
+      throw Exception('Failed to transfer to spending: ${e.toString()}');
+    }
   }
 }

@@ -1,10 +1,8 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-
 
 class KidsZoneDialog extends StatelessWidget {
   final String coinIconPath;

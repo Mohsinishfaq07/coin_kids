@@ -39,5 +39,6 @@ class AppAssets {
   static const crossWithDoubleBorderSvg =
       'assets/bottomSheetIcons/closeButton.svg';
   static const String crossSvg = 'assets/cross.svg';
-  static const button_shadow_png ="assets/button_shadow.png";
+  static const button_shadow_png = "assets/button_shadow.png";
+  static const minus_svg = "assets/minus.svg";
 }

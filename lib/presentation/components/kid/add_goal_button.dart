@@ -1,3 +1,4 @@
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ class AddGoalButton extends StatelessWidget {
                 left: 1,
                 top: 1.29,
                 child: Image.asset(
-                  "assets/Button_shadow.png",
+                  AppAssets.button_shadow_png,
                   height: 10.h,
                 )),
           ],

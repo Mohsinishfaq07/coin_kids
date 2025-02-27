@@ -6,9 +6,7 @@ import 'package:coin_kids/presentation/controllers/kid/market_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/market/parent_wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 
 class ParentMarketScreen extends StatelessWidget {
   @override
@@ -55,7 +53,7 @@ class ParentMarketScreen extends StatelessWidget {
                 if (products.isEmpty) {
                   return const Center(child: Text('No products available'));
                 }
-                
+
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

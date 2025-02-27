@@ -42,23 +42,6 @@ class AddMoneyController extends GetxController {
     }
   }
 
-  // void onNoteDropped(String noteAsset) {
-  //   try {
-  //     // Extract numeric value from the asset name using regular expression
-  //     final noteValueString = noteAsset.split('/').last.split('.').first;
-  //     final noteValue =
-  //         double.parse(RegExp(r'\d+').stringMatch(noteValueString)!);
-
-  //     droppedNotes.add(noteValue);
-
-  //     // Update the total value
-  //     totalValue.value =
-  //         droppedNotes.fold(0.0, (sum, value) => sum + value); // Changed to 0.0
-  //   } catch (e) {
-  //     print("Error parsing note asset: $e");
-  //   }
-  // }
-
   void onNoteDropped(String noteAsset) {
     try {
       // Check in all maps to get exact value

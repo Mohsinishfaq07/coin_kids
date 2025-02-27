@@ -1,21 +1,28 @@
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 class SpendingCardContainer extends StatelessWidget {
   SpendingCardContainer({super.key});
 
+  final KidService _kidService = Get.find<KidService>();
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       height: 27.h,
-      // width: 128.w,
-      // color: Colors.red,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -36,12 +43,8 @@ class SpendingCardContainer extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.only(left: 10.w, right: 20.w),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('kids')
-                      .where('parentId',
-                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                      .snapshots(),
+                child: StreamBuilder<List<KidModel>>(
+                  stream: _kidService.streamKids(user.uid),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const CircularProgressIndicator(
@@ -53,30 +56,25 @@ class SpendingCardContainer extends StatelessWidget {
                       return Text(snapshot.error.toString());
                     }
 
-                    // Handle if no documents are found
-                    if (snapshot.data!.docs.isEmpty) {
+                    final List<KidModel> kids = snapshot.data!;
+                    if (kids.isEmpty) {
                       return Text("No data found.");
                     }
 
-                    // Assuming the first document is the one you want
-                    final kidData =
-                        snapshot.data!.docs[0].data() as Map<String, dynamic>;
-
-                    // Safely extract 'spendings' and 'amount'
-                    final Map<String, dynamic> spendingData =
-                        kidData['spendings'] as Map<String, dynamic>? ?? {};
+                    // Get the first kid's spending jar balance
+                    final KidModel kid = kids.first;
                     final double spendingAmount =
-                        (spendingData['amount'] ?? 0.0).toDouble();
+                        kid.wallet.spendingJar.balance;
 
-                    // Reactive logic to decide which amount to display
+                    // Format the amount with 2 decimal places
                     final formattedSpendingAmount =
                         spendingAmount.toStringAsFixed(2);
 
-                    // Display the appropriate amount
                     return Text(
                       "€$formattedSpendingAmount",
-                      style: AppTextStyle.headingMedium
-                          .copyWith(color: AppColors.textOnPrimary),
+                      style: AppTextStyle.headingMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                      ),
                     );
                   },
                 ),

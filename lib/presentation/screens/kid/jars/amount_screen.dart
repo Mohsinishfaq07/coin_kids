@@ -3,7 +3,7 @@ import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/jars/add_money.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -13,23 +13,15 @@ import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 
-class JarAmountScreen extends StatefulWidget {
-  Color jarColor;
-  RxBool isSpending;
-
+class JarAmountScreen extends GetView<JarCreationController> {
   JarAmountScreen({required this.isSpending, required this.jarColor, Key? key})
       : super(key: key);
 
-  @override
-  State<JarAmountScreen> createState() => _JarAmountScreenState();
-}
-
-class _JarAmountScreenState extends State<JarAmountScreen> {
-  final parentController = Get.put(ParentBaseController());
   final GlobalKey amountTextFieldKey = GlobalKey();
   final GlobalKey nextButtonKey = GlobalKey();
 
-
+  final RxBool isSpending;
+  final Color jarColor;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +43,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
         decoration: const BoxDecoration(
           gradient: AppColors.background,
           image: DecorationImage(
-            image: AssetImage(AppAssets.kidSectionBG),
-          ),
+              image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -83,7 +74,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                     keyboardType: TextInputType.number,
                     hintText: "e.g 10.50 €",
                     onChange: (val) {
-                      // parentController.amount.value = val;
+                      controller.amount.value = val.trim();
                     }),
               ),
               Padding(
@@ -95,7 +86,7 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
                       onTap: () async {
                         // Validate and parse the entered amount safely
                         //todo: change to original value
-                        String enteredAmountString = "";
+                        String enteredAmountString = controller.amount.value;
 
                         if (enteredAmountString.isEmpty ||
                             double.tryParse(enteredAmountString) == null) {
@@ -109,39 +100,36 @@ class _JarAmountScreenState extends State<JarAmountScreen> {
 
                         if (enteredAmount <= 0) {
                           // Show a toast message for invalid amount
-                          ToastUtil.showToast(
-                              "Amount must be greater than 0");
+                          ToastUtil.showToast("Amount must be greater than 0");
 
                           return; // Stop further execution
                         }
 
                         // Perform the desired operation
 
-                        if (widget.isSpending.value) {
-                          // await authController.parentFirebaseFunctions
-                          //     .updateKidSpendingForJar(
-                          //   save: true,
-                          //   kidId: parentController.kidsList[0]['id'],
-                          //   enteredAmount: enteredAmount,
-                          //   spendingJarColor: widget.jarColor,
-                          // );
+                        if (isSpending.value) {
+                          double enteredAmount =
+                              double.parse(controller.amount.value);
+                          final kid = controller.appState.currentKid.value!;
+                          kid.wallet.spendingJar.balance + enteredAmount;
+
+                          // await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance, color: jarColor.value);
+
                           Get.to(() => AddMoneyScreen(
-                                isSpending: widget.isSpending,
+                                isSpending: isSpending,
                                 amount: enteredAmount,
-                                jarColor: widget.jarColor,
+                                jarColor: jarColor,
                               ));
                         } else {
-                          // await authController.parentFirebaseFunctions
-                          //     .kidSpendingToSavings(
-                          //   save: true,
-                          //   childId: parentController.kidsList[0]['id'],
-                          //   enteredAmount: enteredAmount,
-                          //   savingsJarColor: widget.jarColor,
-                          // );
+                          double enteredAmount =
+                              double.parse(controller.amount.value);
+                          final kid = controller.appState.currentKid.value!;
+                          kid.wallet.savingJar.balance + enteredAmount;
+
                           Get.to(() => AddMoneyScreen(
                                 isSpending: false.obs,
                                 amount: enteredAmount,
-                                jarColor: widget.jarColor,
+                                jarColor: jarColor,
                               ));
                         }
                       },
