@@ -24,6 +24,48 @@ class GoalsWidget extends StatelessWidget {
   final GoalService _goalService = Get.find<GoalService>();
   final KidService _kidService = Get.find<KidService>();
 
+  Widget _buildGoalImage(GoalModel goal) {
+    if (goal.isNetworkImage) {
+      // Handle network images
+      return Image.network(
+        goal.photo!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading network image: $error');
+          return const Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 40,
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+      );
+    } else {
+      // Handle local images
+      return Image.file(
+        File(goal.photo!),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading local image: $error');
+          return Image.asset(
+            'assets/logo.png',
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<KidModel?>(
@@ -71,18 +113,118 @@ class GoalsWidget extends StatelessWidget {
                         itemCount: goals.length,
                         itemBuilder: (context, index) {
                           final goal = goals[index];
-                          return FutureBuilder<File?>(
-                            future:
-                                kidGoalController.getImageFromPrefs(goal.id!),
-                            builder: (context, imageSnapshot) {
-                              if (imageSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              File? imageFile = imageSnapshot.data;
-                              return GoalCard(goal: goal, imageFile: imageFile);
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(() => GoalProgress(
+                                    isCompleted:
+                                        (goal.status == GoalStatus.completed)
+                                            .obs,
+                                    goalId: goal.id!,
+                                    fromHome: false.obs,
+                                  ));
                             },
+                            child: Container(
+                              width: 156.w,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      width: 1, color: Color(0xFFCBE4F3)),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x0F000000),
+                                    blurRadius: 6.r,
+                                    offset: Offset(0, 0),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              margin: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: Padding(
+                                padding: EdgeInsets.all(8.w),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      goal.title,
+                                      style: AppTextStyle.headingMedium
+                                          .copyWith(
+                                              color: AppColors.iconPrimary),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.grey[200],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: _buildGoalImage(goal),
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              goal.formattedTargetAmount,
+                                              style: AppTextStyle.headingMedium
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .iconPrimary),
+                                            ),
+                                            Text(
+                                              goal.status ==
+                                                      GoalStatus.completed
+                                                  ? "Goal Achieved"
+                                                  : "Goal Not Achieved",
+                                              style: AppTextStyle.bodySmall
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .textHighlighted),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          height: 15.h,
+                                          width: 15.h,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.iconPrimary,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 10,
+                                                offset: const Offset(2, 4),
+                                              ),
+                                            ],
+                                            borderRadius:
+                                                BorderRadius.circular(8.r),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(5.h),
+                                            child: SvgPicture.asset(
+                                              "assets/arrorDirectionNoShadow.svg",
+                                              height: 2.h,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),

@@ -41,4 +41,9 @@ class AppAssets {
   static const String crossSvg = 'assets/cross.svg';
   static const button_shadow_png = "assets/button_shadow.png";
   static const minus_svg = "assets/minus.svg";
+  // intro screen assets
+  static const first_intro_animation = 'assets/on_board/anim_onboard_earn.json';
+  static const second_intro_animation =
+      'assets/on_board/anim_onboard_save.json';
+  static const third_intro_animation = "assets/newCartAnimation.json";
 }

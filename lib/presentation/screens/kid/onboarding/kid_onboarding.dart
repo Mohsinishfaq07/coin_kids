@@ -92,22 +92,6 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                             SizedBox(
                               height: 6.h,
                             ),
-                            // AppShowCaseWidget(
-                            //   showcaseKey: kidOnboardingController.textFieldKey,
-                            //   description: "What's your name? ✍️",
-                            //   backgroundImage:
-                            //       "assets/center_spot_light_background.png",
-                            //   tooltipPosition: TooltipPosition.top,
-                            //   disposeOnTap: false,
-                            //   disableDefaultTargetGestures: false,
-                            //   child: KidCustomTextField(
-                            //     maxlength: 10,
-                            //     keyboardType: TextInputType.name,
-                            //     hintText: "Enter your name",
-                            //     onChange: (value) =>
-                            //         controller.childName.value = value.trim(),
-                            //   ),
-                            // ),
                             KidCustomTextField(
                               maxlength: 10,
                               keyboardType: TextInputType.name,

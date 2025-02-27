@@ -111,6 +111,9 @@ class GoalModel {
   String get formattedRemainingAmount =>
       '\$${remainingAmount.toStringAsFixed(2)}';
 
+  // Helper method to check if photo is a network image
+  bool get isNetworkImage => photo?.startsWith('http') ?? false;
+
   // Create a new goal from a product
   factory GoalModel.fromProduct(
       String kidId, MarketProductModel product, String goalId) {
@@ -124,6 +127,20 @@ class GoalModel {
       status: GoalStatus.in_progress,
       createdAt: DateTime.now(),
       completedAt: null,
+    );
+  }
+
+  // Create a new goal from a market product
+  factory GoalModel.fromMarketProduct(
+      MarketProductModel product, String kidId) {
+    return GoalModel(
+      userId: kidId,
+      title: product.name,
+      photo: product.imageUrl,
+      targetAmount: product.price,
+      savedAmount: 0,
+      status: GoalStatus.in_progress,
+      createdAt: DateTime.now(),
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dar
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/splash_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/edit_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/favorite_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
@@ -36,7 +37,9 @@ class ControllerBindings extends Bindings {
     Get.put<AuthService>(AuthService(), permanent: true);
     Get.put<ParentService>(ParentService(), permanent: true);
     Get.put<KidService>(KidService(), permanent: true);
-    Get.lazyPut<GoalService>(() => GoalService(), fenix: true);
+    Get.put<GoalService>(GoalService(), permanent: true);
+
+//    Get.lazyPut<GoalService>(() => GoalService(), fenix: true);
     Get.lazyPut<WishlistService>(() => WishlistService(), fenix: true);
     Get.lazyPut<MarketService>(() => MarketService(), fenix: true);
     Get.lazyPut<TransactionService>(() => TransactionService(), fenix: true);
@@ -49,8 +52,10 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<SplashController>(() => SplashController(), fenix: true);
     Get.lazyPut<SignupController>(() => SignupController(), fenix: true);
     Get.lazyPut<SignInController>(() => SignInController(), fenix: true);
-    Get.lazyPut<RoleSelectionController>(() => RoleSelectionController(),
-        fenix: true);
+    // Get.lazyPut<RoleSelectionController>(() => RoleSelectionController(),
+    //     fenix: true);
+    Get.put<RoleSelectionController>(RoleSelectionController(),
+        permanent: true);
     Get.put<AuthenticationController>(AuthenticationController(),
         permanent: true);
     Get.lazyPut<ParentBaseController>(() => ParentBaseController(),
@@ -71,10 +76,12 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<IntroController>(() => IntroController(), fenix: true);
     Get.lazyPut<FavoriteController>(() => FavoriteController(), fenix: true);
     Get.lazyPut<AddMoneyController>(() => AddMoneyController(), fenix: true);
-    Get.lazyPut<MarketController>(() => MarketController(), fenix: true);
+    // Get.lazyPut<MarketController>(() => MarketController(), fenix: true);
+    Get.put<MarketController>(MarketController(), permanent: true);
     Get.put<VerticalNavBarController>(VerticalNavBarController(),
         permanent: true);
     Get.lazyPut<JarCreationController>(() => JarCreationController(),
         fenix: true);
+    Get.lazyPut<EditChildController>(() => EditChildController(), fenix: true);
   }
 }

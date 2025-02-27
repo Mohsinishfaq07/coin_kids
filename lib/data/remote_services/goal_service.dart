@@ -7,14 +7,14 @@ import '../models/goal_model.dart';
 import '../models/market_product_model.dart';
 import 'package:get/get.dart';
 
-class GoalService {
+class GoalService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String collection = 'goals';
   final KidService _kidService = Get.find<KidService>();
 
-  // Create new goal with spending deduction
-  Future<DocumentReference> createGoal(GoalModel goal) async {
+  // Change return type to Future<String> to return goalId directly
+  Future<String> createGoal(GoalModel goal) async {
     try {
       // Get current kid data to validate spending balance
       final kid = await _kidService.fetchKidById(goal.userId);
@@ -46,34 +46,41 @@ class GoalService {
         return goalRef;
       });
 
-      return docRef;
+      return docRef.id; // Return the ID directly
     } catch (e) {
       throw Exception('Failed to create goal: ${e.toString()}');
     }
   }
 
   // Create goal from product
-  Future<DocumentReference> addToGoalsWithProduct(
-      MarketProductModel product) async {
-    try {
-      final String userId = _auth.currentUser?.uid ?? '';
-      if (userId.isEmpty) throw Exception('User not authenticated');
+  // Future<String?> addToGoalsWithProduct(MarketProductModel product) async {
+  //   try {
+  //     // Get current user
+  //     final user = _auth.currentUser;
+  //     if (user == null) {
+  //       throw Exception('User not authenticated');
+  //     }
 
-      final goal = GoalModel(
-        userId: userId,
-        title: product.name,
-        photo: product.imageUrl,
-        targetAmount: product.price,
-        savedAmount: 0,
-        status: GoalStatus.in_progress,
-        createdAt: DateTime.now(),
-      );
+  //     // Get current kid
+  //     final kids = await _kidService.fetchKidsByParentId(user.uid);
+  //     if (kids.isEmpty) {
+  //       throw Exception('No kid found');
+  //     }
+  //     final currentKid = kids.first;
 
-      return await createGoal(goal);
-    } catch (e) {
-      throw Exception('Failed to add product to goals: ${e.toString()}');
-    }
-  }
+  //     // Create goal from product
+  //     final goal = GoalModel.fromProduct(product, currentKid.kidId);
+
+  //     // Create the goal document
+  //     final docRef = await _firestore.collection('goals').add(goal.toJson());
+
+  //     print("Goal created successfully with ID: ${docRef.id}");
+  //     return docRef.id;
+  //   } catch (e) {
+  //     print("Error adding product to goals: $e");
+  //     return null;
+  //   }
+  // }
 
   // Fetch goal by ID
   Future<GoalModel?> fetchGoalById(String goalId) async {
@@ -228,13 +235,72 @@ class GoalService {
     return _firestore
         .collection(collection)
         .where('userId', isEqualTo: userId)
+        // .where('deleted', isEqualTo: false)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => GoalModel.fromJson(
-                  doc.data(),
+                  doc.data() as Map<String, dynamic>,
                   id: doc.id,
                 ))
             .toList());
+  }
+
+  // Add market product as goal
+  Future<DocumentReference<Map<String, dynamic>>> addMarketProductAsGoal(
+    MarketProductModel product,
+  ) async {
+    try {
+      // Get current user
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Get current kid
+      final kids = await _kidService.fetchKidsByParentId(user.uid);
+      if (kids.isEmpty) {
+        throw Exception('No kid found');
+      }
+      final currentKid = kids.first;
+
+      // Create goal from market product with transaction
+      final docRef = await _firestore
+          .runTransaction<DocumentReference<Map<String, dynamic>>>(
+              (transaction) async {
+        // Create goal document
+        final goalRef = _firestore.collection('goals').doc();
+
+        // Create goal with network image URL
+        final goal = GoalModel(
+          userId: currentKid.kidId,
+          title: product.name,
+          photo: product.imageUrl, // Use the network image URL directly
+          targetAmount: product.price,
+          savedAmount: 0,
+          status: GoalStatus.in_progress,
+          createdAt: DateTime.now(),
+        );
+
+        // Set goal data with additional product info
+        transaction.set(goalRef, {
+          ...goal.toJson(),
+          'goalId': goalRef.id,
+          'productId': product.id,
+          'isMarketProduct': true, // Flag to identify market products
+          'productUrl': product.url,
+          'productRating': product.rating,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        return goalRef;
+      });
+
+      print('Market product added as goal successfully: ${docRef.id}');
+      return docRef;
+    } catch (e) {
+      print('Error adding market product as goal: $e');
+      throw Exception('Failed to add product as goal: ${e.toString()}');
+    }
   }
 }

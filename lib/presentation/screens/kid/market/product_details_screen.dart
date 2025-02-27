@@ -6,11 +6,11 @@ import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final MarketProductModel product;
-  final GoalService _goalService = GoalService();
+  final GoalService _goalService = Get.find<GoalService>();
   final verticalNavBarController = Get.find<VerticalNavBarController>();
 
   ProductDetailsScreen({
@@ -26,14 +26,24 @@ class ProductDetailsScreen extends StatelessWidget {
         barrierDismissible: false,
       );
 
-      // Add goal to database
-      await _goalService.addToGoalsWithProduct(product);
+      // Add market product as goal and get DocumentReference
+      final DocumentReference<Map<String, dynamic>> docRef =
+          await _goalService.addMarketProductAsGoal(product);
+
+      // Close loading dialog
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
 
       // Set the navigation to goals tab (index 1)
       verticalNavBarController.currentItem.value = 1;
 
-      // Navigate back to KidHomeScreen with replacement
-      Get.offAll(() => KidHomeScreen());
+      // Navigate back to KidHomeScreen
+      Get.offAll(
+        () => KidHomeScreen(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 300),
+      );
 
       Get.snackbar(
         'Success',
@@ -43,6 +53,11 @@ class ProductDetailsScreen extends StatelessWidget {
         colorText: Colors.white,
       );
     } catch (e) {
+      // Close loading dialog
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
       Get.snackbar(
         'Error',
         e.toString(),
@@ -105,9 +120,10 @@ class ProductDetailsScreen extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
                     const SizedBox(height: 16),
                     _buildInfoRow(
@@ -139,16 +155,21 @@ class ProductDetailsScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: product.about.map((description) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          '• $description',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.grey[600],
-                                height: 1.5,
-                              ),
-                        ),
-                      )).toList(),
+                      children: product.about
+                          .map((description) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Text(
+                                  '• $description',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        color: Colors.grey[600],
+                                        height: 1.5,
+                                      ),
+                                ),
+                              ))
+                          .toList(),
                     ),
                     const SizedBox(height: 32),
                     Row(

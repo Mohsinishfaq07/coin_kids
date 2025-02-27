@@ -12,7 +12,9 @@ import 'package:coin_kids/presentation/components/kid/slider_widget.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/edit_goal.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/slider.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/save_goal_widget.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -24,7 +26,7 @@ import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 
 class GoalProgress extends StatelessWidget {
-  final RxBool isCompleted;
+  RxBool isCompleted;
   final RxBool fromHome;
   final String goalId;
 
@@ -100,7 +102,10 @@ class GoalProgress extends StatelessWidget {
                                             Get.off(() => KidHomeScreen()),
                                       ),
                                     ),
-                                    GoalCard(goal: goal, imageFile: imageFile),
+                                    Center(
+                                      child: GoalCard(
+                                          goal: goal, imageFile: imageFile),
+                                    ),
                                   ],
                                 );
                               },
@@ -649,51 +654,125 @@ class GoalCard extends StatelessWidget {
   final GoalModel goal;
   final File? imageFile;
 
-  const GoalCard({
-    Key? key,
-    required this.goal,
-    this.imageFile,
-  }) : super(key: key);
+  const GoalCard({Key? key, required this.goal, this.imageFile})
+      : super(key: key);
+
+  Widget _buildGoalImage() {
+    if (goal.isNetworkImage) {
+      // Handle network images (from market products)
+      return Image.network(
+        goal.photo!,
+        // fit: BoxFit.cover,
+        width: 50.h,
+        height: 20.h,
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading network image: $error');
+          return const Center(
+            child: Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 40,
+            ),
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+      );
+    } else if (imageFile != null) {
+      // Handle local file images
+      return Image.file(
+        imageFile!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading local image: $error');
+          return Image.asset(
+            'assets/logo.png',
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    } else {
+      // Fallback image
+      return Image.asset(
+        'assets/logo.png',
+        fit: BoxFit.cover,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 187.36.w,
-      height: 120.h,
+      width: 200.w,
+      height: 130.h,
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(12.r)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Text(
             goal.title,
+            style: AppTextStyle.headingMedium,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFFA421D9),
-              fontSize: 16.81,
-              fontFamily: 'Open Sans',
-              height: 0,
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+                color: Colors.grey[200],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+                child: _buildGoalImage(),
+              ),
             ),
           ),
-          if (imageFile != null)
-            Image.file(
-              imageFile!,
-              height: 100.h,
-              width: 100.w,
-              fit: BoxFit.cover,
-            ),
-
-          Text(
-            'Target: ${goal.formattedTargetAmount}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFFA421D9),
-              fontSize: 16.81,
-              fontFamily: 'Open Sans',
-              height: 0,
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 8.h),
+                  Text(
+                    goal.formattedTargetAmount,
+                    style: AppTextStyle.headingLarge.copyWith(
+                      color: AppColors.iconPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          //  Text('Saved: ${goal.formattedSavedAmount}'),
-          // Add more goal details as needed
         ],
       ),
     );

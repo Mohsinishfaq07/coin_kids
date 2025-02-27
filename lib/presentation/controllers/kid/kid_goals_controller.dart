@@ -16,6 +16,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class KidGoalsController extends GetxController {
   var sliderValue = 0.0.obs; // .obs makes it reactive
@@ -26,7 +29,9 @@ class KidGoalsController extends GetxController {
   var isEditMode = false.obs;
   var goalCurrentAmount = 0.0.obs;
   final ImagePicker picker = ImagePicker();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   final authController = Get.find<AuthenticationController>();
 
@@ -86,55 +91,74 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  Future<void> addKidGoal() async {
+  Future<String?> uploadGoalImage(File imageFile, String goalId) async {
+    try {
+      // Create file path in storage - store in goals folder
+      final String fileName = 'goals/$goalId.${imageFile.path.split('.').last}';
+      final Reference storageRef = _storage.ref().child(fileName);
+
+      // Upload file
+      final UploadTask uploadTask = storageRef.putFile(imageFile);
+
+      // Show upload progress
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        print('Upload progress: $progress%');
+      });
+
+      final TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print("Error uploading goal image: $e");
+      return null;
+    }
+  }
+
+  Future<String?> addKidGoal() async {
     try {
       authController.isNormalLoading.value = true;
       Get.dialog(
-        Center(child: CircularProgressIndicator()),
-        barrierDismissible: true,
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
       );
 
       // Get current user ID
       final user = _authService.user.value;
       if (user == null) {
         ToastUtil.showToast("User not authenticated");
-        authController.isNormalLoading.value = false;
-        return;
+        return null;
       }
 
       // Get current kid using parent ID
       final kids = await _kidService.fetchKidsByParentId(user.uid);
       if (kids.isEmpty) {
         ToastUtil.showToast("No kid found");
-        authController.isNormalLoading.value = false;
-        return;
+        return null;
       }
 
       final KidModel currentKid = kids.first;
       final targetAmount = goalAmount.value;
       final spendingBalance = currentKid.wallet.spendingJar.balance;
 
-      // Validate spending jar balance
       if (spendingBalance < targetAmount) {
         ToastUtil.showToast("Not enough funds in spending jar");
-        authController.isNormalLoading.value = false;
-        return;
+        return null;
       }
 
-      // Create a new goal model with initial amount from spending
+      // Create goal model
       final goal = GoalModel(
         userId: currentKid.kidId,
         title: goalName.value,
         photo: goalImage.value.isEmpty ? 'assets/logo.png' : goalImage.value,
         targetAmount: targetAmount,
-        savedAmount: 0, // Initial amount same as target amount
+        savedAmount: 0,
         status: GoalStatus.in_progress,
         createdAt: DateTime.now(),
       );
 
       // Create the goal using GoalService which will also deduct from spending
-      final goalRef = await _goalService.createGoal(goal);
-      final goalId = goalRef.id;
+      final goalId = await _goalService.createGoal(goal);
 
       if (goalId.isNotEmpty) {
         // Save image if exists
@@ -148,24 +172,18 @@ class KidGoalsController extends GetxController {
         goalName.value = "";
         goalAmount.value = 0.0;
 
-        authController.isNormalLoading.value = false;
         ToastUtil.showToast("Goal added successfully");
-        // Get.back(); // Remove loading dialog
-      } else {
-        authController.isNormalLoading.value = false;
-        Get.back(); // Remove loading dialog
-        ToastUtil.showToast("Failed to create goal");
+        return goalId;
       }
-    } on TimeoutException catch (e) {
-      authController.isNormalLoading.value = false;
-      Get.back();
-      ToastUtil.showToast("Operation timed out. Please try again.");
-      print("Timeout error: $e");
+
+      return null;
     } catch (e) {
-      authController.isNormalLoading.value = false;
-      Get.back();
-      ToastUtil.showToast(e.toString());
       print("Error adding goal: $e");
+      ToastUtil.showToast("Failed to create goal");
+      return null;
+    } finally {
+      authController.isNormalLoading.value = false;
+      Get.back(); // Remove loading dialog
     }
   }
 
@@ -503,20 +521,20 @@ class KidGoalsController extends GetxController {
     }
   }
 
-//  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
+  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
 
-  // void fetchGoals(String kidId) {
-  //   FirebaseFirestore.instance
-  //       .collection('goals')
-  //       .where('kidId', isEqualTo: kidId)
-  //       .where('deleted', isEqualTo: false)
-  //       .snapshots()
-  //       .listen((snapshot) {
-  //     if (snapshot.docs.isNotEmpty) {
-  //       goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
-  //     } else {
-  //       goalsList.clear();
-  //     }
-  //   });
-  // }
+  void fetchGoals(String kidId) {
+    FirebaseFirestore.instance
+        .collection('goals')
+        .where('kidId', isEqualTo: kidId)
+        .where('deleted', isEqualTo: false)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
+      } else {
+        goalsList.clear();
+      }
+    });
+  }
 }

@@ -29,9 +29,9 @@ class KidsZoneDialog extends StatelessWidget {
         children: [
           SvgPicture.asset(
             AppAssets.dialogueBGSvg,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             width: 330.w,
-            height: 100.h,
+            height: 120.h,
           ),
           Positioned(
             top: -28.h,

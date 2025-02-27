@@ -1,9 +1,11 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/components/kid/kid_home_appbar.dart';
 import 'package:coin_kids/presentation/components/kid/kid_shop_appbar.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/market_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/market/kids_market_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/wishlist/wishlist_screen.dart';
@@ -15,6 +17,8 @@ import 'package:coin_kids/presentation/screens/kid/goals/save_goal_widget.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
+import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +34,8 @@ class KidHomeScreen extends StatelessWidget {
       Get.find<VerticalNavBarController>();
   final WishlistService _wishlistService = Get.put(WishlistService());
   final KidService _kidService = Get.find<KidService>();
+  final RoleSelectionController roleSelectionController =
+      Get.find<RoleSelectionController>();
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +163,10 @@ class KidHomeScreen extends StatelessWidget {
                       child: Positioned(
                         bottom: 0.h,
                         right: 0.w,
-                        child: ParentZoneWidget(),
+                        child: GestureDetector(
+                            onTap: () => roleSelectionController
+                                .finalizeRole(UserRole.PARENT),
+                            child: ParentZoneWidget()),
                       ),
                     );
                   }),
