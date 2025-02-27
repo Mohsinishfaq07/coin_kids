@@ -1,5 +1,4 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
@@ -10,12 +9,11 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class AddJarColorScreen extends StatelessWidget {
-  RxBool isSpending;
-  final GlobalKey colorGridKey = GlobalKey();
-  final GlobalKey nextButtonKey = GlobalKey();
+  final RxBool isSpending;
+  // final GlobalKey colorGridKey = GlobalKey();
+  // final GlobalKey nextButtonKey = GlobalKey();
 
   AddJarColorScreen({
     required this.isSpending,
@@ -42,14 +40,14 @@ class AddJarColorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Start showcase when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        ShowCaseWidget.of(context).startShowCase([
-          colorGridKey,
-          nextButtonKey,
-        ]);
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (context.mounted) {
+    //     ShowCaseWidget.of(context).startShowCase([
+    //       colorGridKey,
+    //       nextButtonKey,
+    //     ]);
+    //   }
+    // });
 
     return Scaffold(
       extendBody: true,
@@ -59,8 +57,7 @@ class AddJarColorScreen extends StatelessWidget {
         decoration: const BoxDecoration(
           gradient: AppColors.background,
           image: DecorationImage(
-            image: AssetImage(AppAssets.kidSectionBG),
-          ),
+              image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -82,60 +79,107 @@ class AddJarColorScreen extends StatelessWidget {
                 child: Text("Select Jar Color🎨🖌️",
                     style: AppTextStyle.headingLarge),
               ),
-              AppShowCaseWidget(
-                showcaseKey: colorGridKey,
-                description: 'Choose your favorite color for your jar! 🎨',
-                backgroundImage: "assets/center_spot_light_background.png",
-                tooltipPosition: TooltipPosition.top,
-                disposeOnTap: false,
-                child: SizedBox(
-                  height: 80.h,
-                  width: 399.w,
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 6, // 6 items per row
-                      crossAxisSpacing: 30.w,
-                      mainAxisSpacing: 10.h,
-                    ),
-                    itemCount: colors.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          parentController.selectedColorIndex.value = index;
-                        },
-                        child: Obx(() {
-                          bool isSelected =
-                              parentController.selectedColorIndex.value ==
-                                  index;
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                height: 42.h,
-                                width: 42.w,
-                                decoration: BoxDecoration(
-                                  color: colors[index],
-                                  shape: BoxShape.circle,
-                                  border: isSelected
-                                      ? Border.all(
-                                          color: Colors.white, width: 3.w)
-                                      : null,
-                                ),
-                              ),
-                              if (isSelected)
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 24.sp, // Size of the check icon
-                                ),
-                            ],
-                          );
-                        }),
-                      );
-                    },
+              // AppShowCaseWidget(
+              //   showcaseKey: colorGridKey,
+              //   description: 'Choose your favorite color for your jar! 🎨',
+              //   backgroundImage: "assets/center_spot_light_background.png",
+              //   tooltipPosition: TooltipPosition.top,
+              //   disposeOnTap: false,
+              //   child: SizedBox(
+              //     height: 80.h,
+              //     width: 399.w,
+              //     child: GridView.builder(
+              //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //         crossAxisCount: 6, // 6 items per row
+              //         crossAxisSpacing: 30.w,
+              //         mainAxisSpacing: 10.h,
+              //       ),
+              //       itemCount: colors.length,
+              //       itemBuilder: (context, index) {
+              //         return GestureDetector(
+              //           onTap: () {
+              //             parentController.selectedColorIndex.value = index;
+              //           },
+              //           child: Obx(() {
+              //             bool isSelected =
+              //                 parentController.selectedColorIndex.value ==
+              //                     index;
+              //             return Stack(
+              //               alignment: Alignment.center,
+              //               children: [
+              //                 Container(
+              //                   height: 42.h,
+              //                   width: 42.w,
+              //                   decoration: BoxDecoration(
+              //                     color: colors[index],
+              //                     shape: BoxShape.circle,
+              //                     border: isSelected
+              //                         ? Border.all(
+              //                             color: Colors.white, width: 3.w)
+              //                         : null,
+              //                   ),
+              //                 ),
+              //                 if (isSelected)
+              //                   Icon(
+              //                     Icons.check,
+              //                     color: Colors.white,
+              //                     size: 24.sp, // Size of the check icon
+              //                   ),
+              //               ],
+              //             );
+              //           }),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // ),
+              SizedBox(
+                height: 80.h,
+                width: 399.w,
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 6, // 6 items per row
+                    crossAxisSpacing: 30.w,
+                    mainAxisSpacing: 10.h,
                   ),
+                  itemCount: colors.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        parentController.selectedColorIndex.value = index;
+                      },
+                      child: Obx(() {
+                        bool isSelected =
+                            parentController.selectedColorIndex.value == index;
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 42.h,
+                              width: 42.w,
+                              decoration: BoxDecoration(
+                                color: colors[index],
+                                shape: BoxShape.circle,
+                                border: isSelected
+                                    ? Border.all(
+                                        color: Colors.white, width: 3.w)
+                                    : null,
+                              ),
+                            ),
+                            if (isSelected)
+                              Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 24.sp, // Size of the check icon
+                              ),
+                          ],
+                        );
+                      }),
+                    );
+                  },
                 ),
               ),
+
               Padding(
                 padding: EdgeInsets.only(right: 20.w),
                 child: Align(

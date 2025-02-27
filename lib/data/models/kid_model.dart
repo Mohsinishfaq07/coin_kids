@@ -10,9 +10,19 @@ class WalletJar {
   });
 
   factory WalletJar.fromJson(Map<String, dynamic> json) {
+    // Handle the color value which can be either String or int
+    String colorValue;
+    final dynamic rawColor = json['color'];
+    if (rawColor is int) {
+      // Convert int to hex string
+      colorValue = '#${rawColor.toRadixString(16).padLeft(6, '0')}';
+    } else {
+      colorValue = rawColor?.toString() ?? '#000000';
+    }
+
     return WalletJar(
       balance: (json['balance'] ?? 0.0).toDouble(),
-      color: json['color'] ?? '#000000',
+      color: colorValue,
     );
   }
 
@@ -92,9 +102,11 @@ class KidModel {
   factory KidModel.fromJson(Map<String, dynamic> json,
       {String documentId = ''}) {
     return KidModel(
-      kidId: documentId,
+      kidId: documentId.isNotEmpty ? documentId : json['kidId'] ?? '',
       name: json['name'] ?? '',
-      age: json['age'] ?? 0,
+      age: (json['age'] ?? 0) is String
+          ? int.parse(json['age'])
+          : json['age'] ?? 0,
       avatar: json['avatar'] ?? '',
       parentId: json['parentId'] ?? '',
       wallet: Wallet.fromJson(json['wallet'] ?? {}),

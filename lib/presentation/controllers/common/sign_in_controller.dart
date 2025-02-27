@@ -29,7 +29,8 @@ class SignInController extends GetxController {
       );
 
       if (credential.user != null) {
-        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
+        SharedPreferencesHelper.saveBool(
+            SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAll(() => RoleSelectionScreen());
       }
     } catch (e) {

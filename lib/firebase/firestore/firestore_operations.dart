@@ -1,70 +1,52 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
-import 'package:coin_kids/presentation/dialogs/kid/custom_dialogs.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import '../../presentation/controllers/parent/add_child_controller.dart';
-
 class FirestoreOperations {
   ParentFirebaseFunctions parentFirebaseFunctions = ParentFirebaseFunctions();
 }
 
 class ParentFirebaseFunctions {
-  // FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  // final ParentController homeController = Get.put(ParentController());
-  AddChildController addChildController = Get.find();
-  AuthenticationController authController = Get.find();
+  // AddChildController addChildController = Get.find();
+  // AuthenticationController authController = Get.find();
 
+  // final KidsOnBoardingController kidsOnBoardingController =
+  //     Get.put(KidsOnBoardingController());
 
-  final KidsOnBoardingController kidsOnBoardingController = Get.put(KidsOnBoardingController());
+  // String formatDate(DateTime date) {
+  //   var formatter = DateFormat('dd/MM/yy, hh:mm a');
+  //   return formatter.format(date);
+  // }
 
-  String formatDate(DateTime date) {
-    var formatter = DateFormat('dd/MM/yy, hh:mm a');
-    return formatter.format(date);
-  }
+  // Stream<Map<String, dynamic>?> fetchKidData() {
+  //   try {
+  //     String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
-  Stream<Map<String, dynamic>?> fetchKidData() {
-    try {
-      String? userEmail = FirebaseAuth.instance.currentUser?.email;
+  //     if (userEmail == null) {
+  //       return Stream.value(null);
+  //     }
 
-      if (userEmail == null) {
-        return Stream.value(null);
-      }
+  //     DocumentReference parentDocRef =
+  //         FirebaseFirestore.instance.collection('kids').doc(userEmail);
 
-      DocumentReference parentDocRef = FirebaseFirestore.instance.collection('kids').doc(userEmail);
-
-      return parentDocRef.snapshots().map((docSnapshot) {
-        if (docSnapshot.exists) {
-          return docSnapshot.data() as Map<String, dynamic>?;
-        } else {
-          return null;
-        }
-      });
-    } catch (e) {
-      Get.log('Error fetching document fields: $e');
-      return Stream.value(null); // Return an empty stream on error
-    }
-  }
+  //     return parentDocRef.snapshots().map((docSnapshot) {
+  //       if (docSnapshot.exists) {
+  //         return docSnapshot.data() as Map<String, dynamic>?;
+  //       } else {
+  //         return null;
+  //       }
+  //     });
+  //   } catch (e) {
+  //     Get.log('Error fetching document fields: $e');
+  //     return Stream.value(null); // Return an empty stream on error
+  //   }
+  // }
 
   // get all the children related to current logged in parent
 
-  Stream<List<DocumentSnapshot>> fetchChildrenForParent(String currentUserId) {
-    return FirebaseFirestore.instance
-        .collection('kids')
-        .where('parentId', isEqualTo: currentUserId)
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs);
-  }
-
+  // Stream<List<DocumentSnapshot>> fetchChildrenForParent(String currentUserId) {
+  //   return FirebaseFirestore.instance
+  //       .collection('kids')
+  //       .where('parentId', isEqualTo: currentUserId)
+  //       .snapshots()
+  //       .map((querySnapshot) => querySnapshot.docs);
+  // }
 
   // add child to parent
   // Future<void> addKidAndUpdateParent() async {
@@ -330,8 +312,8 @@ class ParentFirebaseFunctions {
   //   }
   // }
 
-  var selectedColorIndex = (-1).obs; // Default to no selection
-  RxBool isSelected = false.obs; //
+  // var selectedColorIndex = (-1).obs; // Default to no selection
+  // RxBool isSelected = false.obs; //
 //
 //   Future<void> updateKidSpendingForJar({
 //     required bool save,

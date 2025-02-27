@@ -8,7 +8,7 @@ import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:coin_kids/presentation/controllers/kid/add_money_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -20,10 +20,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 
-class AddMoneyScreen extends StatefulWidget {
+class AddMoneyScreen extends GetView<JarCreationController> {
   final RxBool isSpending;
   final double amount;
-  Color jarColor;
+  final Color jarColor;
 
   AddMoneyScreen(
       {required this.isSpending,
@@ -31,23 +31,9 @@ class AddMoneyScreen extends StatefulWidget {
       required this.jarColor,
       super.key});
 
-  @override
-  State<AddMoneyScreen> createState() => _AddMoneyScreenState();
-}
-
-class _AddMoneyScreenState extends State<AddMoneyScreen> {
   final addMoneyController = Get.put(AddMoneyController());
-  final parentController = Get.put(ParentBaseController());
 
-  @override
-  void initState() {
-    super.initState();
-    addMoneyController.fetchSpendingAmount();
-    addMoneyController.fetchSavingAmount();
-   // parentController.fetchParentDetails();
-   //  parentController.fetchKids();
-  }
-
+  // @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,8 +62,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                     kidData.containsKey('spendings')
                         ? kidData['spendings'] as Map<String, dynamic>
                         : {};
-                final double spendingAmount =
-                    (spendingData['amount'] ?? 0.0).toDouble();
+                (spendingData['amount'] ?? 0.0).toDouble();
                 final String spendingJarColor =
                     (spendingData['color'] ?? "").toString();
 
@@ -88,16 +73,11 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                         : {};
                 print("$savingsData");
 
-                final double savingAmount =
-                    (savingsData['amount'] ?? 0.0).toDouble();
+                (savingsData['amount'] ?? 0.0).toDouble();
                 final String savingJarColor =
                     (savingsData['color'] ?? "#000000").toString();
 
                 // Ensure "spendings" field exists, otherwise provide default values
-                final Map<String, dynamic> spendingsData =
-                    kidData.containsKey('spendings')
-                        ? kidData['spendings'] as Map<String, dynamic>
-                        : {};
 
                 print("Spending jar color: $spendingJarColor");
                 print("Saving jar color: $savingJarColor");
@@ -107,8 +87,8 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                   decoration: const BoxDecoration(
                     gradient: AppColors.background,
                     image: DecorationImage(
-                      image: AssetImage(AppAssets.kidSectionBG),
-                    ),
+                        image: AssetImage(AppAssets.kidSectionBG),
+                        fit: BoxFit.cover),
                   ),
                   child: SingleChildScrollView(
                     child: Column(
@@ -287,8 +267,6 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                           var noteAsset = addMoneyController
                                               .notesMap.keys
                                               .elementAt(index);
-                                          var noteValue = addMoneyController
-                                              .notesMap[noteAsset];
 
                                           return Draggable<String>(
                                             data:
@@ -339,8 +317,6 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                             var coinAsset = addMoneyController
                                                 .firstCoinList.keys
                                                 .elementAt(index);
-                                            var noteValue = addMoneyController
-                                                .firstCoinList[coinAsset];
 
                                             return Draggable<String>(
                                               data: coinAsset,
@@ -383,9 +359,6 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                                 addMoneyController
                                                     .secondCoinList.keys
                                                     .elementAt(index);
-                                            var noteValue = addMoneyController
-                                                    .secondCoinList[
-                                                secondCoinAsset];
                                             return Draggable<String>(
                                               data: secondCoinAsset,
                                               feedback: Material(
@@ -427,8 +400,6 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                                 addMoneyController
                                                     .thirdCoinList.keys
                                                     .elementAt(index);
-                                            var noteValue = addMoneyController
-                                                .thirdCoinList[thirdCoinAsset];
                                             return Draggable<String>(
                                               data: thirdCoinAsset,
                                               feedback: Material(
@@ -704,19 +675,18 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                               child: GreenNextButton(
                                   showSuffix: true,
                                   onTap: () async {
-                                    if (widget.isSpending == true) {
+                                    if (isSpending == true) {
                                       if (addMoneyController.totalValue.value ==
-                                          widget.amount) {
+                                          amount) {
                                         print('Amounts match!');
-                                        // await authController
-                                        //     .parentFirebaseFunctions
-                                        //     .updateKidSpendingForJar(
-                                        //   save: true,
-                                        //   kidId: parentController.kidsList[0]
-                                        //       ['id'],
-                                        //   enteredAmount: widget.amount,
-                                        //   spendingJarColor: widget.jarColor,
-                                        // );
+                                        final kid = controller
+                                            .appState.currentKid.value!;
+
+                                        await controller.kidService
+                                            .updateSpendingJarBalance(
+                                                kid.kidId, amount,
+                                                color: jarColor.value);
+
                                         addMoneyController.totalValue.value =
                                             0.0;
                                         Get.off(() => KidHomeScreen());
@@ -727,15 +697,19 @@ class _AddMoneyScreenState extends State<AddMoneyScreen> {
                                       }
                                     } else {
                                       if (addMoneyController.totalValue.value ==
-                                          widget.amount) {
+                                          amount) {
                                         print('Amounts match!');
-                                        // final kid = parentController.kidsList[0];
+                                        final kid = controller
+                                            .appState.currentKid.value!;
+                                        await controller.kidService
+                                            .updateSavingJarBalance(
+                                                kid.kidId, amount,
+                                                color: jarColor.value);
                                         // await authController
                                         //     .parentFirebaseFunctions
                                         //     .kidSpendingToSavings(
                                         //   save: false,
                                         //   enteredAmount: widget.amount,
-                                        //   kidId: parentController.kidsList[0]
                                         //       kid.parentId,
                                         //   savingsJarColor: widget.jarColor,
                                         // );

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'market_product_model.dart';
 
-enum GoalStatus { in_progress, completed, cancelled, pending }
+enum GoalStatus { in_progress, completed, cancelled, pending, deleted }
 
 class GoalModel {
   final String? id;
@@ -92,7 +92,8 @@ class GoalModel {
   }
 
   // Calculate progress percentage
-  double get progressPercentage => (savedAmount / targetAmount * 100).clamp(0, 100);
+  double get progressPercentage =>
+      (savedAmount / targetAmount * 100).clamp(0, 100);
 
   // Check if goal is achievable with current balance
   bool isAchievableWithBalance(double balance) {
@@ -107,10 +108,12 @@ class GoalModel {
 
   String get formattedSavedAmount => '\$${savedAmount.toStringAsFixed(2)}';
 
-  String get formattedRemainingAmount => '\$${remainingAmount.toStringAsFixed(2)}';
+  String get formattedRemainingAmount =>
+      '\$${remainingAmount.toStringAsFixed(2)}';
 
   // Create a new goal from a product
-  factory GoalModel.fromProduct(String kidId, MarketProductModel product, String goalId) {
+  factory GoalModel.fromProduct(
+      String kidId, MarketProductModel product, String goalId) {
     return GoalModel(
       id: goalId,
       userId: kidId,

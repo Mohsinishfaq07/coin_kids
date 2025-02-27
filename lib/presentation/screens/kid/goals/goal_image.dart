@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -15,7 +14,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-
 class AddGoalImage extends StatelessWidget {
   const AddGoalImage({
     super.key,
@@ -25,7 +23,9 @@ class AddGoalImage extends StatelessWidget {
   Widget build(BuildContext context) {
     landscapeOrientation();
 
-    KidGoalsController kidGoalsController = Get.find<KidGoalsController>();
+    final KidGoalsController kidGoalsController =
+        Get.find<KidGoalsController>();
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: SafeArea(
@@ -35,8 +35,7 @@ class AddGoalImage extends StatelessWidget {
           decoration: const BoxDecoration(
             gradient: AppColors.background,
             image: DecorationImage(
-              image: AssetImage(AppAssets.kidSectionBG),
-            ),
+                image: AssetImage(AppAssets.kidSectionBG), fit: BoxFit.cover),
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -79,52 +78,65 @@ class AddGoalImage extends StatelessWidget {
                       return Stack(
                         children: [
                           Container(
-                            height: 100.h,
-                            width: 364.w,
-                            decoration: BoxDecoration(
-                              color: AppColors.iconOnPrimary,
-                              borderRadius: BorderRadius.circular(30.r),
-                            ),
-                            child: kidGoalsController.goalImage.value.isEmpty
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          await kidGoalsController
-                                              .pickImageFromCamera();
-                                        },
-                                        child: SvgPicture.asset(
-                                          "assets/kidCameraIcon.svg",
-                                          height: 40.h,
-                                          width: 40.h,
+                              height: 100.h,
+                              width: 364.w,
+                              decoration: BoxDecoration(
+                                color: AppColors.iconOnPrimary,
+                                borderRadius: BorderRadius.circular(30.r),
+                              ),
+                              child: kidGoalsController.goalImage.value.isEmpty
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            await kidGoalsController
+                                                .pickImageFromCamera();
+                                          },
+                                          child: SvgPicture.asset(
+                                            "assets/kidCameraIcon.svg",
+                                            height: 40.h,
+                                            width: 40.h,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      GreenNextButton(
-                                        onTap: () async {
-                                          await kidGoalsController
-                                              .pickFromGallery();
-                                        },
-                                        backgroundColor: Color(0xFFFF9E29),
-                                        borderColor: Color(0xFFFF9E29),
-                                        buttonText: 'Add From Gallery',
-                                        width: 280.w,
-                                        showPrefix: true,
-                                        prefixSvg: "assets/add_icon.svg",
-                                      ),
-                                    ],
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(30.r),
-                                    child: Image.file(
-                                      File(kidGoalsController.goalImage.value),
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    ),
-                                  ),
-                          ),
+                                        SizedBox(height: 8.h),
+                                        GreenNextButton(
+                                          onTap: () async {
+                                            await kidGoalsController
+                                                .pickFromGallery();
+                                          },
+                                          backgroundColor: Color(0xFFFF9E29),
+                                          borderColor: Color(0xFFFF9E29),
+                                          buttonText: 'Add From Gallery',
+                                          width: 280.w,
+                                          showPrefix: true,
+                                          prefixSvg: "assets/add_icon.svg",
+                                        ),
+                                      ],
+                                    )
+                                  : Stack(children: [
+                                      ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(30.r),
+                                          child: Image.file(
+                                            File(kidGoalsController
+                                                .goalImage.value),
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          )),
+                                      Positioned(
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              kidGoalsController
+                                                  .goalImage.value = '';
+                                            },
+                                            child: SvgPicture.asset(AppAssets
+                                                .crossWithDoubleBorderSvg),
+                                          ))
+                                    ])),
                         ],
                       );
                     }),
@@ -135,9 +147,7 @@ class AddGoalImage extends StatelessWidget {
                           padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
                           child: GreenNextButton(
                             onTap: () async {
-                              if (kidGoalsController.goalImage.value.isEmpty) {
-                                kidGoalsController.goalImage.value = "";
-                                kidGoalsController.goalName.value = "";
+                              try {
                                 await kidGoalsController.addKidGoal();
                                 String? goalId = await kidGoalsController
                                     .getGoalIdFromPrefs();
@@ -146,39 +156,19 @@ class AddGoalImage extends StatelessWidget {
                                         isCompleted: false.obs,
                                         goalId: goalId,
                                         fromHome: false.obs,
-                                        //  completed: false.obs,
                                       ));
                                 } else {
                                   ToastUtil.showToast("Goal ID not found");
                                 }
-                                // showToast("Please select an image");
-                              } else {
-                                try {
-                                  await kidGoalsController.addKidGoal();
-                                  String? goalId = await kidGoalsController
-                                      .getGoalIdFromPrefs();
-
-                                  if (goalId != null && goalId.isNotEmpty) {
-                                    Get.off(() => GoalProgress(
-                                          isCompleted: false.obs,
-                                          goalId: goalId,
-                                          fromHome: false.obs,
-                                          // completed: false.obs,
-                                        ));
-                                    kidGoalsController.goalImage.value = "";
-                                    kidGoalsController.goalName.value = "";
-                                  } else {
-                                    ToastUtil.showToast("Goal ID not found");
-                                  }
-                                } on TimeoutException catch (e) {
-                                  print("Firestore transaction timed out: $e");
-                                }
+                              } catch (e) {
+                                print("Error: $e");
+                                ToastUtil.showToast(e.toString());
                               }
                             },
                             showSuffix: true,
                             buttonText:
                                 kidGoalsController.goalImage.value.isNotEmpty
-                                    ? 'save'
+                                    ? 'Next'
                                     : 'Skip',
                             backgroundColor:
                                 kidGoalsController.goalImage.value.isNotEmpty

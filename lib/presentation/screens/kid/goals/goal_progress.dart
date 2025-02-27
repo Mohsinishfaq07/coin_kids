@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
+import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/presentation/components/kid/Icon_button.dart';
 import 'package:coin_kids/presentation/components/kid/goal_completed_screen.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
@@ -10,9 +12,7 @@ import 'package:coin_kids/presentation/components/kid/slider_widget.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/edit_goal.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/slider.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/save_goal_widget.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -20,11 +20,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
 
 class GoalProgress extends StatelessWidget {
-  RxBool isCompleted;
+  final RxBool isCompleted;
   final RxBool fromHome;
   final String goalId;
+
   GoalProgress({
     super.key,
     required this.goalId,
@@ -36,8 +39,9 @@ class GoalProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     landscapeOrientation();
 
-    final kidGoalController =
-        Get.find<KidGoalsController>(); // Using Get.find to access controller
+    final kidGoalController = Get.find<KidGoalsController>();
+    final GoalService _goalService = Get.find<GoalService>();
+    final KidService _kidService = Get.find<KidService>();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -47,102 +51,67 @@ class GoalProgress extends StatelessWidget {
             Row(
               children: [
                 Container(
-                    color: AppColors.iconPrimary,
-                    height: double.infinity,
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    child: Center(
-                      child: StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('kids')
-                              .where('parentId',
-                                  isEqualTo:
-                                      FirebaseAuth.instance.currentUser!.uid)
-                              .snapshots(),
+                  color: AppColors.iconPrimary,
+                  height: double.infinity,
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  child: Center(
+                    child: StreamBuilder<GoalModel?>(
+                      stream: _goalService.streamGoal(goalId),
+                      builder: (context, goalSnapshot) {
+                        if (goalSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+
+                        final goal = goalSnapshot.data;
+                        if (goal == null) {
+                          return const Text("Goal not found");
+                        }
+
+                        // Get kid data using goal's userId
+                        return FutureBuilder<KidModel?>(
+                          future: _kidService.fetchKidById(goal.userId),
                           builder: (context, kidSnapshot) {
                             if (kidSnapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             }
 
-                            if (!kidSnapshot.hasData ||
-                                kidSnapshot.data!.docs.isEmpty) {
-                              print(
-                                  "[DEBUG] No kids found for parentId: ${FirebaseAuth.instance.currentUser!.uid}");
-                              return Text("No Kids Found");
-                            }
+                            final kid = kidSnapshot.data;
+                            if (kid == null) return const Text("Kid not found");
 
-                            // ✅ Get the first kid's ID
-                            final kidId = kidSnapshot.data!.docs.first.id;
-                            print("[DEBUG] Found Kid: $kidId");
-
-                            // 🔹 Now fetch goals for this kid
-                            return StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('goals')
-                                  .where('kidId',
-                                      isEqualTo:
-                                          kidId) // Get goals for the retrieved kid
-                                  .where('goalId',
-                                      isEqualTo:
-                                          goalId) // Match goalId from constructor
-                                  .where('deleted',
-                                      isEqualTo: false) // Exclude deleted goals
-                                  //.orderBy('createdAt', descending: true) // 🔴 Removed for now (needs index)
-                                  .limit(1) // Fetch only the latest goal
-                                  .snapshots(),
-                              builder: (context, goalSnapshot) {
-                                print(
-                                    "[DEBUG] Goal Snapshot: ${goalSnapshot.data?.docs.length}");
-
-                                if (goalSnapshot.connectionState ==
+                            return FutureBuilder<File?>(
+                              future:
+                                  kidGoalController.getImageFromPrefs(goalId),
+                              builder: (context, imageSnapshot) {
+                                if (imageSnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
 
-                                if (!goalSnapshot.hasData ||
-                                    goalSnapshot.data!.docs.isEmpty) {
-                                  print(
-                                      "[DEBUG] No Goal Found for kidId: $kidId and goalId: $goalId");
-                                  return AddGoalWidget();
-                                }
-
-                                // ✅ Get the latest goal data safely
-                                final goalDoc = goalSnapshot.data!.docs.first;
-                                final goal =
-                                    goalDoc.data() as Map<String, dynamic>;
-                                final goalTitle = goal['name'] ?? "No Title";
-                                final goalAmount = goal['amount'] ?? 0;
-
-                                return FutureBuilder<File?>(
-                                  future: kidGoalController
-                                      .getImageFromPrefs(goalId),
-                                  builder: (context, imageSnapshot) {
-                                    if (imageSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
-                                    }
-                                    File? imageFile = imageSnapshot.data;
-                                    return Stack(children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 26.w, top: 12.h),
-                                        child: kidBackButton(
-                                          onTap: () {
-                                            Get.off(() => KidHomeScreen());
-                                          },
-                                        ),
+                                File? imageFile = imageSnapshot.data;
+                                return Stack(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 26.w, top: 12.h),
+                                      child: kidBackButton(
+                                        onTap: () =>
+                                            Get.off(() => KidHomeScreen()),
                                       ),
-                                      Center(
-                                          child: GoalCard(
-                                              goal: goal,
-                                              imageFile: imageFile)),
-                                    ]);
-                                  },
+                                    ),
+                                    GoalCard(goal: goal, imageFile: imageFile),
+                                  ],
                                 );
                               },
                             );
-                          }),
-                    )),
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                // Right side with slider
                 Obx(
                   () => Expanded(
                     flex: 1,
@@ -154,9 +123,7 @@ class GoalProgress extends StatelessWidget {
                             decoration: const BoxDecoration(
                               gradient: AppColors.background,
                               image: DecorationImage(
-                                image: AssetImage(
-                                  AppAssets.kidSectionBG,
-                                ),
+                                image: AssetImage(AppAssets.kidSectionBG),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -295,7 +262,7 @@ class GoalProgress extends StatelessWidget {
                                               backgroundColor:
                                                   AppColors.critical,
                                               borderColor: Colors.red,
-                                              svgAsset: "assets/Minus.svg",
+                                              svgAsset: AppAssets.minus_svg,
                                               iconColor: Colors.white,
                                               svgHeight: 40.h,
                                               onTap: () async {
@@ -499,9 +466,10 @@ class GoalProgress extends StatelessWidget {
                                                   iconPath:
                                                       "assets/pencil_svgrepo.com.svg",
                                                   label: 'Edit',
-                                                  onTap: () => Get.to(() => EditGoal(
-                                                        goalId: goalId,
-                                                      ))),
+                                                  onTap: () =>
+                                                      Get.to(() => EditGoal(
+                                                            goalId: goalId,
+                                                          ))),
                                               SizedBox(
                                                 width: 36.w,
                                               ),
@@ -672,6 +640,61 @@ class GoalProgress extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class GoalCard extends StatelessWidget {
+  final GoalModel goal;
+  final File? imageFile;
+
+  const GoalCard({
+    Key? key,
+    required this.goal,
+    this.imageFile,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 187.36.w,
+      height: 120.h,
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(12.r)),
+      child: Column(
+        children: [
+          Text(
+            goal.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFFA421D9),
+              fontSize: 16.81,
+              fontFamily: 'Open Sans',
+              height: 0,
+            ),
+          ),
+          if (imageFile != null)
+            Image.file(
+              imageFile!,
+              height: 100.h,
+              width: 100.w,
+              fit: BoxFit.cover,
+            ),
+
+          Text(
+            'Target: ${goal.formattedTargetAmount}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFFA421D9),
+              fontSize: 16.81,
+              fontFamily: 'Open Sans',
+              height: 0,
+            ),
+          ),
+          //  Text('Saved: ${goal.formattedSavedAmount}'),
+          // Add more goal details as needed
+        ],
       ),
     );
   }
