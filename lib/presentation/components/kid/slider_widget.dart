@@ -1,3 +1,6 @@
+
+import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/presentation/components/kid/goal_completed_screen.dart';
@@ -69,17 +72,17 @@ class SliderWidget extends StatelessWidget {
                   backgroundColor: AppColors.buttonPrimary,
                   radius: 20.r,
                   child: SvgPicture.asset(
-                    "assets/Coin.svg",
+                    AppAssets.coin_svg,
                     height: 40.h,
                   ),
                 ),
                 enableTooltip: false,
                 activeColor: Colors.blue,
                 inactiveColor: Colors.grey,
-                value: kidGoalController.sliderValue.value == 0
+                value: kidGoalController.sliderValue.value.toMoneyFormat() == 0
                     ? goalCurrentAmount
                     : kidGoalController.sliderValue.value,
-                min: 0,
+                min: double.parse(0.toMoneyFormatNoSymbol()),
                 max: maxAmount,
                 stepSize: 0.1,
                 onChangeStart: (value) {

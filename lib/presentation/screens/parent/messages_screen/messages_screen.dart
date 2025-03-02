@@ -1,11 +1,9 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/notification/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/notification/notification_tile.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -115,26 +113,28 @@ class MessagesScreen extends GetView<MessagesController> {
     );
   }
 
-  Future<void> _showDeleteAllDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete All Notifications'),
-        content: Text('Are you sure you want to delete all notifications?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              controller.deleteAllNotifications();
-            },
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> _showDeleteAllDialog(BuildContext context) async {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text('Delete All Notifications'),
+  //       content: Text('Are you sure you want to delete all notifications?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: Text('Cancel'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(context);
+  //             controller.deleteAllNotifications();
+  //           },
+  //           child: Text('Delete', style: TextStyle(color: Colors.red)),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+
 }

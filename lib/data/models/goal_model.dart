@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 
 import 'market_product_model.dart';
 
@@ -104,12 +105,12 @@ class GoalModel {
   double get remainingAmount => targetAmount - savedAmount;
 
   // Format amounts with currency symbol
-  String get formattedTargetAmount => '\$${targetAmount.toStringAsFixed(2)}';
+  String get formattedTargetAmount => targetAmount.toMoneyFormat();
 
-  String get formattedSavedAmount => '\$${savedAmount.toStringAsFixed(2)}';
+  String get formattedSavedAmount =>  savedAmount.toMoneyFormat();
 
   String get formattedRemainingAmount =>
-      '\$${remainingAmount.toStringAsFixed(2)}';
+      remainingAmount.toMoneyFormat();
 
   // Helper method to check if photo is a network image
   bool get isNetworkImage => photo?.startsWith('http') ?? false;

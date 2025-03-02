@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -69,7 +70,7 @@ class JarWithoutMoneyTitle extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '\$$amount',
+                            text: amount.toMoneyFormat(),
                             style: TextStyle(
                               color: Color(0xFF015486),
                               fontSize: 15.83.sp,

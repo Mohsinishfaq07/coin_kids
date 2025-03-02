@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -113,6 +114,29 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
     double defaultHeight = widget.height ?? 50;
 
     return TextFormField(
+      inputFormatters: [
+        // Custom formatter to handle all rules
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          // If empty, allow it
+          if (newValue.text.isEmpty) {
+            return newValue;
+          }
+
+          // Check if the input matches our valid number pattern
+          // This regex ensures:
+          // 1. Only numbers and single dot
+          // 2. Maximum 2 decimal places
+          // 3. Valid number format
+          final validNumberPattern = RegExp(r'^\d*\.?\d{0,2}$');
+
+          if (validNumberPattern.hasMatch(newValue.text)) {
+            return newValue;
+          }
+
+          // If invalid, keep the old value
+          return oldValue;
+        }),
+      ],
       readOnly: widget.readOnly,
       maxLength: widget.maxLength,
       onChanged: widget.onChanged,

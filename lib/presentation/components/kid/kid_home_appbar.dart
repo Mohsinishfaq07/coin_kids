@@ -17,33 +17,35 @@ class KidDefaultAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 4.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Kid's Avatar Container
-          KidAvatarContainer(),
-
-          // Logout Button
-          GestureDetector(
-            onTap: () async {
-              await _authService.signOut();
-              // Navigate to Login screen after logout
-              Get.offAll(() => LoginScreen());
-            },
-            child: Icon(Icons.logout, color: Colors.red),
-          ),
-
-          // Row for cards and balance widgets
-          Row(
-            children: [
-              SpendingCardContainer(),
-              SizedBox(width: 20.w),
-              coinKidLockContainer(),
-              SizedBox(width: 20.w),
-              totalBalanceWidget(),
-            ],
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Kid's Avatar Container
+            KidAvatarContainer(),
+        
+            // Logout Button
+            GestureDetector(
+              onTap: () async {
+                await _authService.signOut();
+                // Navigate to Login screen after logout
+                Get.offAll(() => LoginScreen());
+              },
+              child: Icon(Icons.logout, color: Colors.red),
+            ),
+        
+            // Row for cards and balance widgets
+            Row(
+              children: [
+                SpendingCardContainer(),
+                SizedBox(width: 20.w),
+                coinKidLockContainer(),
+                SizedBox(width: 20.w),
+                totalBalanceWidget(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

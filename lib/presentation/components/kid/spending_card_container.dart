@@ -1,4 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
@@ -67,11 +68,11 @@ class SpendingCardContainer extends StatelessWidget {
                         kid.wallet.spendingJar.balance;
 
                     // Format the amount with 2 decimal places
-                    final formattedSpendingAmount =
-                        spendingAmount.toStringAsFixed(2);
+                    // final formattedSpendingAmount =
+                    //     spendingAmount.toStringAsFixed(2);
 
                     return Text(
-                      "€$formattedSpendingAmount",
+                      "${spendingAmount.toMoneyFormat()}",
                       style: AppTextStyle.headingMedium.copyWith(
                         color: AppColors.textOnPrimary,
                       ),

@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
@@ -60,7 +60,7 @@ class BasicInfoWidget extends GetView<KidProfileController> {
               ),
               Obx(() {
                 return Text(
-                  "€${controller.appState.currentKid.value!.wallet.spendingJar.balance.toStringAsFixed(2)}",
+                  controller.appState.currentKid.value!.wallet.spendingJar.balance.toMoneyFormat(),
                   style: AppTextStyle.bodyLarge,
                 );
               }),

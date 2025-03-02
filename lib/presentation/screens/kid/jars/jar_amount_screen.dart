@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
-import 'package:coin_kids/presentation/components/common/custom_show_case.dart';
 
 class JarAmountScreen extends GetView<JarCreationController> {
   JarAmountScreen({required this.isSpending, required this.jarColor, Key? key})
@@ -25,6 +24,8 @@ class JarAmountScreen extends GetView<JarCreationController> {
 
   @override
   Widget build(BuildContext context) {
+    final wallet = controller.appState.currentKid.value!.wallet;
+
     // Start showcase when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) {
@@ -63,20 +64,48 @@ class JarAmountScreen extends GetView<JarCreationController> {
               SizedBox(height: 16.h),
               Text("Enter the amount 💸💰", style: AppTextStyle.headingLarge),
               SizedBox(height: 20.h),
-              AppShowCaseWidget(
-                showcaseKey: amountTextFieldKey,
-                description: 'How much money do you want to add to your jar 💵',
-                backgroundImage: "assets/center_spot_light_background.png",
-                tooltipPosition: TooltipPosition.top,
-                disposeOnTap: false,
-                child: KidCustomTextField(
-                    maxlength: 4,
-                    keyboardType: TextInputType.number,
-                    hintText: "e.g 10.50 €",
-                    onChange: (val) {
-                      controller.amount.value = val.trim();
-                    }),
-              ),
+              KidCustomTextField(
+
+                  keyboardType: TextInputType.number,
+                  hintText: "e.g 10.50",
+                  onChange: (val) {
+                    controller.amount.value = val.trim();
+                  }),
+              // AppShowCaseWidget(
+              //   showcaseKey: amountTextFieldKey,
+              //   description: 'How much money do you want to add to your jar 💵',
+              //   backgroundImage: "assets/center_spot_light_background.png",
+              //   tooltipPosition: TooltipPosition.top,
+              //   disposeOnTap: false,
+              //   child: KidCustomTextField(
+              //       maxlength: 4,
+              //       keyboardType: TextInputType.number,
+              //       hintText: "e.g 10.50 €",
+              //       onChange: (val) {
+              //         controller.amount.value = val.trim();
+              //       }),
+              // ),
+              // wallet.spendingJar.balance > 0 ?
+              // KidCustomTextField(
+              //     enabled: false,
+              //     maxlength: 4,
+              //     keyboardType: TextInputType.number,
+              //     hintText: "${wallet.spendingJar.balance.toMoneyFormat()}",
+              //     onChange: (val) {
+              //       wallet.spendingJar.balance.toMoneyFormat();
+              //     })
+              // //     ? Text(
+              // //   'Spending: ${wallet.spendingJar.balance.toMoneyFormat()}',
+              // //   style: TextStyle(fontSize: 12.sp),
+              // // )
+              //     :
+              // KidCustomTextField(
+              //     maxlength: 4,
+              //     keyboardType: TextInputType.number,
+              //     hintText: "e.g 10.50 €",
+              //     onChange: (val) {
+              //       controller.amount.value = val.trim();
+              //     }),
               Padding(
                 padding: EdgeInsets.only(right: 20.w, top: 16.h),
                 child: Align(

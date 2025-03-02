@@ -6,8 +6,10 @@ import 'package:flutter_svg/svg.dart';
 
 class GreenDoneButton extends StatelessWidget {
   final VoidCallback onTap;
+  final double? width;
   const GreenDoneButton({
     required this.onTap,
+    this.width,
     super.key,
   });
 
@@ -17,14 +19,14 @@ class GreenDoneButton extends StatelessWidget {
       onTap: onTap,
       
       child: Container(
-        width: 120.w,
+        width: width ?? 120.w,
         height: 32.h,
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
           color: const Color(0xFF19B859),
           shape: RoundedRectangleBorder(
             side: BorderSide(width: 2.22.w, color: const Color(0xFF0E9454)),
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
         child: Stack(

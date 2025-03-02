@@ -3,9 +3,9 @@ import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/jars/amount_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/screens/kid/jars/jar_amount_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -133,6 +133,7 @@ class AddJarColorScreen extends StatelessWidget {
               //     ),
               //   ),
               // ),
+              SizedBox(height: 10.h,),
               SizedBox(
                 height: 80.h,
                 width: 399.w,

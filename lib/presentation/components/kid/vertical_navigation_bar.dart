@@ -13,6 +13,11 @@ class VerticalNavBarController extends GetxController {
       currentItem.value = newIndex;
     }
   }
+  @override
+  void onClose() {
+    // Clean up any streams, animations, or other resources
+    super.onClose();
+  }
 }
 
 class VerticalNavBar extends StatelessWidget {
@@ -85,6 +90,7 @@ class VerticalNavBar extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class NavItem {

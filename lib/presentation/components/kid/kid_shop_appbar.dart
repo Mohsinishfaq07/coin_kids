@@ -48,6 +48,8 @@ class CustomShopAppBar extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: Row(
+
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Obx(() => _buildFilterButton(
                       "All",

@@ -71,7 +71,7 @@ class ProductDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     landscapeOrientation();
-    KidGoalsController kidGoalsController = Get.put(KidGoalsController());
+    // KidGoalsController kidGoalsController = Get.put(KidGoalsController());
 
     return Scaffold(
       appBar: AppBar(

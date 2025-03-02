@@ -1,4 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/presentation/components/common/AppButton.dart';
@@ -42,7 +43,8 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                   children: [
                     SizedBox(height: 20.h),
                     Obx(() {
-                      return quickTransferChildGeneralDetailWidget(kid: controller.appState.currentKid.value);
+                      return quickTransferChildGeneralDetailWidget(
+                          kid: controller.appState.currentKid.value);
                     }),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
@@ -55,7 +57,8 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
 
-                              color: AppColors.textHighlighted, // Default color for non-bold text
+                              color: AppColors
+                                  .textHighlighted, // Default color for non-bold text
                             ),
                             children: [
                               const TextSpan(
@@ -70,13 +73,15 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
 
-                                  color: AppColors.textHighlighted, // Purple color for "remove"
+                                  color: AppColors
+                                      .textHighlighted, // Purple color for "remove"
                                 ),
                               ),
                               TextSpan(
                                 // text: 'money\nfrom your ${docData['name']}\'s account',
                                 style: const TextStyle(
-                                  color: Colors.black, // Default color for the remaining text
+                                  color: Colors
+                                      .black, // Default color for the remaining text
                                 ),
                               ),
                             ],
@@ -88,12 +93,16 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       alignment: Alignment.topLeft,
                       child: Text(
                         'Enter amount',
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                                fontSize: 14.sp, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 12.h),
                     QuickTransferTextField(
-                        hintText: "0,00",
+                        hintText: 0.toMoneyFormat(),
                         keyboardType: TextInputType.number,
                         onChanged: (val) {
                           controller.amount.value = val;
@@ -105,14 +114,20 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       child: Text.rich(
                         TextSpan(
                           text: 'Leave a Message ', // Default text
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(
                                 fontSize: 14.h,
                                 fontWeight: FontWeight.bold,
                               ),
                           children: [
                             TextSpan(
                               text: '(Optional)', // Optional in gray color
-                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(
                                     fontSize: 14.h,
                                     fontFamily: 'Open Sans',
                                     color: AppColors.textSecondary,
@@ -140,28 +155,40 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '- Remove',
-                            backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                            backgroundColor: controller.amount.value.isNotEmpty
+                                ? AppColors.buttonPrimary
+                                : AppColors.buttonDisabled,
                             onPressed: () async {
                               if (controller.amount.value.isEmpty) {
-                                controller.amountValidation.value = 'Enter valid amount';
+                                controller.amountValidation.value =
+                                    'Enter valid amount';
                               } else {
                                 try {
-                                  double enteredAmount = double.parse(controller.amount.value);
-                                  final kid = controller.appState.currentKid.value!;
-                                  var newBalance = kid.wallet.spendingJar.balance - enteredAmount;
+                                  double enteredAmount =
+                                      double.parse(controller.amount.value);
+                                  final kid =
+                                      controller.appState.currentKid.value!;
+                                  var newBalance =
+                                      kid.wallet.spendingJar.balance -
+                                          enteredAmount;
 
                                   if (newBalance < 0) {
-                                    ToastUtil.showToast("Kid doesn't have enough money");
+                                    ToastUtil.showToast(
+                                        "Kid doesn't have enough money");
                                     return;
                                   }
 
-                                  await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
+                                  await controller.kidService
+                                      .updateSpendingJarBalanceByParent(
+                                          kid.kidId, newBalance);
                                   showDialog(
                                     context: context,
                                     builder: (context) => AppParentDialog(
-                                      iconPath: "assets/succesful_dialog_icon.svg",
+                                      iconPath:
+                                          "assets/succesful_dialog_icon.svg",
                                       title: "Transfer Successful",
-                                      subtitle: "€${enteredAmount} transferred to ${kid.name}",
+                                      subtitle:
+                                          "€${enteredAmount.toMoneyFormat()} deducted from ${kid.name}",
                                       buttons: [
                                         DialogButton(
                                           text: "Close",
@@ -181,24 +208,35 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                           return AppButton(
                             size: Size(125.w, 50.h),
                             text: '+ Send',
-                            backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                            backgroundColor: controller.amount.value.isNotEmpty
+                                ? AppColors.buttonPrimary
+                                : AppColors.buttonDisabled,
                             onPressed: () async {
                               if (controller.amount.value.isEmpty) {
-                                controller.amountValidation.value = 'Enter valid amount';
+                                controller.amountValidation.value =
+                                    'Enter valid amount';
                               } else {
                                 try {
-                                  double enteredAmount = double.parse(controller.amount.value);
-                                  final kid = controller.appState.currentKid.value!;
-                                  var newBalance = kid.wallet.spendingJar.balance + enteredAmount;
+                                  double enteredAmount =
+                                      double.parse(controller.amount.value);
+                                  final kid =
+                                      controller.appState.currentKid.value!;
+                                  var newBalance =
+                                      kid.wallet.spendingJar.balance +
+                                          enteredAmount;
 
-                                  await controller.kidService.updateSpendingJarBalance(kid.kidId, newBalance);
+                                  await controller.kidService
+                                      .updateSpendingJarBalanceByParent(
+                                          kid.kidId, newBalance);
 
                                   showDialog(
                                     context: context,
                                     builder: (context) => AppParentDialog(
-                                      iconPath: "assets/succesful_dialog_icon.svg",
+                                      iconPath:
+                                          "assets/succesful_dialog_icon.svg",
                                       title: "Transfer Successful",
-                                      subtitle: "€${enteredAmount} deducted from ${kid.name}",
+                                      subtitle:
+                                          "€${enteredAmount} Transferred to ${kid.name}",
                                       buttons: [
                                         DialogButton(
                                           text: "Close",
@@ -304,7 +342,8 @@ Widget quickTransferChildGeneralDetailWidget({required KidModel? kid}) {
               SizedBox(height: 8.h),
 
               // Child Avatar
-              CircleAvatar(radius: 30, backgroundImage: NetworkImage(kid.avatar)),
+              CircleAvatar(
+                  radius: 30, backgroundImage: NetworkImage(kid.avatar)),
               SizedBox(height: 8.h),
 
               // Available Money
@@ -314,7 +353,7 @@ Widget quickTransferChildGeneralDetailWidget({required KidModel? kid}) {
               ),
               SizedBox(height: 6.h),
               Text(
-                '\$ ${kid.wallet.spendingJar.balance}',
+                kid.wallet.spendingJar.balance.toMoneyFormat(),
                 style: AppTextStyle.bodyMedium,
               ),
             ],

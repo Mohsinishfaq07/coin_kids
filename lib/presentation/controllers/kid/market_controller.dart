@@ -97,4 +97,9 @@ class MarketController extends GetxController {
       return null;
     }
   }
+  @override
+  void onClose() {
+    // Clean up any streams, animations, or other resources
+    super.onClose();
+  }
 }

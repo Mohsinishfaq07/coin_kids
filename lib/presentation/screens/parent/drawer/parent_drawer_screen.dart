@@ -122,27 +122,29 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     ],
                   ),
                   child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() {
-                          return _buildProfileRow("Full name", controller.appState.currentParent.value!.name, "assets/drawer_svgs/3p.svg");
-                        }),
-                        SizedBox(height: 26.h),
-                        Obx(() {
-                          return _buildProfileRow(
-                            "Date of birth",
-                            controller.appState.currentParent.value!.dob == 0
-                                ? "Not Specified"
-                                : DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob)),
-                            "assets/drawer_svgs/calendar_month.svg",
-                          );
-                        }),
-                        SizedBox(height: 26.h),
-                        Obx(() {
-                          return _buildProfileRow("Gender", controller.appState.currentParent.value!.gender, "assets/drawer_svgs/wc.svg");
-                        }),
-                      ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Obx(() {
+                            return _buildProfileRow("Full name", controller.appState.currentParent.value!.name, "assets/drawer_svgs/3p.svg");
+                          }),
+                          SizedBox(height: 26.h),
+                          Obx(() {
+                            return _buildProfileRow(
+                              "Date of birth",
+                              controller.appState.currentParent.value!.dob == 0
+                                  ? "Not Specified"
+                                  : DateFormat('d MMM, y').format(DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob)),
+                              "assets/drawer_svgs/calendar_month.svg",
+                            );
+                          }),
+                          SizedBox(height: 26.h),
+                          Obx(() {
+                            return _buildProfileRow("Gender", controller.appState.currentParent.value!.gender, "assets/drawer_svgs/wc.svg");
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                 ),

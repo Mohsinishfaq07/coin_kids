@@ -17,8 +17,6 @@ import 'package:coin_kids/presentation/screens/kid/goals/save_goal_widget.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/presentation/screens/parent/home_screen/parent_home_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

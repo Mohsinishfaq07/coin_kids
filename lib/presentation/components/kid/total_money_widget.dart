@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
@@ -60,7 +61,7 @@ Widget totalBalanceWidget() {
                   final List<KidModel> kids = snapshot.data!;
                   if (kids.isEmpty) {
                     return Text(
-                      "€0.00",
+                      0.toMoneyFormat(),
                       style: AppTextStyle.headingMedium.copyWith(
                         color: AppColors.textOnPrimary,
                       ),
@@ -73,7 +74,7 @@ Widget totalBalanceWidget() {
                   final totalBalance = spendingAmount + savingAmount;
 
                   return Text(
-                    "€${totalBalance.toStringAsFixed(2)}",
+                    totalBalance.toMoneyFormat(),
                     style: AppTextStyle.headingMedium.copyWith(
                       color: AppColors.textOnPrimary,
                     ),

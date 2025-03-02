@@ -55,6 +55,7 @@ class AddChildScreen extends GetView<AddChildController> {
 
                   // Child Age Field
                   CustomTextField(
+                    maxLength: 2,
                     titleText: "Age",
                     hintText: "Enter child's age",
                     keyboardType: TextInputType.number,

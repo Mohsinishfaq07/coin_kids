@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_back_button.dart';
 import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
@@ -13,6 +14,7 @@ import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/screens/kid/jars/widgets/half_circle_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,7 +39,7 @@ class AddMoneyScreen extends GetView<JarCreationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBody: true,
+        // extendBody: true,
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('kids')
@@ -90,157 +92,55 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                         image: AssetImage(AppAssets.kidSectionBG),
                         fit: BoxFit.cover),
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 16.h),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(children: [
-                                  kidBackButton(
-                                    onTap: () {
-                                      showDeleteGoalDialog(
-                                        imageAsset: "assets/clap.png",
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(children: [
+                              kidBackButton(
+                                onTap: () {
+                                  showDeleteGoalDialog(
+                                    imageAsset: "assets/clap.png",
 
-                                        context,
-                                        label:
-                                            "Cancel transfer", // The title of the dialog
-                                        subLabel:
-                                            "Do you want to cancel Transfer?", // The subtitle
-                                        YesonTap: () async {
-                                          addMoneyController.totalValue.value =
-                                              0.0;
-                                          Get.back();
-                                        }, // The action to take on "Yes" button click
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(width: 20.w),
-                                  Text(
-                                    "Add money",
-                                    style: AppTextStyle.headingLarge,
-                                  )
-                                ]),
-                                SpendingCardContainer(),
-                              ],
-                            ),
-                          ),
+                                    context,
+                                    label:
+                                        "Cancel transfer", // The title of the dialog
+                                    subLabel:
+                                        "Do you want to cancel Transfer?", // The subtitle
+                                    YesonTap: () async {
+                                      addMoneyController.totalValue.value =
+                                          0.0;
+                                      Get.back();
+                                    }, // The action to take on "Yes" button click
+                                  );
+                                },
+                              ),
+                              SizedBox(width: 20.w),
+                              Text(
+                                "Add money",
+                                style: AppTextStyle.headingLarge,
+                              )
+                            ]),
+                            SpendingCardContainer(),
+                          ],
                         ),
-                        SizedBox(height: 16.h),
-                        Padding(
-                          padding: EdgeInsets.only(right: 35.w),
-                          child: Row(
+                      ),
+                      // SizedBox(height: 16.h),
+                      Stack(
+                        children: [
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Stack(
-                                  children: [
-                                    HalfCircleWidget(),
-                                    Positioned(
-                                      right:
-                                          0, // Aligns the child to the right corner
-                                      top: 0, // Aligns the child to the top
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .start, // Aligns buttons to the top
-                                        children: [
-                                          // First Button
-                                          GestureDetector(
-                                            onTap: () {
-                                              addMoneyController
-                                                  .clickedIndex.value = 0;
-                                            },
-                                            child: Obx(() {
-                                              final isSelected =
-                                                  addMoneyController
-                                                          .clickedIndex.value ==
-                                                      0;
+                             //  HalfCircleWithButtonsWidget(clickedIndex: addMoneyController.clickedIndex, onButtonTap: (index) {
+                             // addMoneyController.   clickedIndex.value = index;  // Update the clicked index
+                             //  },),
 
-                                              return isSelected
-                                                  ? AvatarGlow(
-                                                      glowRadiusFactor: 0.3.r,
-                                                      startDelay:
-                                                          const Duration(
-                                                              seconds: 2),
-                                                      repeat: true,
-                                                      glowCount: 2,
-                                                      glowShape:
-                                                          BoxShape.circle,
-                                                      animate:
-                                                          true, // Glow only when selected
-                                                      duration: const Duration(
-                                                          seconds: 2),
-                                                      glowColor: AppColors
-                                                          .buttonPrimary,
-                                                      child: _buildButton(
-                                                        isSelected,
-                                                        assetPath:
-                                                            "assets/notes.svg", // Customize icon
-                                                      ),
-                                                    )
-                                                  : _buildButton(
-                                                      isSelected,
-                                                      assetPath:
-                                                          "assets/notes.svg", // Customize icon
-                                                    );
-                                            }),
-                                          ),
-                                          SizedBox(height: 20.h),
-                                          // Second Button
-                                          GestureDetector(
-                                            onTap: () {
-                                              addMoneyController
-                                                  .clickedIndex.value = 1;
-                                            },
-                                            child: Obx(() {
-                                              final isSelected =
-                                                  addMoneyController
-                                                          .clickedIndex.value ==
-                                                      1;
-
-                                              return isSelected
-                                                  ? AvatarGlow(
-                                                      glowRadiusFactor: 0.3.r,
-                                                      startDelay:
-                                                          const Duration(
-                                                              seconds: 2),
-                                                      repeat: true,
-                                                      glowCount: 2,
-                                                      glowShape:
-                                                          BoxShape.circle,
-                                                      animate:
-                                                          true, // Glow only when selected
-                                                      duration: const Duration(
-                                                          seconds: 2),
-                                                      glowColor: AppColors
-                                                          .buttonPrimary,
-                                                      child: _buildButton(
-                                                        isSelected,
-                                                        assetPath:
-                                                            "assets/Coin.svg", // Customize icon
-                                                      ),
-                                                    )
-                                                  : _buildButton(
-                                                      isSelected,
-                                                      assetPath:
-                                                          "assets/Coin.svg", // Customize icon
-                                                    );
-                                            }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                               SizedBox(
-                                width: 68.w,
+                                // width: 10.w,
                               ),
                               Obx(() {
                                 // Dynamically display widget based on button click
@@ -432,9 +332,9 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                                   return SizedBox.shrink();
                                 }
                               }),
-                              SizedBox(
-                                width: 58.w,
-                              ),
+                              // SizedBox(
+                              //   width: 58.w,
+                              // ),
                               Column(
                                 children: [
                                   GestureDetector(
@@ -507,9 +407,9 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                                   )
                                 ],
                               ),
-                              SizedBox(
-                                width: 20.w,
-                              ),
+                              // SizedBox(
+                              //   width: 20.w,
+                              // ),
                               DragTarget<String>(
                                 onAcceptWithDetails: (data) {
                                   addMoneyController.onNoteDropped(
@@ -574,7 +474,7 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                                                           0
                                                       ? Marquee(
                                                           text:
-                                                              '${addMoneyController.totalValue.value}€',
+                                                              addMoneyController.totalValue.value.toMoneyFormat(),
                                                           decelerationDuration:
                                                               Duration(
                                                                   milliseconds:
@@ -618,7 +518,7 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        '${addMoneyController.totalValue.value}',
+                                                                        addMoneyController.totalValue.value.toMoneyFormat(),
                                                                     style:
                                                                         TextStyle(
                                                                       color: Color(
@@ -667,66 +567,168 @@ class AddMoneyScreen extends GetView<JarCreationController> {
                               ),
                             ],
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 20.w, top: 10.h),
-                          child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: GreenNextButton(
-                                  showSuffix: true,
-                                  onTap: () async {
-                                    if (isSpending == true) {
-                                      if (addMoneyController.totalValue.value ==
-                                          amount) {
-                                        print('Amounts match!');
-                                        final kid = controller
-                                            .appState.currentKid.value!;
+                          Positioned(
+                            left: -80.w,
+                            child: Stack(
+                              children: [
+                                HalfCircleWidget(),
+                                Positioned(
+                                  right:
+                                  0, // Aligns the child to the right corner
+                                  top: 0, // Aligns the child to the top
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .start, // Aligns buttons to the top
+                                    children: [
+                                      // First Button
+                                      GestureDetector(
+                                        onTap: () {
+                                          addMoneyController
+                                              .clickedIndex.value = 0;
+                                        },
+                                        child: Obx(() {
+                                          final isSelected =
+                                              addMoneyController
+                                                  .clickedIndex.value ==
+                                                  0;
 
-                                        await controller.kidService
-                                            .updateSpendingJarBalance(
-                                                kid.kidId, amount,
-                                                color: jarColor.value);
+                                          return isSelected
+                                              ? AvatarGlow(
+                                            glowRadiusFactor: 0.3.r,
+                                            startDelay:
+                                            const Duration(
+                                                seconds: 2),
+                                            repeat: true,
+                                            glowCount: 2,
+                                            glowShape:
+                                            BoxShape.circle,
+                                            animate:
+                                            true, // Glow only when selected
+                                            duration: const Duration(
+                                                seconds: 2),
+                                            glowColor: AppColors
+                                                .buttonPrimary,
+                                            child: _buildButton(
+                                              isSelected,
+                                              assetPath:
+                                              "assets/notes.svg", // Customize icon
+                                            ),
+                                          )
+                                              : _buildButton(
+                                            isSelected,
+                                            assetPath:
+                                            "assets/notes.svg", // Customize icon
+                                          );
+                                        }),
+                                      ),
+                                      SizedBox(height: 20.h),
+                                      // Second Button
+                                      GestureDetector(
+                                        onTap: () {
+                                          addMoneyController
+                                              .clickedIndex.value = 1;
+                                        },
+                                        child: Obx(() {
+                                          final isSelected =
+                                              addMoneyController
+                                                  .clickedIndex.value ==
+                                                  1;
 
-                                        addMoneyController.totalValue.value =
-                                            0.0;
-                                        Get.off(() => KidHomeScreen());
-                                      } else {
-                                        ToastUtil.showToast(
-                                          "Total value does not match spending amount!",
-                                        );
-                                      }
+                                          return isSelected
+                                              ? AvatarGlow(
+                                            glowRadiusFactor: 0.3.r,
+                                            startDelay:
+                                            const Duration(
+                                                seconds: 2),
+                                            repeat: true,
+                                            glowCount: 2,
+                                            glowShape:
+                                            BoxShape.circle,
+                                            animate:
+                                            true, // Glow only when selected
+                                            duration: const Duration(
+                                                seconds: 2),
+                                            glowColor: AppColors
+                                                .buttonPrimary,
+                                            child: _buildButton(
+                                              isSelected,
+                                              assetPath:
+                                              "assets/Coin.svg", // Customize icon
+                                            ),
+                                          )
+                                              : _buildButton(
+                                            isSelected,
+                                            assetPath:
+                                            "assets/Coin.svg", // Customize icon
+                                          );
+                                        }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 20.w, top: 10.h),
+                        child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: GreenNextButton(
+                                showSuffix: true,
+                                onTap: () async {
+                                  if (isSpending == true) {
+                                    if (addMoneyController.totalValue.value ==
+                                        amount) {
+                                      print('Amounts match!');
+                                      final kid = controller
+                                          .appState.currentKid.value!;
+
+                                      await controller.kidService
+                                          .updateSpendingJarBalance(
+                                              kid.kidId, amount,
+                                              color: jarColor.value);
+
+                                      addMoneyController.totalValue.value =
+                                          0.0;
+                                      Get.off(() => KidHomeScreen());
                                     } else {
-                                      if (addMoneyController.totalValue.value ==
-                                          amount) {
-                                        print('Amounts match!');
-                                        final kid = controller
-                                            .appState.currentKid.value!;
-                                        await controller.kidService
-                                            .updateSavingJarBalance(
-                                                kid.kidId, amount,
-                                                color: jarColor.value);
-                                        // await authController
-                                        //     .parentFirebaseFunctions
-                                        //     .kidSpendingToSavings(
-                                        //   save: false,
-                                        //   enteredAmount: widget.amount,
-                                        //       kid.parentId,
-                                        //   savingsJarColor: widget.jarColor,
-                                        // );
-                                        addMoneyController.totalValue.value =
-                                            0.0;
-                                        Get.off(() => KidHomeScreen());
-                                      } else {
-                                        ToastUtil.showToast(
-                                          "Total value does not match savings amount!",
-                                        );
-                                      }
+                                      ToastUtil.showToast(
+                                        "Total value does not match spending amount!",
+                                      );
                                     }
-                                  },
-                                  buttonText: "Next")),
-                        ),
-                      ],
-                    ),
+                                  } else {
+                                    if (addMoneyController.totalValue.value ==
+                                        amount) {
+                                      print('Amounts match!');
+                                      final kid = controller
+                                          .appState.currentKid.value!;
+                                      await controller.kidService
+                                          .updateSavingJarBalance(
+                                              kid.kidId, amount,
+                                              color: jarColor.value);
+                                      // await authController
+                                      //     .parentFirebaseFunctions
+                                      //     .kidSpendingToSavings(
+                                      //   save: false,
+                                      //   enteredAmount: widget.amount,
+                                      //       kid.parentId,
+                                      //   savingsJarColor: widget.jarColor,
+                                      // );
+                                      addMoneyController.totalValue.value =
+                                          0.0;
+                                      Get.off(() => KidHomeScreen());
+                                    } else {
+                                      ToastUtil.showToast(
+                                        "Total value does not match savings amount!",
+                                      );
+                                    }
+                                  }
+                                },
+                                buttonText: "Next")),
+                      ),
+                    ],
                   ),
                 );
               }
@@ -772,7 +774,7 @@ class RightHalfCircleClipper extends CustomClipper<Path> {
       pi, // Sweep angle (half circle to the bottom center)
       false,
     );
-    path.lineTo(size.width / 2, size.height);
+    path.lineTo(size.width / 2, size.height); // Closing the path
     path.close();
     return path;
   }
@@ -784,26 +786,16 @@ class RightHalfCircleClipper extends CustomClipper<Path> {
 class HalfCircleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(2.0), // Add padding for the border
-          child: ClipPath(
-            clipper: RightHalfCircleClipper(),
-            child: Container(
-              width: 155.w,
-              height: 80.h,
-              color: Colors.transparent, // Fill color for the right half-circle
-            ),
-          ),
+    return ClipPath(
+      clipper: RightHalfCircleClipper(), // Clip the right half circle
+      child: Container(
+        width: 155.w, // Set the width for the right half-circle
+        height: 80.h, // Set the height for the right half-circle
+        // color: Colors.blue, // Fill color for the right half-circle
+        child: CustomPaint(
+          painter: RightHalfCircleBorderPainter(),
         ),
-        Positioned.fill(
-          child: CustomPaint(
-            painter: RightHalfCircleBorderPainter(),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

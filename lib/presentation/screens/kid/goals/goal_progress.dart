@@ -12,9 +12,7 @@ import 'package:coin_kids/presentation/components/kid/slider_widget.dart';
 import 'package:coin_kids/presentation/dialogs/kid/delete_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/edit_goal.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/slider.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/save_goal_widget.dart';
 import 'package:coin_kids/presentation/components/kid/spending_card_container.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -26,7 +24,7 @@ import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 
 class GoalProgress extends StatelessWidget {
-  RxBool isCompleted;
+  final RxBool isCompleted;
   final RxBool fromHome;
   final String goalId;
 
@@ -162,9 +160,13 @@ class GoalProgress extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Goal Progress',
-                                          style: AppTextStyle.headingMedium,
+                                        Align(
+                                          alignment : Alignment.center,
+
+                                          child: Text(
+                                            'Goal Progress',
+                                            style: AppTextStyle.headingMedium,
+                                          ),
                                         ),
                                         SizedBox(height: 20.h),
                                         Row(
@@ -510,122 +512,125 @@ class GoalProgress extends StatelessWidget {
                                               width: 128.w,
                                               suffixSvg:
                                                   AppAssets.kidTickButton,
-                                              onTap: () async {
-                                                final kidSnapshot =
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection('kids')
-                                                        .where('parentId',
-                                                            isEqualTo:
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid)
-                                                        .get();
-
-                                                if (kidSnapshot.docs.isEmpty) {
-                                                  print(
-                                                      "[DEBUG] No kids found");
-                                                  return;
-                                                }
-
-                                                final kidId =
-                                                    kidSnapshot.docs.first.id;
-                                                final goalSnapshot =
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection('goals')
-                                                        .where('kidId',
-                                                            isEqualTo: kidId)
-                                                        .where('goalId',
-                                                            isEqualTo: goalId)
-                                                        .get();
-
-                                                if (goalSnapshot.docs.isEmpty) {
-                                                  print(
-                                                      "[DEBUG] No goal found");
-                                                  return;
-                                                }
-
-                                                final goalDoc =
-                                                    goalSnapshot.docs.first;
-                                                final goalData = goalDoc.data();
-
-                                                double currentAmount = goalData
-                                                        .containsKey(
-                                                            'currentAmount')
-                                                    ? (goalData['currentAmount']
-                                                            is int
-                                                        ? (goalData['currentAmount']
-                                                                as int)
-                                                            .toDouble() // Convert int to double
-                                                        : (goalData[
-                                                                'currentAmount'] ??
-                                                            0.0))
-                                                    : 0.0;
-
-                                                double sliderValue =
-                                                    kidGoalController
-                                                        .sliderValue.value;
-
-                                                // Calculate only the newly added amount
-                                                if (kidGoalController
-                                                        .isMinus.value ==
-                                                    true.obs.value) {
-                                                  double addedAmount =
-                                                      currentAmount -
-                                                          sliderValue;
-                                                  // sliderValue -
-                                                  //     currentAmount;
-
-                                                  kidGoalController
-                                                      .GoalsTOSpending(
-                                                    goalId: goalId,
-                                                    kidId: kidId,
-                                                    enteredAmount: addedAmount,
-                                                  );
-                                                  kidGoalController
-                                                          .isMinus.value ==
-                                                      false;
-                                                  return;
-
-                                                  // if (addedAmount <= 0) {
-                                                  //   Get.offAll(KidHomeScreen());
-                                                  //   return;
-                                                  // } else {
-                                                  // kidGoalController
-                                                  //     .GoalsTOSpending(
-                                                  //   goalId: goalId,
-                                                  //   kidId: kidId,
-                                                  //   enteredAmount:
-                                                  //       addedAmount,
-                                                  // );
-                                                  // }
-                                                  //  return;
-                                                } else {
-                                                  double addedAmount =
-                                                      sliderValue -
-                                                          currentAmount;
-
-                                                  if (addedAmount <= 0) {
-                                                    Get.offAll(KidHomeScreen());
-                                                    return;
-                                                  } else {
-                                                    kidGoalController
-                                                        .SpendingTOGoals(
-                                                      goalId: goalId,
-                                                      kidId: kidId,
-                                                      enteredAmount:
-                                                          addedAmount,
-                                                    );
-                                                  }
-
-                                                  print(
-                                                      "[DEBUG] Firestore updated with added amount: $addedAmount");
-                                                  kidGoalController
-                                                          .isMinus.value ==
-                                                      false;
-                                                }
+                                              // onTap: () async {
+                                              //   final kidSnapshot =
+                                              //       await FirebaseFirestore
+                                              //           .instance
+                                              //           .collection('kids')
+                                              //           .where('parentId',
+                                              //               isEqualTo:
+                                              //                   FirebaseAuth
+                                              //                       .instance
+                                              //                       .currentUser!
+                                              //                       .uid)
+                                              //           .get();
+                                              //
+                                              //   if (kidSnapshot.docs.isEmpty) {
+                                              //     print(
+                                              //         "[DEBUG] No kids found");
+                                              //     return;
+                                              //   }
+                                              //
+                                              //   final kidId =
+                                              //       kidSnapshot.docs.first.id;
+                                              //   final goalSnapshot =
+                                              //       await FirebaseFirestore
+                                              //           .instance
+                                              //           .collection('goals')
+                                              //           .where('kidId',
+                                              //               isEqualTo: kidId)
+                                              //           .where('goalId',
+                                              //               isEqualTo: goalId)
+                                              //           .get();
+                                              //
+                                              //   if (goalSnapshot.docs.isEmpty) {
+                                              //     print(
+                                              //         "[DEBUG] No goal found");
+                                              //     return;
+                                              //   }
+                                              //
+                                              //   final goalDoc =
+                                              //       goalSnapshot.docs.first;
+                                              //   final goalData = goalDoc.data();
+                                              //
+                                              //   double currentAmount = goalData
+                                              //           .containsKey(
+                                              //               'currentAmount')
+                                              //       ? (goalData['currentAmount']
+                                              //               is int
+                                              //           ? (goalData['currentAmount']
+                                              //                   as int)
+                                              //               .toDouble() // Convert int to double
+                                              //           : (goalData[
+                                              //                   'currentAmount'] ??
+                                              //               0.0))
+                                              //       : 0.0;
+                                              //
+                                              //   double sliderValue =
+                                              //       kidGoalController
+                                              //           .sliderValue.value;
+                                              //
+                                              //   // Calculate only the newly added amount
+                                              //   if (kidGoalController
+                                              //           .isMinus.value ==
+                                              //       true.obs.value) {
+                                              //     double addedAmount =
+                                              //         currentAmount -
+                                              //             sliderValue;
+                                              //     // sliderValue -
+                                              //     //     currentAmount;
+                                              //
+                                              //     kidGoalController
+                                              //         .GoalsTOSpending(
+                                              //       goalId: goalId,
+                                              //       kidId: kidId,
+                                              //       enteredAmount: addedAmount,
+                                              //     );
+                                              //     kidGoalController
+                                              //             .isMinus.value ==
+                                              //         false;
+                                              //     return;
+                                              //
+                                              //     // if (addedAmount <= 0) {
+                                              //     //   Get.offAll(KidHomeScreen());
+                                              //     //   return;
+                                              //     // } else {
+                                              //     // kidGoalController
+                                              //     //     .GoalsTOSpending(
+                                              //     //   goalId: goalId,
+                                              //     //   kidId: kidId,
+                                              //     //   enteredAmount:
+                                              //     //       addedAmount,
+                                              //     // );
+                                              //     // }
+                                              //     //  return;
+                                              //   } else {
+                                              //     double addedAmount =
+                                              //         sliderValue -
+                                              //             currentAmount;
+                                              //
+                                              //     if (addedAmount <= 0) {
+                                              //       Get.offAll(KidHomeScreen());
+                                              //       return;
+                                              //     } else {
+                                              //       kidGoalController
+                                              //           .SpendingTOGoals(
+                                              //         goalId: goalId,
+                                              //         kidId: kidId,
+                                              //         enteredAmount:
+                                              //             addedAmount,
+                                              //       );
+                                              //     }
+                                              //
+                                              //     print(
+                                              //         "[DEBUG] Firestore updated with added amount: $addedAmount");
+                                              //     kidGoalController
+                                              //             .isMinus.value ==
+                                              //         false;
+                                              //   }
+                                              //   Get.offAll(KidHomeScreen());
+                                              // },
+                                              onTap: (){
                                                 Get.offAll(KidHomeScreen());
                                               },
                                               buttonText: "Done",
@@ -667,12 +672,13 @@ class GoalCard extends StatelessWidget {
         height: 20.h,
         errorBuilder: (context, error, stackTrace) {
           print('Error loading network image: $error');
-          return const Center(
-            child: Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 40,
-            ),
+          return  Center(
+            child: Image.asset("assets/goals_place_holder.png",height: 40,)
+            // Icon(
+            //   Icons.error_outline,
+            //   color: Colors.red,
+            //   size: 40,
+            // ),
           );
         },
         loadingBuilder: (context, child, loadingProgress) {
@@ -697,7 +703,7 @@ class GoalCard extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) {
           print('Error loading local image: $error');
           return Image.asset(
-            'assets/logo.png',
+            'assets/goals_place_holder.png',
             fit: BoxFit.cover,
           );
         },
@@ -705,7 +711,7 @@ class GoalCard extends StatelessWidget {
     } else {
       // Fallback image
       return Image.asset(
-        'assets/logo.png',
+        'assets/goals_place_holder.png',
         fit: BoxFit.cover,
       );
     }

@@ -1,6 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
@@ -249,7 +250,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                           } else if (addMoneyController.clickedIndex.value == 1) {
                             return Center(
                               child: Container(
-                                color: Colors.red,
+                                color: Colors.transparent,
                                 width: 150.w,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -456,6 +457,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                       width: 140.w,
                                       color: candidateData.isNotEmpty ? Colors.green.withOpacity(0.5) : null, // Highlight effect when dragging over
                                     ),
+
                                     Positioned(
                                       bottom: 0.h,
                                       left: 30.w,
@@ -463,7 +465,7 @@ class _TransferByDragState extends State<TransferByDrag> {
                                         child: Container(
                                           width: 90.w,
                                           height: 16.h,
-                                          padding: EdgeInsets.symmetric(horizontal: 12.69.w, vertical: 2.h),
+                                          padding: EdgeInsets.symmetric(horizontal: 1.69.w, vertical: 2.h),
                                           decoration: ShapeDecoration(
                                             color: Colors.white,
                                             shape: RoundedRectangleBorder(
@@ -476,64 +478,173 @@ class _TransferByDragState extends State<TransferByDrag> {
                                                 blurRadius: 2.60,
                                                 offset: Offset(-1.30, 1.95),
                                                 spreadRadius: 0,
-                                              )
+                                              ),
                                             ],
                                           ),
                                           child: addMoneyController.totalValue.value > 0
+                                              ? (addMoneyController.totalValue.value.toString().length > 8
                                               ? Marquee(
-                                                  text: addMoneyController.totalValue.value.toString(),
-                                                  decelerationDuration: Duration(milliseconds: 300),
-                                                  // Shortened
-                                                  decelerationCurve: Curves.easeOut,
-                                                  velocity: 60.0,
-                                                  // Slower velocity
-                                                  accelerationDuration: Duration(milliseconds: 300),
-                                                  // Shortened
-                                                  accelerationCurve: Curves.linear,
-                                                  pauseAfterRound: Duration(seconds: 1),
-                                                  blankSpace: 10.0,
-                                                  style: TextStyle(
-                                                    color: Color(0xFF015486),
-                                                    fontSize: 15.83.sp,
-                                                    fontFamily: 'Open Sans',
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                )
+                                            text: addMoneyController.totalValue.value.toMoneyFormat(),
+                                            decelerationDuration: Duration(milliseconds: 300),
+                                            decelerationCurve: Curves.easeOut,
+                                            velocity: 40.0,
+                                            accelerationDuration: Duration(milliseconds: 300),
+                                            accelerationCurve: Curves.linear,
+                                            pauseAfterRound: Duration(seconds: 1),
+                                            blankSpace: 20.w,
+                                            style: TextStyle(
+                                              color: Color(0xFF015486),
+                                              fontSize: 16.sp,
+                                              fontFamily: 'Open Sans',
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          )
                                               : Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text.rich(
+                                                TextSpan(
                                                   children: [
-                                                    Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: '${addMoneyController.totalValue.value}',
-                                                            style: TextStyle(
-                                                              color: Color(0xFF015486),
-                                                              fontSize: 15.83.sp,
-                                                              fontFamily: 'Open Sans',
-                                                              fontWeight: FontWeight.w800,
-                                                            ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: '€',
-                                                            style: TextStyle(
-                                                              color: Color(0xFF015486),
-                                                              fontSize: 15.83.sp,
-                                                              fontFamily: 'Open Sans',
-                                                              fontWeight: FontWeight.w700,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                    TextSpan(
+                                                      text: addMoneyController.totalValue.value.toMoneyFormat(),
+                                                      style: TextStyle(
+                                                        color: Color(0xFF015486),
+                                                        fontSize: 15.83.sp,
+                                                        fontFamily: 'Open Sans',
+                                                        fontWeight: FontWeight.w800,
                                                       ),
-                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                    TextSpan(
+                                                      text: '€',
+                                                      style: TextStyle(
+                                                        color: Color(0xFF015486),
+                                                        fontSize: 15.83.sp,
+                                                        fontFamily: 'Open Sans',
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ))
+                                              : Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: addMoneyController.totalValue.value.toMoneyFormat(),
+                                                      style: TextStyle(
+                                                        color: Color(0xFF015486),
+                                                        fontSize: 15.83.sp,
+                                                        fontFamily: 'Open Sans',
+                                                        fontWeight: FontWeight.w800,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: '€',
+                                                      style: TextStyle(
+                                                        color: Color(0xFF015486),
+                                                        fontSize: 15.83.sp,
+                                                        fontFamily: 'Open Sans',
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
+                                    // Positioned(
+                                    //   bottom: 0.h,
+                                    //   left: 30.w,
+                                    //   child: Center(
+                                    //     child: Container(
+                                    //       width: 90.w,
+                                    //       height: 16.h,
+                                    //       padding: EdgeInsets.symmetric(horizontal: 1.69.w, vertical: 2.h),
+                                    //       decoration: ShapeDecoration(
+                                    //         color: Colors.white,
+                                    //         shape: RoundedRectangleBorder(
+                                    //           side: BorderSide(width: 1.53.w, color: Color(0xFF015486)),
+                                    //           borderRadius: BorderRadius.circular(51.33.r),
+                                    //         ),
+                                    //         shadows: [
+                                    //           BoxShadow(
+                                    //             color: Color(0x3F6169D3),
+                                    //             blurRadius: 2.60,
+                                    //             offset: Offset(-1.30, 1.95),
+                                    //             spreadRadius: 0,
+                                    //           )
+                                    //         ],
+                                    //       ),
+                                    //       child: addMoneyController.totalValue.value > 0
+                                    //           ? Marquee(
+                                    //               text: addMoneyController.totalValue.value.toMoneyFormat(),
+                                    //               decelerationDuration: Duration(milliseconds: 300),
+                                    //               // Shortened
+                                    //               decelerationCurve: Curves.easeOut,
+                                    //               velocity: 40.0,
+                                    //               // Slower velocity
+                                    //               accelerationDuration: Duration(milliseconds: 300),
+                                    //               // Shortened
+                                    //               accelerationCurve: Curves.linear,
+                                    //               pauseAfterRound: Duration(seconds: 1),
+                                    //               blankSpace: 20.w,
+                                    //               style: TextStyle(
+                                    //                 color: Color(0xFF015486),
+                                    //                 fontSize: 16.sp,
+                                    //                 fontFamily: 'Open Sans',
+                                    //                 fontWeight: FontWeight.w800,
+                                    //               ),
+                                    //             )
+                                    //           : Row(
+                                    //               mainAxisSize: MainAxisSize.min,
+                                    //               mainAxisAlignment: MainAxisAlignment.center,
+                                    //               crossAxisAlignment: CrossAxisAlignment.center,
+                                    //               children: [
+                                    //                 Text.rich(
+                                    //                   TextSpan(
+                                    //                     children: [
+                                    //                       TextSpan(
+                                    //                         text: '${addMoneyController.totalValue.value}',
+                                    //                         style: TextStyle(
+                                    //                           color: Color(0xFF015486),
+                                    //                           fontSize: 15.83.sp,
+                                    //                           fontFamily: 'Open Sans',
+                                    //                           fontWeight: FontWeight.w800,
+                                    //                         ),
+                                    //                       ),
+                                    //                       TextSpan(
+                                    //                         text: '€',
+                                    //                         style: TextStyle(
+                                    //                           color: Color(0xFF015486),
+                                    //                           fontSize: 15.83.sp,
+                                    //                           fontFamily: 'Open Sans',
+                                    //                           fontWeight: FontWeight.w700,
+                                    //                         ),
+                                    //                       ),
+                                    //                     ],
+                                    //                   ),
+                                    //                   textAlign: TextAlign.center,
+                                    //                 ),
+                                    //               ],
+                                    //             ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    //
                                   ]),
                                 ],
                               );

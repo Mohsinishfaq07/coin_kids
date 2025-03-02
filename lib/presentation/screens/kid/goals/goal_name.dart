@@ -64,7 +64,7 @@ class AddGoalName extends StatelessWidget {
                   //   },
                   // ),
                   KidCustomTextField(
-                      // keyboardType: TextInputType.name,
+                       keyboardType: TextInputType.name,
                       hintText: "e.g Electric Bike ",
                       onChange: (val) {
                         kidGoalsController.goalName.value = val;

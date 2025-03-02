@@ -46,7 +46,7 @@ class GreenNextButton extends StatelessWidget {
               width: 2.22.w,
               color: borderColor ?? const Color(0xFF0E9454),
             ),
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
         child: Stack(

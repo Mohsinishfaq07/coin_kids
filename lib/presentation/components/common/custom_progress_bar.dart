@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class CustomProgressBar extends StatelessWidget {
                       ),
                     )
                   : Text(
-                      '€${totalValue.toStringAsFixed(0)}',
+                      '${totalValue.toMoneyFormat()}',
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,

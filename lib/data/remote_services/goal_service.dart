@@ -22,10 +22,10 @@ class GoalService extends GetxService {
         throw Exception('Kid not found');
       }
 
-      final spendingBalance = kid.wallet.spendingJar.balance;
-      if (spendingBalance < goal.targetAmount) {
-        throw Exception('Insufficient funds in spending jar');
-      }
+      // final spendingBalance = kid.wallet.spendingJar.balance;
+      // if (spendingBalance < goal.targetAmount) {
+      //   throw Exception('Insufficient funds in spending jar');
+      // }
 
       // Use a transaction to ensure both operations succeed or fail together
       final docRef = await _firestore
@@ -35,13 +35,13 @@ class GoalService extends GetxService {
         transaction.set(goalRef, goal.toJson());
 
         // Update kid's spending jar balance
-        final newSpendingBalance = spendingBalance - goal.targetAmount;
-        transaction.update(
-          _firestore.collection('kids').doc(goal.userId),
-          {
-            'wallet.spendingJar.balance': newSpendingBalance,
-          },
-        );
+       // final newSpendingBalance = spendingBalance - goal.targetAmount;
+        // transaction.update(
+        //   _firestore.collection('kids').doc(goal.userId),
+        //   {
+        //     'wallet.spendingJar.balance': newSpendingBalance,
+        //   },
+        // );
 
         return goalRef;
       });

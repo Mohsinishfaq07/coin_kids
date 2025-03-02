@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/utils/landscape_orientation.dart';
 import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
@@ -23,7 +24,6 @@ import 'package:image_picker/image_picker.dart';
 class KidSectionOnboarding extends GetView<AddChildController> {
   KidSectionOnboarding({super.key});
 
-  // final _addChildController = Get.put(AddChildController());
   final KidsOnBoardingController kidOnboardingController =
       Get.put(KidsOnBoardingController());
 
@@ -108,6 +108,8 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: GreenNextButton(
+                                  width: 110.w,
+
                                   showSuffix: true,
                                   onTap: () {
                                     if (controller.childName.value.isEmpty) {
@@ -156,7 +158,7 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                     ),
                     Center(
                       child: Text(
-                        controller.childName.value,
+                        "Hi ${controller.childName.value}",
                         style: AppTextStyle.headingLarge,
                       ),
                     ),
@@ -167,170 +169,84 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                       "How old are you?",
                       style: AppTextStyle.headingMedium,
                     ),
-                    // AppShowCaseWidget(
-                    //   showcaseKey: kidOnboardingController.ageListKey,
-                    //   description: "How old are you? 🎂",
-                    //   backgroundImage:
-                    //       "assets/center_spot_light_background.png",
-                    //   tooltipPosition: TooltipPosition.top,
-                    //   disposeOnTap: false,
-                    //   disableDefaultTargetGestures: false,
-                    //   child: Padding(
-                    //     padding: EdgeInsets.only(left: 130.w),
-                    //     child: SizedBox(
-                    //       height: 50.h,
-                    //       // width: double.infinity,
-                    //       child: ListView.builder(
-                    //           itemCount: kidOnboardingController.ageList.length,
-                    //           scrollDirection: Axis.horizontal,
-                    //           itemBuilder: (context, index) {
-                    //             return Obx(() {
-                    //               return Align(
-                    //                 alignment: Alignment.center,
-                    //                 child: GestureDetector(
-                    //                   onTap: () {
-                    //                     kidOnboardingController
-                    //                             .selectedAge.value =
-                    //                         kidOnboardingController
-                    //                             .ageList[index];
+                    SizedBox(
+                      height: 50.h,
+                      // width: double.infinity,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                          itemCount: kidOnboardingController.ageList.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Obx(() {
+                              return Align(
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    kidOnboardingController
+                                            .selectedAge.value =
+                                        kidOnboardingController
+                                            .ageList[index];
 
-                    //                     // Store the same value in _addChildController.childAge
-                    //                     controller.childAge.value =
-                    //                         kidOnboardingController
-                    //                             .ageList[index];
+                                    // Store the same value in _addChildController.childAge
+                                    controller.childAge.value =
+                                        kidOnboardingController
+                                            .ageList[index];
 
-                    //                     // Set the selected age in kidSectionOnboardingController
-                    //                   },
-                    //                   child: Padding(
-                    //                     padding: const EdgeInsets.all(4.0),
-                    //                     child: Container(
-                    //                       height: 50,
-                    //                       width: 50,
-                    //                       decoration: BoxDecoration(
-                    //                         color: kidOnboardingController
-                    //                                     .selectedAge.value ==
-                    //                                 kidOnboardingController
-                    //                                     .ageList[index]
-                    //                             ? AppColors.textPrimary
-                    //                             : AppColors.textOnPrimary,
-                    //                         borderRadius:
-                    //                             BorderRadius.circular(50.r),
-                    //                         border: Border.all(
-                    //                           color: kidOnboardingController
-                    //                                       .selectedAge.value ==
-                    //                                   kidOnboardingController
-                    //                                       .ageList[index]
-                    //                               ? AppColors.textOnPrimary
-                    //                               : AppColors.textPrimary,
-                    //                         ),
-                    //                       ),
-                    //                       child: Center(
-                    //                         child: Text(
-                    //                           kidOnboardingController
-                    //                               .ageList[index],
-                    //                           style: AppTextStyle.headingMedium
-                    //                               .copyWith(
-                    //                                   color: kidOnboardingController
-                    //                                               .selectedAge
-                    //                                               .value ==
-                    //                                           kidOnboardingController
-                    //                                                   .ageList[
-                    //                                               index]
-                    //                                       ? AppColors
-                    //                                           .textOnPrimary
-                    //                                       : AppColors
-                    //                                           .textPrimary),
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               );
-                    //             });
-                    //           }),
-                    //     ),
-                    //   ),
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 130.w),
-                      child: SizedBox(
-                        height: 50.h,
-                        // width: double.infinity,
-                        child: ListView.builder(
-                            itemCount: kidOnboardingController.ageList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Obx(() {
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      kidOnboardingController
-                                              .selectedAge.value =
-                                          kidOnboardingController
-                                              .ageList[index];
-
-                                      // Store the same value in _addChildController.childAge
-                                      controller.childAge.value =
-                                          kidOnboardingController
-                                              .ageList[index];
-
-                                      // Set the selected age in kidSectionOnboardingController
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Container(
-                                        height: 50,
-                                        width: 50,
-                                        decoration: BoxDecoration(
+                                    // Set the selected age in kidSectionOnboardingController
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color: kidOnboardingController
+                                                    .selectedAge.value ==
+                                                kidOnboardingController
+                                                    .ageList[index]
+                                            ? AppColors.textPrimary
+                                            : AppColors.textOnPrimary,
+                                        borderRadius:
+                                            BorderRadius.circular(50.r),
+                                        border: Border.all(
                                           color: kidOnboardingController
                                                       .selectedAge.value ==
                                                   kidOnboardingController
                                                       .ageList[index]
-                                              ? AppColors.textPrimary
-                                              : AppColors.textOnPrimary,
-                                          borderRadius:
-                                              BorderRadius.circular(50.r),
-                                          border: Border.all(
-                                            color: kidOnboardingController
-                                                        .selectedAge.value ==
-                                                    kidOnboardingController
-                                                        .ageList[index]
-                                                ? AppColors.textOnPrimary
-                                                : AppColors.textPrimary,
-                                          ),
+                                              ? AppColors.textOnPrimary
+                                              : AppColors.textPrimary,
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            kidOnboardingController
-                                                .ageList[index],
-                                            style: AppTextStyle.headingMedium
-                                                .copyWith(
-                                                    color: kidOnboardingController
-                                                                .selectedAge
-                                                                .value ==
-                                                            kidOnboardingController
-                                                                .ageList[index]
-                                                        ? AppColors
-                                                            .textOnPrimary
-                                                        : AppColors
-                                                            .textPrimary),
-                                          ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          kidOnboardingController
+                                              .ageList[index],
+                                          style: AppTextStyle.headingMedium
+                                              .copyWith(
+                                                  color: kidOnboardingController
+                                                              .selectedAge
+                                                              .value ==
+                                                          kidOnboardingController
+                                                              .ageList[index]
+                                                      ? AppColors
+                                                          .textOnPrimary
+                                                      : AppColors
+                                                          .textPrimary),
                                         ),
                                       ),
                                     ),
                                   ),
-                                );
-                              });
-                            }),
-                      ),
+                                ),
+                              );
+                            });
+                          }),
                     ),
-
                     Padding(
                       padding: EdgeInsets.only(right: 20.w),
                       child: Align(
                           alignment: Alignment.bottomRight,
                           child: GreenNextButton(
+                            width: 110.w,
                             onTap: () {
                               if (kidOnboardingController
                                   .selectedAge.value.isEmpty) {
@@ -407,12 +323,14 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                                   padding:
                                       EdgeInsets.only(right: 20.w, left: 20.w),
                                   child: GreenDoneButton(
+                                    width: 110.w,
+
                                     // },
                                     onTap: () async {
                                       try {
                                         // Check if avatar is selected
                                         if (controller.selectedAvatar.value ==
-                                            -1) {
+                                            -0) {
                                           ToastUtil.showToast(
                                               "Please select an avatar");
                                           return;
@@ -472,9 +390,8 @@ class KidSectionOnboarding extends GetView<AddChildController> {
       }
 
       return GridView.builder(
-        shrinkWrap: true,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+          crossAxisCount: 5,
           crossAxisSpacing: 16.w,
           mainAxisSpacing: 16.h,
         ),
@@ -493,14 +410,14 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                             : Colors.transparent,
                         width: 2,
                       ),
-                      borderRadius: BorderRadius.circular(30.r),
+                      borderRadius: BorderRadius.circular(60.r),
                     ),
                     child: controller.kidImagePath.value.isNotEmpty
                         ? Stack(
                             alignment: Alignment.center,
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(30.r),
+                                borderRadius: BorderRadius.circular(60.r),
                                 child: Image.file(
                                   File(controller.kidImagePath.value),
                                   height: 30.h,
@@ -525,7 +442,7 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                         : Container(
                             decoration: BoxDecoration(
                               color: AppColors.iconPrimary,
-                              borderRadius: BorderRadius.circular(30.r),
+                              borderRadius: BorderRadius.circular(60.r),
                             ),
                             child: Icon(
                               Icons.add_a_photo,
@@ -550,31 +467,57 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                         : Colors.transparent,
                     width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(30.r),
+                  borderRadius: BorderRadius.circular(60.r),
                 ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(30.r),
-                      child: Image.network(
-                        controller.avatars[avatarIndex],
+                      child: CachedNetworkImage(
+                        imageUrl: controller.avatars[avatarIndex],
                         height: 30.h,
                         width: 30.h,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.buttonPrimary,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.iconPrimary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(60.r),
+                          ),
+                          child: Icon(
+                            Icons.error_outline,
+                            color: AppColors.iconPrimary,
+                            size: 24.sp,
+                          ),
+                        ),
                       ),
                     ),
+
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(30.r),
+                    //   child: Image.network(
+                    //     controller.avatars[avatarIndex],
+                    //     height: 30.h,
+                    //     width: 30.h,
+                    //     fit: BoxFit.cover,
+                    //     loadingBuilder: (context, child, loadingProgress) {
+                    //       if (loadingProgress == null) return child;
+                    //       return Center(
+                    //         child: CircularProgressIndicator(
+                    //           value: loadingProgress.expectedTotalBytes != null
+                    //               ? loadingProgress.cumulativeBytesLoaded /
+                    //                   loadingProgress.expectedTotalBytes!
+                    //               : null,
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     if (controller.selectedAvatar.value == avatarIndex)
                       Container(
                         decoration: BoxDecoration(
@@ -584,7 +527,7 @@ class KidSectionOnboarding extends GetView<AddChildController> {
                         child: Icon(
                           Icons.check,
                           color: Colors.white,
-                          size: 44.sp,
+                          size: 34.sp,
                         ),
                       ),
                   ],
@@ -605,4 +548,3 @@ class KidSectionOnboarding extends GetView<AddChildController> {
   }
 }
 
-/// Custom Tooltip Decoration with Background Image

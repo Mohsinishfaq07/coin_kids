@@ -1,4 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +27,7 @@ class JarWithMoneyTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color jarColor = hexToColor(color);
-    String amountText = '$amount€'; // Convert to String for length check
+    String amountText = amount.toMoneyFormat(); // Convert to String for length check
 
     // Calculate text width
     TextPainter textPainter = TextPainter(

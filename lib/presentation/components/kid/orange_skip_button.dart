@@ -27,7 +27,7 @@ class OrangeSkipButton extends StatelessWidget {
               width: 2.22.w,
               color: const Color(0xFFD67513),
             ),
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
         child: Stack(

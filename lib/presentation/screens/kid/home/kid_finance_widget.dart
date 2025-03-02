@@ -1,5 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/data/models/kid_model.dart';
+ import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/presentation/components/kid/jar_with_money.dart';
 import 'package:coin_kids/presentation/components/kid/jar_without_money.dart';
 import 'package:coin_kids/presentation/screens/kid/jars/Jar_color_screen.dart';
@@ -78,7 +78,7 @@ class KidFinanceWidgets extends StatelessWidget {
         onTap: () {
           Get.to(AddJarColorScreen(isSpending: true.obs));
         },
-        child: Image.asset("assets/jars/jar.png"),
+        child: Image.asset(AppAssets.child_jar_place_holder_png),
       );
     } else if (spendingAmount != 0.0) {
       return JarWithMoneyTitle(

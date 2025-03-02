@@ -57,8 +57,8 @@ class ParentHomeController extends GetxController {
   void insertTestData() async {
     final userId = Get.find<AuthService>().user.value?.uid;
     if (userId != null) {
-      await DummyDataGenerator.insertDummyNotifications(userId);
-      await DummyDataGenerator.insertDummyGoals(appState.currentKid.value!.kidId);
+      // await DummyDataGenerator.insertDummyNotifications(userId);
+      // await DummyDataGenerator.insertDummyGoals(appState.currentKid.value!.kidId);
     }
   }
 }

@@ -46,4 +46,13 @@ class AppAssets {
   static const second_intro_animation =
       'assets/on_board/anim_onboard_save.json';
   static const third_intro_animation = "assets/newCartAnimation.json";
+  static const parent_side_spending_jar_svg = "assets/kidManageIcons/spendingJar.svg";
+  static const parent_side_saving_jar_svg = 'assets/kidManageIcons/savingJar.svg';
+  static const parent_jar_place_holder_png = "assets/jars/parent_jar_place_holder.png";
+  static const coin_svg= "assets/Coin.svg";
+  static const child_jar_place_holder_png ="assets/jars/jar.png";
+  static const goal_placeholder_png = "assets/goals_place_holder.png";
+
+
+
 }

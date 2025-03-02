@@ -1,4 +1,5 @@
 import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/extention/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/kid/green_next_button.dart';
@@ -64,7 +65,7 @@ class AddGoalAmount extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 KidCustomTextField(
-                  hintText: "000.00 €",
+                  hintText: 0.toMoneyFormat(),
                   onChange: (value) {
                     // Attempt to parse the value as a double
                     double? parsedValue = double.tryParse(value);
@@ -72,7 +73,7 @@ class AddGoalAmount extends StatelessWidget {
                     // If parsing fails (i.e., parsedValue is null), set a default value (e.g., 0.0)
                     kidGoalsController.goalAmount.value = parsedValue ?? 0.0;
                   },
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.number,
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 20.w, top: 16.h),

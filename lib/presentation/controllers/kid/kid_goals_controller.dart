@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
@@ -17,8 +18,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
+
 
 class KidGoalsController extends GetxController {
   var sliderValue = 0.0.obs; // .obs makes it reactive
@@ -29,7 +29,6 @@ class KidGoalsController extends GetxController {
   var isEditMode = false.obs;
   var goalCurrentAmount = 0.0.obs;
   final ImagePicker picker = ImagePicker();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -145,12 +144,11 @@ class KidGoalsController extends GetxController {
         ToastUtil.showToast("Not enough funds in spending jar");
         return null;
       }
-
       // Create goal model
       final goal = GoalModel(
         userId: currentKid.kidId,
         title: goalName.value,
-        photo: goalImage.value.isEmpty ? 'assets/logo.png' : goalImage.value,
+        photo: goalImage.value.isEmpty ? AppAssets.goal_placeholder_png : goalImage.value,
         targetAmount: targetAmount,
         savedAmount: 0,
         status: GoalStatus.in_progress,
