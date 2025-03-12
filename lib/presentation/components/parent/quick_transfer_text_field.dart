@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-
 class QuickTransferTextField extends StatefulWidget {
   const QuickTransferTextField({
     this.controller,
@@ -72,9 +71,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
     // Listen to focus changes
     _focusNode.addListener(() {
       setState(() {
-        _prefixContainerColor = _focusNode.hasFocus
-            ? Colors.blue.shade800
-            : Colors.grey; // Update color based on focus
+        _prefixContainerColor = _focusNode.hasFocus ? Colors.blue.shade800 : Colors.grey; // Update color based on focus
       });
     });
   }
@@ -115,25 +112,17 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
 
     return TextFormField(
       inputFormatters: [
-        // Custom formatter to handle all rules
         TextInputFormatter.withFunction((oldValue, newValue) {
-          // If empty, allow it
           if (newValue.text.isEmpty) {
             return newValue;
           }
 
-          // Check if the input matches our valid number pattern
-          // This regex ensures:
-          // 1. Only numbers and single dot
-          // 2. Maximum 2 decimal places
-          // 3. Valid number format
           final validNumberPattern = RegExp(r'^\d*\.?\d{0,2}$');
 
           if (validNumberPattern.hasMatch(newValue.text)) {
             return newValue;
           }
 
-          // If invalid, keep the old value
           return oldValue;
         }),
       ],
@@ -141,7 +130,8 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
       maxLength: widget.maxLength,
       onChanged: widget.onChanged,
       keyboardType: widget.keyboardType,
-      focusNode: _focusNode, // Use the local focus node
+      focusNode: _focusNode,
+      // Use the local focus node
       controller: widget.controller,
       obscureText: _obscureText,
       onFieldSubmitted: widget.onFieldSubmitted,
@@ -149,9 +139,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
       cursorColor: Colors.blue.shade800,
       autovalidateMode: widget.autoValidateMode ?? AutovalidateMode.disabled,
       cursorHeight: 16.h,
-      style: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.normal // Adjust text size as needed
+      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal // Adjust text size as needed
           ),
 
       decoration: InputDecoration(
@@ -182,8 +170,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
 
         floatingLabelBehavior: widget.floatingLabelBehavior,
         hintText: widget.hintText,
-        hintStyle: TextStyle(
-            color: Colors.grey, fontSize: 15.sp, fontWeight: FontWeight.normal),
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 15.sp, fontWeight: FontWeight.normal),
         labelStyle: TextStyle(color: Colors.grey.shade200, fontSize: 14.sp),
         suffixIcon: _buildSuffixIcon(),
         prefixIcon: Row(

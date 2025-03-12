@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WalletJar {
   final double balance;
-  final String color;
+  final int color;
 
   WalletJar({
     required this.balance,
@@ -10,19 +10,9 @@ class WalletJar {
   });
 
   factory WalletJar.fromJson(Map<String, dynamic> json) {
-    // Handle the color value which can be either String or int
-    String colorValue;
-    final dynamic rawColor = json['color'];
-    if (rawColor is int) {
-      // Convert int to hex string
-      colorValue = '#${rawColor.toRadixString(16).padLeft(6, '0')}';
-    } else {
-      colorValue = rawColor?.toString() ?? '#000000';
-    }
-
     return WalletJar(
       balance: (json['balance'] ?? 0.0).toDouble(),
-      color: colorValue,
+      color: json['color'],
     );
   }
 
@@ -35,7 +25,7 @@ class WalletJar {
 
   WalletJar copyWith({
     double? balance,
-    String? color,
+    int? color,
   }) {
     return WalletJar(
       balance: balance ?? this.balance,
@@ -110,7 +100,7 @@ class KidModel {
       avatar: json['avatar'] ?? '',
       parentId: json['parentId'] ?? '',
       wallet: Wallet.fromJson(json['wallet'] ?? {}),
-      coinKidsBalance: (json['coinKidsBalance'] ?? 0.0).toDouble(),
+      coinKidsBalance: (json['coinKidsBalance'] ?? -1.0).toDouble(),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }

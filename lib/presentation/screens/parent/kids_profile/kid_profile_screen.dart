@@ -1,8 +1,9 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/kid_profile_threed_btn.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/edit_child/edit_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/basic_info_widget.dart';
@@ -19,72 +20,70 @@ class KidProfileScreen extends GetView<KidProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "${controller.appState.currentKid.value!.name}'s Profile",
+      appBar: ParentAppBar(
+        title: "${controller.appState.currentKid.value?.name ?? "User"}'s Profile",
         centerTitle: true,
         showBackButton: true,
       ),
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.background,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BasicInfoWidget(),
-              Padding(
-                padding: EdgeInsets.only(top: 45.h, bottom: 46.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    kidMainButtons(
-                      title: 'Quick\nTransfer',
-                      assetPath: 'assets/kidManageIcons/quickTransfer.svg',
-                      onTap: () => Get.to(() => QuickTransferPage(
-                          // kidId: kidId,
-                          // docData: kid.toJson(),
-                          )),
-                    ),
-                    kidMainButtons(
-                      title: 'Schedule\nAllowance',
-                      assetPath: 'assets/kidManageIcons/scheduleAllowance.svg',
-                      onTap: () {
-                        ToastUtil.showToast("Coming soon...");
-                      },
-                    ),
-                    kidMainButtons(
-                      title: 'Edit\nProfile',
-                      assetPath: 'assets/kidManageIcons/editProfile.svg',
-                      onTap: () => Get.to(() => EditChildScreen()),
-                    )
-                  ],
-                ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppColors.background,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BasicInfoWidget(),
+            Padding(
+              padding: EdgeInsets.only(top: 45.h, bottom: 46.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  KidButton.iconWithTitle(
+                    title: 'Quick\nTransfer',
+                    iconPath: Assets.icTransfer,
+                    onTap: () => Get.to(() => QuickTransferPage()),
+                    baseColor: AppColors.colorPrimary,
+                  ),
+                  KidButton.iconWithTitle(
+                    title: 'Schedule\nAllowance',
+                    iconPath: Assets.icScheduleAllowance,
+                    onTap: () {
+                      ToastUtil.showToast("Coming soon...");
+                    },
+                    baseColor: AppColors.colorPrimary,
+                  ),
+                  KidButton.iconWithTitle(
+                    title: 'Edit\nProfile',
+                    iconPath: Assets.icEdit,
+                    onTap: () => Get.to(() => EditChildScreen()),
+                    baseColor: AppColors.colorPrimary,
+                  )
+                ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildTabSwitcher(KidProfileTabs.Jars, 'assets/kidManageIcons/coin.svg'),
-                    _buildTabSwitcher(KidProfileTabs.Notifications, 'assets/Frame.svg'),
-                    _buildTabSwitcher(KidProfileTabs.Goals, 'assets/kidManageIcons/goalIcon.svg'),
-                  ],
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildTabSwitcher(KidProfileTabs.Jars, 'assets/kidManageIcons/coin.svg'),
+                  _buildTabSwitcher(KidProfileTabs.Notifications, 'assets/Frame.svg'),
+                  _buildTabSwitcher(KidProfileTabs.Goals, 'assets/kidManageIcons/goalIcon.svg'),
+                ],
               ),
-              Obx(() {
-                switch (controller.currentType.value) {
-                  case KidProfileTabs.Jars:
-                    return JarsTabWidget();
-                  case KidProfileTabs.Notifications:
-                    return NotificationTabWidget();
-                  case KidProfileTabs.Goals:
-                    return GoalsTabWidget();
-                }
-              }),
-            ],
-          ),
+            ),
+            Obx(() {
+              switch (controller.currentType.value) {
+                case KidProfileTabs.Jars:
+                  return JarsTabWidget();
+                case KidProfileTabs.Notifications:
+                  return NotificationTabWidget();
+                case KidProfileTabs.Goals:
+                  return GoalsTabWidget();
+              }
+            }),
+          ],
         ),
       ),
     );
@@ -92,7 +91,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
 
   Widget _buildTabSwitcher(KidProfileTabs type, String assetPath) {
     return Obx(() => _tabSwitcherContainer(
-          containerColor: controller.currentType.value == type ? Colors.purple : const Color(0xFFEDFAFF),
+          containerColor: controller.currentType.value == type ? AppColors.colorPrimary : const Color(0xFFEDFAFF),
           assetPath: assetPath,
           onTap: () => controller.currentType.value = type,
           topRight: type == KidProfileTabs.Goals ? 10.0 : 0.0,

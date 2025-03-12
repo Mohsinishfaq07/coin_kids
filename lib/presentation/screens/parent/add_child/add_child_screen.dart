@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/add_child_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,7 +22,7 @@ class AddChildScreen extends GetView<AddChildController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const ParentAppBar(
         showBackButton: true,
         title: "Add your child",
         centerTitle: false,
@@ -39,7 +40,7 @@ class AddChildScreen extends GetView<AddChildController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Child Name Field
-                  CustomTextField(
+                  ParentTextField(
                     maxLength: 8,
                     titleText: "Child name",
                     hintText: "Enter your child name",
@@ -54,7 +55,7 @@ class AddChildScreen extends GetView<AddChildController> {
                   SizedBox(height: 16.h),
 
                   // Child Age Field
-                  CustomTextField(
+                  ParentTextField(
                     maxLength: 2,
                     titleText: "Age",
                     hintText: "Enter child's age",
@@ -64,9 +65,16 @@ class AddChildScreen extends GetView<AddChildController> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter child age';
                       }
-                      if (int.tryParse(value) == null) {
-                        return 'Please enter a valid age';
+
+                      final intValue = int.tryParse(value);
+                      if (intValue == null) {
+                        return 'Please enter a valid number';
                       }
+
+                      if (intValue < 3 && intValue > 25) {
+                        return 'Age must be between 1 to 25 yo';
+                      }
+
                       return null;
                     },
                   ),
@@ -84,16 +92,20 @@ class AddChildScreen extends GetView<AddChildController> {
 
                   // Add Child Button
                   Center(
-                    child: Obx(() => AppButton(
-                          text: controller.isLoading.value ? "Adding Child..." : "Add Child",
-                          onPressed: () async {
-                            if (controller.isLoading.value) return;
+                    child: AppButton(
+                      size: Size(0.8.sw, 50),
+                      child: Text(
+                        "Add child",
+                        style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                      ),
+                      onPressed: () async {
+                        if (controller.isLoading.value) return;
 
-                            if (_formKey.currentState?.validate() ?? false) {
-                              await controller.createKid();
-                            }
-                          },
-                        )),
+                        if (_formKey.currentState?.validate() ?? false) {
+                          await controller.createKid();
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -136,7 +148,7 @@ class AddChildScreen extends GetView<AddChildController> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: controller.kidImagePath.value.isNotEmpty ? Colors.purple : Colors.transparent,
+                        color: controller.kidImagePath.value.isNotEmpty ? AppColors.colorPrimary : Colors.transparent,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(60.r),
@@ -191,7 +203,7 @@ class AddChildScreen extends GetView<AddChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: controller.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
+                    color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(60.r),
@@ -214,7 +226,7 @@ class AddChildScreen extends GetView<AddChildController> {
                         ),
                         errorWidget: (context, url, error) => Container(
                           decoration: BoxDecoration(
-                            color: AppColors.iconPrimary.withOpacity(0.1),
+                            color: AppColors.iconPrimary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(60.r),
                           ),
                           child: Icon(

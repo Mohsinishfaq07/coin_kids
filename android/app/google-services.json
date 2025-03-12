@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "132663123215-46mvivh9o8ed92o4jl3nl8pr637jjoa6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.coinkids",
+            "certificate_hash": "c747665811777f7e7a102f8273b930ee06cd7fe0"
+          }
+        },
+        {
           "client_id": "132663123215-n3orko625lnf1ksbobueu9l1ptjfr6mo.apps.googleusercontent.com",
           "client_type": 3
         }

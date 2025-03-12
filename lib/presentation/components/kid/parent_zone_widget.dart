@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ParentZoneWidget extends StatelessWidget {
   const ParentZoneWidget({Key? key}) : super(key: key);
@@ -12,8 +13,6 @@ class ParentZoneWidget extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomRight,
       child: Container(
-        height: 51.h,
-        width: 70.w,
         decoration: BoxDecoration(
           color: AppColors.textOnPrimary,
           borderRadius: BorderRadius.only(
@@ -27,7 +26,7 @@ class ParentZoneWidget extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(2.h),
                 child: SvgPicture.asset(
-                  "assets/parent.svg",
+                  Assets.icParentZone,
                   height: 30.h,
                 ),
               ),
@@ -39,6 +38,7 @@ class ParentZoneWidget extends StatelessWidget {
                   fontWeight: MyFontWeight.ExtraBold.fontWeight,
                 ),
               ),
+              SizedBox(height: 4.h),
             ],
           ),
         ),

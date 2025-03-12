@@ -1,92 +1,78 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
+
 import '../models/goal_model.dart';
 import '../models/market_product_model.dart';
-import 'package:get/get.dart';
 
 class GoalService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String collection = 'goals';
   final KidService _kidService = Get.find<KidService>();
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  // Change return type to Future<String> to return goalId directly
-  Future<String> createGoal(GoalModel goal) async {
+  Future<void> createGoal(GoalModel goal) async {
     try {
-      // Get current kid data to validate spending balance
-      final kid = await _kidService.fetchKidById(goal.userId);
-      if (kid == null) {
-        throw Exception('Kid not found');
+      final photo = goal.photo;
+
+      final DocumentReference docRef = await _firestore.collection(collection).add(goal.copyWith(photo: '').toJson());
+      final String goalId = docRef.id;
+
+      if (photo != null || photo!.isNotEmpty) {
+        final String fileName = 'goals/$goalId.${photo.split('.').last}';
+        final Reference ref = _storage.ref().child(fileName);
+
+        final UploadTask uploadTask = ref.putFile(File(photo));
+        final TaskSnapshot snapshot = await uploadTask;
+        final goalPhoto = await snapshot.ref.getDownloadURL();
+
+        final updatedGoal = goal.copyWith(
+          id: goalId,
+          photo: goalPhoto,
+        );
+        await _firestore.collection(collection).doc(goalId).update(updatedGoal.toJson());
       }
-
-      // final spendingBalance = kid.wallet.spendingJar.balance;
-      // if (spendingBalance < goal.targetAmount) {
-      //   throw Exception('Insufficient funds in spending jar');
-      // }
-
-      // Use a transaction to ensure both operations succeed or fail together
-      final docRef = await _firestore
-          .runTransaction<DocumentReference>((transaction) async {
-        // Create the goal
-        final goalRef = _firestore.collection(collection).doc();
-        transaction.set(goalRef, goal.toJson());
-
-        // Update kid's spending jar balance
-       // final newSpendingBalance = spendingBalance - goal.targetAmount;
-        // transaction.update(
-        //   _firestore.collection('kids').doc(goal.userId),
-        //   {
-        //     'wallet.spendingJar.balance': newSpendingBalance,
-        //   },
-        // );
-
-        return goalRef;
-      });
-
-      return docRef.id; // Return the ID directly
     } catch (e) {
-      throw Exception('Failed to create goal: ${e.toString()}');
+      throw Exception('Failed to create kid: $e');
     }
   }
 
   // Create goal from product
-  // Future<String?> addToGoalsWithProduct(MarketProductModel product) async {
-  //   try {
-  //     // Get current user
-  //     final user = _auth.currentUser;
-  //     if (user == null) {
-  //       throw Exception('User not authenticated');
-  //     }
+  Future<String?> addToGoalsWithProduct(MarketProductModel product) async {
+    try {
+      // Get current user
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
 
-  //     // Get current kid
-  //     final kids = await _kidService.fetchKidsByParentId(user.uid);
-  //     if (kids.isEmpty) {
-  //       throw Exception('No kid found');
-  //     }
-  //     final currentKid = kids.first;
+      final appState = Get.find<AppStateController>();
 
-  //     // Create goal from product
-  //     final goal = GoalModel.fromProduct(product, currentKid.kidId);
+      // Create goal from product
+      final goal = GoalModel.fromProduct(appState.currentKid.value!.kidId, product);
 
-  //     // Create the goal document
-  //     final docRef = await _firestore.collection('goals').add(goal.toJson());
+      // Create the goal document
+      final docRef = await _firestore.collection('goals').add(goal.toJson());
 
-  //     print("Goal created successfully with ID: ${docRef.id}");
-  //     return docRef.id;
-  //   } catch (e) {
-  //     print("Error adding product to goals: $e");
-  //     return null;
-  //   }
-  // }
+      print("Goal created successfully with ID: ${docRef.id}");
+      return docRef.id;
+    } catch (e) {
+      print("Error adding product to goals: $e");
+      return null;
+    }
+  }
 
   // Fetch goal by ID
   Future<GoalModel?> fetchGoalById(String goalId) async {
     try {
-      final DocumentSnapshot doc =
-          await _firestore.collection(collection).doc(goalId).get();
+      final DocumentSnapshot doc = await _firestore.collection(collection).doc(goalId).get();
 
       if (!doc.exists) {
         return null;
@@ -101,25 +87,18 @@ class GoalService extends GetxService {
   // Fetch all goals for a user
   Future<List<GoalModel>> fetchUserGoals(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection(collection)
-          .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
+      final QuerySnapshot snapshot = await _firestore.collection(collection).where('userId', isEqualTo: userId).orderBy('createdAt', descending: true).get();
 
-      return snapshot.docs
-          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch user goals: ${e.toString()}');
     }
   }
 
   // Update goal
-  Future<void> updateGoal(String goalId, GoalModel goal) async {
+  Future<void> updateGoal(GoalModel goal) async {
     try {
-      await _firestore.collection(collection).doc(goalId).update(goal.toJson());
+      await _firestore.collection(collection).doc(goal.id).update(goal.toJson());
     } catch (e) {
       throw Exception('Failed to update goal: ${e.toString()}');
     }
@@ -133,12 +112,11 @@ class GoalService extends GetxService {
 
       final updatedGoal = goal.copyWith(
         savedAmount: newAmount,
-        status:
-            newAmount >= goal.targetAmount ? GoalStatus.completed : goal.status,
+        status: newAmount >= goal.targetAmount ? GoalStatus.completed : goal.status,
         completedAt: newAmount >= goal.targetAmount ? DateTime.now() : null,
       );
 
-      await updateGoal(goalId, updatedGoal);
+      await updateGoal(updatedGoal);
     } catch (e) {
       throw Exception('Failed to update saved amount: ${e.toString()}');
     }
@@ -159,15 +137,11 @@ class GoalService extends GetxService {
       final QuerySnapshot snapshot = await _firestore
           .collection(collection)
           .where('userId', isEqualTo: userId)
-          .where('status',
-              isEqualTo: GoalStatus.completed.toString().split('.').last)
+          .where('status', isEqualTo: GoalStatus.completed.toString().split('.').last)
           .orderBy('completedAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch completed goals: ${e.toString()}');
     }
@@ -179,28 +153,21 @@ class GoalService extends GetxService {
       final QuerySnapshot snapshot = await _firestore
           .collection(collection)
           .where('userId', isEqualTo: userId)
-          .where('status',
-              isEqualTo: GoalStatus.in_progress.toString().split('.').last)
+          .where('status', isEqualTo: GoalStatus.in_progress.toString().split('.').last)
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch in-progress goals: ${e.toString()}');
     }
   }
 
   // Fetch achievable goals
-  Future<List<GoalModel>> fetchAchievableGoals(
-      String userId, double balance) async {
+  Future<List<GoalModel>> fetchAchievableGoals(String userId, double balance) async {
     try {
       final goals = await fetchInProgressGoals(userId);
-      return goals
-          .where((goal) => goal.isAchievableWithBalance(balance))
-          .toList();
+      return goals.where((goal) => goal.isAchievableWithBalance(balance)).toList();
     } catch (e) {
       throw Exception('Failed to fetch achievable goals: ${e.toString()}');
     }
@@ -216,7 +183,7 @@ class GoalService extends GetxService {
         status: GoalStatus.cancelled,
       );
 
-      await updateGoal(goalId, updatedGoal);
+      await updateGoal(updatedGoal);
     } catch (e) {
       throw Exception('Failed to cancel goal: ${e.toString()}');
     }
@@ -240,67 +207,9 @@ class GoalService extends GetxService {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => GoalModel.fromJson(
-                  doc.data() as Map<String, dynamic>,
+                  doc.data(),
                   id: doc.id,
                 ))
             .toList());
-  }
-
-  // Add market product as goal
-  Future<DocumentReference<Map<String, dynamic>>> addMarketProductAsGoal(
-    MarketProductModel product,
-  ) async {
-    try {
-      // Get current user
-      final user = _auth.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
-      }
-
-      // Get current kid
-      final kids = await _kidService.fetchKidsByParentId(user.uid);
-      if (kids.isEmpty) {
-        throw Exception('No kid found');
-      }
-      final currentKid = kids.first;
-
-      // Create goal from market product with transaction
-      final docRef = await _firestore
-          .runTransaction<DocumentReference<Map<String, dynamic>>>(
-              (transaction) async {
-        // Create goal document
-        final goalRef = _firestore.collection('goals').doc();
-
-        // Create goal with network image URL
-        final goal = GoalModel(
-          userId: currentKid.kidId,
-          title: product.name,
-          photo: product.imageUrl, // Use the network image URL directly
-          targetAmount: product.price,
-          savedAmount: 0,
-          status: GoalStatus.in_progress,
-          createdAt: DateTime.now(),
-        );
-
-        // Set goal data with additional product info
-        transaction.set(goalRef, {
-          ...goal.toJson(),
-          'goalId': goalRef.id,
-          'productId': product.id,
-          'isMarketProduct': true, // Flag to identify market products
-          'productUrl': product.url,
-          'productRating': product.rating,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-
-        return goalRef;
-      });
-
-      print('Market product added as goal successfully: ${docRef.id}');
-      return docRef;
-    } catch (e) {
-      print('Error adding market product as goal: $e');
-      throw Exception('Failed to add product as goal: ${e.toString()}');
-    }
   }
 }

@@ -1,13 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:coin_kids/app_assets.dart';
+import 'package:coin_kids/core/utils/orientation_utils.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/screens/common/intro/intro_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IntroController extends GetxController {
   final pageIndex = 0.obs;
-  final CarouselSliderController carouselController =
-      CarouselSliderController();
+  final CarouselSliderController carouselController = CarouselSliderController();
+
+  @override
+  void onInit() {
+    OrientationUtils.lockToPortrait();
+    super.onInit();
+  }
 
   void updatePageIndex(int index) {
     pageIndex.value = index;
@@ -17,17 +23,17 @@ class IntroController extends GetxController {
     OnboardingPage(
       title: "Earn",
       description: "Give Kids Financial Superpowers",
-      imagePath: AppAssets.first_intro_animation,
+      imagePath: Assets.animOnboardEarn,
     ),
     OnboardingPage(
       title: "Save",
       description: "Give Kids Financial Superpowers",
-      imagePath: AppAssets.second_intro_animation,
+      imagePath: Assets.animOnboardSave,
     ),
     OnboardingPage(
       title: "Spend",
       description: "Give Kids Financial Superpowers",
-      imagePath: AppAssets.third_intro_animation,
+      imagePath: Assets.animOnboardSpend,
     ),
   ];
 }

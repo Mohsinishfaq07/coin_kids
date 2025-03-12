@@ -31,7 +31,7 @@ class GoalListItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -64,7 +64,7 @@ class GoalListItem extends StatelessWidget {
                             ),
                             errorWidget: (context, url, error) => Container(
                               decoration: BoxDecoration(
-                                color: AppColors.iconPrimary.withOpacity(0.1),
+                                color: AppColors.iconPrimary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               child: Icon(

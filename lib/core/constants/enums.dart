@@ -16,4 +16,19 @@ enum KidProfileTabs {
   Goals,
 }
 
-enum Jars { spendingJar, savingJar }
+enum Jars {
+  spendingJar,
+  savingJar,
+}
+
+enum JarState {
+  null_jar,
+  empty,
+  filled,
+}
+
+enum AmountAdditionMode {
+  jarCreation,
+  requestMoney,
+  addMoney,
+}

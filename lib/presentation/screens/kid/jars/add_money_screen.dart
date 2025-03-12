@@ -1,0 +1,103 @@
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
+import 'package:coin_kids/presentation/controllers/kid/add_money_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+class AddMoneyScreen extends GetView<AddMoneyController> {
+  final AmountAdditionMode mode;
+
+  const AddMoneyScreen({
+    Key? key,
+    required this.mode,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.background,
+          image: DecorationImage(
+            image: AssetImage(Assets.kidBg),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 16.h),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20.w),
+                child: KidButton.iconOnly(
+                  onTap: () => Get.back(),
+                  baseColor: AppColors.btnColorOrange,
+                  iconPath: Assets.icBack,
+                  size: 36,
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              _getScreenTitle(),
+              style: AppTextStyle.headingLarge,
+            ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(width: 178.w),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 32.w),
+                        child: KidTextField(
+                          keyboardType: TextInputType.number,
+                          hintText: "e.g 10.50",
+                          onChange: (val) {
+                            controller.amount.value = double.tryParse(val.trim()) ?? 0.0;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(24.w),
+                    child: KidButton(
+                      onTap: () => controller.handleNextButton(mode),
+                      baseColor: AppColors.btnColorGreen,
+                      text: "Next",
+                      iconPath: Assets.icTick,
+                      iconPosition: IconPosition.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getScreenTitle() {
+    switch (mode) {
+      case AmountAdditionMode.jarCreation:
+        return "Enter the amount 💸💰";
+      case AmountAdditionMode.requestMoney:
+        return "Request Money from Parent 🙏";
+      default:
+        return "Add Money to Spending 💰";
+    }
+  }
+}

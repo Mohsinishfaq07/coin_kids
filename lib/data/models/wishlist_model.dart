@@ -3,7 +3,7 @@ import 'market_product_model.dart';
 
 class WishlistModel {
   final String? id;
-  final String kidId;
+  final String userId;
   final String productId;
   final DateTime addedAt;
   final bool isPriority;
@@ -11,7 +11,7 @@ class WishlistModel {
 
   WishlistModel({
     this.id,
-    required this.kidId,
+    required this.userId,
     required this.productId,
     required this.addedAt,
     this.isPriority = false,
@@ -21,7 +21,7 @@ class WishlistModel {
   factory WishlistModel.fromJson(Map<String, dynamic> json, {String? id, MarketProductModel? product}) {
     return WishlistModel(
       id: id,
-      kidId: json['kidId'] ?? '',
+      userId: json['userId'] ?? '',
       productId: json['productId'] ?? '',
       addedAt: (json['addedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isPriority: json['isPriority'] ?? false,
@@ -33,7 +33,7 @@ class WishlistModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'kidId': kidId,
+      'userId': userId,
       'productId': productId,
       'addedAt': Timestamp.fromDate(addedAt),
       'isPriority': isPriority,
@@ -49,7 +49,7 @@ class WishlistModel {
 
   WishlistModel copyWith({
     String? id,
-    String? kidId,
+    String? userId,
     String? productId,
     DateTime? addedAt,
     bool? isPriority,
@@ -57,7 +57,7 @@ class WishlistModel {
   }) {
     return WishlistModel(
       id: id ?? this.id,
-      kidId: kidId ?? this.kidId,
+      userId: userId ?? this.userId,
       productId: productId ?? this.productId,
       addedAt: addedAt ?? this.addedAt,
       isPriority: isPriority ?? this.isPriority,
@@ -66,9 +66,9 @@ class WishlistModel {
   }
 
   // Create a wishlist item from a market product
-  factory WishlistModel.fromProduct(String kidId, MarketProductModel product) {
+  factory WishlistModel.fromProduct(String userId, MarketProductModel product) {
     return WishlistModel(
-      kidId: kidId,
+      userId: userId,
       productId: product.id!,
       addedAt: DateTime.now(),
       isPriority: false,

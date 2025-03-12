@@ -118,14 +118,6 @@ IconData _getNotificationIcon(NotificationType type) {
       return Icons.emoji_events;
     case NotificationType.transaction_pending:
       return Icons.pending;
-    case NotificationType.reward_earned:
-      return Icons.star;
-    case NotificationType.task_completed:
-      return Icons.task_alt;
-    case NotificationType.task_assigned:
-      return Icons.assignment;
-    case NotificationType.balance_low:
-      return Icons.account_balance_wallet;
     case NotificationType.balance_added:
       return Icons.add_card;
     case NotificationType.wishlist_added:
@@ -151,8 +143,6 @@ void _handleNotificationTap(NotificationModel notification) {
     case NotificationType.transaction_pending:
       Get.to(() => QuickTransferPage());
       break;
-    // Add other cases as needed
-    case NotificationType.reward_earned:
     default:
       print(notification);
   }

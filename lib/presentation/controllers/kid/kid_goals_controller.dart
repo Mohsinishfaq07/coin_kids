@@ -1,44 +1,117 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/app_assets.dart';
+
+import 'package:coin_kids/core/extensions/number_extensions.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
-import 'package:coin_kids/data/models/kid_model.dart';
-import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/firebase/firebase_authentication/authentication_controller.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-
 
 class KidGoalsController extends GetxController {
+  final appBar = Get.find<KidAppBarController>();
+  final appState = Get.find<AppStateController>();
+
+  final TextEditingController textController = TextEditingController();
+
   var sliderValue = 0.0.obs; // .obs makes it reactive
   RxBool isMinus = false.obs;
 
+  RxBool isLoading = false.obs;
+
   var isImageRemoved = false.obs;
-  var isLoading = false.obs;
-  var isEditMode = false.obs;
+
   var goalCurrentAmount = 0.0.obs;
   final ImagePicker picker = ImagePicker();
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  final authController = Get.find<AuthenticationController>();
-
-  RxString goalName = ''.obs;
-  RxDouble goalAmount = 0.0.obs;
-  RxString goalImage = ''.obs;
   RxBool isPickingImage = false.obs; // Add flag
   var initialSliderValue = 0.0;
+
+  final RxList<GoalModel> goals = <GoalModel>[].obs;
+
+  // Stream subscription
+  StreamSubscription<List<GoalModel>>? _goalsSubscription;
+
+  final GoalService _goalService = Get.find<GoalService>();
+
+  final Rx<GoalModel> oldGoal = Rx<GoalModel>(
+    GoalModel(
+      userId: '',
+      title: '',
+      photo: '',
+      targetAmount: 0,
+      savedAmount: 0,
+      status: GoalStatus.in_progress,
+      createdAt: DateTime.now(),
+    ),
+  );
+
+  final Rx<GoalModel> newGoal = Rx<GoalModel>(
+    GoalModel(
+      userId: '',
+      title: '',
+      photo: '',
+      targetAmount: 0,
+      savedAmount: 0,
+      status: GoalStatus.in_progress,
+      createdAt: DateTime.now(),
+    ),
+  );
+
+  final Rx<GoalSummaryScreenMode> screenMode = Rx<GoalSummaryScreenMode>(GoalSummaryScreenMode.create);
+  final RxString goalId = ''.obs;
+
+  final RxDouble progressValue = 0.0.obs;
+  final double progressStep = 0.25;
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    _goalsSubscription?.cancel();
+    super.onClose();
+  }
+
+  void setTitle(title) {
+    newGoal.value = newGoal.value.copyWith(title: title);
+    newGoal.refresh();
+  }
+
+  void setAmount(targetAmount) {
+    newGoal.value = newGoal.value.copyWith(targetAmount: targetAmount);
+    newGoal.refresh();
+  }
+
+  void setPhoto(photo) {
+    newGoal.value = newGoal.value.copyWith(photo: photo);
+    newGoal.refresh();
+  }
+
+  void removePhoto() {
+    newGoal.value = newGoal.value.copyWith(photo: '');
+    newGoal.refresh();
+  }
+
   void setInitialSliderValue(double value) {
     initialSliderValue = value;
   }
@@ -51,21 +124,16 @@ class KidGoalsController extends GetxController {
     goalCurrentAmount.value = amount;
   }
 
-  final GoalService _goalService = Get.find<GoalService>();
-  final KidService _kidService = Get.find<KidService>();
-  final AuthService _authService = Get.find<AuthService>();
-
   Future<void> pickFromGallery() async {
     try {
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 80,
+        imageQuality: 50,
       );
 
       if (pickedFile != null) {
-        goalImage.value = pickedFile.path;
-
-        // ToastUtil.showToast("Image saved locally.");
+        print("Path is: " + pickedFile.path);
+        setPhoto(pickedFile.path);
       } else {
         ToastUtil.showToast("No Image Selected");
       }
@@ -81,7 +149,7 @@ class KidGoalsController extends GetxController {
     try {
       final pickedImage = await picker.pickImage(source: ImageSource.camera);
       if (pickedImage != null) {
-        goalImage.value = pickedImage.path;
+        newGoal.value.copyWith(photo: pickedImage.path);
       }
     } catch (e) {
       print("Error picking image: $e");
@@ -90,449 +158,252 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  Future<String?> uploadGoalImage(File imageFile, String goalId) async {
-    try {
-      // Create file path in storage - store in goals folder
-      final String fileName = 'goals/$goalId.${imageFile.path.split('.').last}';
-      final Reference storageRef = _storage.ref().child(fileName);
-
-      // Upload file
-      final UploadTask uploadTask = storageRef.putFile(imageFile);
-
-      // Show upload progress
-      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-        double progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        print('Upload progress: $progress%');
-      });
-
-      final TaskSnapshot snapshot = await uploadTask;
-      return await snapshot.ref.getDownloadURL();
-    } catch (e) {
-      print("Error uploading goal image: $e");
-      return null;
-    }
-  }
-
-  Future<String?> addKidGoal() async {
-    try {
-      authController.isNormalLoading.value = true;
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
-
-      // Get current user ID
-      final user = _authService.user.value;
-      if (user == null) {
-        ToastUtil.showToast("User not authenticated");
-        return null;
-      }
-
-      // Get current kid using parent ID
-      final kids = await _kidService.fetchKidsByParentId(user.uid);
-      if (kids.isEmpty) {
-        ToastUtil.showToast("No kid found");
-        return null;
-      }
-
-      final KidModel currentKid = kids.first;
-      final targetAmount = goalAmount.value;
-      final spendingBalance = currentKid.wallet.spendingJar.balance;
-
-      if (spendingBalance < targetAmount) {
-        ToastUtil.showToast("Not enough funds in spending jar");
-        return null;
-      }
-      // Create goal model
-      final goal = GoalModel(
-        userId: currentKid.kidId,
-        title: goalName.value,
-        photo: goalImage.value.isEmpty ? AppAssets.goal_placeholder_png : goalImage.value,
-        targetAmount: targetAmount,
-        savedAmount: 0,
-        status: GoalStatus.in_progress,
-        createdAt: DateTime.now(),
-      );
-
-      // Create the goal using GoalService which will also deduct from spending
-      final goalId = await _goalService.createGoal(goal);
-
-      if (goalId.isNotEmpty) {
-        // Save image if exists
-        if (goalImage.value.isNotEmpty) {
-          await saveImageToPrefs(goalId, File(goalImage.value));
-        }
-        await saveGoalIdToPrefs(goalId);
-
-        // Reset values
-        goalImage.value = "";
-        goalName.value = "";
-        goalAmount.value = 0.0;
-
-        ToastUtil.showToast("Goal added successfully");
-        return goalId;
-      }
-
-      return null;
-    } catch (e) {
-      print("Error adding goal: $e");
-      ToastUtil.showToast("Failed to create goal");
-      return null;
-    } finally {
-      authController.isNormalLoading.value = false;
-      Get.back(); // Remove loading dialog
-    }
-  }
-
-  Future<void> saveGoalIdToPrefs(String goalId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('currentGoalId', goalId);
-  }
-
-  Future<String?> getGoalIdFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('currentGoalId');
-  }
-
-  Future<void> saveImageToPrefs(String goalId, File? imageFile) async {
-    try {
-      List<int> imageBytes;
-
-      // **Check if imageFile is valid**
-      if (imageFile == null || !imageFile.existsSync()) {
-        print("Invalid image file provided. Using default image.");
-
-        // **Load the default image from assets**
-        ByteData assetData = await rootBundle.load('assets/dollar_coin.png');
-        imageBytes = assetData.buffer.asUint8List();
-      } else {
-        // **Read the provided image file**
-        imageBytes = await imageFile.readAsBytes();
-      }
-
-      // **Convert image to Base64 string**
-      String base64Image = base64Encode(imageBytes);
-
-      // **Store in SharedPreferences with goalId as key**
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('goal_image_$goalId', base64Image);
-
-      print("Image saved successfully for goalId: $goalId");
-    } catch (e) {
-      print("Error saving image: $e");
-    }
-  }
-
-  Future<void> removeImageFromPrefs(String goalId) async {
-    isLoading.value = true;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('goal_image_$goalId'); // Remove image based on goalId
-    goalImage.value = "";
-    isLoading.value = false;
-    ToastUtil.showToast("Goal Image Removed");
-    print("Image removed from SharedPreferences");
-  }
-
-  Future<File?> getImageFromPrefs(String goalId) async {
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      // Retrieve Base64 string from SharedPreferences
-      String? base64Image = prefs.getString('goal_image_$goalId');
-
-      if (base64Image == null) return null; // If no image found, return null
-
-      // Convert Base64 to bytes
-      List<int> imageBytes = base64Decode(base64Image);
-
-      // Get the temporary directory
-      Directory tempDir = await Directory.systemTemp.createTemp();
-
-      // Create a file with the goalId as its name
-      File imageFile = File('${tempDir.path}/$goalId.png');
-
-      // Write bytes to the file
-      await imageFile.writeAsBytes(imageBytes);
-
-      return imageFile;
-    } catch (e) {
-      print("❌ Error retrieving image: $e");
-      return null;
-    }
-  }
-
-  // Function to update slider value
-  void updateValue(double value) {
-    sliderValue.value = value;
-    initialSliderValue = value;
-  }
-
-  // Function to set the goal amount (max value)
-  void setGoalAmount(double amount) {
-    // If you want to update slider value to 0 when the goalAmount is set
-    sliderValue.value = 0.0;
-  }
-
-  Future<void> GoalsTOSpending({
-    required String kidId,
-    required String goalId,
-    required double enteredAmount,
-  }) async {
-    try {
-      // References to Firestore collections
-      DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(kidId);
-      DocumentReference goalDocRef =
-          FirebaseFirestore.instance.collection('goals').doc(goalId);
-
-      // Fetch current spending details
-      DocumentSnapshot kidSnapshot = await kidDocRef.get();
-      if (!kidSnapshot.exists) {
-        Get.back();
-        Get.log("Kid document not found: $kidId");
-        return;
-      }
-
-      double currentSpending = (kidSnapshot.data()
-              as Map<String, dynamic>?)?['spendings']?['amount'] ??
-          0.0;
-
-      if (enteredAmount > currentSpending) {
-        Get.back();
-        ToastUtil.showToast('Not Enough Funds');
-
-        return;
-      }
-
-      // Deduct from spending
-      double updatedSpending = currentSpending + enteredAmount;
-
-      // Update spending in `kids` collection
-      await kidDocRef.update({
-        'spendings.amount': updatedSpending,
-      });
-
-      // Fetch existing goal amount
-      DocumentSnapshot goalSnapshot = await goalDocRef.get();
-      if (!goalSnapshot.exists) {
-        Get.back();
-        Get.log("Goal document not found: ");
-        return;
-      }
-      double currentGoalAmount =
-          (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
-                  ?.toDouble() ??
-              0.0;
-
-      double updatedGoalAmount = currentGoalAmount - enteredAmount;
-
-      // Update or create goal document in `goals` collection
-      await goalDocRef.update(
-        {
-          'kidId': kidId,
-          'currentAmount': updatedGoalAmount,
-        },
-      );
-
-      // Get.back();
-      Get.log(
-          "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
-      ToastUtil.showToast('Funds moved to Spendings successfully!');
-    } catch (e) {
-      Get.back();
-      Get.log("Error transferring funds: $e");
-    }
-  }
-
-  Future<void> SpendingTOGoals({
-    required String kidId,
-    required String goalId,
-    required double enteredAmount,
-  }) async {
-    try {
-      DocumentReference kidDocRef =
-          FirebaseFirestore.instance.collection('kids').doc(kidId);
-      DocumentReference goalDocRef =
-          FirebaseFirestore.instance.collection('goals').doc(goalId);
-
-      // Fetch current spending details
-      DocumentSnapshot kidSnapshot = await kidDocRef.get();
-      if (!kidSnapshot.exists) {
-        Get.back();
-        Get.log("Kid document not found: $kidId");
-        return;
-      }
-
-      double currentSpending = (kidSnapshot.data()
-              as Map<String, dynamic>?)?['spendings']?['amount'] ??
-          0.0;
-
-      // Fetch existing goal amount
-      DocumentSnapshot goalSnapshot = await goalDocRef.get();
-      if (!goalSnapshot.exists) {
-        Get.back();
-        Get.log("Goal document not found: ");
-        return;
-      }
-
-      double currentGoalAmount =
-          (goalSnapshot.data() as Map<String, dynamic>?)?['currentAmount']
-                  ?.toDouble() ??
-              0.0;
-      double goalAmount =
-          (goalSnapshot.data() as Map<String, dynamic>?)?['amount']
-                  ?.toDouble() ??
-              0.0;
-
-      // Check if the goal is already completed (currentGoalAmount >= goalAmount)
-      if (currentGoalAmount == goalAmount) {
-        ToastUtil.showToast('Goal already achieved!');
-        return; // If goal is already reached, prevent any changes
-      }
-
-      if (enteredAmount > currentSpending) {
-        ToastUtil.showToast('Not Enough Funds');
-        return;
-      }
-
-      if (enteredAmount > goalAmount) {
-        ToastUtil.showToast('Not Enough Funds');
-        return;
-      }
-
-      // Deduct from spending only if goal is not completed
-      double updatedSpending = currentSpending - enteredAmount;
-
-      // Update spending in `kids` collection
-      await kidDocRef.update({
-        'spendings.amount': updatedSpending,
-      });
-
-      // Prevent exceeding the goalAmount while updating goal
-      if (currentGoalAmount + enteredAmount > goalAmount) {
-        ToastUtil.showToast('Goal amount already reached!');
-        return; // Prevent further processing if goal amount is exceeded
-      }
-
-      // Update goal amounthor
-      double updatedGoalAmount = currentGoalAmount + enteredAmount;
-      int completionPercentage =
-          ((updatedGoalAmount / goalAmount) * 100).toInt();
-
-      // Update goal document in `goals` collection
-      await goalDocRef.update({
-        'kidId': kidId,
-        'currentAmount': updatedGoalAmount,
-        'progress': completionPercentage,
-      });
-
-      // Mark goal as completed if the goal is fully achieved
-      if (updatedGoalAmount >= goalAmount) {
-        await goalDocRef.update({
-          'completed': true,
-        });
-        Get.log("Goal completed!");
-      }
-      // previousValue.value = 0.0;
-      Get.log(
-          "Funds moved successfully: $enteredAmount transferred from Spendings to Goals.");
-      ToastUtil.showToast(
-        'Funds moved to Goals successfully!',
-      );
-    } catch (e) {
-      Get.back();
-      Get.log("Error transferring funds: $e");
-    }
-  }
-
   Future<void> deleteGoal(String goalId) async {
     try {
-      isLoading.value = true;
-      final kidSnapshot = await FirebaseFirestore.instance
-          .collection('kids')
-          .where('parentId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      if (kidSnapshot.docs.isEmpty) {
-        print("[DEBUG] No kids found");
-        return;
-      }
-
-      final kidId = kidSnapshot.docs.first.id;
-
-      // Get the goal document to check current amount
-      DocumentSnapshot goalSnapshot =
-          await _firebaseFirestore.collection('goals').doc(goalId).get();
-
-      if (!goalSnapshot.exists) {
-        ToastUtil.showToast("Goal not found");
-        return;
-      }
-
-      // Get the current amount from the goal
-      double currentGoalAmount =
-          (goalSnapshot.data() as Map<String, dynamic>)['currentAmount']
-                  ?.toDouble() ??
-              0.0;
-
-      // If there's any amount in the goal, transfer it to spendings
-      if (currentGoalAmount > 0) {
-        // Get the kid's document
-        DocumentReference kidDocRef =
-            _firebaseFirestore.collection('kids').doc(kidId);
-        DocumentSnapshot kidSnapshot = await kidDocRef.get();
-
-        if (kidSnapshot.exists) {
-          // Get current spending amount
-          double currentSpending = (kidSnapshot.data()
-                      as Map<String, dynamic>)['spendings']?['amount']
-                  ?.toDouble() ??
-              0.0;
-
-          // Add goal amount to spendings
-          double updatedSpending = currentSpending + currentGoalAmount;
-
-          // Update kid's spendings
-          await kidDocRef.update({
-            'spendings.amount': updatedSpending,
-          });
-        }
-      }
-
-      // Now proceed with the original delete operation
-      await _firebaseFirestore.collection('goals').doc(goalId).update({
-        'deleted': true,
-      });
-      await FirebaseFirestore.instance.collection('goals').doc(goalId).delete();
-
-      // Remove the image from SharedPreferences
-      await removeImageFromPrefs(goalId);
-
-      ToastUtil.showToast("Goal deleted successfully");
-      isLoading.value = false;
-      Get.off(() => KidHomeScreen());
+      await _goalService.deleteGoal(goalId);
+      Get.back();
     } catch (e) {
-      isLoading.value = false;
-      ToastUtil.showToast("Failed to delete goal: $e");
-      print("Error deleting goal: $e");
+      print('Error deleting goal: $e');
+      Get.back();
     }
   }
 
-  var goalsList = <Map<String, dynamic>>[].obs; // Reactive list
+  void startListeningToGoals(String kidId) {
+    isLoading.value = true;
 
-  void fetchGoals(String kidId) {
-    FirebaseFirestore.instance
-        .collection('goals')
-        .where('kidId', isEqualTo: kidId)
-        .where('deleted', isEqualTo: false)
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        goalsList.value = snapshot.docs.map((doc) => doc.data()).toList();
-      } else {
-        goalsList.clear();
+    _goalsSubscription = _goalService.streamUserGoals(kidId).listen(
+      (goalsList) {
+        goals.value = goalsList.where((goal) => goal.status != GoalStatus.deleted).toList();
+        isLoading.value = false;
+      },
+      onError: (error) {
+        print('Error fetching goals: $error');
+        isLoading.value = false;
+      },
+    );
+  }
+
+  void createNewGoal() async {
+    showLoadingDialog("Creating Goal ...");
+
+    try {
+      final goal = newGoal.value.copyWith(userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
+      await _goalService.createGoal(goal);
+
+      if (appState.currentKid.value!.coinKidsBalance == -1) {
+        final _kidService = Get.find<KidService>();
+        await _kidService.updateCoinKidsBalance(appState.currentKid.value!.kidId, 0);
+
+        //Usage
+        KidDialog.show(
+          emoji: Assets.icCoinStar,
+          title: 'WoW',
+          subtitle: 'You unlock CoinKids bar and receive\nyour first Coinkids',
+          extraContent: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                Assets.icCoinStar,
+                width: 20.w,
+                height: 20.w,
+              ),
+              SizedBox(width: 4.w),
+              Text("+2 CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+            ],
+          ),
+          buttons: [
+            KidButton(
+              text: 'Ok',
+              onTap: () {
+                Get.until((route) => route.settings.name == '/KidBaseScreen');
+              },
+              baseColor: AppColors.btnColorGreen,
+            ),
+          ],
+        );
+
+        resetNewGoal();
+
+        return;
       }
+
+      resetNewGoal();
+
+      Get.until((route) => route.settings.name == '/KidBaseScreen');
+    } catch (e) {
+      ToastUtil.showExceptionToast(e);
+      Get.back();
+      print(e);
+    }
+  }
+
+  void updateGoal() async {
+
+    try {
+      if (oldGoal.value == newGoal.value) {
+        return;
+      }
+
+      showLoadingDialog("Updating Goal...");
+
+      final goal = newGoal.value.copyWith(userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
+      await _goalService.updateGoal(goal);
+
+      resetNewGoal();
+      resetOldGoal();
+
+      Get.close(2);
+    } catch (e) {
+      ToastUtil.showExceptionToast(e);
+      Get.back();
+      print(e);
+    }
+  }
+
+  void incrementProgress(GoalModel goal) {
+    final newValue = (progressValue.value + progressStep).clamp(0.0, goal.targetAmount);
+    updateProgress(newValue);
+  }
+
+  void decrementProgress(GoalModel goal) {
+    final newValue = (progressValue.value - progressStep).clamp(0.0, goal.targetAmount);
+    updateProgress(newValue);
+  }
+
+  void updateProgress(double value) {
+    progressValue.value = value;
+    textController.text = value.toMoneyFormat(showSymbol: false);
+  }
+
+  Future<void> saveProgress(GoalModel goal) async {
+    final newAmount = double.parse(progressValue.value.toMoneyFormat(showSymbol: false));
+
+    // If the value hasn't changed, do nothing
+    if (newAmount == goal.savedAmount) {
+      return;
+    }
+
+    final finalGoal = goals.firstWhere((item) {
+      return item.id == goal.id;
     });
+
+    // Calculate percentage of completion
+    final targetAmount = finalGoal.targetAmount;
+    final oldPercentage = (finalGoal.savedAmount / targetAmount) * 100;
+    final newPercentage = (newAmount / targetAmount) * 100;
+
+    print("oldPercentage $oldPercentage");
+    print("newPercentage $newPercentage");
+
+    showLoadingDialog("Saving Goal");
+    try {
+      await _goalService.updateSavedAmount(finalGoal.id!, newAmount).timeout(Duration(seconds: 15), onTimeout: () {
+        throw Exception(TimeoutException);
+      });
+    } catch (e) {
+      print('Error saving progress: $e');
+      ToastUtil.showToast("No Internet Connection");
+      return;
+    } finally {
+      Get.back();
+    }
+
+    if (oldPercentage < 100 && newPercentage >= 100) {
+      _showGoalCompletedDialog(goal.targetAmount);
+    } else if (oldPercentage < 75 && newPercentage >= 75) {
+      _showMilestoneDialog("So Close!", "You're 75% closer to reaching your Goal", 6, Assets.icConfetti);
+    } else if (oldPercentage < 50 && newPercentage >= 50) {
+      _showMilestoneDialog("Halfway There!", "Amazing work! Keep saving", 4, Assets.icHappyStar);
+    } else if (oldPercentage < 25 && newPercentage >= 25) {
+      _showMilestoneDialog("Great Job!", "You just reach your first milestone", 2, Assets.icClap);
+    }
+  }
+
+  void resetNewGoal() {
+    newGoal.value = GoalModel(
+      userId: '',
+      title: '',
+      photo: '',
+      targetAmount: 0,
+      savedAmount: 0,
+      status: GoalStatus.in_progress,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  void resetOldGoal() {
+    oldGoal.value = GoalModel(
+      userId: '',
+      title: '',
+      photo: '',
+      targetAmount: 0,
+      savedAmount: 0,
+      status: GoalStatus.in_progress,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  void _showMilestoneDialog(String title, String subtitle, int coinKids, String emoji) {
+    KidDialog.show(
+      emoji: emoji,
+      title: title,
+      subtitle: subtitle,
+      extraContent: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            Assets.icCoinStar,
+            width: 20.w,
+            height: 20.w,
+          ),
+          SizedBox(width: 4.w),
+          Text("+$coinKids CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+        ],
+      ),
+      buttons: [
+        KidButton(
+          text: 'Continue',
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorGreen,
+        ),
+      ],
+    );
+  }
+
+  void _showGoalCompletedDialog(double amount) {
+    KidDialog.show(
+      emoji: Assets.icTrophy,
+      title: 'You Did It!',
+      subtitle: 'Congratulations, Nina! You’ve reached\nyour savings goal ${amount.toMoneyFormat()}',
+      extraContent: Column(
+        children: [
+          SizedBox(height: 8.h),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                Assets.icCoinStar,
+                width: 20.w,
+                height: 20.w,
+              ),
+              SizedBox(width: 4.w),
+              Text("+10 CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+            ],
+          ),
+        ],
+      ),
+      buttons: [
+        KidButton(
+          text: 'Awesome!',
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icTick,
+        ),
+      ],
+    );
   }
 }

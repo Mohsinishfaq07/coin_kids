@@ -1,89 +1,72 @@
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class VerticalNavBarController extends GetxController {
-  RxInt currentItem = 0.obs;
-  void updateCurrentIndex(int newIndex) {
-    if (currentItem.value != newIndex) {
-      currentItem.value = newIndex;
-    }
-  }
-  @override
-  void onClose() {
-    // Clean up any streams, animations, or other resources
-    super.onClose();
-  }
+  final RxInt selectedIndex = 0.obs;
 }
 
-class VerticalNavBar extends StatelessWidget {
-  VerticalNavBarController verticalNavBarController =
-      Get.put(VerticalNavBarController());
+class VerticalNavBar extends GetView<VerticalNavBarController> {
+
+  final appbarController = Get.find<KidAppBarController>();
 
   @override
   Widget build(BuildContext context) {
-    final List<NavItem> navItems = [
-      NavItem(AppAssets.kidHomeIcon, 'HOME', () {
-        verticalNavBarController.currentItem.value = 0;
-        Get.log(
-            'log: nav controller index: ${verticalNavBarController.currentItem.value}');
-      }),
-      NavItem(AppAssets.kidGoalIcon, 'GOALS', () {
-        verticalNavBarController.currentItem.value = 1;
-        Get.log(
-            'log: nav controller index: ${verticalNavBarController.currentItem.value}');
-      }),
-      NavItem(AppAssets.kidShopIcons, 'SHOP', () {
-        verticalNavBarController.currentItem.value = 2;
-        Get.log(
-            'log: nav controller index: ${verticalNavBarController.currentItem.value}');
-      }),
-    ];
-    return Container(
-      width: 90.w,
-      height: 130.h,
-      decoration: BoxDecoration(
-        color: AppColors.textOnPrimary,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(20.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: navItems.map((item) => _buildNavItem(item)).toList(),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(NavItem item) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2.h),
-      child: SingleChildScrollView(
-        child: GestureDetector(
-          onTap: item.onTap,
-          child: Column(
-            children: [
-              // Circular Button (SVG)
-              SvgPicture.asset(
-                item.iconPath,
-                height: 30.h,
+    return Obx(
+      () => Align(
+        alignment: Alignment.bottomLeft,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFF3FCFF),
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(20.r),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
-              SizedBox(height: 0.h),
-              // Label
-              Text(item.label,
-                  style: AppTextStyle.labelSmall
-                      .copyWith(fontWeight: MyFontWeight.ExtraBold.fontWeight)),
+            ],
+          ),
+          child: NavigationRail(
+            selectedIndex: controller.selectedIndex.value,
+            onDestinationSelected: (int index) {
+              controller.selectedIndex.value = index;
+              if(index == 1) {
+                appbarController.resetToDefault();
+              } else if (index == 2) {
+                appbarController.configureForMarket();
+              } else {
+                appbarController.resetToDefault();
+              }
+            },
+            minWidth: 80.w,
+            backgroundColor: Colors.transparent,
+            labelType: NavigationRailLabelType.all,
+            useIndicator: false,
+            groupAlignment: 0,
+            destinations: [
+              _buildDestination(
+                Assets.icKidHome,
+                'HOME',
+                controller.selectedIndex.value == 0,
+              ),
+              _buildDestination(
+                Assets.icKidGoal,
+                'GOALS',
+                controller.selectedIndex.value == 1,
+              ),
+              _buildDestination(
+                Assets.icKidMarket,
+                'SHOP',
+                controller.selectedIndex.value == 2,
+              ),
             ],
           ),
         ),
@@ -91,12 +74,20 @@ class VerticalNavBar extends StatelessWidget {
     );
   }
 
-}
-
-class NavItem {
-  final String iconPath;
-  final String label;
-  final Function() onTap;
-
-  NavItem(this.iconPath, this.label, this.onTap);
+  NavigationRailDestination _buildDestination(
+    String iconPath,
+    String label,
+    bool isSelected,
+  ) {
+    return NavigationRailDestination(
+      icon: SvgPicture.asset(iconPath),
+      label: Text(
+        label,
+        style: AppTextStyle.labelSmall.copyWith(
+          fontWeight: MyFontWeight.ExtraBold.fontWeight,
+          color: isSelected ? AppColors.colorPrimary : AppColors.iconDisabled,
+        ),
+      ),
+    );
+  }
 }

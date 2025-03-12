@@ -1,7 +1,6 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/parent_model.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,12 +13,21 @@ class AuthService extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final ParentService _parentService = ParentService();
 
-  Rx<User?> user = Rx<User?>(null);
+  // Make user stream final and initialize with current user
+  final Rx<User?> user = Rx<User?>(FirebaseAuth.instance.currentUser);
+
+  // Computed properties
+  bool get isLoggedIn => user.value != null;
+
+  String get userId => user.value?.uid ?? '';
+
+  String get userEmail => user.value?.email ?? '';
 
   @override
   void onInit() {
     super.onInit();
     user.bindStream(_auth.authStateChanges());
+    ever(user, handleAuthChanged);
   }
 
   // Email/Password Sign Up
@@ -29,7 +37,7 @@ class AuthService extends GetxController {
     required String name,
     int dob = 0,
     required String gender,
-    int pin = 0000,
+    String pin = "0000",
   }) async {
     try {
       // Create user with email and password
@@ -39,16 +47,7 @@ class AuthService extends GetxController {
       );
 
       if (credential.user != null) {
-        final parent = ParentModel(
-          id: credential.user!.uid,
-          email: email,
-          password: password,
-          name: name,
-          pin: pin,
-          createdAt: DateTime.now(),
-          dob: dob,
-          gender: gender,
-        );
+        final parent = ParentModel(id: credential.user!.uid, email: email, password: password, name: name, pin: pin, createdAt: DateTime.now(), dob: dob, gender: gender, isOpened: false);
 
         await _parentService.createParent(parent);
       }
@@ -65,12 +64,14 @@ class AuthService extends GetxController {
     required String password,
   }) async {
     try {
-      final result = await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      return result;
+      // Update user stream immediately
+      user.value = userCredential.user;
+      return userCredential;
     } catch (e) {
       throw _handleAuthException(e);
     }
@@ -98,22 +99,25 @@ class AuthService extends GetxController {
       // Sign in to Firebase with the Google credential
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      // If this is a new user, create parent document
-      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+      // Update user stream immediately
+      user.value = userCredential.user;
+      Get.log("User is: ${user.value}");
+
+      // If uid doc is not present, create new Doc, create parent document
+      ParentModel? parentData = await _parentService.fetchParentData();
+
+      if (parentData == null) {
         final parent = ParentModel(
-          email: googleUser.email,
-          password: '',
-          // No password for Google sign in
-          name: googleUser.displayName ?? '',
-          pin: 0000,
-          // Default PIN
-          createdAt: DateTime.now(),
-          dob: DateTime
-              .now()
-              .millisecondsSinceEpoch,
-          // Will need to be updated by user
-          gender: '', // Will need to be updated by user
-        );
+            id: userCredential.user!.uid,
+            email: googleUser.email,
+            password: '',
+            name: googleUser.displayName ?? '',
+            pin: "0000",
+            imageUrl: googleUser.photoUrl ?? "",
+            createdAt: DateTime.now(),
+            dob: 0,
+            gender: '',
+            isOpened: false);
 
         await _parentService.createParent(parent);
       }
@@ -127,14 +131,12 @@ class AuthService extends GetxController {
   // Apple Sign In
   Future<UserCredential> signInWithApple() async {
     try {
-      // Check if Apple Sign In is available
       final isAvailable = await SignInWithApple.isAvailable();
 
       if (!isAvailable) {
         throw Exception('Apple Sign In is not available on this device');
       }
 
-      // Get Apple credentials
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -142,7 +144,6 @@ class AuthService extends GetxController {
         ],
       );
 
-      // Create OAuthCredential
       final oauthCredential = OAuthProvider("apple.com").credential(
         idToken: appleCredential.identityToken,
         accessToken: appleCredential.authorizationCode,
@@ -151,25 +152,24 @@ class AuthService extends GetxController {
       // Sign in to Firebase
       final UserCredential userCredential = await _auth.signInWithCredential(oauthCredential);
 
+      // Update user stream immediately
+      user.value = userCredential.user;
+
       // If this is a new user, create parent document
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
         final String? email = userCredential.user?.email;
         final String? name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
 
         final parent = ParentModel(
-          email: email ?? '',
-          password: '',
-          // No password for Apple sign in
-          name: name == null || name.isEmpty ? 'Apple User' : name,
-          pin: 0000,
-          // Default PIN
-          createdAt: DateTime.now(),
-          dob: DateTime
-              .now()
-              .millisecondsSinceEpoch,
-          // Will need to be updated by user
-          gender: '', // Will need to be updated by user
-        );
+            id: userCredential.user!.uid,
+            email: email ?? '',
+            password: '',
+            name: name == null || name.isEmpty ? 'Apple User' : name,
+            pin: "0000",
+            createdAt: DateTime.now(),
+            dob: 0,
+            gender: '',
+            isOpened: false);
 
         await _parentService.createParent(parent);
       }
@@ -180,14 +180,23 @@ class AuthService extends GetxController {
     }
   }
 
+  // Handle auth state changes
+  void handleAuthChanged(User? firebaseUser) async {
+    if (firebaseUser == null) {
+      await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.NONE.name);
+      // Get.offAll(() => SignInScreen());
+    }
+  }
+
   // Sign Out
   Future<void> signOut() async {
     try {
-      Get.offAll(() => LoginScreen());
-      await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.NONE.name);
       await Future.wait([
         _auth.signOut(),
+        _googleSignIn.signOut(),
       ]);
+      // Update user stream immediately
+      user.value = null;
     } catch (e) {
       throw _handleAuthException(e);
     }
@@ -239,6 +248,6 @@ class AuthService extends GetxController {
           return Exception("${e.code}: ${e.message}");
       }
     }
-    return Exception('An unexpected error occurred.');
+    return Exception('An unexpected error occurred. $e');
   }
 }

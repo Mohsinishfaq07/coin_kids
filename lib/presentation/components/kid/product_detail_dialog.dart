@@ -1,0 +1,209 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/models/market_product_model.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class ProductDetailDialog extends StatelessWidget {
+  final MarketProductModel product;
+  final VoidCallback onAddToGoal;
+
+  const ProductDetailDialog({
+    Key? key,
+    required this.product,
+    required this.onAddToGoal,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.backgroundInverse,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              // Left Column - Image and Add to Goal Button
+              SizedBox(
+                width: 0.25.sw - 20.w, // 25% of dialog width minus padding
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          image: DecorationImage(
+                            image: NetworkImage(product.imageUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    KidButton(
+                      onTap: onAddToGoal,
+                      text: 'Add to Goal',
+                      baseColor: AppColors.btnColorOrange,
+                      height: 48.w,
+                      iconPath: Assets.icGoal,
+                      iconPosition: IconPosition.right,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 16.w),
+
+              // Right Column - Title, Description, and Amazon Card
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Close Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            product.name,
+                            style: AppTextStyle.headingMedium,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: 20.w),
+                        KidButton.iconOnly(
+                          onTap: () => Get.back(),
+                          baseColor: AppColors.btnColorOrange,
+                          iconPath: Assets.icCross,
+                          size: 30.w,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+
+                    // About Text
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: product.about
+                              .map((about) => Padding(
+                                    padding: EdgeInsets.only(bottom: 8.h),
+                                    child: Text(
+                                      about,
+                                      style: AppTextStyle.bodyLarge,
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+
+                    // Amazon Card
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: InkWell(
+                          onTap: () => _launchProductUrl(product.url),
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: Padding(
+                            padding: EdgeInsets.all(16.w),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset(
+                                      Assets.amazon,
+                                      width: 92.w,
+                                    ),
+                                    Text(
+                                      '€${product.price.toStringAsFixed(2)}',
+                                      style: AppTextStyle.headingLarge,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8.h),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Free delivery by Amazon.\nOrder within 2 days.',
+                                        style: AppTextStyle.bodyLarge,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(1.w),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.colorPrimary,
+                                        borderRadius: BorderRadius.circular(8.r),
+                                      ),
+                                      child: Icon(
+                                        Icons.navigate_next,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchProductUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (!await launchUrl(uri)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Could not open product link',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    }
+  }
+}

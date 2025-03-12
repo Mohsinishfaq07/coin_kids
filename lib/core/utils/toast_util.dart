@@ -1,0 +1,28 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+class ToastUtil {
+  static void showToast(String message, {Color color = AppColors.iconPrimary}) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: color,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  static void showExceptionToast(dynamic message) {
+    final error = message.toString().substring(11);
+    Fluttertoast.showToast(
+      msg: error,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: AppColors.notificationCritical,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+}

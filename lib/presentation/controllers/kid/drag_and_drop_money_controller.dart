@@ -1,0 +1,335 @@
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/extensions/number_extensions.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+
+import 'jar_creation_controller.dart';
+
+enum DragAndDropMode {
+  jarCreation, // Creating new jar
+  countMoney, // Counting existing jar money
+  transferMoney, // Transfer between jars
+}
+
+class DragAndDropMoneyController extends GetxController {
+  final appState = Get.find<AppStateController>();
+  final jarCreationController = Get.find<JarCreationController>();
+  final appBarController = Get.find<KidAppBarController>();
+  final kidService = Get.find<KidService>();
+
+  // Toggle between bills and coins
+  final isShowingBills = true.obs;
+
+  // Current amount being added
+  final totalValue = 0.0.obs;
+
+  // Stack for undo functionality
+  final addedAmounts = <double>[].obs;
+
+  // Jar state
+  final jarState = JarState.empty.obs;
+
+  late final DragAndDropMode mode;
+  late final double targetAmount;
+  late final String sourceJarId;
+  late final String targetJarId;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeMode();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Configure AppBar when the widget is ready
+    appBarController.configureForAddMoney();
+
+    cancelTitle.value = switch (mode) {
+      DragAndDropMode.jarCreation => "Cancel Jar Creation?",
+      DragAndDropMode.countMoney => "Cancel Counting?",
+      DragAndDropMode.transferMoney => "Cancel Transfer",
+    };
+  }
+
+  @override
+  void onClose() {
+    // Reset state when closing
+    reset();
+    super.onClose();
+  }
+
+  void _initializeMode() {
+    mode = Get.arguments['mode'] as DragAndDropMode;
+
+    switch (mode) {
+      case DragAndDropMode.jarCreation:
+        targetAmount = jarCreationController.amount.value;
+        break;
+
+      case DragAndDropMode.countMoney:
+        final jarName = Get.arguments['jarId'] as String;
+        if (jarName == Jars.spendingJar.name) {
+          final jar = appState.currentKid.value?.wallet.spendingJar;
+          targetAmount = jar?.balance ?? 0.0;
+        } else {
+          final jar = appState.currentKid.value?.wallet.savingJar;
+          targetAmount = jar?.balance ?? 0.0;
+        }
+
+        break;
+
+      case DragAndDropMode.transferMoney:
+        sourceJarId = Get.arguments['sourceJarId'] as String;
+        targetJarId = Get.arguments['targetJarId'] as String;
+        targetAmount = Get.arguments['amount'] as double;
+        break;
+    }
+  }
+
+  final cancelTitle = ''.obs;
+
+  Future<void> handleNextButton() async {
+    switch (mode) {
+      case DragAndDropMode.jarCreation:
+        await _handleJarCreation();
+        break;
+
+      case DragAndDropMode.countMoney:
+        _handleCountingComplete();
+        break;
+
+      case DragAndDropMode.transferMoney:
+        await _handleTransfer();
+        break;
+    }
+  }
+
+  Future<void> _handleJarCreation() async {
+    await createJar();
+  }
+
+  void _handleCountingComplete() {
+    if (isComplete) {
+      Get.back();
+      ToastUtil.showToast("Great job counting! 🎉");
+    }
+  }
+
+  Future<void> _handleTransfer() async {
+    final currentKid = appState.currentKid.value;
+    if (currentKid != null) {
+      await kidService.transferBetweenJars(
+        currentKid.kidId,
+        sourceJarId,
+        targetJarId,
+        totalValue.value,
+      );
+
+      appBarController.resetToDefault();
+
+      Get.close(2);
+
+      ToastUtil.showToast("Transfer complete! 🎉");
+    }
+  }
+
+  void toggleMoneyType() {
+    isShowingBills.value = !isShowingBills.value;
+  }
+
+  bool canAddAmount(double amount) {
+    final newTotal = totalValue.value + amount;
+    return newTotal <= targetAmount;
+  }
+
+  Future<void> createJar() async {
+    if (jarCreationController.jarType == Jars.spendingJar && !isComplete) {
+      ToastUtil.showToast("Enter all amount");
+      return;
+    }
+
+    final kid = appState.currentKid.value;
+
+    if (kid == null) {
+      ToastUtil.showToast("Session Expired");
+      Get.offAll(SignInScreen());
+    }
+
+    final spendingJar = kid!.wallet.spendingJar;
+    final savingJar = kid.wallet.savingJar;
+
+    try {
+      showLoadingDialog("Creating Jar");
+      if (jarCreationController.jarType == Jars.spendingJar) {
+        if (isComplete) {
+          final finalBalance = spendingJar.balance + totalValue.value;
+          print('final Balance Spend $finalBalance');
+          jarCreationController.kidService.updateSpendingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
+        } else {
+          ToastUtil.showToast("${remainingAmount.toMoneyFormat()} remaining");
+        }
+      } else {
+        print('final Balance Total ${totalValue.value}');
+        final finalBalance = savingJar.balance + totalValue.value;
+        print('final Balance Save $finalBalance');
+
+        jarCreationController.kidService.updateSavingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      Get.until((route) => route.settings.name == '/KidBaseScreen');
+    }
+
+    if (jarCreationController.jarType == Jars.spendingJar) {
+    } else {}
+  }
+
+  Future<bool> tryAddAmount(double amount) async {
+    if (!canAddAmount(amount)) {
+      await HapticFeedback.heavyImpact();
+      Get.snackbar(
+        'Cannot Add Amount',
+        'You can only add ${remainingAmount.toStringAsFixed(2)}€',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+      return false;
+    }
+
+    totalValue.value += amount;
+    addedAmounts.add(amount);
+    updateJarState();
+    await HapticFeedback.lightImpact();
+    return true;
+  }
+
+  void updateJarState() {
+    if (totalValue.value > 0) {
+      jarState.value = JarState.filled;
+    } else {
+      jarState.value = JarState.empty;
+    }
+  }
+
+  double get remainingAmount => targetAmount - totalValue.value;
+
+  bool get isComplete => totalValue.value == targetAmount;
+
+  RxDouble spendingAmount = 0.0.obs; // Changed to RxDouble
+  RxDouble savingAmount = 0.0.obs; // Changed to RxDouble
+  var clickedIndex = 0.obs; // Observable for the text
+  RxBool isJarFilled = false.obs;
+  RxList<double> droppedNotes = <double>[].obs; // Changed to double
+  RxString spendingJarColor = ''.obs;
+  RxString savingJarColor = ''.obs;
+
+  void resetJar() {
+    droppedNotes.clear();
+    totalValue.value = 0.0; // Reset to 0.0
+  }
+
+  Future<void> undoLastAmount() async {
+    if (addedAmounts.isNotEmpty) {
+      final lastAmount = addedAmounts.last;
+      totalValue.value -= lastAmount;
+      addedAmounts.removeLast();
+      updateJarState();
+      await HapticFeedback.mediumImpact();
+    } else {
+      Get.snackbar(
+        'Nothing to Undo',
+        'No more actions to undo',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.grey.withValues(alpha: 0.8),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 1),
+      );
+    }
+  }
+
+  void reset() {
+    totalValue.value = 0.0;
+    addedAmounts.clear();
+    updateJarState();
+  }
+
+  // Organize bills by rows for better layout control
+  final List<List<MapEntry<String, double>>> billRows = [
+    // Row 1: 10€, 5€
+    [
+      MapEntry(Assets.euroTen, 10.0),
+      MapEntry(Assets.euroFive, 5.0),
+    ],
+    // Row 2: 50€, 20€
+    [
+      MapEntry(Assets.euroFifty, 50.0),
+      MapEntry(Assets.euroTwenty, 20.0),
+    ],
+    // Row 3: 100€, 200€
+    [
+      MapEntry(Assets.euroTwoHundred, 200.0),
+      MapEntry(Assets.euroHundred, 100.0),
+    ],
+  ];
+
+  // Organize coins by rows
+  final List<List<MapEntry<String, double>>> coinRows = [
+    // Row 1: 2€, 1€ (larger coins)
+    [
+      MapEntry(Assets.euroTwo, 2.0),
+      MapEntry(Assets.euroOne, 1.0),
+    ],
+    // Row 2: 50c, 20c, 10c
+    [
+      MapEntry(Assets.centFifty, 0.50),
+      MapEntry(Assets.centTwenty, 0.20),
+      MapEntry(Assets.centTen, 0.10),
+    ],
+    // Row 3: 5c, 2c, 1c
+    [
+      MapEntry(Assets.centFive, 0.05),
+      MapEntry(Assets.centTwo, 0.02),
+      MapEntry(Assets.centOne, 0.01),
+    ],
+  ];
+
+  // Remove old maps as they're now organized in rows
+  Map<String, double> get billsList => Map.fromEntries(billRows.expand((row) => row).toList());
+
+  Map<String, double> get coinsList => Map.fromEntries(coinRows.expand((row) => row).toList());
+
+  String get screenTitle {
+    switch (mode) {
+      case DragAndDropMode.jarCreation:
+        return "Add money";
+      case DragAndDropMode.countMoney:
+        return "Count your money";
+      case DragAndDropMode.transferMoney:
+        return "Transfer money";
+    }
+  }
+
+  String get nextButtonText {
+    switch (mode) {
+      case DragAndDropMode.jarCreation:
+        return "Create Jar";
+      case DragAndDropMode.countMoney:
+        return "Done";
+      case DragAndDropMode.transferMoney:
+        return "Transfer";
+    }
+  }
+}

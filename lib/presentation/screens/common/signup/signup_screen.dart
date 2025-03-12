@@ -1,12 +1,12 @@
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
-import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,7 +24,7 @@ class SignupScreen extends GetView<SignupController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        appBar: CustomAppBar(
+        appBar: ParentAppBar(
           backgroundColor: Color(0xFFCAF0FF),
           title: "Let's Get Start!",
           showBackButton: false,
@@ -44,7 +44,7 @@ class SignupScreen extends GetView<SignupController> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    CustomTextField(
+                    ParentTextField(
                       hintText: 'Full Name',
                       onChanged: (value) {
                         controller.name.value = value.trim();
@@ -60,7 +60,7 @@ class SignupScreen extends GetView<SignupController> {
 
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.h),
-                      child: CustomTextField(
+                      child: ParentTextField(
                         hintText: 'Email',
                         keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
@@ -72,7 +72,7 @@ class SignupScreen extends GetView<SignupController> {
                             return "Email is required";
                           }
                           // Validate email format
-                          if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+                          if (!GetUtils.isEmail(value)) {
                             return "Enter a valid email address";
                           }
                           return null;
@@ -82,7 +82,7 @@ class SignupScreen extends GetView<SignupController> {
 
                     // PIN Input
                     Obx(() {
-                      return CustomTextField(
+                      return ParentTextField(
                         hintText: 'Password',
                         onChanged: (value) {
                           controller.password.value = value.trim();
@@ -90,7 +90,7 @@ class SignupScreen extends GetView<SignupController> {
                         titleText: 'Password',
                         obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: controller.showPassword.value ? "assets/eye.svg" : "assets/hide_eye.svg",
+                        suffixSvgPath: controller.showPassword.value ? Assets.icEye : Assets.icEyeHide,
                         onSuffixTap: () {
                           controller.showPassword.value = !controller.showPassword.value;
                         },
@@ -105,7 +105,7 @@ class SignupScreen extends GetView<SignupController> {
                     Obx(() {
                       return Padding(
                         padding: EdgeInsets.only(top: 16.h, bottom: 36.h),
-                        child: CustomTextField(
+                        child: ParentTextField(
                             hintText: 'Confirm Password',
                             onChanged: (value) {
                               controller.confirmPassword.value = value.trim();
@@ -113,7 +113,7 @@ class SignupScreen extends GetView<SignupController> {
                             titleText: 'Confirm Password',
                             obscureText: controller.showPassword.value,
                             suffixIconColor: AppColors.textPrimary,
-                            suffixSvgPath: controller.showPassword.value ? "assets/eye.svg" : "assets/hide_eye.svg",
+                            suffixSvgPath: controller.showPassword.value ? Assets.icEye : Assets.icEyeHide,
                             onSuffixTap: () {
                               controller.showPassword.value = !controller.showPassword.value;
                             },
@@ -135,11 +135,13 @@ class SignupScreen extends GetView<SignupController> {
                     Center(
                       child: AppButton(
                         backgroundColor: AppColors.buttonPrimary,
-                        // backgroundColor: controller.isButtonEnabled.value ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                        text: 'Signup',
+                        size: Size(0.8.sw, 50),
+                        child: Text(
+                          "Sign up",
+                          style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                        ),
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            // If the form is valid, proceed with the signup action
                             try {
                               controller.signUpWithEmail();
                             } catch (e) {
@@ -162,7 +164,7 @@ class SignupScreen extends GetView<SignupController> {
                         ),
                         GestureDetector(
                             onTap: () {
-                              Get.off(() => LoginScreen());
+                              Get.off(() => SignInScreen());
                             },
                             child: Text(
                               "LOGIN",
@@ -186,89 +188,55 @@ class SignupScreen extends GetView<SignupController> {
                       ),
                       onPressed: () async {
                         try {
-                          //     await controller.signUpWithGoogle();
+                          await controller.signInWithGoogle();
                         } catch (e) {
                           print("Error: $e");
                         }
                       },
-                      child: Obx(() {
-                        return controller.isGoogleLoading.value
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                                    child: SvgPicture.asset(AppAssets.googleIconSvg, height: 24),
-                                  ),
-                                  Text(
-                                    "Sign in with Google",
-                                    style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                                  ),
-                                  SizedBox.shrink()
-                                  // Padding(
-                                  //   padding: EdgeInsets.only(
-                                  //       right: 10.w, left: 10.w),
-                                  //   child: SvgPicture.asset(
-                                  //       AppAssets.appleIconSvg,
-                                  //       color: Colors.transparent,
-                                  //       height: 10),
-                                  // ),
-                                ],
-                              );
-                      }),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                            child: SvgPicture.asset(Assets.icGoogle, height: 24),
+                          ),
+                          Text(
+                            "Sign in with Google",
+                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                          ),
+                          SizedBox.shrink()
+                        ],
+                      ),
                     ),
                     SizedBox(height: 16.h),
 
                     // Apple Login Button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                      ),
-                      onPressed: () {
-                        // controller.signinWithApple();
-                      },
-                      child: Obx(
-                        () {
-                          return controller.isAppleLoading.value
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 10.w),
-                                      child: SvgPicture.asset(AppAssets.appleIconSvg, height: 24),
-                                    ),
-                                    Text(
-                                      "Sign in with Apple",
-                                      style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                                    ),
-                                    SizedBox.shrink()
-                                    // Padding(
-                                    //   padding:
-                                    //       const EdgeInsets.only(right: 10.0),
-                                    //   child: SvgPicture.asset(
-                                    //       AppAssets.appleIconSvg,
-                                    //       color: Colors.transparent,
-                                    //       height: 10),
-                                    // ),
-                                  ],
-                                );
-                        },
-                      ),
-                    ),
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.black,
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
+                    //   ),
+                    //   onPressed: () {
+                    //     // controller.signinWithApple();
+                    //   },
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       Padding(
+                    //         padding: EdgeInsets.only(right: 10.w),
+                    //         child: SvgPicture.asset(AppAssets.appleIconSvg, height: 24),
+                    //       ),
+                    //       Text(
+                    //         "Sign in with Apple",
+                    //         style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                    //       ),
+                    //       SizedBox.shrink()
+                    //     ],
+                    //   ),
+                    // ),
 
                     SizedBox(height: 80.h),
                     // Terms and Signup Button

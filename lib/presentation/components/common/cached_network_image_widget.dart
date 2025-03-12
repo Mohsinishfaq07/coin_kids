@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
@@ -13,6 +14,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
   final Color? backgroundColor;
   final Widget? loadingWidget;
   final bool showLoading;
+  final Color? iconColor;
 
   const CachedNetworkImageWidget({
     Key? key,
@@ -26,6 +28,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
     this.backgroundColor,
     this.loadingWidget,
     this.showLoading = true,
+    this.iconColor,
   }) : super(key: key);
 
   @override
@@ -53,9 +56,10 @@ class CachedNetworkImageWidget extends StatelessWidget {
       height: height,
       color: backgroundColor ?? Colors.grey[200],
       child: Center(
-        child: loadingWidget ?? CircularProgressIndicator(
-          strokeWidth: 2.w,
-        ),
+        child: loadingWidget ??
+            CircularProgressIndicator(
+              strokeWidth: 2.w,
+            ),
       ),
     );
   }
@@ -64,7 +68,6 @@ class CachedNetworkImageWidget extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: backgroundColor ?? Colors.grey[200],
       child: _buildAssetImage(errorAsset),
     );
   }
@@ -78,14 +81,23 @@ class CachedNetworkImageWidget extends StatelessWidget {
       );
     }
 
-    return Image.asset(
-      asset,
-      width: width,
-      height: height,
-      fit: fit,
-    );
+    return asset.endsWith("svg")
+        ? SvgPicture.asset(
+            asset,
+            width: width,
+            height: height,
+            fit: fit,
+            color: iconColor != null ? iconColor : null,
+          )
+        : Image.asset(
+            asset,
+            width: width,
+            height: height,
+            fit: fit,
+            color: iconColor != null ? iconColor : null,
+          );
   }
-} 
+}
 
 // // Basic usage
 // CachedNetworkImageWidget(

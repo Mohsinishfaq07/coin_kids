@@ -1,130 +1,178 @@
-import 'package:flutter/material.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/presentation/screens/kid/base/kid_base_screen.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class KidsOnBoardingController extends GetxController {
-  // final GlobalKey textFieldKey = GlobalKey();
-  // final GlobalKey ageListKey = GlobalKey();
-  // final GlobalKey avatarListKey = GlobalKey();
-  // final GlobalKey jarKey = GlobalKey();
-  // final GlobalKey spendingJarKey = GlobalKey();
-  // final GlobalKey savingsJarKey = GlobalKey();
+enum OnboardingStep { name, age, avatar }
 
-  // void startShowcase(BuildContext context) {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     ShowCaseWidget.of(context).startShowCase([
-  //       textFieldKey,
-  //       ageListKey,
-  //       avatarListKey,
-  //       jarKey,
-  //       spendingJarKey,
-  //       savingsJarKey
-  //     ]);
-  //   });
-  // }
+class KidOnboardingController extends GetxController {
+  final kidsService = Get.find<KidService>();
+  final authService = Get.find<AuthService>();
+  final ImagePicker _picker = ImagePicker();
 
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  //   startShowcase(Get.context!); // Call showcase after UI builds
-  // }
+  // Step Management
+  final currentStep = OnboardingStep.name.obs;
 
-  RxBool spotLightOn = false.obs;
+  // Form Data
+  final _name = ''.obs;
+  final _age = 0.obs;
+  final _selectedAvatarIndex = (-1).obs;
+  final _customImagePath = ''.obs;
+  final _selectedAvatarUrl = ''.obs;
+  final _avatars = <String>[].obs;
+  final _isLoading = false.obs;
 
-  RxInt spotLightIndex = 0.obs;
+  // Getters
+  String get name => _name.value;
 
-  RxString selectedAge = "".obs;
-  RxString selectedAvatar = "".obs;
+  int get selectedAge => _age.value;
 
-  List<String> ageList = ['6', '7', '8', '9', '10', '11', '12', '13', '14+'];
-  final List<String> avatars = [
-    "assets/child_avatar_image_pngs/Frame 1.png",
-    "assets/child_avatar_image_pngs/Frame 2.png",
-    "assets/child_avatar_image_pngs/Frame 3.png",
-    "assets/child_avatar_image_pngs/Frame 4.png",
-    "assets/child_avatar_image_pngs/Frame 5.png",
-    "assets/child_avatar_image_pngs/Frame 6.png",
-    "assets/child_avatar_image_pngs/Frame 7.png",
-    "assets/child_avatar_image_pngs/Frame 8.png",
-    "assets/child_avatar_image_pngs/Frame 9.png",
-    "assets/child_avatar_image_pngs/Frame 10.png",
-    "assets/child_avatar_image_pngs/Frame 11.png",
-    "assets/child_avatar_image_pngs/Frame 12.png",
-    "assets/child_avatar_image_pngs/Frame 13.png",
-    "assets/child_avatar_image_pngs/Frame 14.png",
-    "assets/child_avatar_image_pngs/Frame 15.png",
-    "assets/child_avatar_image_pngs/Frame 16.png",
-    "assets/child_avatar_image_pngs/Frame 17.png",
-    "assets/child_avatar_image_pngs/Frame 18.png",
-    "assets/child_avatar_image_pngs/Frame 19.png",
-    "assets/child_avatar_image_pngs/Frame 20.png",
-    "assets/child_avatar_image_pngs/Frame 21.png",
-    "assets/child_avatar_image_pngs/Frame 22.png",
-    "assets/child_avatar_image_pngs/Frame 23.png",
-    "assets/child_avatar_image_pngs/Frame 24.png",
-    "assets/child_avatar_image_pngs/Frame 25.png",
-    "assets/child_avatar_image_pngs/Frame 26.png",
-    "assets/child_avatar_image_pngs/Frame 27.png",
-    "assets/child_avatar_image_pngs/Frame 28.png",
-    "assets/child_avatar_image_pngs/Frame 29.png",
-    "assets/child_avatar_image_pngs/Frame 30.png",
-    "assets/child_avatar_image_pngs/Frame 31.png",
-    "assets/child_avatar_image_pngs/Frame 32.png",
-    "assets/child_avatar_image_pngs/Frame 33.png",
-    "assets/child_avatar_image_pngs/Frame 34.png",
-    "assets/child_avatar_image_pngs/Frame 35.png",
-    "assets/child_avatar_image_pngs/Frame 36.png"
-  ];
+  int get selectedAvatarIndex => _selectedAvatarIndex.value;
+
+  String get customImagePath => _customImagePath.value;
+
+  String get selectedAvatarUrl => _selectedAvatarUrl.value;
+
+  List<String> get avatars => _avatars;
+
+  bool get isLoading => _isLoading.value;
+
+  // Age options as defined in original controller
+  final ageList = ['6', '7', '8', '9', '10', '11', '12', '13', '14+'];
 
   @override
   void onInit() {
-    Future.delayed(const Duration(seconds: 1), () {
-      // showOnBoarding1SpotLight();
-    });
     super.onInit();
+    loadAvatars();
   }
 
-  showOnBoarding1SpotLight() {
-    spotLightOn.value = true;
-    Get.log('showing spot light : $spotLightOn');
-    showDialog(
-      context: Get.context!,
-      builder: (BuildContext context) {
-        return const Dialog(
-          backgroundColor: Colors.transparent, // Make background transparent
-          child: Text(""),
-        );
-      },
-    ).then((_) {
-      spotLightOn.value = false;
-      Get.log('spot light dismissed : $spotLightOn');
-    });
+  // Navigation Functions
+  void proceedToAge() {
+    if (_name.value.isEmpty) {
+      ToastUtil.showToast("Please enter your name");
+      return;
+    }
+
+    currentStep.value = OnboardingStep.age;
   }
 
-  increaseSpotLightIndex({required int index}) {
-    spotLightIndex.value = index;
-    spotLightOn.value = false; // Reset spotlight state
+  void proceedToAvatar() {
+    if (_age.value == 0) {
+      ToastUtil.showToast("Please select your age");
+      return;
+    }
 
-    if (spotLightIndex.value == 1) {
-      // Reset the shown flag for the next showcase
-      spotLightShown.value = false;
-    } else if (spotLightIndex.value == 2) {
-      // Reset for avatar showcase
-      spotLightShown.value = false;
-    } else if (spotLightIndex.value == 3) {
-      // Handle completion of all showcases
-      spotLightShown.value = true;
+    currentStep.value = OnboardingStep.avatar;
+  }
+
+  void goBack() {
+    switch (currentStep.value) {
+      case OnboardingStep.name:
+        Get.back(); // Return to role selection
+        break;
+      case OnboardingStep.age:
+        currentStep.value = OnboardingStep.name;
+        break;
+      case OnboardingStep.avatar:
+        currentStep.value = OnboardingStep.age;
+        break;
     }
   }
 
-  decreaseSpotLightIndex() {
-    if (spotLightIndex.value == 0) {
+  // Data Functions
+  void setName(String value) => _name.value = value.trim();
+
+  void setAge(String value) {
+    if (value == '14+') {
+      _age.value = 14;
     } else {
-      spotLightIndex.value--;
+      _age.value = int.tryParse(value) ?? 0;
     }
   }
 
-  final spotLightShown = false.obs;
+  Future<void> loadAvatars() async {
+    try {
+      _isLoading.value = true;
+      final urls = await kidsService.fetchPredefinedAvatars();
+      _avatars.value = urls;
+      if (urls.isNotEmpty) {
+        _selectedAvatarUrl.value = urls.first;
+      }
+    } catch (e) {
+      ToastUtil.showToast('Failed to load avatars: $e');
+    } finally {
+      _isLoading.value = false;
+    }
+  }
 
-  // Optional: Add a method to check if all showcases are complete
-  bool get areAllShowcasesComplete => spotLightIndex.value >= 3;
+  Future<void> takePicture() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      _customImagePath.value = image.path;
+      _selectedAvatarIndex.value = -1;
+      _selectedAvatarUrl.value = '';
+    }
+  }
+
+  Future<void> pickFromGallery() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      _customImagePath.value = image.path;
+      _selectedAvatarIndex.value = -1;
+      _selectedAvatarUrl.value = '';
+    }
+  }
+
+  void selectAvatar(int index) {
+    _selectedAvatarIndex.value = index;
+    _customImagePath.value = '';
+    _selectedAvatarUrl.value = avatars[index];
+  }
+
+  void skipAvatar() {
+    _completeOnboarding();
+  }
+
+  Future<void> completeOnboarding() async {
+    if (_selectedAvatarIndex.value == -1 && _customImagePath.isEmpty) {
+      ToastUtil.showToast("Please select an avatar or upload a photo");
+      return;
+    }
+    await _completeOnboarding();
+  }
+
+  Future<void> _completeOnboarding() async {
+    try {
+      _isLoading.value = true;
+
+      final parentId = authService.user.value?.uid;
+      if (parentId == null) {
+        ToastUtil.showToast("User not authenticated");
+        return;
+      }
+
+      await kidsService.createKid(
+        name: _name.value,
+        age: _age.value,
+        parentId: parentId,
+        customImagePath: _customImagePath.value,
+        selectedAvatarUrl: _selectedAvatarUrl.value,
+      );
+
+      ToastUtil.showToast("Profile created successfully!");
+      Get.offAll(() => const KidBaseScreen());
+    } catch (e) {
+      ToastUtil.showToast("Failed to create profile: $e");
+    } finally {
+      _isLoading.value = false;
+    }
+  }
 }

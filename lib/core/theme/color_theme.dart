@@ -10,6 +10,19 @@ class AppColors {
     end: Alignment.bottomCenter,
   );
 
+  static const LinearGradient backgroundInverse = LinearGradient(
+    colors: [
+      Colors.white,
+      Color(0xFFCAF0FF),
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  //color primary
+  static const Color colorPrimary = const Color(0xffa421d9);
+  static const Color colorSecondary = const Color(0xFFFF9E29);
+
   //Card
   static const Color cardPrimary = const Color(0xff01FFb3);
   static const Color cardSecondary = const Color(0xffFFeb3b);
@@ -24,6 +37,7 @@ class AppColors {
   static const Color iconPrimary = Color(0xffa421d9);
   static const Color iconPrimaryVariant = Color(0xff015486);
   static const Color iconOnPrimary = Color(0xffffffff);
+  static const Color iconSecondaryVariant = Color(0xFFFF9E29);
   static const Color iconSecondary = Colors.white;
   static const Color iconDisabled = Color(0xff848484);
 
@@ -46,4 +60,10 @@ class AppColors {
   static const Color KidZoneParent = const Color(0xff38BEBE);
   static const Color primaryLightColor = const Color(0xFFD2A4EF);
   static const Color addIconBorderColor = const Color(0xFF148F2F);
+
+  //Kid Button Colors
+  static const Color btnColorGreen = const Color(0xFF19B859);
+  static const Color btnColorOrange = const Color(0xFFFF9E29);
+  static const Color btnColorRed = const Color(0xFFF6612F);
+
 }

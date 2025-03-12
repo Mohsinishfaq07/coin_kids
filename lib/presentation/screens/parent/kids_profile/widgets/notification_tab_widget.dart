@@ -1,4 +1,4 @@
-import 'package:coin_kids/presentation/components/parent/notification/empty_state.dart';
+import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/notification/notification_tile.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/messages_screen/messages_screen.dart';
@@ -16,7 +16,7 @@ class NotificationTabWidget extends GetView<KidProfileController> {
           }
 
           if (controller.notifications.isEmpty) {
-            return buildNotificationEmptyState(controller);
+            return buildNotificationEmptyState((){});
           }
 
           return ListView.builder(

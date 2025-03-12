@@ -1,4 +1,4 @@
-import 'package:coin_kids/core/extention/number_extensions.dart';
+import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
@@ -36,13 +36,13 @@ class BasicInfoWidget extends GetView<KidProfileController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Obx(() {
-                return Text(controller.appState.currentKid.value!.name, style: AppTextStyle.bodyLarge);
+                return Text(controller.appState.currentKid.value?.name ?? "", style: AppTextStyle.bodyLarge);
               }),
               Padding(
                 padding: EdgeInsets.all(4.w),
                 child: Obx(() {
                   return CircleAvatarWidget(
-                    imagePath: controller.appState.currentKid.value!.avatar,
+                    imagePath: controller.appState.currentKid.value?.avatar ?? "",
                     imageType: ImageType.network,
                     backgroundColor: AppColors.iconPrimary,
                     size: 50.r,
@@ -60,7 +60,7 @@ class BasicInfoWidget extends GetView<KidProfileController> {
               ),
               Obx(() {
                 return Text(
-                  controller.appState.currentKid.value!.wallet.spendingJar.balance.toMoneyFormat(),
+                  controller.appState.currentKid.value?.wallet.spendingJar.balance.toMoneyFormat() ?? "",
                   style: AppTextStyle.bodyLarge,
                 );
               }),

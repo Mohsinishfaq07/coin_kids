@@ -1,10 +1,11 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/forgot_password_controller.dart';
+import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: ParentAppBar(
         title: "Recover Password",
         centerTitle: false,
         showBackButton: true,
@@ -30,7 +31,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
               children: [
                 const SizedBox(height: 20),
                 // Email Input
-                CustomTextField(
+                ParentTextField(
                   hintText: 'Email',
                   titleText: 'Email',
                   onChanged: (value) {
@@ -51,14 +52,29 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
 
                 // Login Button
                 AppButton(
-                  text: 'Send',
+                  child: Text(
+                    "Send",
+                    style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary),
+                  ),
                   onPressed: () async {
                     if (controller.email.value.isNotEmpty && controller.email.value.contains('@')) {
-                      await controller.authService.resetPassword(controller.email.value);
-                      ToastUtil.showToast("Email sent");
-                      Get.back();
+                      // await controller.authService.resetPassword(controller.email.value);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AppParentDialog(
+                          iconPath: "assets/ic_email_sent.svg",
+                          title: "Email sent successfully",
+                          subtitle: "Password reset e-mail sent to your added email address, Click on the link to recover your password.",
+                          buttons: [
+                            DialogButton(
+                              text: "Close",
+                              onPressed: () => Get.back(),
+                            ),
+                          ],
+                        ),
+                      );
                     } else {
-                      ToastUtil.showToast('Check your email');
+                      ToastUtil.showToast('Please enter correct E-mail');
                     }
                   },
                 ),

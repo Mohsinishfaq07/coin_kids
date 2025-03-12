@@ -3,7 +3,7 @@ import '../models/market_product_model.dart';
 
 class MarketService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String collection = 'market_products';
+  final String collection = 'products';
 
   // Create new product
   Future<DocumentReference> createProduct(MarketProductModel product) async {

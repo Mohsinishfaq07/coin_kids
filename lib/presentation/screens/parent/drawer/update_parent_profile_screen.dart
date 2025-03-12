@@ -1,8 +1,10 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/update_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,10 +14,20 @@ import 'package:get/get.dart';
 class UpdateParentProfile extends GetView<UpdateProfileController> {
   UpdateParentProfile({super.key});
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    // Set default gender when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.selectedGender.value.isEmpty) {
+        final currentGender = controller.appState.currentParent.value?.gender;
+        controller.selectGender(currentGender ?? UserGender.Male.name);
+      }
+    });
+
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const ParentAppBar(
         title: "Update Profile",
         centerTitle: false,
         showBackButton: true,
@@ -24,34 +36,33 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
         decoration: const BoxDecoration(
           gradient: AppColors.background,
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h),
                 Text(
                   "Birthday",
                   style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 12.h),
                 Obx(() {
-                  return CustomTextField(
-                    enabled: !controller.isLoading.value,
+                  return ParentTextField(
                     hintText: controller.birthday.value == null
                         ? controller.formatDate(
-                            DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob),
+                            DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0),
                           )
                         : controller.formatDate(controller.birthday.value!),
                     titleText: 'Birthday',
+                    enabled: false,
                     suffixIcon: Icons.calendar_month,
+                    suffixIconColor: AppColors.textPrimary,
                     onSuffixTap: () async {
-                      if (controller.isLoading.value) return;
-                      
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob),
+                        initialDate: DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0),
                         firstDate: DateTime(1900),
                         lastDate: DateTime.now(),
                       );
@@ -67,14 +78,25 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                   style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 12.h),
-                Obx(() => CustomTextField(
-                  enabled: !controller.isLoading.value,
-                  titleText: 'Full name',
-                  hintText: controller.appState.currentParent.value!.name,
-                  onChanged: (value) {
-                    controller.parentName.value = value.trim();
-                  },
-                )),
+                Obx(() => ParentTextField(
+                      titleText: 'Full name',
+                      hintText: controller.appState.currentParent.value?.name ?? "",
+                      onChanged: (value) {
+                        controller.parentName.value = value.trim();
+                      },
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return null; // Allow empty as it will use existing name
+                        }
+                        if (value!.length < 2) {
+                          return 'Name must be at least 2 characters';
+                        }
+                        if (value.length > 50) {
+                          return 'Name must be less than 50 characters';
+                        }
+                        return null;
+                      },
+                    )),
                 SizedBox(height: 23.h),
                 Text("Gender (Optional)",
                     style: TextStyle(
@@ -84,87 +106,79 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                     )),
                 SizedBox(height: 12.h),
                 Obx(() => Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                          onTap: () {
-                            if (controller.isLoading.value) return;
-                            controller.selectGender(UserGender.Male.name);
-                          },
-                          child: Container(
-                            height: 48.h,
-                            width: 154.w,
-                            padding: const EdgeInsets.only(
-                              top: 12.33,
-                              left: 20,
-                              right: 20,
-                              bottom: 13.33,
-                            ),
-                            decoration: ShapeDecoration(
-                              color: controller.selectedGender.value == UserGender.Male.name ? AppColors.buttonPrimary : Colors.white54,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/man_3.svg",
-                              height: 24.h,
-                              width: 24.w,
-                              color: controller.selectedGender.value == UserGender.Male.name ? Colors.white : AppColors.textPrimary,
-                            ),
-                          )),
-                    ),
-                    SizedBox(width: 14.w),
-                    Expanded(
-                      child: GestureDetector(
-                          onTap: () {
-                            if (controller.isLoading.value) return;
-                            controller.selectGender(UserGender.Female.name);
-                          },
-                          child: Container(
-                            height: 48.h,
-                            width: 154.w,
-                            padding: const EdgeInsets.only(
-                              top: 12.33,
-                              left: 20,
-                              right: 20,
-                              bottom: 13.33,
-                            ),
-                            decoration: ShapeDecoration(
-                              color: controller.selectedGender.value == UserGender.Female.name ? AppColors.buttonPrimary : Colors.white54,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/woman.svg",
-                              height: 24.h,
-                              width: 24.w,
-                              color: controller.selectedGender.value == UserGender.Female.name ? Colors.white : AppColors.textPrimary,
-                            ),
-                          )),
-                    ),
-                  ],
-                )),
-                SizedBox(height: 40.h),
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                              onTap: () => controller.selectGender(UserGender.Male.name),
+                              child: Container(
+                                height: 48.h,
+                                width: 154.w,
+                                padding: const EdgeInsets.only(
+                                  top: 12.33,
+                                  left: 20,
+                                  right: 20,
+                                  bottom: 13.33,
+                                ),
+                                decoration: ShapeDecoration(
+                                  color: controller.selectedGender.value == UserGender.Male.name ? AppColors.buttonPrimary : Colors.white54,
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                  Assets.icMale,
+                                  height: 24.h,
+                                  width: 24.w,
+                                  color: controller.selectedGender.value == UserGender.Male.name ? Colors.white : AppColors.textPrimary,
+                                ),
+                              )),
+                        ),
+                        SizedBox(width: 14.w),
+                        Expanded(
+                          child: GestureDetector(
+                              onTap: () => controller.selectGender(UserGender.Female.name),
+                              child: Container(
+                                height: 48.h,
+                                width: 154.w,
+                                padding: const EdgeInsets.only(
+                                  top: 12.33,
+                                  left: 20,
+                                  right: 20,
+                                  bottom: 13.33,
+                                ),
+                                decoration: ShapeDecoration(
+                                  color: controller.selectedGender.value == UserGender.Female.name ? AppColors.buttonPrimary : Colors.white54,
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                  Assets.icFemale,
+                                  height: 24.h,
+                                  width: 24.w,
+                                  color: controller.selectedGender.value == UserGender.Female.name ? Colors.white : AppColors.textPrimary,
+                                ),
+                              )),
+                        ),
+                      ],
+                    )),
+                Expanded(child: Container()),
                 Center(
-                  child: Obx(() => AppButton(
-                        backgroundColor: AppColors.buttonPrimary,
-                        text: controller.isLoading.value ? 'Updating...' : 'Update profile',
-                        onPressed: () {
-                          if (controller.isLoading.value) return;
-                          final currentParent = controller.appState.currentParent.value!;
-
-                          final parentModel = controller.appState.currentParent.value!.copyWith(
-                            dob: controller.birthday.value == null ? currentParent.dob : controller.birthday.value!.millisecondsSinceEpoch,
-                            name: controller.parentName.value.isEmpty ? currentParent.name : controller.parentName.value,
-                            gender: controller.selectedGender.value,
-                          );
-                          controller.parentService.updateParent(parentModel);
-                        },
-                      )),
+                  child: AppButton(
+                    backgroundColor: AppColors.buttonPrimary,
+                    size: Size(0.8.sw, 50),
+                    child: Text(
+                      "Save Changes",
+                      style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await controller.updateProfile();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

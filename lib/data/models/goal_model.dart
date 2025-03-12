@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/core/extention/number_extensions.dart';
+import 'package:coin_kids/core/extensions/number_extensions.dart';
 
 import 'market_product_model.dart';
 
@@ -60,6 +60,7 @@ class GoalModel {
     String? userId,
     String? title,
     double? targetAmount,
+    String? photo,
     double? savedAmount,
     GoalStatus? status,
     DateTime? createdAt,
@@ -93,8 +94,7 @@ class GoalModel {
   }
 
   // Calculate progress percentage
-  double get progressPercentage =>
-      (savedAmount / targetAmount * 100).clamp(0, 100);
+  double get progressPercentage => (savedAmount / targetAmount * 100).clamp(0, 100);
 
   // Check if goal is achievable with current balance
   bool isAchievableWithBalance(double balance) {
@@ -107,19 +107,16 @@ class GoalModel {
   // Format amounts with currency symbol
   String get formattedTargetAmount => targetAmount.toMoneyFormat();
 
-  String get formattedSavedAmount =>  savedAmount.toMoneyFormat();
+  String get formattedSavedAmount => savedAmount.toMoneyFormat();
 
-  String get formattedRemainingAmount =>
-      remainingAmount.toMoneyFormat();
+  String get formattedRemainingAmount => remainingAmount.toMoneyFormat();
 
   // Helper method to check if photo is a network image
   bool get isNetworkImage => photo?.startsWith('http') ?? false;
 
   // Create a new goal from a product
-  factory GoalModel.fromProduct(
-      String kidId, MarketProductModel product, String goalId) {
+  factory GoalModel.fromProduct(String kidId, MarketProductModel product) {
     return GoalModel(
-      id: goalId,
       userId: kidId,
       title: product.name,
       photo: product.imageUrl,
@@ -128,20 +125,6 @@ class GoalModel {
       status: GoalStatus.in_progress,
       createdAt: DateTime.now(),
       completedAt: null,
-    );
-  }
-
-  // Create a new goal from a market product
-  factory GoalModel.fromMarketProduct(
-      MarketProductModel product, String kidId) {
-    return GoalModel(
-      userId: kidId,
-      title: product.name,
-      photo: product.imageUrl,
-      targetAmount: product.price,
-      savedAmount: 0,
-      status: GoalStatus.in_progress,
-      createdAt: DateTime.now(),
     );
   }
 }

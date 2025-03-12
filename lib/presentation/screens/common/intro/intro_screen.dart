@@ -1,10 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/core/utils/portrait_orientation.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
-import 'package:coin_kids/presentation/components/common/AppIconButton.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
+import 'package:coin_kids/presentation/components/common/app_icon_button.dart';
 import 'package:coin_kids/presentation/controllers/common/intro_controller.dart';
 import 'package:coin_kids/presentation/screens/common/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +13,8 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class IntroScreen extends GetView<IntroController> {
-  IntroScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
-    PortraitOrientation();
-
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -32,7 +27,7 @@ class IntroScreen extends GetView<IntroController> {
               child: Padding(
                 padding: EdgeInsets.only(top: 46.h),
                 child: SvgPicture.asset(
-                  AppAssets.cloudImageSvg,
+                  Assets.parentBgCloud,
                   width: 360.w,
                   fit: BoxFit.fitWidth,
                 ),
@@ -66,7 +61,12 @@ class IntroScreen extends GetView<IntroController> {
                             onPressed: () {
                               Get.off(() => SignupScreen());
                             },
-                            text: "Get Started")
+                            size: Size(0.8.sw, 50),
+                            child: Text(
+                              "Done",
+                              style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                            ),
+                          )
                         : Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Row(

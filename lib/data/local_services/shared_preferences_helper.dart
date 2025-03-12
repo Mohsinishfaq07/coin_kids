@@ -6,6 +6,10 @@ class SharedPreferencesHelper {
   static String isEverLoggedIn = "isEverLoggedIn";
   static String lastLoggedInRole = "lastLoggedInRole";
   static String isKidOnboarded = "isKidOnboarded";
+  static String hasShownKidsZoneShowcase = "hasShownKidsZoneShowcase";
+  static String goalAchievementNotificationEnabled = "hasShownKidsZoneShowcase";
+  static String moneyRequestNotificationEnabled = "hasShownKidsZoneShowcase";
+  static String showcaseMoneyJarKey = "showcaseMoneyJarKey";
 
   // Initialize SharedPreferences
   static Future<void> init() async {
@@ -51,4 +55,4 @@ class SharedPreferencesHelper {
   static Future<void> clear() async {
     await _preferences?.clear();
   }
-} 
+}

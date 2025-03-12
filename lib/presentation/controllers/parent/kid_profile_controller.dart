@@ -4,9 +4,9 @@ import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:get/get.dart';
 
 class KidProfileController extends GetxController {
@@ -33,7 +33,7 @@ class KidProfileController extends GetxController {
       final kid = appState.currentKid.value;
       if (kid == null) {
             ToastUtil.showToast("Session Expired. Login Again");
-            Get.offAll(() => LoginScreen());
+            Get.offAll(() => SignInScreen());
             return;
           }
 

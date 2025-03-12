@@ -145,14 +145,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class KidCustomTextField extends StatefulWidget {
+class KidTextField extends StatefulWidget {
   final String hintText;
   final Function(String) onChange;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
   final int? maxlength;
 
-  const KidCustomTextField({
+  const KidTextField({
     Key? key,
     required this.hintText,
     required this.onChange,
@@ -162,10 +162,10 @@ class KidCustomTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _KidCustomTextFieldState createState() => _KidCustomTextFieldState();
+  _KidTextFieldState createState() => _KidTextFieldState();
 }
 
-class _KidCustomTextFieldState extends State<KidCustomTextField> {
+class _KidTextFieldState extends State<KidTextField> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
   Color _borderColor = const Color(0xFF848484); // Default grey border color
@@ -238,7 +238,8 @@ class _KidCustomTextFieldState extends State<KidCustomTextField> {
             fontWeight: FontWeight.w700,
             color: AppColors.textSecondary,
           ),
-          fillColor: const Color(0xffffffff), // Filled color: white
+          fillColor: const Color(0xffffffff),
+          // Filled color: white
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(

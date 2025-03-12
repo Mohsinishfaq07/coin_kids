@@ -1,6 +1,6 @@
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
 
 class ImagePickerBottomSheet {
   static void show({
@@ -51,4 +51,4 @@ class ImagePickerBottomSheet {
       enableDrag: true,
     );
   }
-} 
+}

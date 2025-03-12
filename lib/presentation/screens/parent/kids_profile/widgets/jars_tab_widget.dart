@@ -1,67 +1,55 @@
-import 'package:coin_kids/app_assets.dart';
-import 'package:coin_kids/core/extention/number_extensions.dart';
+import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
+import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class JarsTabWidget extends GetView<KidProfileController> {
   @override
   Widget build(BuildContext context) {
-    final wallet = controller.appState.currentKid.value!.wallet;
+    return Obx(() {
+      final kid = controller.appState.currentKid.value;
+      if (kid == null) return const SizedBox.shrink();
 
-    return
-      Obx(() {
-        if (controller.appState.currentKid.value!.wallet.spendingJar.color == "#000000") {
-           return Expanded(child: Image.asset(AppAssets.parent_jar_place_holder_png));
-        }
+      final spendingJar = kid.wallet.spendingJar;
+      final savingJar = kid.wallet.savingJar;
+      final isSpendingJarCreated = spendingJar.color != 0;
+      final isSavingJarCreated = savingJar.color != 0;
+
+      if (!isSpendingJarCreated) {
         return Expanded(
+          child: Center(child: buildJarEmptyState()),
+        );
+      }
+
+      return Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            JarWidget(
+              jarState: spendingJar.balance > 0 ? JarState.filled : JarState.empty,
+              jarName: "Money",
+              jarColor: Color(spendingJar.color),
+              amount: spendingJar.balance,
+              showAmount: true,
+            ),
 
 
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Savings Jar
+            if(isSavingJarCreated) SizedBox(width: 30.w),
 
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    AppAssets.parent_side_saving_jar_svg,
-                    height: 100.h,
-                    width: 100.w,
-                  ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'Savings:${wallet.savingJar.balance.toMoneyFormat()}',
-                    style: TextStyle(fontSize: 12.sp),
-                  ),
-                ],
-              ),
-              // Spending Jar
+            if(isSavingJarCreated) JarWidget(
+              jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
+              jarName: "Saving",
+              jarColor: Color(savingJar.color),
+              amount: savingJar.balance,
+              showAmount: true,
+            ),
 
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    AppAssets.parent_side_spending_jar_svg,
-                    height: 100.h,
-                    width: 100.w,
-                  ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'Spending: €${wallet.spendingJar.balance.toMoneyFormat()}',
-                    style: TextStyle(fontSize: 12.sp),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ); // If color isn't #000000, no icon is shown
-      });
-
-
-
+          ],
+        ),
+      );
+    });
   }
 }

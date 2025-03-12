@@ -1,8 +1,7 @@
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
-import 'package:coin_kids/utils/dummy_data_generator.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -23,10 +22,11 @@ class ParentHomeController extends GetxController {
     }
 
     ever(
-        appState.hasKid,
-        (hasKids) => {
-              if (hasKids) {fetchKidsList()}
-            });
+      appState.hasKid,
+      (hasKids) => {
+        if (hasKids) {fetchKidsList()}
+      },
+    );
 
     if (kDebugMode) {
       insertTestData();

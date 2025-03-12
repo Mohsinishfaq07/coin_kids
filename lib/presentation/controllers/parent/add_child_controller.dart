@@ -1,11 +1,10 @@
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-// Define the AddChildController
 class AddChildController extends GetxController {
   final kidsService = Get.find<KidService>();
   final authService = Get.find<AuthService>();
@@ -14,7 +13,7 @@ class AddChildController extends GetxController {
   final childName = ''.obs;
   final childAge = ''.obs;
 
-  final selectedAvatar = (0).obs;
+  final selectedAvatar = 0.obs;
   final selectedAvatarPath = ''.obs;
   final avatars = <String>[].obs;
   final kidImagePath = ''.obs;
@@ -87,7 +86,7 @@ class AddChildController extends GetxController {
       final parentId = authService.user.value?.uid;
       if (parentId == null) {
         ToastUtil.showToast("User Session Expired");
-        Get.offAll(() => LoginScreen());
+        Get.offAll(() => SignInScreen());
         return;
       }
 
@@ -101,7 +100,8 @@ class AddChildController extends GetxController {
 
       await kidsService.createKid(
         name: childName.value,
-        age: age, // Use the parsed age
+        age: age,
+        // Use the parsed age
         parentId: parentId,
         customImagePath: kidImagePath.value,
         selectedAvatarUrl: selectedAvatarPath.value,

@@ -1,20 +1,65 @@
+import 'dart:io';
 import 'dart:ui';
 
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart' show ImagePicker, ImageSource, XFile;
+import 'package:path_provider/path_provider.dart';
 
-Future<void> pickImage(ImageSource source, VoidCallback onPick(XFile? file), VoidCallback onError(e)) async {
-  final ImagePicker _picker = ImagePicker();
+class ImageUtils {
+  static Future<File> resizeImage(File originalFile, {int targetSize = 200}) async {
+    try {
+      // Read original file
+      final originalImage = img.decodeImage(await originalFile.readAsBytes());
+      if (originalImage == null) throw Exception('Failed to decode image');
 
-  try {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: source,
-      imageQuality: 80,
-    );
+      // Calculate new dimensions maintaining aspect ratio
+      int newWidth, newHeight;
+      if (originalImage.width > originalImage.height) {
+        newWidth = targetSize;
+        newHeight = (targetSize * originalImage.height / originalImage.width).round();
+      } else {
+        newHeight = targetSize;
+        newWidth = (targetSize * originalImage.width / originalImage.height).round();
+      }
 
-    onPick(pickedFile);
-  } catch (e) {
-    onError(e);
-    ToastUtil.showToast("Failed to pick image: $e");
+      // Resize image
+      final resizedImage = img.copyResize(
+        originalImage,
+        width: newWidth,
+        height: newHeight,
+        interpolation: img.Interpolation.linear,
+      );
+
+      // Get temporary directory
+      final tempDir = await getTemporaryDirectory();
+      final tempPath = tempDir.path;
+      final targetPath = '$tempPath/resized_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // Save resized image
+      final File resizedFile = File(targetPath);
+      await resizedFile.writeAsBytes(img.encodeJpg(resizedImage, quality: 85));
+
+      return resizedFile;
+    } catch (e) {
+      print('Error resizing image: $e');
+      return originalFile; // Return original file if resize fails
+    }
+  }
+
+  Future<void> pickImage(ImageSource source, VoidCallback onPick(XFile? file), VoidCallback onError(e)) async {
+    final ImagePicker _picker = ImagePicker();
+
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
+
+      onPick(pickedFile);
+    } catch (e) {
+      onError(e);
+      ToastUtil.showToast("Failed to pick image: $e");
+    }
   }
 }

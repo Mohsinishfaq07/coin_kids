@@ -5,7 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../data/models/notification_model.dart';
 import '../../../data/remote_services/notification_service.dart';
-import '../../components/kid/toast_widget.dart';
+import '../../../core/utils/toast_util.dart';
 
 class MessagesController extends GetxController {
   final NotificationService _notificationService = Get.find<NotificationService>();
@@ -111,6 +111,28 @@ class MessagesController extends GetxController {
         }
       }
       
+      selectedNotifications.clear();
+      ToastUtil.showToast('Notifications updated');
+    } catch (e) {
+      print('Error updating notifications: $e');
+      ToastUtil.showToast('Failed to update notifications');
+    }
+  }
+
+  Future<void> markAsRead(String notificationId) async {
+    if (selectedNotifications.isEmpty) return;
+
+    try {
+      await _notificationService.markAsRead(notificationId);
+
+      // Update local notifications
+      for (var i = 0; i < notifications.length; i++) {
+        if (selectedNotifications.contains(notifications[i].id)) {
+          final updatedNotification = notifications[i].copyWith(isRead: true);
+          notifications[i] = updatedNotification;
+        }
+      }
+
       selectedNotifications.clear();
       ToastUtil.showToast('Notifications updated');
     } catch (e) {

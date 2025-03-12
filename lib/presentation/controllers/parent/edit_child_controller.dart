@@ -1,11 +1,12 @@
+import 'dart:io';
+
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
-import 'package:coin_kids/presentation/controllers/app_state_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/login_screen.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 // Define the AddChildController
 class EditChildController extends GetxController {
@@ -16,13 +17,13 @@ class EditChildController extends GetxController {
 
   final childName = 'Enter new name'.obs;
   final childAge = 'Enter age'.obs;
-  
+
   // Store original values to check for changes
   String originalName = '';
   String originalAge = '';
   String originalAvatar = '';
 
-  final selectedAvatar = (-1).obs; // -1 means no predefined avatar selected
+  final selectedAvatar = 0.obs; // -1 means no predefined avatar selected
   final selectedAvatarPath = ''.obs;
   final avatars = <String>[].obs;
   final kidImagePath = ''.obs;
@@ -38,14 +39,14 @@ class EditChildController extends GetxController {
 
     if (kid == null) {
       ToastUtil.showToast("Session Expired, Login Again");
-      Get.offAll(LoginScreen());
+      Get.offAll(SignInScreen());
       return;
     }
 
     // Store original values
     originalName = kid.name;
     originalAge = kid.age.toString();
-    originalAvatar = kid.avatar ?? '';
+    originalAvatar = kid.avatar;
 
     // Set current values
     childName.value = originalName;
@@ -109,17 +110,17 @@ class EditChildController extends GetxController {
       final kid = appState.currentKid.value;
       if (kid == null) {
         ToastUtil.showToast("Session Expired");
-        Get.offAll(() => LoginScreen());
+        Get.offAll(() => SignInScreen());
         return;
       }
 
       // Only update changed values
       Map<String, dynamic> updates = {};
-      
+
       if (childName.value != originalName) {
         updates['name'] = childName.value;
       }
-      
+
       if (childAge.value != originalAge) {
         updates['age'] = int.parse(childAge.value);
       }
@@ -135,11 +136,13 @@ class EditChildController extends GetxController {
       }
 
       if (updates.isNotEmpty) {
-        await kidsService.updateKid(kid.kidId, kid.copyWith(
-          name: updates['name'] as String? ?? kid.name,
-          age: updates['age'] as int? ?? kid.age,
-          avatar: updates['avatar'] as String? ?? kid.avatar,
-        ));
+        await kidsService.updateKid(
+            kid.kidId,
+            kid.copyWith(
+              name: updates['name'] as String? ?? kid.name,
+              age: updates['age'] as int? ?? kid.age,
+              avatar: updates['avatar'] as String? ?? kid.avatar,
+            ));
       }
 
       ToastUtil.showToast("Child updated successfully");

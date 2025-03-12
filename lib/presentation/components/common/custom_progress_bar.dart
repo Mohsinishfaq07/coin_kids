@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:coin_kids/core/extention/number_extensions.dart';
+import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +69,7 @@ class CustomProgressBar extends StatelessWidget {
                             height: height.h,
                             width: maxWidth,
                             decoration: BoxDecoration(
-                              color: AppColors.buttonPrimary.withOpacity(0.5),
+                              color: AppColors.buttonPrimary.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(height.h / 2),
                             ),
                           ),

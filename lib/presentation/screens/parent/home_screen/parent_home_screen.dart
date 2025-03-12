@@ -1,10 +1,10 @@
-import 'package:coin_kids/app_assets.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
-import 'package:coin_kids/core/utils/portrait_orientation.dart';
-import 'package:coin_kids/presentation/components/common/App_small_button.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
-import 'package:coin_kids/presentation/components/kid/toast_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
 import 'package:coin_kids/presentation/screens/parent/add_child/add_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer_screen.dart';
@@ -19,7 +19,6 @@ import 'package:get/get.dart';
 class ParentsHomeScreen extends GetView<ParentHomeController> {
   @override
   Widget build(BuildContext context) {
-    PortraitOrientation();
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 60.h,
@@ -34,16 +33,12 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Get.to(
-                    ParentDrawer(),
-                    transition: Transition.leftToRightWithFade,
-                    duration: const Duration(milliseconds: 300),
-                  );
+                  Get.to(ParentDrawer());
                 },
                 child: Obx(
-                      () {
+                  () {
                     return CircleAvatarWidget(
-                      imagePath: controller.appState.currentParent.value!.imageUrl,
+                      imagePath: controller.appState.currentParent.value?.imageUrl ?? "",
                       imageType: ImageType.network,
                       backgroundColor: AppColors.iconPrimary,
                       size: 40.r,
@@ -58,17 +53,10 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                   Obx(() {
                     return Text(
                       controller.appState.currentParent.value?.name ?? "Null",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(fontSize: 18.sp),
+                      style: AppTextStyle.headingMedium.copyWith(fontWeight: FontWeight.w800),
                     );
                   }),
-                  Text("Welcome 👋", style: Theme
-                      .of(context)
-                      .textTheme
-                      .bodySmall)
+                  Text("Welcome 👋", style: AppTextStyle.bodySmall)
                 ],
               ),
             ],
@@ -79,7 +67,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
             gradient: AppColors.background,
           ),
           child: Obx(
-                () {
+            () {
               if (controller.isLoading.value) {
                 // Show loading indicator
                 return const Center(
@@ -100,7 +88,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             bottom: 81.h,
                           ),
                           child: SvgPicture.asset(
-                            AppAssets.appLogoSvg,
+                            Assets.appIconText,
                             height: 50.h,
                           ),
                         ),
@@ -117,25 +105,17 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Almost There!", style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                              Text("Almost There!", style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
                               const SizedBox(height: 10),
                               Text("Starting by adding your first child.",
                                   textAlign: TextAlign.center,
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
                               SizedBox(height: 26.h),
-                              AppSmallButton(
+                              AppButton(
                                 onPressed: () {
                                   Get.to(() => AddChildScreen());
                                 },
-                                text: 'Add child',
+                                child: Text("Add Child"),
                               )
                             ],
                           ),
@@ -154,8 +134,8 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 60),
-                        child: Image.asset(
-                          "assets/logo.png", // Ensure the image is in the 'assets' folder and added to pubspec.yaml
+                        child: SvgPicture.asset(
+                          Assets.appIconText,
                           height: 50,
                         ),
                       ),
@@ -186,22 +166,20 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     onTap: () {
                                       if (controller.kidsList.isNotEmpty) {
                                         ToastUtil.showToast("You have already added a child");
-                                      } else {
-                                        Get.to(() => AddChildScreen());
                                       }
                                     },
                                     child: Column(
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.purple, width: 2),
+                                            border: Border.all(color: AppColors.iconDisabled, width: 2),
                                             borderRadius: BorderRadius.circular(40),
                                           ),
                                           child: const Padding(
                                             padding: EdgeInsets.all(14.0),
                                             child: Icon(
                                               Icons.add, // Add icon
-                                              color: AppColors.buttonPrimary,
+                                              color: AppColors.iconDisabled,
                                               size: 30,
                                             ),
                                           ),
@@ -211,7 +189,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                           'Add Member\n(Coming soon)',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary,
+                                            color: AppColors.iconDisabled,
                                             fontSize: 13.sp,
                                             fontFamily: 'Open Sans',
                                             fontWeight: FontWeight.w600,
@@ -222,8 +200,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     ),
                                   ),
                                 );
-                              }
-                              else {
+                              } else {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                   child: GestureDetector(
@@ -234,9 +211,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                       children: [
                                         Obx(() {
                                           return CircleAvatarWidget(
-                                            imagePath: controller.appState.currentKid.value!.avatar,
+                                            imagePath: controller.appState.currentKid.value?.avatar ?? "",
                                             imageType: ImageType.network,
-                                            errorAsset: AppAssets.appLogo,
+                                            errorAsset: Assets.icPerson,
                                             size: 50.r,
                                           );
                                         }),
@@ -277,15 +254,12 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                AppSmallButton(
+                                AppButton(
                                   onPressed: () {
                                     Get.to(() => QuickTransferPage());
                                   },
                                   size: Size(183.w, 50.h),
-                                  text: "Quick Transfer",
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: "Roboto",
+                                  child: Text("Quick Transfer"),
                                 ),
                                 const SizedBox(height: 20),
                                 Padding(
@@ -296,29 +270,13 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                       children: [
                                         TextSpan(
                                           text: 'Send ',
-                                          style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
+                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
                                         ),
-                                        TextSpan(text: 'or ', style: Theme
-                                            .of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                        TextSpan(text: 'remove ', style: Theme
-                                            .of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
+                                        TextSpan(text: 'or ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                        TextSpan(text: 'remove ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
                                         TextSpan(
                                             text: 'money from your child\'s account',
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
                                       ],
                                     ),
                                   ),

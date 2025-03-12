@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
-import 'package:coin_kids/presentation/components/common/AppButton.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
-import 'package:coin_kids/presentation/components/parent/custom_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/custom_text_field.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/edit_child_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +20,7 @@ class EditChildScreen extends GetView<EditChildController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const ParentAppBar(
         showBackButton: true,
         title: "Edit Profile",
         centerTitle: false,
@@ -38,7 +39,7 @@ class EditChildScreen extends GetView<EditChildController> {
                 children: [
                   // Child Name Field
                   Obx(() {
-                    return CustomTextField(
+                    return ParentTextField(
                       maxLength: 8,
                       initialValue: controller.childName.value,
                       hintText: controller.childName.value,
@@ -55,7 +56,7 @@ class EditChildScreen extends GetView<EditChildController> {
 
                   // Child Age Field
                   Obx(() {
-                    return CustomTextField(
+                    return ParentTextField(
                       initialValue: controller.childAge.value,
                       hintText: controller.childAge.value,
                       keyboardType: TextInputType.number,
@@ -64,9 +65,16 @@ class EditChildScreen extends GetView<EditChildController> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter child age';
                         }
-                        if (int.tryParse(value) == null) {
-                          return 'Please enter a valid age';
+
+                        final intValue = int.tryParse(value);
+                        if (intValue == null) {
+                          return 'Please enter a valid number';
                         }
+
+                        if (intValue < 1 && intValue > 25) {
+                          return 'Age must be between 1 to 25 yo';
+                        }
+
                         return null;
                       },
                     );
@@ -76,7 +84,11 @@ class EditChildScreen extends GetView<EditChildController> {
                   // Avatar Selection Title
                   Text(
                     "Select Avatar",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
                   ),
                   SizedBox(height: 12.h),
 
@@ -85,8 +97,13 @@ class EditChildScreen extends GetView<EditChildController> {
 
                   // Add Child Button
                   Center(
-                    child: Obx(() => AppButton(
-                          text: controller.isLoading.value ? "Updating Child..." : "Update Child",
+                    child: Obx(() =>
+                        AppButton(
+                          size: Size(0.8.sw, 50),
+                          child: Text(
+                            "Save Changes",
+                            style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                          ),
                           onPressed: () async {
                             if (controller.isLoading.value) return;
 
@@ -136,7 +153,7 @@ class EditChildScreen extends GetView<EditChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: _isCustomImageSelected() ? Colors.purple : Colors.transparent,
+                    color: _isCustomImageSelected() ? AppColors.colorPrimary : Colors.transparent,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(60.r),
@@ -149,40 +166,42 @@ class EditChildScreen extends GetView<EditChildController> {
           // Predefined avatars
           final avatarIndex = index - 1;
           return Obx(
-            () => GestureDetector(
-              onTap: () => controller.selectAvatar(avatarIndex),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: controller.selectedAvatar.value == avatarIndex ? Colors.purple : Colors.transparent,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(60.r),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ClipRRect(
+                () =>
+                GestureDetector(
+                  onTap: () => controller.selectAvatar(avatarIndex),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
+                        width: 2,
+                      ),
                       borderRadius: BorderRadius.circular(60.r),
-                      child: CachedNetworkImage(
-                        imageUrl: controller.avatars[avatarIndex],
-                        height: 60.h,
-                        width: 60.w,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.buttonPrimary,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(60.r),
+                          child: CachedNetworkImage(
+                            imageUrl: controller.avatars[avatarIndex],
+                            height: 60.h,
+                            width: 60.w,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.buttonPrimary,
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) => _buildErrorWidget(),
                           ),
                         ),
-                        errorWidget: (context, url, error) => _buildErrorWidget(),
-                      ),
+                        if (controller.selectedAvatar.value == avatarIndex) _buildSelectedOverlay(),
+                      ],
                     ),
-                    if (controller.selectedAvatar.value == avatarIndex) _buildSelectedOverlay(),
-                  ],
+                  ),
                 ),
-              ),
-            ),
           );
         },
       );
@@ -225,12 +244,13 @@ class EditChildScreen extends GetView<EditChildController> {
               height: 60.h,
               width: 60.w,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.buttonPrimary,
-                ),
-              ),
+              placeholder: (context, url) =>
+                  Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.buttonPrimary,
+                    ),
+                  ),
               errorWidget: (context, url, error) => _buildErrorWidget(),
             ),
           ),
@@ -270,7 +290,7 @@ class EditChildScreen extends GetView<EditChildController> {
   Widget _buildErrorWidget() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.iconPrimary.withOpacity(0.1),
+        color: AppColors.iconPrimary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(60.r),
       ),
       child: Icon(

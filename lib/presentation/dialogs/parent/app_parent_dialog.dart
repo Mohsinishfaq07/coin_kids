@@ -73,13 +73,13 @@ class AppParentDialog extends StatelessWidget {
                 title,
                 textAlign: textAlign,
                 style: AppTextStyle.headingMedium.copyWith(
-                  color: AppColors.textPrimary,
+                  color: AppColors.textHighlighted,
                 ),
               ),
 
               if (subtitle != null) ...[
                 SizedBox(height: 14.h),
-                Text(subtitle!, textAlign: textAlign, style: AppTextStyle.bodyMedium),
+                Text(subtitle!, textAlign: textAlign, style: AppTextStyle.bodyLarge),
               ],
 
               if (message != null) ...[

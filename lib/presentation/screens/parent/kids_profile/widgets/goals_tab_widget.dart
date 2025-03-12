@@ -1,5 +1,5 @@
 import 'package:coin_kids/presentation/components/parent/goal_list_item.dart';
-import 'package:coin_kids/presentation/components/parent/notification/empty_state.dart';
+import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +15,7 @@ class GoalsTabWidget extends GetView<KidProfileController> {
           }
 
           if (controller.goals.isEmpty) {
-            return buildGoalsEmptyState(controller);
+            return buildGoalsEmptyState((){});
           }
 
           return ListView.builder(

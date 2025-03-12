@@ -1,30 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'notification_metadata.dart';
 
 enum NotificationType {
-  goal_milestone,    // Goal progress notifications
-  goal_completed,    // Goal completion
-  transaction_pending,    // New transaction needs approval
-  transaction_approved,   // Transaction was approved
-  transaction_rejected,   // Transaction was rejected
-  reward_earned,     // Kid earned a reward
-  task_completed,    // Task completion
-  task_assigned,     // New task assigned
-  balance_low,       // Low balance warning
-  balance_added,     // Money added to account
-  wishlist_added,    // Item added to wishlist
-  system_notification  // General system notifications
+  goal_milestone, // Goal progress notifications
+  goal_completed, // Goal completion
+  transaction_pending, // New transaction needs approval
+  transaction_approved, // Transaction was approved
+  transaction_rejected, // Transaction was rejected
+  balance_added, // Money added to account
+  balance_removed, // Money remove to account
+  wishlist_added, // Item added to wishlist
+  system_notification // General system notifications
 }
 
 class NotificationModel {
   final String? id;
-  final String userId;      // Recipient's ID
-  final String senderId;    // Sender's ID
+  final String userId; // Recipient's ID
+  final String senderId; // Sender's ID
   final NotificationType type;
   final String message;
   final DateTime timestamp;
   final bool isRead;
-  final Map<String, dynamic>? metadata;  // Additional data specific to notification type
-  final String? imageUrl;   // Optional image URL
+  final NotificationMetadata? metadata;
+  final String? imageUrl; // Optional image URL
   final String? actionUrl; // Optional deep link or action URL
 
   NotificationModel({
@@ -41,15 +39,18 @@ class NotificationModel {
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json, {String? id}) {
+    final type = _stringToNotificationType(json['type'] ?? '');
+    final metadata = json['metadata'] != null ? _parseMetadata(type, json['metadata']) : null;
+
     return NotificationModel(
       id: id,
       userId: json['userId'] ?? '',
       senderId: json['senderId'] ?? '',
-      type: _stringToNotificationType(json['type'] ?? ''),
+      type: type,
       message: json['message'] ?? '',
       timestamp: (json['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isRead: json['isRead'] ?? false,
-      metadata: json['metadata'],
+      metadata: metadata,
       imageUrl: json['imageUrl'],
       actionUrl: json['actionUrl'],
     );
@@ -63,7 +64,7 @@ class NotificationModel {
       'message': message,
       'timestamp': Timestamp.fromDate(timestamp),
       'isRead': isRead,
-      if (metadata != null) 'metadata': metadata,
+      if (metadata != null) 'metadata': metadata?.toJson(),
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (actionUrl != null) 'actionUrl': actionUrl,
     };
@@ -74,6 +75,26 @@ class NotificationModel {
       (e) => e.toString().split('.').last == type,
       orElse: () => NotificationType.system_notification,
     );
+  }
+
+  static NotificationMetadata? _parseMetadata(NotificationType type, Map<String, dynamic> json) {
+    switch (type) {
+      case NotificationType.goal_milestone:
+        return GoalMilestoneMetadata.fromJson(json);
+      case NotificationType.transaction_pending:
+      case NotificationType.transaction_approved:
+      case NotificationType.transaction_rejected:
+        return TransactionMetadata.fromJson(json, type);
+      case NotificationType.balance_added:
+      case NotificationType.balance_removed:
+        return BalanceMetadata.fromJson(json, type);
+      case NotificationType.wishlist_added:
+        return WishlistMetadata.fromJson(json);
+      case NotificationType.system_notification:
+        return SystemNotificationMetadata.fromJson(json);
+      default:
+        return null;
+    }
   }
 
   // Helper method to get relative time
@@ -100,7 +121,7 @@ class NotificationModel {
     String? message,
     DateTime? timestamp,
     bool? isRead,
-    Map<String, dynamic>? metadata,
+    NotificationMetadata? metadata,
     String? imageUrl,
     String? actionUrl,
   }) {
@@ -117,4 +138,4 @@ class NotificationModel {
       actionUrl: actionUrl ?? this.actionUrl,
     );
   }
-} 
+}
