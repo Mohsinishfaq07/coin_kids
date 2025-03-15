@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/base/kid_onboarding_base_screen.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidAgeScreen extends GetView<KidOnboardingController> {
-  const KidAgeScreen({Key? key}) : super(key: key);
+  const KidAgeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
               onTap: controller.proceedToAvatar,
               text: 'Next',
               baseColor: AppColors.btnColorGreen,
-              iconPath: "assets/arrorDirectionNoShadow.svg",
+              iconPath: Assets.icNext,
               iconPosition: IconPosition.right,
               width: 120.w,
             ),

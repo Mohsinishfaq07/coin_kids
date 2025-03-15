@@ -1,6 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -17,10 +17,6 @@ class UpdateProfileController extends GetxController {
 
   final isLoading = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   String formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
@@ -61,7 +57,7 @@ class UpdateProfileController extends GetxController {
     if (birthday.value != null) {
       final now = DateTime.now();
       final age = now.difference(birthday.value!).inDays / 365;
-      
+
       if (age < 18) {
         ToastUtil.showToast(
           'You must be at least 18 years old',
@@ -69,7 +65,7 @@ class UpdateProfileController extends GetxController {
         );
         return false;
       }
-      
+
       if (age > 100) {
         ToastUtil.showToast(
           'Please enter a valid birth date',
@@ -90,10 +86,9 @@ class UpdateProfileController extends GetxController {
 
     // Check if any changes were made
     final currentParent = appState.currentParent.value!;
-    final noChanges = 
-      (parentName.value.isEmpty || parentName.value == currentParent.name) &&
-      (birthday.value == null || birthday.value!.millisecondsSinceEpoch == currentParent.dob) &&
-      selectedGender.value == currentParent.gender;
+    final noChanges = (parentName.value.isEmpty || parentName.value == currentParent.name) &&
+        (birthday.value == null || birthday.value!.millisecondsSinceEpoch == currentParent.dob) &&
+        selectedGender.value == currentParent.gender;
 
     if (noChanges) {
       ToastUtil.showToast(
@@ -128,7 +123,7 @@ class UpdateProfileController extends GetxController {
     } catch (e) {
       Get.back(); // Close loading dialog
       ToastUtil.showToast(
-        'Failed to update profile', 
+        'Failed to update profile',
         color: AppColors.notificationWarning,
       );
       return false;

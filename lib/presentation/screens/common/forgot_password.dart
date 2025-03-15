@@ -1,27 +1,30 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/forgot_password_controller.dart';
 import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
-  ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: ParentAppBar(
         title: "Recover Password",
         centerTitle: false,
         showBackButton: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Padding(
@@ -52,9 +55,11 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
 
                 // Login Button
                 AppButton(
+                  backgroundColor: AppColors.buttonPrimary,
+                  size: Size(0.8.sw, 50),
                   child: Text(
-                    "Send",
-                    style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary),
+                    "Get Recovery Link",
+                    style: AppTextStyle.appButton,
                   ),
                   onPressed: () async {
                     if (controller.email.value.isNotEmpty && controller.email.value.contains('@')) {
@@ -62,7 +67,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
                       showDialog(
                         context: context,
                         builder: (context) => AppParentDialog(
-                          iconPath: "assets/ic_email_sent.svg",
+                          iconPath: Assets.icEmailSent,
                           title: "Email sent successfully",
                           subtitle: "Password reset e-mail sent to your added email address, Click on the link to recover your password.",
                           buttons: [

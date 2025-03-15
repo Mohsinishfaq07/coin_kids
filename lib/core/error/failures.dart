@@ -8,4 +8,4 @@ class ServerFailure extends Failure {
 
 class NotFoundFailure extends Failure {
   const NotFoundFailure();
-} 
+}

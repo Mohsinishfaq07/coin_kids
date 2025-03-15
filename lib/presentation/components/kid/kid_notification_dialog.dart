@@ -1,0 +1,282 @@
+import 'package:coin_kids/core/extensions/number_extensions.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/models/notification_metadata.dart';
+import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as time_ago;
+
+class KidNotificationDialog extends StatefulWidget {
+  final List<NotificationModel> notifications;
+  final Function(NotificationModel) onDismissSingle;
+  final VoidCallback onDismissAll;
+
+  const KidNotificationDialog({
+    super.key,
+    required this.notifications,
+    required this.onDismissSingle,
+    required this.onDismissAll,
+  });
+
+  @override
+  State<KidNotificationDialog> createState() => _KidNotificationDialogState();
+}
+
+class _KidNotificationDialogState extends State<KidNotificationDialog> {
+  late int currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = 0;
+  }
+
+  void nextNotification() {
+    if (currentIndex < widget.notifications.length - 1) {
+      setState(() {
+        currentIndex++;
+      });
+      widget.onDismissSingle(widget.notifications[currentIndex - 1]);
+    }
+  }
+
+  void previousNotification() {
+    if (currentIndex > 0) {
+      setState(() {
+        currentIndex--;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final notification = widget.notifications[currentIndex];
+    final hasMultipleNotifications = widget.notifications.length > 1;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Container(
+        width: 400.w,
+        padding: EdgeInsets.all(8.r),
+        decoration: BoxDecoration(
+          color: AppColors.colorPrimary,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Header with close button and notification count
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Notification count
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    '${currentIndex + 1}/${widget.notifications.length}',
+                    style: AppTextStyle.bodySmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                // Close button
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Get.log("Close button tapped"); // Debug print
+                      widget.onDismissAll();
+                    },
+                    customBorder: CircleBorder(),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 24.r,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildNotificationHeader(notification),
+
+                    SizedBox(height: 8.h),
+
+                    // Title
+                    Text(
+                      notification.title,
+                      style: AppTextStyle.headingMedium.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.clip,
+                    ),
+
+                    if (getNotificationDescription(notification).isNotEmpty) SizedBox(height: 4.h),
+
+                    // Message
+                    if (getNotificationDescription(notification).isNotEmpty)
+                      Text(
+                        getNotificationDescription(notification),
+                        style: AppTextStyle.bodyMedium.copyWith(
+                          color: AppColors.textOnPrimary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                    SizedBox(height: 16.h),
+
+                    // Timestamp
+                    Text(
+                      time_ago.format(notification.timestamp),
+                      style: AppTextStyle.bodySmall.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(height: 24.h),
+                  ],
+                ),
+              ),
+            ),
+            // Navigation and action buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Previous button (only if multiple notifications)
+                if (hasMultipleNotifications)
+                  Opacity(
+                    opacity: currentIndex > 0 ? 1.0 : 0.3,
+                    child: KidButton.iconOnly(
+                      onTap: currentIndex > 0 ? previousNotification : () {},
+                      baseColor: AppColors.btnColorOrange,
+                      iconPath: Assets.icBack,
+                      size: 40.r,
+                      iconSize: 20.r,
+                    ),
+                  ),
+
+                SizedBox(width: hasMultipleNotifications ? 16.w : 0),
+
+                // Action button
+                KidButton(
+                  onTap: () {
+                    if (currentIndex < widget.notifications.length - 1) {
+                      nextNotification();
+                    } else {
+                      widget.onDismissSingle(notification);
+                      widget.onDismissAll();
+                    }
+                  },
+                  text: currentIndex < widget.notifications.length - 1 ? "Next" : "Got it!",
+                  baseColor: AppColors.btnColorGreen,
+                ),
+
+                SizedBox(width: hasMultipleNotifications ? 16.w : 0),
+
+                // Next button (only if multiple notifications)
+                if (hasMultipleNotifications)
+                  Opacity(
+                    opacity: currentIndex < widget.notifications.length - 1 ? 1.0 : 0.3,
+                    child: KidButton.iconOnly(
+                      onTap: currentIndex < widget.notifications.length - 1 ? nextNotification : () {},
+                      baseColor: AppColors.btnColorOrange,
+                      iconPath: Assets.icNext,
+                      size: 40.r,
+                      iconSize: 20.r,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationHeader(NotificationModel notification) {
+    String iconPath;
+
+    switch (notification.type) {
+      case NotificationType.balanceRemoved:
+        iconPath = Assets.emojiSad;
+        break;
+      case NotificationType.balanceAdded:
+        iconPath = Assets.icCoinEuro;
+        break;
+      case NotificationType.transactionApproved:
+        iconPath = Assets.icCoinEuro;
+        break;
+      case NotificationType.transactionRejected:
+        iconPath = Assets.emojiSad;
+        break;
+      default:
+        iconPath = Assets.icCoinEuro;
+    }
+
+    return iconPath.endsWith("svg")
+        ? SvgPicture.asset(
+            iconPath,
+            width: 64.r,
+            height: 64.r,
+          )
+        : Image.asset(
+            iconPath,
+            width: 64.r,
+            height: 64.r,
+          );
+  }
+
+  String getNotificationDescription(NotificationModel notification) {
+    if (notification.type == NotificationType.balanceAdded || notification.type == NotificationType.balanceRemoved) {
+      final BalanceMetadata metaData = notification.metadata as BalanceMetadata;
+      if (metaData.type == NotificationType.balanceAdded) {
+        String text = "You received ${metaData.amount.toMoneyFormat()}";
+        if (metaData.message != null || metaData.message!.isNotEmpty) {
+          text = "$text\nMessage: ${metaData.message}";
+        }
+        return text;
+      } else {
+        String text = "${metaData.amount.toMoneyFormat()} Deducted from you";
+        if (metaData.message != null || metaData.message!.isNotEmpty) {
+          text = "$text\nMessage: ${metaData.message}";
+        }
+        return text;
+      }
+    } else if (notification.type == NotificationType.transactionApproved || notification.type == NotificationType.transactionRejected) {
+      final TransactionMetadata metaData = notification.metadata as TransactionMetadata;
+      if (metaData.type == NotificationType.transactionApproved) {
+        return "${metaData.amount.toMoneyFormat()} added to your account";
+      } else if (metaData.type == NotificationType.transactionRejected) {
+        return "${metaData.amount.toMoneyFormat()} money request rejected.";
+      }
+    }
+
+    return "";
+  }
+}

@@ -20,6 +20,8 @@ enum GoalSummaryScreenMode {
 }
 
 class GoalSummaryScreen extends GetView<KidGoalsController> {
+  const GoalSummaryScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +30,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
         onBackPressed: () => Get.back(),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Row(
@@ -51,7 +53,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   }
 
   Widget _buildImageSection() {
-    return Container(
+    return SizedBox(
       height: 1.sh,
       width: 0.4.sw,
       child: Align(
@@ -111,6 +113,8 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                         ),
                       ),
                       Positioned(
+                          right: -10,
+                          top: -10,
                           child: KidButton.iconOnly(
                             onTap: () {
                               ToastUtil.showToast("Clicked");
@@ -120,9 +124,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                             iconPath: Assets.icCross,
                             size: 30.w,
                             iconSize: 16.w,
-                          ),
-                          right: -10,
-                          top: -10)
+                          ))
                     ],
                   ),
           );

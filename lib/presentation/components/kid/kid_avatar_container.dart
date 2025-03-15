@@ -12,10 +12,10 @@ class KidAvatarContainer extends StatelessWidget {
   final String avatarUrl;
 
   const KidAvatarContainer({
-    Key? key,
+    super.key,
     required this.kidName,
     required this.avatarUrl,
-  }) : super(key: key);
+  });
 
   String getKidAvatar(String localPath) {
     return File(localPath).existsSync() ? localPath : Assets.icAvatarPlaceholder;
@@ -60,7 +60,7 @@ class KidAvatarContainer extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.centerLeft,
-            child: Container(
+            child: SizedBox(
               height: iconSize,
               width: iconSize,
               child: CircleAvatarWidget(

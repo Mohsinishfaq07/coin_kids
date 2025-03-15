@@ -1,19 +1,20 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
-import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
+import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_market_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/market/parent_product_detail_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/market/parent_wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ParentMarketScreen extends GetView<ParentMarketController> {
+  const ParentMarketScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +24,7 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(gradient: AppColors.background),
+            decoration: BoxDecoration(gradient: AppColors.background),
             padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Obx(() {
               if (!controller.isInitialized.value) {
@@ -64,11 +65,11 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
                         ? const Center(child: Text('No products match your filters'))
                         : GridView.builder(
                             padding: EdgeInsets.only(bottom: 80.h),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 8.0,
+                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200.w,
                               mainAxisSpacing: 8.0,
-                              childAspectRatio: 159 / 216,
+                              crossAxisSpacing: 8.0,
+                              mainAxisExtent: 240.h,
                             ),
                             itemCount: controller.displayProducts.length,
                             itemBuilder: (context, index) {
@@ -87,7 +88,7 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
             right: 0,
             child: Center(
               child: GestureDetector(
-                onTap: () => Get.to(() => ParentWishlistScreen()),
+                onTap: () => Get.toNamed(Routes.parentWishlist),
                 child: Container(
                   width: 0.8.sw,
                   height: 40.h,
@@ -227,7 +228,7 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
   Widget _buildProductCard(MarketProductModel product) {
     return InkWell(
       onTap: () {
-        Get.to(ParentProductDetailScreen(product: product));
+        Get.toNamed(Routes.parentProductDetails, arguments: product);
       },
       child: Container(
         clipBehavior: Clip.antiAlias,
@@ -312,7 +313,7 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
                         Assets.icFavorite,
                         width: 24.w,
                         height: 24.w,
-                        color: controller.isInWishlist(product.id!) ? AppColors.colorPrimary : Colors.grey[400],
+                        colorFilter: ColorFilter.mode(controller.isInWishlist(product.id!) ? AppColors.colorPrimary : Colors.grey[400]!, BlendMode.srcIn),
                       ),
                     );
                   }),

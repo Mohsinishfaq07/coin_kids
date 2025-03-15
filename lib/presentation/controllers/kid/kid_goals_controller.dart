@@ -7,6 +7,7 @@ import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -53,7 +54,7 @@ class KidGoalsController extends GetxController {
       photo: '',
       targetAmount: 0,
       savedAmount: 0,
-      status: GoalStatus.in_progress,
+      status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
     ),
   );
@@ -65,7 +66,7 @@ class KidGoalsController extends GetxController {
       photo: '',
       targetAmount: 0,
       savedAmount: 0,
-      status: GoalStatus.in_progress,
+      status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
     ),
   );
@@ -75,16 +76,6 @@ class KidGoalsController extends GetxController {
 
   final RxDouble progressValue = 0.0.obs;
   final double progressStep = 0.25;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   @override
   void onClose() {
@@ -132,7 +123,7 @@ class KidGoalsController extends GetxController {
       );
 
       if (pickedFile != null) {
-        print("Path is: " + pickedFile.path);
+        Get.log("Path is: ${pickedFile.path}");
         setPhoto(pickedFile.path);
       } else {
         ToastUtil.showToast("No Image Selected");
@@ -152,7 +143,7 @@ class KidGoalsController extends GetxController {
         newGoal.value.copyWith(photo: pickedImage.path);
       }
     } catch (e) {
-      print("Error picking image: $e");
+      Get.log("Error picking image: $e");
     } finally {
       isPickingImage.value = false; // Reset flag
     }
@@ -163,7 +154,7 @@ class KidGoalsController extends GetxController {
       await _goalService.deleteGoal(goalId);
       Get.back();
     } catch (e) {
-      print('Error deleting goal: $e');
+      Get.log('Error deleting goal: $e');
       Get.back();
     }
   }
@@ -177,7 +168,7 @@ class KidGoalsController extends GetxController {
         isLoading.value = false;
       },
       onError: (error) {
-        print('Error fetching goals: $error');
+        Get.log('Error fetching goals: $error');
         isLoading.value = false;
       },
     );
@@ -191,8 +182,8 @@ class KidGoalsController extends GetxController {
       await _goalService.createGoal(goal);
 
       if (appState.currentKid.value!.coinKidsBalance == -1) {
-        final _kidService = Get.find<KidService>();
-        await _kidService.updateCoinKidsBalance(appState.currentKid.value!.kidId, 0);
+        final kidService = Get.find<KidService>();
+        await kidService.updateCoinKidsBalance(appState.currentKid.value!.kidId, 0);
 
         //Usage
         KidDialog.show(
@@ -215,7 +206,7 @@ class KidGoalsController extends GetxController {
             KidButton(
               text: 'Ok',
               onTap: () {
-                Get.until((route) => route.settings.name == '/KidBaseScreen');
+                Get.until((route) => route.settings.name == Routes.kidBase);
               },
               baseColor: AppColors.btnColorGreen,
             ),
@@ -229,16 +220,15 @@ class KidGoalsController extends GetxController {
 
       resetNewGoal();
 
-      Get.until((route) => route.settings.name == '/KidBaseScreen');
+      Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.back();
-      print(e);
+      Get.log(e.toString(), isError: true);
     }
   }
 
   void updateGoal() async {
-
     try {
       if (oldGoal.value == newGoal.value) {
         return;
@@ -252,11 +242,11 @@ class KidGoalsController extends GetxController {
       resetNewGoal();
       resetOldGoal();
 
-      Get.close(2);
+      Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.back();
-      print(e);
+      Get.log(e.toString(), isError: true);
     }
   }
 
@@ -275,47 +265,43 @@ class KidGoalsController extends GetxController {
     textController.text = value.toMoneyFormat(showSymbol: false);
   }
 
-  Future<void> saveProgress(GoalModel goal) async {
-    final newAmount = double.parse(progressValue.value.toMoneyFormat(showSymbol: false));
-
-    // If the value hasn't changed, do nothing
-    if (newAmount == goal.savedAmount) {
-      return;
-    }
-
-    final finalGoal = goals.firstWhere((item) {
-      return item.id == goal.id;
-    });
-
-    // Calculate percentage of completion
-    final targetAmount = finalGoal.targetAmount;
-    final oldPercentage = (finalGoal.savedAmount / targetAmount) * 100;
-    final newPercentage = (newAmount / targetAmount) * 100;
-
-    print("oldPercentage $oldPercentage");
-    print("newPercentage $newPercentage");
-
-    showLoadingDialog("Saving Goal");
+  Future<void> saveProgress(String goalId) async {
     try {
-      await _goalService.updateSavedAmount(finalGoal.id!, newAmount).timeout(Duration(seconds: 15), onTimeout: () {
-        throw Exception(TimeoutException);
-      });
-    } catch (e) {
-      print('Error saving progress: $e');
-      ToastUtil.showToast("No Internet Connection");
-      return;
-    } finally {
-      Get.back();
-    }
+      showLoadingDialog("Updating Progress");
+      // Get the current goal to compare values
+      final goal = goals.firstWhere((item) => item.id == goalId);
 
-    if (oldPercentage < 100 && newPercentage >= 100) {
-      _showGoalCompletedDialog(goal.targetAmount);
-    } else if (oldPercentage < 75 && newPercentage >= 75) {
-      _showMilestoneDialog("So Close!", "You're 75% closer to reaching your Goal", 6, Assets.icConfetti);
-    } else if (oldPercentage < 50 && newPercentage >= 50) {
-      _showMilestoneDialog("Halfway There!", "Amazing work! Keep saving", 4, Assets.icHappyStar);
-    } else if (oldPercentage < 25 && newPercentage >= 25) {
-      _showMilestoneDialog("Great Job!", "You just reach your first milestone", 2, Assets.icClap);
+      // Get the current value from the slider
+      final newAmount = progressValue.value;
+
+      // If the value hasn't changed, do nothing
+      if (newAmount == goal.savedAmount) {
+        Get.back();
+        return;
+      }
+
+      // Use the transaction method to update progress with rewards
+      await _goalService.updateGoalProgressWithRewards(goalId, newAmount);
+
+      Get.back();
+
+      // Only show milestone dialogs if the amount is increasing
+      if (newAmount > goal.savedAmount) {
+        final percentage = (newAmount / goal.targetAmount) * 100;
+
+        if (percentage >= 100 && goal.savedAmount < goal.targetAmount) {
+          _showGoalCompletedDialog(goal.targetAmount);
+        } else if (percentage >= 75 && (goal.savedAmount / goal.targetAmount) * 100 < 75) {
+          _showMilestoneDialog("So Close!", "You're 75% closer to reaching your PS5", 3, Assets.icConfetti);
+        } else if (percentage >= 50 && (goal.savedAmount / goal.targetAmount) * 100 < 50) {
+          _showMilestoneDialog("Halfway There! ", "Amazing work! Keep saving.", 2, Assets.icHappyStar);
+        } else if (percentage >= 25 && (goal.savedAmount / goal.targetAmount) * 100 < 25) {
+          _showMilestoneDialog("Great Job!", "You just reach your first milestone", 2, Assets.icClap);
+        }
+      }
+    } catch (e) {
+      Get.log('Error saving progress: $e');
+      ToastUtil.showExceptionToast(e);
     }
   }
 
@@ -326,7 +312,7 @@ class KidGoalsController extends GetxController {
       photo: '',
       targetAmount: 0,
       savedAmount: 0,
-      status: GoalStatus.in_progress,
+      status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
     );
   }
@@ -338,7 +324,7 @@ class KidGoalsController extends GetxController {
       photo: '',
       targetAmount: 0,
       savedAmount: 0,
-      status: GoalStatus.in_progress,
+      status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
     );
   }
@@ -376,7 +362,7 @@ class KidGoalsController extends GetxController {
     KidDialog.show(
       emoji: Assets.icTrophy,
       title: 'You Did It!',
-      subtitle: 'Congratulations, Nina! You’ve reached\nyour savings goal ${amount.toMoneyFormat()}',
+      subtitle: 'Congratulations, ${appState.currentKid.value!.name}, You\'ve reached\nyour savings goal ${amount.toMoneyFormat()}',
       extraContent: Column(
         children: [
           SizedBox(height: 8.h),

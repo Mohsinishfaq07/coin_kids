@@ -10,7 +10,6 @@ class ParentModel {
   final int dob;
   final String gender;
   final String imageUrl;
-  final bool isOpened;
 
   ParentModel({
     this.id,
@@ -21,7 +20,6 @@ class ParentModel {
     required this.createdAt,
     required this.dob,
     required this.gender,
-    required this.isOpened,
     this.imageUrl = '',
   });
 
@@ -34,7 +32,6 @@ class ParentModel {
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dob: (json['dob']) ?? DateTime.now().millisecondsSinceEpoch,
       gender: json['gender'] ?? '',
-      isOpened: json['isOpened'] ?? false,
       imageUrl: json['imageUrl'] ?? '',
     );
   }
@@ -48,7 +45,6 @@ class ParentModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'dob': dob,
       'gender': gender,
-      'isOpened': isOpened,
       'imageUrl': imageUrl,
     };
   }
@@ -75,7 +71,6 @@ class ParentModel {
       dob: dob ?? this.dob,
       gender: gender ?? this.gender,
       imageUrl: imageUrl ?? this.imageUrl,
-      isOpened: isOpened ?? this.isOpened,
     );
   }
 }

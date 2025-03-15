@@ -22,9 +22,9 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage(Assets.kidBg),
             fit: BoxFit.cover,
           ),

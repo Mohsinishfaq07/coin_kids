@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
@@ -7,13 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../goals/widgets/goal_card.dart';
-import 'new_goal/add_goal_name.dart';
 import 'widgets/no_goals_widget.dart';
 
 class KidGoalsScreen extends GetView<KidGoalsController> {
   final String currentKidId;
 
-  const KidGoalsScreen({required this.currentKidId, Key? key}) : super(key: key);
+  const KidGoalsScreen({required this.currentKidId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
         final double cardWidth = (screenWidth - (crossAxisCount + 1) * 8.w) / crossAxisCount;
         final double cardHeight = cardWidth * 1.35;
 
-        return Container(
+        return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           child: Stack(
@@ -72,7 +72,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     child: KidButton(
                       baseColor: AppColors.btnColorOrange,
                       text: 'Add Goal',
-                      onTap: () => Get.to(() => AddGoalNameScreen()),
+                      onTap: () => Get.toNamed(Routes.kidAddGoalName),
                       iconPath: Assets.icAdd,
                     ),
                   ),

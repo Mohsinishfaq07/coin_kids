@@ -11,13 +11,13 @@ class MarketFilterChip extends StatelessWidget {
   final VoidCallback onTap;
 
   const MarketFilterChip({
-    Key? key,
+    super.key,
     required this.label,
     this.selectedValue,
     required this.isSelected,
     required this.iconPath,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class MarketFilterChip extends StatelessWidget {
               iconPath,
               width: 16.w,
               height: 16.w,
-              color: isSelected ? Colors.white : Colors.grey[600],
+              colorFilter: ColorFilter.mode(isSelected ? Colors.white : Colors.grey[600]!, BlendMode.srcIn),
             ),
             SizedBox(width: 4.w),
             Text(

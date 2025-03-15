@@ -1,0 +1,2 @@
+/Users/quantumgroveceo/AndroidStudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/6a4n3v6l/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/quantumgroveceo/AndroidStudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/6a4n3v6l/arm64-v8a/CMakeFiles/rebuild_cache.dir

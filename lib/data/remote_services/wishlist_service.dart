@@ -65,7 +65,7 @@ class WishlistService extends GetxService {
       }
       wishlistItems.refresh();
     } catch (e) {
-      print('Failed to refresh wishlist statuses: $e');
+      Get.log('Failed to refresh wishlist statuses: $e');
     }
   }
 

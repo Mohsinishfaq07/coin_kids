@@ -2,6 +2,7 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class GoalProgressWidget extends GetView<KidGoalsController> {
-  GoalProgressWidget(this.goal, {super.key});
+  const GoalProgressWidget(this.goal, {super.key});
 
   final GoalModel goal;
 
@@ -196,7 +197,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           controller.screenMode.value = GoalSummaryScreenMode.edit;
                           controller.newGoal.value = goal;
                           controller.oldGoal.value = goal;
-                          Get.to(() => GoalSummaryScreen());
+                          Get.toNamed(Routes.kidGoalSummary);
                         },
                       ),
                       SizedBox(width: 40.w),
@@ -216,7 +217,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 text: 'Done',
                 baseColor: AppColors.btnColorGreen,
                 iconPath: Assets.icTick,
-                onTap: () => controller.saveProgress(goal),
+                onTap: () => controller.saveProgress(goal.id!),
               ),
             ],
           ),
@@ -242,7 +243,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
         KidButton(
           text: "No",
           onTap: () {
-            Get.close(1);
+            Get.back();
           },
           baseColor: AppColors.btnColorOrange,
           iconPath: Assets.icCross,
@@ -253,7 +254,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
           text: "Yes",
           onTap: () async {
             await controller.deleteGoal(goal.id!);
-            Get.close(2);
+            Get.until((route) => route.settings.name == Routes.kidBase);
           },
           baseColor: AppColors.btnColorGreen,
           iconPath: Assets.icTick,

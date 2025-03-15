@@ -22,7 +22,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.selectedGender.value.isEmpty) {
         final currentGender = controller.appState.currentParent.value?.gender;
-        controller.selectGender(currentGender ?? UserGender.Male.name);
+        controller.selectGender(currentGender ?? UserGender.male.name);
       }
     });
 
@@ -33,7 +33,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
         showBackButton: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Form(
@@ -109,7 +109,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                              onTap: () => controller.selectGender(UserGender.Male.name),
+                              onTap: () => controller.selectGender(UserGender.male.name),
                               child: Container(
                                 height: 48.h,
                                 width: 154.w,
@@ -120,7 +120,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   bottom: 13.33,
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: controller.selectedGender.value == UserGender.Male.name ? AppColors.buttonPrimary : Colors.white54,
+                                  color: controller.selectedGender.value == UserGender.male.name ? AppColors.buttonPrimary : Colors.white54,
                                   shape: RoundedRectangleBorder(
                                     side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
                                     borderRadius: BorderRadius.circular(12.r),
@@ -130,14 +130,14 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   Assets.icMale,
                                   height: 24.h,
                                   width: 24.w,
-                                  color: controller.selectedGender.value == UserGender.Male.name ? Colors.white : AppColors.textPrimary,
+                                  colorFilter: ColorFilter.mode(controller.selectedGender.value == UserGender.male.name ? Colors.white : AppColors.textPrimary, BlendMode.srcIn),
                                 ),
                               )),
                         ),
                         SizedBox(width: 14.w),
                         Expanded(
                           child: GestureDetector(
-                              onTap: () => controller.selectGender(UserGender.Female.name),
+                              onTap: () => controller.selectGender(UserGender.female.name),
                               child: Container(
                                 height: 48.h,
                                 width: 154.w,
@@ -148,7 +148,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   bottom: 13.33,
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: controller.selectedGender.value == UserGender.Female.name ? AppColors.buttonPrimary : Colors.white54,
+                                  color: controller.selectedGender.value == UserGender.female.name ? AppColors.buttonPrimary : Colors.white54,
                                   shape: RoundedRectangleBorder(
                                     side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
                                     borderRadius: BorderRadius.circular(12.r),
@@ -158,26 +158,28 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   Assets.icFemale,
                                   height: 24.h,
                                   width: 24.w,
-                                  color: controller.selectedGender.value == UserGender.Female.name ? Colors.white : AppColors.textPrimary,
+                                  colorFilter: ColorFilter.mode(controller.selectedGender.value == UserGender.female.name ? Colors.white : AppColors.textPrimary, BlendMode.srcIn),
                                 ),
                               )),
                         ),
                       ],
                     )),
                 Expanded(child: Container()),
-                Center(
-                  child: AppButton(
-                    backgroundColor: AppColors.buttonPrimary,
-                    size: Size(0.8.sw, 50),
-                    child: Text(
-                      "Save Changes",
-                      style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                SafeArea(
+                  child: Center(
+                    child: AppButton(
+                      backgroundColor: AppColors.buttonPrimary,
+                      size: Size(0.8.sw, 50),
+                      child: Text(
+                        "Save Changes",
+                        style: AppTextStyle.appButton,
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await controller.updateProfile();
+                        }
+                      },
                     ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await controller.updateProfile();
-                      }
-                    },
                   ),
                 ),
               ],

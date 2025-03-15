@@ -1,16 +1,16 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_wishlist_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/market/parent_product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ParentWishlistScreen extends GetView<ParentWishlistController> {
-  ParentWishlistScreen({Key? key}) : super(key: key);
+  const ParentWishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class ParentWishlistScreen extends GetView<ParentWishlistController> {
         },
       ),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.background),
+        decoration: BoxDecoration(gradient: AppColors.background),
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -97,7 +97,7 @@ class ParentWishlistScreen extends GetView<ParentWishlistController> {
       child: InkWell(
         onTap: () {
           if (item.product != null) {
-            Get.to(() => ParentProductDetailScreen(product: item.product!));
+            Get.toNamed(Routes.parentProductDetails, arguments: item.product!);
           }
         },
         borderRadius: BorderRadius.circular(12.r),

@@ -1,10 +1,10 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/product_detail_dialog.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/market/kid_wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'product_card.dart';
 
 class KidsMarketScreen extends GetView<KidMarketController> {
-  const KidsMarketScreen({Key? key}) : super(key: key);
+  const KidsMarketScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
         final double cardWidth = (screenWidth - (crossAxisCount + 1) * 8.w) / crossAxisCount;
         final double cardHeight = cardWidth * 1.35;
 
-        return Container(
+        return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           child: Stack(
@@ -196,7 +196,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                 top: 0.10.sh,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => Get.to(() => KidWishlistScreen()),
+                  onTap: () => Get.toNamed(Routes.kidWishlist),
                   child: Container(
                     clipBehavior: Clip.hardEdge,
                     width: 26.h,

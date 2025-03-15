@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'market_product_model.dart';
 
 class WishlistModel {
@@ -25,9 +26,7 @@ class WishlistModel {
       productId: json['productId'] ?? '',
       addedAt: (json['addedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isPriority: json['isPriority'] ?? false,
-      product: product ?? (json['product'] != null 
-          ? MarketProductModel.fromJson(json['product'] as Map<String, dynamic>)
-          : null),
+      product: product ?? (json['product'] != null ? MarketProductModel.fromJson(json['product'] as Map<String, dynamic>) : null),
     );
   }
 

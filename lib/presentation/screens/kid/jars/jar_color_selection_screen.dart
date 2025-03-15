@@ -1,17 +1,18 @@
-import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/jars/drag_and_drop_money_screen.dart';
-import 'package:coin_kids/presentation/screens/kid/jars/add_money_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class JarColorSelectionScreen extends GetView<JarCreationController> {
+  const JarColorSelectionScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +20,9 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
         ),
         child: Column(
           children: [
@@ -106,12 +107,16 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                     child: KidButton(
                       onTap: () {
                         if (controller.jarType == Jars.spendingJar) {
-                          Get.to(() => AddMoneyScreen(
-                                mode: AmountAdditionMode.jarCreation,
-                              ));
+                          Get.toNamed(Routes.kidMoneyAddOrRequest, arguments: AmountAdditionMode.jarCreation);
                         } else {
                           controller.amount.value = controller.appState.currentKid.value!.wallet.spendingJar.balance;
-                          Get.to(() => DragAndDropMoneyScreen(), arguments: {'mode': DragAndDropMode.jarCreation},);
+
+                          Get.toNamed(
+                            Routes.kidDragAndDrop,
+                            arguments: {
+                              'mode': DragAndDropMode.jarCreation,
+                            },
+                          );
                         }
                       },
                       baseColor: AppColors.btnColorGreen,

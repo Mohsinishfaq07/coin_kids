@@ -13,10 +13,10 @@ class ProductDetailDialog extends StatelessWidget {
   final VoidCallback onAddToGoal;
 
   const ProductDetailDialog({
-    Key? key,
+    super.key,
     required this.product,
     required this.onAddToGoal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +88,7 @@ class ProductDetailDialog extends StatelessWidget {
                           baseColor: AppColors.btnColorOrange,
                           iconPath: Assets.icCross,
                           size: 30.w,
+                          iconSize: 15,
                         ),
                       ],
                     ),

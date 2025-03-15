@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/quantumgroveceo/Development/FlutterSdk/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/quantumgroveceo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/quantumgroveceo/AndroidStudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/6a4n3v6l/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/quantumgroveceo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/quantumgroveceo/AndroidStudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/6a4n3v6l/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

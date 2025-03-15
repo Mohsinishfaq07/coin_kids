@@ -1,7 +1,6 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
@@ -15,13 +14,10 @@ import 'package:get/get.dart';
 
 class GoalDetailsScreen extends GetView<KidGoalsController> {
   final String goalId;
-  final bool fromHome;
 
-  const GoalDetailsScreen({
-    required this.goalId,
-    this.fromHome = false,
+  GoalDetailsScreen({
     super.key,
-  });
+  }) : goalId = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +34,15 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage(Assets.kidBg),
             fit: BoxFit.cover,
           ),
         ),
         child: Obx(() {
           var goal = controller.goals.firstWhere((item) => item.id == goalId);
-          ToastUtil.showToast(goal.savedAmount.toString());
           return Row(
             children: [
               // Left side with goal card (35% width)
@@ -77,7 +72,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
 class GoalCard extends StatelessWidget {
   final GoalModel goal;
 
-  const GoalCard({required this.goal, Key? key}) : super(key: key);
+  const GoalCard({required this.goal, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +129,7 @@ class GoalCard extends StatelessWidget {
           ),
           // Content Container
           Text(
-            '${goal.targetAmount.toMoneyFormat()}',
+            goal.targetAmount.toMoneyFormat(),
             style: AppTextStyle.headingMedium.copyWith(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,

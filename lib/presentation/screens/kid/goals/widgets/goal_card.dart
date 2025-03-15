@@ -2,9 +2,9 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/goal_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 class GoalCard extends StatelessWidget {
   final GoalModel goal;
 
-  const GoalCard({required this.goal, Key? key}) : super(key: key);
+  const GoalCard({required this.goal, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,7 @@ class GoalCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(
-          () => GoalDetailsScreen(goalId: goal.id!, fromHome: true),
-        );
+        Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goal.id!);
       },
       child: Container(
         decoration: BoxDecoration(

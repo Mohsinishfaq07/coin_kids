@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -39,7 +40,7 @@ class EditChildController extends GetxController {
 
     if (kid == null) {
       ToastUtil.showToast("Session Expired, Login Again");
-      Get.offAll(SignInScreen());
+      Get.offAllNamed(Routes.signIn);
       return;
     }
 
@@ -110,7 +111,7 @@ class EditChildController extends GetxController {
       final kid = appState.currentKid.value;
       if (kid == null) {
         ToastUtil.showToast("Session Expired");
-        Get.offAll(() => SignInScreen());
+        Get.offAllNamed(Routes.signIn);
         return;
       }
 
@@ -135,6 +136,7 @@ class EditChildController extends GetxController {
         updates['avatar'] = selectedAvatarPath.value;
       }
 
+      showLoadingDialog("Updating Profile");
       if (updates.isNotEmpty) {
         await kidsService.updateKid(
             kid.kidId,
@@ -146,10 +148,10 @@ class EditChildController extends GetxController {
       }
 
       ToastUtil.showToast("Child updated successfully");
-      Get.back();
     } catch (e) {
       ToastUtil.showToast("Failed to update child: $e");
     } finally {
+      Get.until((route) => route.settings.name == Routes.parentKidProfile);
       isLoading.value = false;
     }
   }

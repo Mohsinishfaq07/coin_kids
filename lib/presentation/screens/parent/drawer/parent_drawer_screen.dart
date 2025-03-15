@@ -3,15 +3,12 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_drawer_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/parent_change_pin_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/parent_feedback_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/update_parent_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,6 +17,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class ParentDrawer extends GetView<ParentDrawerController> {
+  const ParentDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,20 +32,20 @@ class ParentDrawer extends GetView<ParentDrawerController> {
           TextButton(
             onPressed: () async {
               await controller.authService.signOut();
-              Get.offAll(() => SignInScreen());
+              Get.offAllNamed(Routes.signIn);
             },
-            child: Text("Logout"),
             style: ButtonStyle(
               textStyle: WidgetStateProperty.all(
                 AppTextStyle.headingSmall,
               ),
               foregroundColor: WidgetStateProperty.all(AppColors.notificationCritical),
             ),
+            child: Text("Logout"),
           )
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Stack(
@@ -107,7 +106,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
 
                     // My Profile Section
                     _buildSectionHeader("My Profile", onEdit: () {
-                      Get.to(() => UpdateParentProfile());
+                      Get.toNamed(Routes.parentEditProfile);
                     }),
                     Container(
                       width: 328.w,
@@ -194,7 +193,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               height: 31.h,
                             ),
                             _buildProfileRowWithArrow("Parent Zone Pin", Assets.icPin, onTap: () {
-                              Get.to(ParentChangePinScreen());
+                              Get.toNamed(Routes.parentChangePin);
                             }),
                           ],
                         ),
@@ -302,7 +301,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               showArrow: false,
                               iconSize: 24.sp,
                               onTap: () async {
-                                Get.to(() => ParentFeedbackScreen());
+                                Get.toNamed(Routes.parentFeedback);
                               },
                             ),
                             SizedBox(
@@ -365,7 +364,10 @@ class ParentDrawer extends GetView<ParentDrawerController> {
               onTap: onEdit,
               child: Row(
                 children: [
-                  SvgPicture.asset(Assets.icEdit),
+                  SvgPicture.asset(
+                    Assets.icEdit,
+                    colorFilter: ColorFilter.mode(AppColors.iconPrimaryVariant, BlendMode.srcIn),
+                  ),
                   SizedBox(
                     width: 4.w,
                   ),
@@ -398,7 +400,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
             children: [
               SvgPicture.asset(
                 iconPath, // Path to your SVG asset
-                color: AppColors.colorPrimary,
+                colorFilter: ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
                 height: 20.h, // Adjust the size as needed
                 width: 20.w, // Adjust the size as needed
               ),
@@ -439,7 +441,10 @@ class ParentDrawer extends GetView<ParentDrawerController> {
           children: [
             SvgPicture.asset(
               iconPath, // Path to your SVG asset
-              color: isComingSoon ? AppColors.iconDisabled : AppColors.colorPrimary,
+              colorFilter: ColorFilter.mode(
+                isComingSoon ? AppColors.iconDisabled : AppColors.colorPrimary,
+                BlendMode.srcIn,
+              ),
               height: iconSize.h, // Use the passed size or default size
               width: iconSize.w, // Use the passed size or default size
             ),
@@ -476,7 +481,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
           children: [
             SvgPicture.asset(
               iconPath, // Path to your SVG asset
-              color: AppColors.colorPrimary,
+              colorFilter: ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
               height: 24.h, // Adjust the size as needed
               width: 24.w, // Adjust the size as needed
             ),

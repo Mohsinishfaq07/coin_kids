@@ -11,10 +11,9 @@ import 'package:url_launcher/url_launcher.dart';
 class ParentProductDetailScreen extends StatelessWidget {
   final MarketProductModel product;
 
-  const ParentProductDetailScreen({
-    Key? key,
-    required this.product,
-  }) : super(key: key);
+  ParentProductDetailScreen({
+    super.key,
+  }) : product = Get.arguments;
 
   Future<void> _launchProductUrl() async {
     final Uri url = Uri.parse(product.url);
@@ -44,7 +43,7 @@ class ParentProductDetailScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: Container(
-          decoration: const BoxDecoration(gradient: AppColors.background),
+          decoration: BoxDecoration(gradient: AppColors.background),
           child: Column(
             children: [
               // Product Image
@@ -74,15 +73,13 @@ class ParentProductDetailScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 16.h),
-                      ...product.about
-                          .map((about) => Padding(
-                                padding: EdgeInsets.only(bottom: 8.h),
-                                child: Text(
-                                  about,
-                                  style: AppTextStyle.bodyLarge,
-                                ),
-                              ))
-                          .toList(),
+                      ...product.about.map((about) => Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: Text(
+                              about,
+                              style: AppTextStyle.bodyLarge,
+                            ),
+                          )),
                     ],
                   ),
                 ),

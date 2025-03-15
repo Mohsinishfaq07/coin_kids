@@ -1,9 +1,9 @@
 import 'package:coin_kids/core/utils/orientation_utils.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
-import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
 import 'package:get/get.dart';
 
 class SignInController extends GetxController {
@@ -35,7 +35,7 @@ class SignInController extends GetxController {
 
       if (credential.user != null) {
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
-        Get.offAll(() => RoleSelectionScreen());
+        Get.offAllNamed(Routes.roleSelection);
       }
     } catch (e) {
       ToastUtil.showExceptionToast(e);
@@ -56,7 +56,7 @@ class SignInController extends GetxController {
 
       if (credential.user != null) {
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
-        Get.offAll(() => RoleSelectionScreen());
+        Get.offAllNamed(Routes.roleSelection);
       }
     } catch (e) {
       ToastUtil.showExceptionToast(e);

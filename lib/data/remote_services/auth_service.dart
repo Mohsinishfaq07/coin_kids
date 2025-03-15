@@ -47,7 +47,16 @@ class AuthService extends GetxController {
       );
 
       if (credential.user != null) {
-        final parent = ParentModel(id: credential.user!.uid, email: email, password: password, name: name, pin: pin, createdAt: DateTime.now(), dob: dob, gender: gender, isOpened: false);
+        final parent = ParentModel(
+          id: credential.user!.uid,
+          email: email,
+          password: password,
+          name: name,
+          pin: pin,
+          createdAt: DateTime.now(),
+          dob: dob,
+          gender: gender,
+        );
 
         await _parentService.createParent(parent);
       }
@@ -108,16 +117,16 @@ class AuthService extends GetxController {
 
       if (parentData == null) {
         final parent = ParentModel(
-            id: userCredential.user!.uid,
-            email: googleUser.email,
-            password: '',
-            name: googleUser.displayName ?? '',
-            pin: "0000",
-            imageUrl: googleUser.photoUrl ?? "",
-            createdAt: DateTime.now(),
-            dob: 0,
-            gender: '',
-            isOpened: false);
+          id: userCredential.user!.uid,
+          email: googleUser.email,
+          password: '',
+          name: googleUser.displayName ?? '',
+          pin: "0000",
+          imageUrl: googleUser.photoUrl ?? "",
+          createdAt: DateTime.now(),
+          dob: 0,
+          gender: '',
+        );
 
         await _parentService.createParent(parent);
       }
@@ -158,18 +167,18 @@ class AuthService extends GetxController {
       // If this is a new user, create parent document
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
         final String? email = userCredential.user?.email;
-        final String? name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
+        final String name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
 
         final parent = ParentModel(
-            id: userCredential.user!.uid,
-            email: email ?? '',
-            password: '',
-            name: name == null || name.isEmpty ? 'Apple User' : name,
-            pin: "0000",
-            createdAt: DateTime.now(),
-            dob: 0,
-            gender: '',
-            isOpened: false);
+          id: userCredential.user!.uid,
+          email: email ?? '',
+          password: '',
+          name: name.isEmpty ? 'Apple User' : name,
+          pin: "0000",
+          createdAt: DateTime.now(),
+          dob: 0,
+          gender: '',
+        );
 
         await _parentService.createParent(parent);
       }
@@ -183,8 +192,7 @@ class AuthService extends GetxController {
   // Handle auth state changes
   void handleAuthChanged(User? firebaseUser) async {
     if (firebaseUser == null) {
-      await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.NONE.name);
-      // Get.offAll(() => SignInScreen());
+      await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.none.name);
     }
   }
 

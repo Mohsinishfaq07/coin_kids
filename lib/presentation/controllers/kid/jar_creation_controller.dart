@@ -1,10 +1,8 @@
 import 'dart:ui';
 
 import 'package:coin_kids/core/constants/enums.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:get/get.dart';
 
 class JarCreationController extends GetxController {

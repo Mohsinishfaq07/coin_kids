@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
@@ -12,6 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
+  const DragAndDropMoneyScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +28,9 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
         ),
         child: Column(
           children: [
@@ -70,7 +73,6 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                       flex: 2,
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          final availableHeight = constraints.maxHeight;
                           final availableWidth = constraints.maxWidth;
 
                           return Obx(() {
@@ -101,7 +103,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                                 aspectRatio: isShowingBills
                                                     ? 1.8 // Bills are rectangular
                                                     : 1.0, // Coins are circular
-                                                child: _buildDraggableMoney(moneyItem),
+                                                child: _buildDraggableMoney(moneyItem, availableWidth, isShowingBills, rowIndex),
                                               ),
                                             ),
                                           ),
@@ -119,15 +121,15 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                     Expanded(
                       flex: 2,
                       child: DragTarget<double>(
-                        onWillAccept: (amount) {
-                          // Show visual feedback based on whether amount can be added
-                          return amount != null && controller.canAddAmount(amount);
+                        onWillAcceptWithDetails: (details) {
+                          double? amount = details.data;
+                          return controller.canAddAmount(amount);
                         },
-                        onAccept: (amount) async {
+                        onAcceptWithDetails: (details) async {
+                          double amount = details.data;
                           await controller.tryAddAmount(amount);
                         },
                         builder: (context, candidateData, rejectedData) {
-                          // Calculate color based on whether dropped amount would be valid
                           Color? jarColor;
                           if (candidateData.isNotEmpty) {
                             final proposedAmount = candidateData.first as double;
@@ -221,7 +223,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
         KidButton(
           text: "yes",
           onTap: () {
-            Get.until((route) => route.settings.name == "/KidsBaseScreen");
+            Get.until((route) => route.settings.name == Routes.kidBase);
           },
           baseColor: AppColors.btnColorGreen,
           iconPath: Assets.icTick,
@@ -232,12 +234,19 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
   }
 }
 
-Widget _buildDraggableMoney(MapEntry<String, double> moneyItem) {
+Widget _buildDraggableMoney(MapEntry<String, double> moneyItem, double availableWidth, bool isShowingBills, int rowIndex) {
   return Draggable<double>(
     data: moneyItem.value,
     feedback: Material(
       color: Colors.transparent,
-      child: _buildMoneyItem(moneyItem, isDragging: true),
+      child: SizedBox(
+        width: isShowingBills
+            ? availableWidth * 0.35.w // Bills are wider
+            : rowIndex == 0
+                ? availableWidth * 0.3 // Larger coins (€1, €2)
+                : availableWidth * 0.25, // Adjust the size as needed
+        child: _buildMoneyItem(moneyItem, isDragging: true),
+      ),
     ),
     childWhenDragging: _buildMoneyItem(moneyItem, isGhost: true),
     child: _buildMoneyItem(moneyItem),
@@ -247,13 +256,11 @@ Widget _buildDraggableMoney(MapEntry<String, double> moneyItem) {
 Widget _buildMoneyItem(MapEntry<String, double> moneyItem, {bool isDragging = false, bool isGhost = false}) {
   final opacity = isGhost ? 0.5 : 1.0;
 
-  return Container(
-    child: Opacity(
-      opacity: opacity,
-      child: Image.asset(
-        moneyItem.key,
-        fit: BoxFit.contain,
-      ),
+  return Opacity(
+    opacity: opacity,
+    child: Image.asset(
+      moneyItem.key,
+      fit: BoxFit.contain,
     ),
   );
 }

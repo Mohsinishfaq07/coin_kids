@@ -1,0 +1,1 @@
+/Users/quantumgroveceo/AndroidStudioProjects/coin-kids/build/app/intermediates/cxx/RelWithDebInfo/6a4n3v6l/obj/x86_64

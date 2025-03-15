@@ -37,6 +37,7 @@ class Assets {
   static const String icBack = 'assets/ic_back.svg';
   static const String icBadge = 'assets/ic_badge.svg';
   static const String icBin = 'assets/ic_bin.svg';
+  static const String icBtnLock = 'assets/ic_btn_lock.png';
   static const String icBudget = 'assets/shop/ic_budget.svg';
   static const String icCalender = 'assets/drawer/ic_calender.svg';
   static const String icCamera = 'assets/ic_camera.svg';
@@ -50,6 +51,8 @@ class Assets {
   static const String icCurrencyRound = 'assets/ic_currency_round.svg';
   static const String icEdit = 'assets/ic_edit.svg';
   static const String icEmailSent = 'assets/ic_email_sent.svg';
+  static const String icEmojiLogout = 'assets/ic_emoji_logout.svg';
+  static const String icEmojiMessage = 'assets/ic_emoji_message.svg';
   static const String icEye = 'assets/ic_eye.svg';
   static const String icEyeHide = 'assets/ic_eye_hide.svg';
   static const String icFavorite = 'assets/shop/ic_favorite.svg';
@@ -63,6 +66,7 @@ class Assets {
   static const String icGoal = 'assets/ic_goal.svg';
   static const String icGoalYellow = 'assets/ic_goal_yellow.svg';
   static const String icGoogle = 'assets/ic_google.svg';
+  static const String icHand = 'assets/ic_hand.png';
   static const String icHappyStar = 'assets/ic_happy_star.svg';
   static const String icHome = 'assets/ic_home.svg';
   static const String icImKid = 'assets/role_selection_icons/ic_im_kid.svg';
@@ -82,6 +86,12 @@ class Assets {
   static const String icPin = 'assets/drawer/ic_pin.svg';
   static const String icRotateLandscape = 'assets/ic_rotate_landscape.png';
   static const String icRotatePortrait = 'assets/ic_rotate_portrait.png';
+  static const String icRoundAllowance = 'assets/ic_round_allowance.svg';
+  static const String icRoundBack = 'assets/ic_round_back.svg';
+  static const String icRoundClose = 'assets/ic_round_close.svg';
+  static const String icRoundClosedialog = 'assets/ic_round_closedialog.svg';
+  static const String icRoundEdit = 'assets/ic_round_edit.svg';
+  static const String icRoundRating = 'assets/ic_round_rating.svg';
   static const String icScheduleAllowance = 'assets/ic_schedule_allowance.svg';
   static const String icSearch = 'assets/shop/ic_search.svg';
   static const String icShare = 'assets/drawer/ic_share.svg';
@@ -101,6 +111,7 @@ class Assets {
   static const String jarShadow = 'assets/jar/jar_shadow.png';
   static const String jarTag = 'assets/jar/jar_tag.svg';
   static const String kidBg = 'assets/kid_bg.png';
+  static const String moneyJar = 'assets/on_board/money_jar.json';
   static const String newCartAnimation = 'assets/newCartAnimation.json';
   static const String openSansBold = 'assets/fonts/OpenSans-Bold.ttf';
   static const String openSansExtraBold = 'assets/fonts/OpenSans-ExtraBold.ttf';

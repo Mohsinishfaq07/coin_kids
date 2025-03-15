@@ -26,7 +26,7 @@ class JarWidget extends StatelessWidget {
   final int moneyTextBoxSize = 20;
 
   const JarWidget({
-    Key? key,
+    super.key,
     required this.jarState,
     required this.jarName,
     this.height = 150,
@@ -41,11 +41,11 @@ class JarWidget extends StatelessWidget {
     this.tagWidth,
     this.amount,
     this.showAmount = true,
-  }) : super(key: key);
+  });
 
   String _getJarAsset() {
     switch (jarState) {
-      case JarState.null_jar:
+      case JarState.nullJar:
         return Assets.jarNull;
       case JarState.empty:
       case JarState.filled:
@@ -70,7 +70,7 @@ class JarWidget extends StatelessWidget {
     double width = height * 0.8;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         height: height + moneyTextBoxSize,
         child: Stack(
           alignment: Alignment.center,

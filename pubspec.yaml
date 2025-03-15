@@ -55,7 +55,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_inner_shadow: 0.0.1
   fluttertoast: ^8.2.10
-  intl: ^0.20.1
+  intl: ^0.19.0
   shared_preferences: ^2.3.5
   avatar_glow: ^3.0.1
   marquee: ^2.3.0
@@ -74,15 +74,23 @@ dependencies:
   firebase_app_check: ^0.3.2+4
   
 
+  http: any
+  path: any
+  device_preview: ^1.2.0
+  responsive_framework: ^1.5.1
+  auto_size_text: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^5.0.0
+
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/app_icon/appIcon.png"
-  //remove_alpha_ios: true
+  image_path: "assets/app_icon.png"
+  remove_alpha_ios: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -108,7 +116,6 @@ flutter:
     - assets/shop/
     - assets/fonts/
     - assets/drawer/
-    - assets/currency/
     - assets/on_board/
     - assets/placeholders/
     - assets/role_selection_icons/

@@ -1,18 +1,10 @@
- import 'package:get/get.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:get/get.dart';
 
 class ParentFeedbackController extends GetxController {
-  final RxList<String> feedbackCategories = <String>[
-    'Bug Report',
-    'Feature Request',
-    'User Experience',
-    'Performance',
-    'Content',
-    'Design',
-    'Other'
-  ].obs;
+  final RxList<String> feedbackCategories = <String>['Bug Report', 'Feature Request', 'User Experience', 'Performance', 'Content', 'Design', 'Other'].obs;
 
   final RxList<String> selectedCategories = <String>[].obs;
   final RxString feedbackText = ''.obs;
@@ -39,21 +31,19 @@ class ParentFeedbackController extends GetxController {
     }
 
     try {
-      String categories = selectedCategories.isEmpty 
-          ? '' 
-          : '\nCategories: ${selectedCategories.join(", ")}';
-      
-      String feedback = feedbackText.value.trim().isEmpty 
-          ? '' 
-          : '\nFeedback: ${feedbackText.value.trim()}';
+      String categories = selectedCategories.isEmpty ? '' : '\nCategories: ${selectedCategories.join(", ")}';
+
+      String feedback = feedbackText.value.trim().isEmpty ? '' : '\nFeedback: ${feedbackText.value.trim()}';
 
       await ShareUtils.sendFeedback(
         additionalText: '$categories$feedback',
       );
-      
+
       Get.back(); // Return to previous screen after successful submission
-      
-      ToastUtil.showToast('Thank you for your feedback!',);
+
+      ToastUtil.showToast(
+        'Thank you for your feedback!',
+      );
     } catch (e) {
       ToastUtil.showToast(
         'Failed to send feedback',

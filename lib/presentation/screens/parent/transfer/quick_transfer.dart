@@ -1,26 +1,23 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/main.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
+import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/components/parent/quick_transfer_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
-import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
-import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 import '../../../../core/theme/color_theme.dart';
 
 class QuickTransferPage extends GetView<QuickTransferController> {
+  const QuickTransferPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +28,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: AppColors.background,
           ),
           child: Stack(children: [
@@ -102,6 +99,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                     onChanged: (val) {
                       controller.amount.value = val;
                     },
+                    initialValue: controller.amount.value,
                     prefix: SvgPicture.asset(
                       Assets.icCurrencyRound,
                     ),
@@ -146,13 +144,21 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       Obx(() {
                         return AppButton(
                           size: Size(125.w, 50.h),
+                          backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                          onPressed: () async {
+                            if (controller.amount.value.isEmpty) {
+                              controller.amountValidation.value = 'Enter valid amount';
+                            } else {
+                              controller.removeMoney();
+                            }
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 "Remove",
-                                style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                                style: AppTextStyle.appButton,
                               ),
                               SizedBox(
                                 width: 6.w,
@@ -164,46 +170,15 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               ),
                             ],
                           ),
-                          backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                          onPressed: () async {
-                            if (controller.amount.value.isEmpty) {
-                              controller.amountValidation.value = 'Enter valid amount';
-                            } else {
-                              try {
-                                double enteredAmount = double.parse(controller.amount.value);
-                                final kid = controller.appState.currentKid.value!;
-                                var newBalance = kid.wallet.spendingJar.balance - enteredAmount;
-
-                                if (newBalance < 0) {
-                                  ToastUtil.showToast("Kid doesn't have enough money");
-                                  return;
-                                }
-
-                                await controller.kidService.updateSpendingJar(kid.kidId, newBalance);
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AppParentDialog(
-                                    iconPath: Assets.icSuccessDialog,
-                                    title: "Transfer Successful",
-                                    subtitle: "€${enteredAmount.toMoneyFormat()} deducted from ${kid.name}",
-                                    buttons: [
-                                      DialogButton(
-                                        text: "Close",
-                                        onPressed: () => Get.back(),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } catch (e) {
-                                print(e);
-                              }
-                            }
-                          },
                         );
                       }),
                       Obx(() {
                         return AppButton(
                           size: Size(125.w, 50.h),
+                          backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                          onPressed: () {
+                            controller.sendMoney();
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -218,50 +193,10 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               ),
                               Text(
                                 "Send",
-                                style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                                style: AppTextStyle.appButton,
                               ),
                             ],
                           ),
-                          backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                          onPressed: () async {
-                            if (controller.amount.value.isEmpty) {
-                              controller.amountValidation.value = 'Enter valid amount';
-                            } else {
-                              try {
-                                double enteredAmount = double.parse(controller.amount.value);
-                                final kid = controller.appState.currentKid.value!;
-                                var newBalance = kid.wallet.spendingJar.balance + enteredAmount;
-
-                                await controller.kidService.updateSpendingJar(kid.kidId, newBalance);
-
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AppParentDialog(
-                                    iconPath: Assets.icSuccessDialog,
-                                    title: "Transfer Successful",
-                                    subtitle: "€${enteredAmount} Transferred to ${kid.name}",
-                                    buttons: [
-                                      DialogButton(
-                                        text: "Close",
-                                        onPressed: () async {
-                                          final hasShownKidsZoneShowcase = await SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasShownKidsZoneShowcase) ?? false;
-                                          if (!hasShownKidsZoneShowcase) {
-                                            Get.off(() => ParentBaseScreen());
-                                            SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasShownKidsZoneShowcase, true);
-                                            ShowCaseWidget.of(context).startShowCase([ShowcaseManager.parentToKidNavShowcaseKey]);
-                                          } else {
-                                            Get.off(() => ParentBaseScreen());
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } on Exception catch (e) {
-                                print("Exception $e");
-                              }
-                            }
-                          },
                         );
                       }),
                     ],
@@ -276,7 +211,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
   }
 }
 
-quickTransferFields({
+Widget quickTransferFields({
   required Function()? onTap,
   required Function(String)? onChanged,
   required TextInputType? keyboardType,
@@ -353,7 +288,7 @@ Widget quickTransferChildGeneralDetailWidget({required KidModel? kid}) {
               SizedBox(height: 8.h),
 
               // Child Avatar
-              CircleAvatar(radius: 30, backgroundImage: NetworkImage(kid.avatar)),
+              CircleAvatarWidget(size: 48.h, imagePath: kid.avatar, imageType: ImageType.network),
               SizedBox(height: 8.h),
 
               // Available Money

@@ -17,7 +17,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
   final Color? iconColor;
 
   const CachedNetworkImageWidget({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.placeholderAsset,
     this.errorAsset,
@@ -29,7 +29,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
     this.loadingWidget,
     this.showLoading = true,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
   }
 
   Widget _buildErrorWidget() {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: _buildAssetImage(errorAsset),
@@ -87,14 +87,14 @@ class CachedNetworkImageWidget extends StatelessWidget {
             width: width,
             height: height,
             fit: fit,
-            color: iconColor != null ? iconColor : null,
+            colorFilter: iconColor != null ? ColorFilter.mode(iconColor!, BlendMode.srcIn) : null,
           )
         : Image.asset(
             asset,
             width: width,
             height: height,
             fit: fit,
-            color: iconColor != null ? iconColor : null,
+            color: iconColor,
           );
   }
 }

@@ -33,7 +33,7 @@ class AppStateController extends GetxController {
     super.onInit();
     // Listen to auth state changes
     _authSubscription = _authService.user.listen((user) {
-      print("AppStateController: Auth state changed - User: ${user?.uid}");
+      Get.log("AppStateController: Auth state changed - User: ${user?.uid}");
       if (user != null) {
         _initStreams();
       } else {
@@ -49,15 +49,15 @@ class AppStateController extends GetxController {
   void _initStreams() {
     final userId = _authService.user.value?.uid;
     if (userId == null) {
-      print("AppStateController: No user ID available");
+      Get.log("AppStateController: No user ID available");
       return;
     }
 
-    print("AppStateController: Initializing streams for user: $userId");
+    Get.log("AppStateController: Initializing streams for user: $userId");
 
     // Subscribe to single kid stream
     _kidSubscription = _kidService.streamKidByParentId(userId).listen((kid) {
-      print("AppStateController: Received kid data: ${kid?.name}");
+      Get.log("AppStateController: Received kid data: ${kid?.name}");
       currentKid.value = kid;
       hasKid.value = kid != null;
     });
@@ -67,16 +67,16 @@ class AppStateController extends GetxController {
     _parentSubscription?.cancel();
     _parentSubscription = _parentService.streamParentData().listen(
       (parent) {
-        print("AppStateController: Received parent data: ${parent}");
+        Get.log("AppStateController: Received parent data: $parent");
         currentParent.value = parent;
         isParentLoading.value = false;
       },
       onError: (error) {
-        print("AppStateController: Parent stream error: $error");
+        Get.log("AppStateController: Parent stream error: $error");
         isParentLoading.value = false;
       },
       onDone: () {
-        print("AppStateController: Parent stream completed");
+        Get.log("AppStateController: Parent stream completed");
         isParentLoading.value = false;
       },
     );
@@ -84,14 +84,14 @@ class AppStateController extends GetxController {
 
   // Refresh streams (useful after login/logout)
   void refreshStreams() {
-    print("AppStateController: Refreshing streams");
+    Get.log("AppStateController: Refreshing streams");
     _cancelStreams();
     _initStreams();
   }
 
   // Cancel all streams
   void _cancelStreams() {
-    print("AppStateController: Cancelling streams");
+    Get.log("AppStateController: Cancelling streams");
     _kidSubscription?.cancel();
     _parentSubscription?.cancel();
   }
@@ -104,7 +104,7 @@ class AppStateController extends GetxController {
 
   @override
   void onClose() {
-    print("AppStateController: Disposing controller");
+    Get.log("AppStateController: Disposing controller");
     _cancelStreams();
     _authSubscription?.cancel();
     super.onClose();

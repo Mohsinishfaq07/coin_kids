@@ -1,28 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/transaction_model.dart';
 import './kid_service.dart';
 
 class TransactionService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   final KidService _kidService = KidService();
 
   // Create new transaction
-  Future<DocumentReference> createTransaction(
-      TransactionModel transaction) async {
+  Future<DocumentReference> createTransaction(TransactionModel transaction) async {
     try {
-      final docRef =
-          await _firestore.collection('transactions').add(transaction.toJson());
+      final docRef = await _firestore.collection('transactions').add(transaction.toJson());
 
       // If it's an earn or reward transaction, update kid's balance
-      if ((transaction.type == TransactionType.earn ||
-              transaction.type == TransactionType.reward) &&
-          transaction.status == TransactionStatus.approved) {
-        await _kidService.updateCoinKidsBalance(
-            transaction.userId,
-            (await _kidService.fetchKidById(transaction.userId))!
-                    .coinKidsBalance +
-                transaction.amount);
+      if ((transaction.type == TransactionType.earn || transaction.type == TransactionType.reward) && transaction.status == TransactionStatus.approved) {
+        await _kidService.updateCoinKidsBalance(transaction.userId, (await _kidService.fetchKidById(transaction.userId))!.coinKidsBalance + transaction.amount);
       }
 
       return docRef;
@@ -34,82 +28,55 @@ class TransactionService {
   // Fetch transaction by ID
   Future<TransactionModel?> fetchTransactionById(String transactionId) async {
     try {
-      final DocumentSnapshot doc =
-          await _firestore.collection('transactions').doc(transactionId).get();
+      final DocumentSnapshot doc = await _firestore.collection('transactions').doc(transactionId).get();
 
       if (!doc.exists) {
         return null;
       }
 
-      return TransactionModel.fromJson(doc.data() as Map<String, dynamic>,
-          id: doc.id);
+      return TransactionModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id);
     } catch (e) {
       throw Exception('Failed to fetch transaction: ${e.toString()}');
     }
   }
 
   // Fetch transactions by user ID (kid's transactions)
-  Future<List<TransactionModel>> fetchTransactionsByUserId(
-      String userId) async {
+  Future<List<TransactionModel>> fetchTransactionsByUserId(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection('transactions')
-          .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
+      final QuerySnapshot snapshot = await _firestore.collection('transactions').where('userId', isEqualTo: userId).orderBy('createdAt', descending: true).get();
 
-      return snapshot.docs
-          .map((doc) => TransactionModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => TransactionModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch user transactions: ${e.toString()}');
     }
   }
 
   // Fetch transactions by parent ID
-  Future<List<TransactionModel>> fetchTransactionsByParentId(
-      String parentId) async {
+  Future<List<TransactionModel>> fetchTransactionsByParentId(String parentId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection('transactions')
-          .where('parentId', isEqualTo: parentId)
-          .orderBy('createdAt', descending: true)
-          .get();
+      final QuerySnapshot snapshot = await _firestore.collection('transactions').where('parentId', isEqualTo: parentId).orderBy('createdAt', descending: true).get();
 
-      return snapshot.docs
-          .map((doc) => TransactionModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => TransactionModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch parent transactions: ${e.toString()}');
     }
   }
 
   // Update transaction status
-  Future<void> updateTransactionStatus(
-      String transactionId, TransactionStatus newStatus) async {
+  Future<void> updateTransactionStatus(String transactionId, TransactionStatus newStatus) async {
     try {
       final transaction = await fetchTransactionById(transactionId);
       if (transaction == null) {
         throw Exception('Transaction not found');
       }
 
-      await _firestore
-          .collection('transactions')
-          .doc(transactionId)
-          .update({'status': newStatus.toString().split('.').last});
+      await _firestore.collection('transactions').doc(transactionId).update({'status': newStatus.toString().split('.').last});
 
       // If status is changed to approved and it's an earn/reward transaction, update kid's balance
-      if (newStatus == TransactionStatus.approved &&
-          (transaction.type == TransactionType.earn ||
-              transaction.type == TransactionType.reward)) {
+      if (newStatus == TransactionStatus.approved && (transaction.type == TransactionType.earn || transaction.type == TransactionType.reward)) {
         final kid = await _kidService.fetchKidById(transaction.userId);
         if (kid != null) {
-          await _kidService.updateCoinKidsBalance(
-              transaction.userId, kid.coinKidsBalance + transaction.amount);
+          await _kidService.updateCoinKidsBalance(transaction.userId, kid.coinKidsBalance + transaction.amount);
         }
       }
     } catch (e) {
@@ -127,22 +94,16 @@ class TransactionService {
   }
 
   // Fetch pending transactions for parent
-  Future<List<TransactionModel>> fetchPendingTransactions(
-      String parentId) async {
+  Future<List<TransactionModel>> fetchPendingTransactions(String parentId) async {
     try {
       final QuerySnapshot snapshot = await _firestore
           .collection('transactions')
           .where('parentId', isEqualTo: parentId)
-          .where('status',
-              isEqualTo: TransactionStatus.pending.toString().split('.').last)
+          .where('status', isEqualTo: TransactionStatus.pending.toString().split('.').last)
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => TransactionModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => TransactionModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
       throw Exception('Failed to fetch pending transactions: ${e.toString()}');
     }
@@ -158,20 +119,14 @@ class TransactionService {
       final QuerySnapshot snapshot = await _firestore
           .collection('transactions')
           .where('userId', isEqualTo: userId)
-          .where('createdAt',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
           .where('createdAt', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => TransactionModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-              id: doc.id))
-          .toList();
+      return snapshot.docs.map((doc) => TransactionModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
     } catch (e) {
-      throw Exception(
-          'Failed to fetch transactions by date range: ${e.toString()}');
+      throw Exception('Failed to fetch transactions by date range: ${e.toString()}');
     }
   }
 }

@@ -12,7 +12,7 @@ import '../../../../../core/theme/color_theme.dart' show AppColors;
 class GoalTimelineWidget extends GetView<KidGoalsController> {
   final GoalModel goal;
 
-  GoalTimelineWidget({
+  const GoalTimelineWidget({
     required this.goal,
     super.key,
   });
@@ -46,9 +46,9 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage(Assets.kidBg),
             fit: BoxFit.cover,
           ),

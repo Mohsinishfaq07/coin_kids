@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart' show ImagePicker, ImageSource, XFile;
 import 'package:path_provider/path_provider.dart';
@@ -42,23 +43,23 @@ class ImageUtils {
 
       return resizedFile;
     } catch (e) {
-      print('Error resizing image: $e');
+      Get.log('Error resizing image: $e');
       return originalFile; // Return original file if resize fails
     }
   }
 
-  Future<void> pickImage(ImageSource source, VoidCallback onPick(XFile? file), VoidCallback onError(e)) async {
-    final ImagePicker _picker = ImagePicker();
+  Future<void> pickImage(ImageSource source, VoidCallback Function(XFile? file) onPick, _) async {
+    final ImagePicker picker = ImagePicker();
 
     try {
-      final XFile? pickedFile = await _picker.pickImage(
+      final XFile? pickedFile = await picker.pickImage(
         source: source,
         imageQuality: 80,
       );
 
       onPick(pickedFile);
     } catch (e) {
-      onError(e);
+      Get.log(e.toString(), isError: true);
       ToastUtil.showToast("Failed to pick image: $e");
     }
   }

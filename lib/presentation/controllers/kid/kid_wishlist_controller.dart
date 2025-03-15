@@ -26,7 +26,6 @@ class KidWishlistController extends GetxController {
     super.onReady();
   }
 
-
   Future<void> fetchWishlist() async {
     isLoading.value = true;
     error.value = '';
@@ -39,7 +38,7 @@ class KidWishlistController extends GetxController {
       wishlistItems.value = items;
     } catch (e) {
       error.value = 'Failed to load wishlist items';
-      print(e);
+      Get.log(e.toString(), isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -50,7 +49,7 @@ class KidWishlistController extends GetxController {
       await _wishlistService.removeFromWishlist(productId);
       wishlistItems.removeWhere((item) => item.productId == productId);
     } catch (e) {
-      print('Failed to remove item from wishlist: $e');
+      Get.log('Failed to remove item from wishlist: $e');
     }
   }
 }

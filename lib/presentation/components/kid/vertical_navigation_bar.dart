@@ -8,12 +8,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class VerticalNavBarController extends GetxController {
+  final KidAppBarController appBarController;
+
+  VerticalNavBarController(this.appBarController);
+
   final RxInt selectedIndex = 0.obs;
 }
 
 class VerticalNavBar extends GetView<VerticalNavBarController> {
-
-  final appbarController = Get.find<KidAppBarController>();
+  const VerticalNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +41,12 @@ class VerticalNavBar extends GetView<VerticalNavBarController> {
             selectedIndex: controller.selectedIndex.value,
             onDestinationSelected: (int index) {
               controller.selectedIndex.value = index;
-              if(index == 1) {
-                appbarController.resetToDefault();
+              if (index == 1) {
+                controller.appBarController.resetToDefault();
               } else if (index == 2) {
-                appbarController.configureForMarket();
+                controller.appBarController.configureForMarket();
               } else {
-                appbarController.resetToDefault();
+                controller.appBarController.resetToDefault();
               }
             },
             minWidth: 80.w,
@@ -84,7 +87,7 @@ class VerticalNavBar extends GetView<VerticalNavBarController> {
       label: Text(
         label,
         style: AppTextStyle.labelSmall.copyWith(
-          fontWeight: MyFontWeight.ExtraBold.fontWeight,
+          fontWeight: MyFontWeight.extraBold.fontWeight,
           color: isSelected ? AppColors.colorPrimary : AppColors.iconDisabled,
         ),
       ),

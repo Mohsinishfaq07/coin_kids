@@ -24,7 +24,7 @@ class KidButton extends StatelessWidget {
   final double? maxWidth;
 
   const KidButton({
-    Key? key,
+    super.key,
     required this.onTap,
     this.text,
     required this.baseColor,
@@ -40,7 +40,7 @@ class KidButton extends StatelessWidget {
     this.textStyle,
     this.belowTextStyle,
     this.maxWidth = 300,
-  }) : super(key: key);
+  });
 
   // Factory constructor for icon-only button
   factory KidButton.iconOnly({
@@ -155,7 +155,7 @@ class KidButton extends StatelessWidget {
 
           // Add extra buffer for text rendering
           if (text != null) {
-            contentWidth += 12.w; // Additional buffer for text
+            contentWidth += 18.w; // Additional buffer for text
           }
 
           // Determine final width based on the three cases:
@@ -240,24 +240,23 @@ class KidButton extends StatelessWidget {
     if (text != null) {
       final bool shouldEllipsize = width != null || (maxWidth != null && containerWidth >= maxWidth!);
 
+      widgets.add(SizedBox(width: 4.w,));
       widgets.add(
         Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Text(
-              text!,
-              style: textStyle ??
-                  AppTextStyle.headingMedium.copyWith(
-                    color: Colors.white,
-                    fontSize: fontSize ?? 22,
-                  ),
-              overflow: shouldEllipsize ? TextOverflow.ellipsis : TextOverflow.visible,
-              softWrap: !shouldEllipsize,
-              maxLines: 1,
-            ),
+          child: Text(
+            text!,
+            style: textStyle ??
+                AppTextStyle.headingMedium.copyWith(
+                  color: Colors.white,
+                  fontSize: fontSize ?? 22,
+                ),
+            overflow: shouldEllipsize ? TextOverflow.ellipsis : TextOverflow.visible,
+            softWrap: !shouldEllipsize,
+            maxLines: 1,
           ),
         ),
       );
+      widgets.add(SizedBox(width: 4.w,));
     }
 
     if (iconPath != null && iconPosition == IconPosition.right) {
@@ -287,6 +286,7 @@ class KidButton extends StatelessWidget {
         iconPath!,
         fit: BoxFit.cover,
         height: iconHeight,
+        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
       ),
     );
   }

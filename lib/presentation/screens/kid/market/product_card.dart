@@ -13,13 +13,13 @@ class ProductCard extends StatelessWidget {
   final bool isLoading;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.onWishlistTap,
     required this.onTap,
     required this.isInWishlist,
     required this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +127,7 @@ class ProductCard extends StatelessWidget {
                             Assets.icFavorite,
                             width: 24.w,
                             height: 24.w,
-                            color: isInWishlist ? AppColors.colorPrimary : Colors.grey[400],
+                            colorFilter: ColorFilter.mode(isInWishlist ? AppColors.colorPrimary : Colors.grey[400]!, BlendMode.srcIn),
                           ),
                         ),
                     ],

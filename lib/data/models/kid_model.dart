@@ -77,6 +77,7 @@ class KidModel {
   final Wallet wallet;
   final double coinKidsBalance;
   final DateTime createdAt;
+  final bool isConnected;
 
   KidModel({
     required this.kidId,
@@ -87,21 +88,20 @@ class KidModel {
     required this.wallet,
     required this.coinKidsBalance,
     required this.createdAt,
+    this.isConnected = false,
   });
 
-  factory KidModel.fromJson(Map<String, dynamic> json,
-      {String documentId = ''}) {
+  factory KidModel.fromJson(Map<String, dynamic> json, {String documentId = ''}) {
     return KidModel(
       kidId: documentId.isNotEmpty ? documentId : json['kidId'] ?? '',
       name: json['name'] ?? '',
-      age: (json['age'] ?? 0) is String
-          ? int.parse(json['age'])
-          : json['age'] ?? 0,
+      age: (json['age'] ?? 0) is String ? int.parse(json['age']) : json['age'] ?? 0,
       avatar: json['avatar'] ?? '',
       parentId: json['parentId'] ?? '',
       wallet: Wallet.fromJson(json['wallet'] ?? {}),
       coinKidsBalance: (json['coinKidsBalance'] ?? -1.0).toDouble(),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isConnected: (json['isConnected'] ?? false),
     );
   }
 
@@ -115,6 +115,7 @@ class KidModel {
       'wallet': wallet.toJson(),
       'coinKidsBalance': coinKidsBalance,
       'createdAt': Timestamp.fromDate(createdAt),
+      'isConnected': isConnected,
     };
   }
 
@@ -127,6 +128,7 @@ class KidModel {
     Wallet? wallet,
     double? coinKidsBalance,
     DateTime? createdAt,
+    bool? isConnected,
   }) {
     return KidModel(
       kidId: kidId ?? this.kidId,
@@ -137,6 +139,7 @@ class KidModel {
       wallet: wallet ?? this.wallet,
       coinKidsBalance: coinKidsBalance ?? this.coinKidsBalance,
       createdAt: createdAt ?? this.createdAt,
+      isConnected: isConnected ?? false,
     );
   }
 }

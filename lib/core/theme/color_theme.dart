@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const LinearGradient background = LinearGradient(
+  static LinearGradient background = LinearGradient(
     colors: [
       Color(0xFFCAF0FF),
       Colors.white,
@@ -10,7 +10,7 @@ class AppColors {
     end: Alignment.bottomCenter,
   );
 
-  static const LinearGradient backgroundInverse = LinearGradient(
+  static LinearGradient backgroundInverse = LinearGradient(
     colors: [
       Colors.white,
       Color(0xFFCAF0FF),
@@ -20,50 +20,50 @@ class AppColors {
   );
 
   //color primary
-  static const Color colorPrimary = const Color(0xffa421d9);
-  static const Color colorSecondary = const Color(0xFFFF9E29);
+  static Color colorPrimary = Color(0xffa421d9);
+  static Color colorSecondary = Color(0xFFFF9E29);
 
   //Card
-  static const Color cardPrimary = const Color(0xff01FFb3);
-  static const Color cardSecondary = const Color(0xffFFeb3b);
+  static Color cardPrimary = Color(0xFFEDFAFF);
+  static Color cardBorder = Color(0xFFCBE4F3);
+  static Color cardSecondary = Color(0xffFFeb3b);
 
   //Button
-  static const Color buttonPrimary = const Color(0xffa421d9);
-  static const Color buttonSecondary = const Color(0xfff3c84b);
-  static const Color buttonDisabled = const Color(0xffd9d9d9);
-  static const Color skipButton = const Color(0xFFFF9E29);
+  static Color buttonPrimary = Color(0xffa421d9);
+  static Color buttonSecondary = Color(0xfff3c84b);
+  static Color buttonDisabled = Color(0xffd9d9d9);
+  static Color skipButton = Color(0xFFFF9E29);
 
   //Icon
-  static const Color iconPrimary = Color(0xffa421d9);
-  static const Color iconPrimaryVariant = Color(0xff015486);
-  static const Color iconOnPrimary = Color(0xffffffff);
-  static const Color iconSecondaryVariant = Color(0xFFFF9E29);
-  static const Color iconSecondary = Colors.white;
-  static const Color iconDisabled = Color(0xff848484);
+  static Color iconPrimary = Color(0xffa421d9);
+  static Color iconPrimaryVariant = Color(0xff015486);
+  static Color iconOnPrimary = Color(0xffffffff);
+  static Color iconSecondaryVariant = Color(0xFFFF9E29);
+  static Color iconSecondary = Colors.white;
+  static Color iconDisabled = Color(0xff848484);
 
   //Text
-  static const Color textPrimary = Color(0xff015486);
-  static const Color textOnPrimary = Colors.white;
-  static const Color textSecondary = const Color(0xff676666);
-  static const Color textHighlighted = const Color(0xffa421d9);
+  static Color textPrimary = Color(0xff015486);
+  static Color textOnPrimary = Colors.white;
+  static Color textSecondary = Color(0xff676666);
+  static Color textHighlighted = Color(0xffa421d9);
 
   //Notification
-  static const Color notificationPositive = const Color(0xff81c784);
-  static const Color notificationWarning = const Color(0xffff9800);
-  static const Color notificationCritical = const Color(0xffe57373);
+  static Color notificationPositive = Color(0xff81c784);
+  static Color notificationWarning = Color(0xffff9800);
+  static Color notificationCritical = Color(0xffe57373);
 
-  static const Color progressBar = const Color(0xffeed3f8);
-  static const Color strokeColor = const Color(0xffa2a2a2);
-  static const Color inputFieldBG = const Color(0xfff6f6f6);
-  static const Color currencyStroke = const Color(0xff4caf50);
-  static const Color critical = const Color(0xffff6757);
-  static const Color KidZoneParent = const Color(0xff38BEBE);
-  static const Color primaryLightColor = const Color(0xFFD2A4EF);
-  static const Color addIconBorderColor = const Color(0xFF148F2F);
+  static Color progressBar = Color(0xffeed3f8);
+  static Color strokeColor = Color(0xffa2a2a2);
+  static Color inputFieldBG = Color(0xfff6f6f6);
+  static Color currencyStroke = Color(0xff4caf50);
+  static Color critical = Color(0xffff6757);
+  static Color kidZoneParent = Color(0xff38BEBE);
+  static Color primaryLightColor = Color(0xFFD2A4EF);
+  static Color addIconBorderColor = Color(0xFF148F2F);
 
   //Kid Button Colors
-  static const Color btnColorGreen = const Color(0xFF19B859);
-  static const Color btnColorOrange = const Color(0xFFFF9E29);
-  static const Color btnColorRed = const Color(0xFFF6612F);
-
+  static Color btnColorGreen = Color(0xFF19B859);
+  static Color btnColorOrange = Color(0xFFFF9E29);
+  static Color btnColorRed = Color(0xFFF6612F);
 }

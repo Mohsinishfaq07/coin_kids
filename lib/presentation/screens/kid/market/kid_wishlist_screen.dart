@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidWishlistScreen extends GetView<KidWishlistController> {
-  const KidWishlistScreen({Key? key}) : super(key: key);
+  const KidWishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                 Get.back();
               }),
           body: Container(
-            decoration: const BoxDecoration(gradient: AppColors.background),
+            decoration: BoxDecoration(gradient: AppColors.background),
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -105,110 +106,113 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
   }
 
   Widget _buildWishlistItem(WishlistModel item) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          if (item.product != null) {
-            Get.dialog(
-              ProductDetailDialog(
-                product: item.product!,
-                onAddToGoal: () {
-                  Get.back();
-                  // controller.addToGoal(item.product!);
-                },
-              ),
-              barrierDismissible: true,
-            );
-          }
-        },
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          child: Stack(
-            children: [
-              // Delete Button
-              Positioned(
-                top: 8.h,
-                right: 8.w,
-                child: GestureDetector(
-                  onTap: () => controller.removeFromWishlist(item.productId),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Main Content
+          GestureDetector(
+            onTap: () {
+              if (item.product != null) {
+                Get.dialog(
+                  ProductDetailDialog(
+                    product: item.product!,
+                    onAddToGoal: () {
+                      Get.back();
+                    },
+                  ),
+                  barrierDismissible: true,
+                );
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Product Image
+                Expanded(
+                  flex: 3,
                   child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red,
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 16.sp,
+                    margin: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      image: DecorationImage(
+                        image: NetworkImage(item.product?.imageUrl ?? ''),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
-              ),
-
-              // Main Content
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product Image
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      margin: EdgeInsets.all(8.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.r),
-                        image: DecorationImage(
-                          image: NetworkImage(item.product?.imageUrl ?? ''),
-                          fit: BoxFit.cover,
+                // Product Details
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.product?.name ?? '',
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
+                        const Spacer(),
+                        Text(
+                          '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Product Details
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.product?.name ?? '',
-                            style: AppTextStyle.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const Spacer(),
-                          Text(
-                            '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
-                            style: AppTextStyle.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
-        ),
+
+          // Delete Button - Use a simple IconButton instead of KidButton
+          Positioned(
+            top: 4.h,
+            right: 4.w,
+            child: Material(
+              elevation: 10,
+              color: AppColors.btnColorRed,
+              shape: CircleBorder(),
+              child: InkWell(
+                onTap: () {
+                  Get.log("Delete button tapped");
+                  ToastUtil.showToast("Removing item from wishlist");
+                  controller.removeFromWishlist(item.productId);
+                },
+                customBorder: CircleBorder(),
+                child: Container(
+                  width: 28.r,
+                  height: 28.r,
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.close,
+                    size: 14.r,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

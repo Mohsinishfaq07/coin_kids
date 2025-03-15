@@ -9,12 +9,12 @@ class OrientationTransition extends StatefulWidget {
   final bool showInstruction;
 
   const OrientationTransition({
-    Key? key,
+    super.key,
     required this.child,
     required this.toPortrait,
     this.instructionDuration = const Duration(seconds: 3),
     this.showInstruction = false,
-  }) : super(key: key);
+  });
 
   @override
   State<OrientationTransition> createState() => _OrientationTransitionState();
@@ -59,9 +59,7 @@ class _OrientationTransitionState extends State<OrientationTransition> {
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: _showInstruction
-          ? RotationInstruction(toPortrait: widget.toPortrait)
-          : widget.child,
+      child: _showInstruction ? RotationInstruction(toPortrait: widget.toPortrait) : widget.child,
     );
   }
 }

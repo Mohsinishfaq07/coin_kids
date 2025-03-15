@@ -1,7 +1,7 @@
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
-import 'package:coin_kids/presentation/screens/kid/base/kid_base_screen.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -159,16 +159,10 @@ class KidOnboardingController extends GetxController {
         return;
       }
 
-      await kidsService.createKid(
-        name: _name.value,
-        age: _age.value,
-        parentId: parentId,
-        customImagePath: _customImagePath.value,
-        selectedAvatarUrl: _selectedAvatarUrl.value,
-      );
+      await kidsService.createKid(name: _name.value, age: _age.value, parentId: parentId, customImagePath: _customImagePath.value, selectedAvatarUrl: _selectedAvatarUrl.value, isConnected: false);
 
       ToastUtil.showToast("Profile created successfully!");
-      Get.offAll(() => const KidBaseScreen());
+      Get.offAllNamed(Routes.kidBase);
     } catch (e) {
       ToastUtil.showToast("Failed to create profile: $e");
     } finally {

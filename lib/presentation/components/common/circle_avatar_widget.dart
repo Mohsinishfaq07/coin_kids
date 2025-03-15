@@ -20,7 +20,7 @@ class CircleAvatarWidget extends StatelessWidget {
   final String? errorAsset;
 
   const CircleAvatarWidget({
-    Key? key,
+    super.key,
     this.imagePath = '',
     this.imageType = ImageType.none,
     this.size = 40,
@@ -31,7 +31,7 @@ class CircleAvatarWidget extends StatelessWidget {
     this.border,
     this.placeholderAsset,
     this.errorAsset,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

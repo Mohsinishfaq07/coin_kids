@@ -8,15 +8,15 @@ class RotationInstruction extends StatelessWidget {
   final bool toPortrait;
 
   const RotationInstruction({
-    Key? key,
+    super.key,
     this.toPortrait = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Center(

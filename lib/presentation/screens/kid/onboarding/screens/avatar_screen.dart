@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidAvatarScreen extends GetView<KidOnboardingController> {
-  const KidAvatarScreen({Key? key}) : super(key: key);
+  const KidAvatarScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

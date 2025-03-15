@@ -13,7 +13,7 @@ class ParentAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool showBackButton;
   final bool centerTitle;
-  final Color backButtonColor; // New parameter for back button color
+  final Color? backButtonColor; // New parameter for back button color
 
   const ParentAppBar({
     super.key,
@@ -25,7 +25,7 @@ class ParentAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.showBackButton = false,
     this.centerTitle = true,
-    this.backButtonColor = AppColors.textPrimary,
+    this.backButtonColor,
   });
 
   @override
@@ -36,7 +36,7 @@ class ParentAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: elevation,
       leading: showBackButton
           ? IconButton(
-              icon: Icon(Icons.arrow_back_rounded, color: backButtonColor),
+              icon: Icon(Icons.arrow_back_rounded, color: backButtonColor ?? AppColors.iconPrimaryVariant),
               onPressed: onBackPressed ?? () => Get.back(), // Default action is Get.back
             )
           : null,

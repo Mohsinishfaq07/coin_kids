@@ -3,7 +3,7 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 
 import 'market_product_model.dart';
 
-enum GoalStatus { in_progress, completed, cancelled, pending, deleted }
+enum GoalStatus { inProgress, completed, cancelled, pending, deleted }
 
 class GoalModel {
   final String? id;
@@ -83,13 +83,13 @@ class GoalModel {
   static GoalStatus _stringToGoalStatus(String status) {
     switch (status.toLowerCase()) {
       case 'in_progress':
-        return GoalStatus.in_progress;
+        return GoalStatus.inProgress;
       case 'completed':
         return GoalStatus.completed;
       case 'cancelled':
         return GoalStatus.cancelled;
       default:
-        return GoalStatus.in_progress;
+        return GoalStatus.inProgress;
     }
   }
 
@@ -122,7 +122,7 @@ class GoalModel {
       photo: product.imageUrl,
       targetAmount: product.price,
       savedAmount: 0,
-      status: GoalStatus.in_progress,
+      status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
       completedAt: null,
     );

@@ -3,6 +3,7 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class DialogButton {
   final String text;
@@ -45,60 +46,65 @@ class AppParentDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
       ),
       elevation: 10,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: Get.height * 0.7, // Limit height to 70% of screen
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: alignment!,
-            children: [
-              if (iconPath != null) ...[
-                SizedBox(height: 10.h),
-                Container(
-                  child: SvgPicture.asset(
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0),
+            color: Colors.white,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: alignment!,
+              children: [
+                if (iconPath != null) ...[
+                  SizedBox(height: 10.h),
+                  SvgPicture.asset(
                     iconPath!,
                     height: 152.h,
                     width: 152.h,
                   ),
-                ),
-                SizedBox(height: 10.h),
-              ],
+                  SizedBox(height: 10.h),
+                ],
 
-              Text(
-                title,
-                textAlign: textAlign,
-                style: AppTextStyle.headingMedium.copyWith(
-                  color: AppColors.textHighlighted,
-                ),
-              ),
-
-              if (subtitle != null) ...[
-                SizedBox(height: 14.h),
-                Text(subtitle!, textAlign: textAlign, style: AppTextStyle.bodyLarge),
-              ],
-
-              if (message != null) ...[
-                SizedBox(height: 14.h),
                 Text(
-                  message!,
+                  title,
                   textAlign: textAlign,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    color: Colors.grey[600],
+                  style: AppTextStyle.headingMedium.copyWith(
+                    color: AppColors.textHighlighted,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.clip,
                 ),
+
+                if (subtitle != null) ...[
+                  SizedBox(height: 24.h),
+                  Text(subtitle!, textAlign: textAlign, style: AppTextStyle.bodyMedium),
+                ],
+
+                if (message != null) ...[
+                  SizedBox(height: 14.h),
+                  Text(
+                    message!,
+                    textAlign: textAlign,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+
+                SizedBox(height: 32.h),
+
+                // Buttons
+                buttons.length == 1 ? _buildSingleButton(buttons.first) : _buildButtonRow(buttons),
               ],
-
-              SizedBox(height: 20.h),
-
-              // Buttons
-              buttons.length == 1 ? _buildSingleButton(buttons.first) : _buildButtonRow(buttons),
-            ],
+            ),
           ),
         ),
       ),

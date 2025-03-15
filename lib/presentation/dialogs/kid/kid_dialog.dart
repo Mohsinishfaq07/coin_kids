@@ -13,7 +13,7 @@ class KidDialog extends StatelessWidget {
   final String subtitle;
   final Widget? extraContent;
   final List<Widget> buttons;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final double width;
   final double emojiSize;
   final EdgeInsets contentPadding;
@@ -24,12 +24,12 @@ class KidDialog extends StatelessWidget {
     required this.subtitle,
     this.extraContent,
     required this.buttons,
-    this.backgroundColor = AppColors.colorPrimary,
+    this.backgroundColor,
     this.width = 0.8,
     this.emojiSize = 60,
     this.contentPadding = const EdgeInsets.all(24),
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class KidDialog extends StatelessWidget {
               bottom: contentPadding.bottom / 1.5,
             ),
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: backgroundColor ?? AppColors.colorPrimary,
               borderRadius: BorderRadius.circular(24.r),
             ),
             child: Column(
@@ -72,7 +72,7 @@ class KidDialog extends StatelessWidget {
                 Text(
                   subtitle,
                   style: AppTextStyle.headingSmall.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -120,6 +120,7 @@ class KidDialog extends StatelessWidget {
     );
   }
 
+/*
   MainAxisAlignment _getButtonAlignment() {
     if (buttons.length == 1) {
       return MainAxisAlignment.center;
@@ -129,6 +130,7 @@ class KidDialog extends StatelessWidget {
       return MainAxisAlignment.spaceAround;
     }
   }
+*/
 
   // Static method to show the dialog
   static Future<T?> show<T>(
@@ -137,7 +139,7 @@ class KidDialog extends StatelessWidget {
       required String subtitle,
       Widget? extraContent,
       required List<Widget> buttons,
-      Color backgroundColor = AppColors.colorPrimary,
+      Color? backgroundColor,
       double width = 0.8,
       double emojiSize = 60,
       EdgeInsets contentPadding = const EdgeInsets.all(24),
@@ -149,7 +151,7 @@ class KidDialog extends StatelessWidget {
         subtitle: subtitle,
         extraContent: extraContent,
         buttons: buttons,
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? AppColors.colorPrimary,
         width: width,
         emojiSize: emojiSize,
         contentPadding: contentPadding,
@@ -188,7 +190,7 @@ void showExampleDialog() {
 //Usage
 void exampleDialog() {
   KidDialog.show(
-    emoji: '🎯',
+    emoji: Assets.icTrophy,
     title: 'Goal Achieved!',
     subtitle: 'You saved enough for your goal',
     buttons: [

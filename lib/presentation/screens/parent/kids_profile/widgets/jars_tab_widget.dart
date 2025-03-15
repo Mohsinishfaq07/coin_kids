@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class JarsTabWidget extends GetView<KidProfileController> {
+  const JarsTabWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -35,18 +37,15 @@ class JarsTabWidget extends GetView<KidProfileController> {
               amount: spendingJar.balance,
               showAmount: true,
             ),
-
-
-            if(isSavingJarCreated) SizedBox(width: 30.w),
-
-            if(isSavingJarCreated) JarWidget(
-              jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
-              jarName: "Saving",
-              jarColor: Color(savingJar.color),
-              amount: savingJar.balance,
-              showAmount: true,
-            ),
-
+            if (isSavingJarCreated) SizedBox(width: 30.w),
+            if (isSavingJarCreated)
+              JarWidget(
+                jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
+                jarName: "Saving",
+                jarColor: Color(savingJar.color),
+                amount: savingJar.balance,
+                showAmount: true,
+              ),
           ],
         ),
       );

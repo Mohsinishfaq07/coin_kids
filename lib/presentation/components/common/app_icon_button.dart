@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //USAGE
 // AppIconButton(
 //                                   onPressed: () {
-//                                     print("Button Pressed");
+//                                     Get.log("Button Pressed");
 //                                   },
 //                                   icon: const Icon(Icons.arrow_forward_rounded),
 //                                   outerShadowColor: Colors.black.withValues(alpha: 0.3),
@@ -20,7 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppIconButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Icon icon;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final Color foregroundColor;
 
   // Outer Shadow Properties
@@ -37,7 +37,7 @@ class AppIconButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.icon,
-    this.backgroundColor = AppColors.iconPrimary,
+    this.backgroundColor,
     this.foregroundColor = Colors.white,
     // Outer Shadow Defaults
     this.outerShadowColor = const Color.fromARGB(63, 13, 13, 13),
@@ -57,7 +57,7 @@ class AppIconButton extends StatelessWidget {
         padding: EdgeInsets.all(8.h),
         child: Container(
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: backgroundColor ?? AppColors.colorPrimary,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -71,7 +71,7 @@ class AppIconButton extends StatelessWidget {
             onPressed: onPressed,
             icon: icon,
             style: IconButton.styleFrom(
-              backgroundColor: backgroundColor,
+              backgroundColor: backgroundColor ?? AppColors.colorPrimary,
               foregroundColor: foregroundColor,
             ),
           ),

@@ -52,18 +52,23 @@ class DatabaseHelper {
     _database = await _initDB('goals_database.db');
     return _database!;
   }
+
   Future<int> insertImage(String filePath) async {
     final db = await instance.database;
 
     final data = {'filePath': filePath};
     return await db.insert('images', data);
   }
+
   Future<void> insertImageForGoals(String goalId, String imagePath) async {
-    final db = await _database;
-    await db?.insert('images', {
-      'goalId': goalId,
-      'imagePath': imagePath,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    final db = _database;
+    await db?.insert(
+        'images',
+        {
+          'goalId': goalId,
+          'imagePath': imagePath,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<Map<String, dynamic>>> fetchAllImages() async {
@@ -74,8 +79,7 @@ class DatabaseHelper {
   Future<void> insertCredentials(String email, String password) async {
     final db = await instance.database;
     final data = {'email': email, 'password': password};
-    await db.insert('credentials', data,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert('credentials', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Fetch user credentials
@@ -102,7 +106,8 @@ class DatabaseHelper {
     final db = await instance.database;
     db.close();
   }
-   Future<String?> getSavedEmail() async {
+
+  Future<String?> getSavedEmail() async {
     final db = await instance.database;
     final result = await db.query(
       'credentials',
@@ -116,11 +121,13 @@ class DatabaseHelper {
     }
     return null; // Return null if no email is found
   }
+
   Future<List<Map<String, dynamic>>> getImages() async {
-  final db = await database;
-  return await db.query('images_table'); // Table name adjust karein
-}
- Future<String?> getImageByGoalId(String  goalId) async {
+    final db = await database;
+    return await db.query('images_table'); // Table name adjust karein
+  }
+
+  Future<String?> getImageByGoalId(String goalId) async {
     final db = await _db;
     // final result = await db.query(
     //   'goals',
@@ -128,12 +135,12 @@ class DatabaseHelper {
     //   where: 'id = ?',
     //   whereArgs: [goalId],
     // );
-     final List<Map<String, dynamic>> result = await db.query(
+    final List<Map<String, dynamic>> result = await db.query(
       'images',
       where: 'goalId = ?',
       whereArgs: [goalId],
     );
-    
+
     if (result.isNotEmpty) {
       return result.first['images'] as String;
     }

@@ -2,25 +2,26 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/data/remote_services/auth_service.dart';
-import 'package:get/get.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
+import 'package:coin_kids/data/models/wishlist_model.dart';
+import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
-import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 enum FilterType { all, age, budget, rating }
-enum AgeRange { all, zero_to_two, three_to_five, six_to_nine, ten_to_twelve, thirteen_to_sixteen, sixteen_plus }
+
+enum AgeRange { all, zeroToTwo, threeToFive, sixToNine, tenToTwelve, thirteenToSixteen, sixteenPlus }
 
 class ParentMarketController extends GetxController {
   final MarketService _marketService = Get.find<MarketService>();
   final WishlistService _wishlistService = Get.find<WishlistService>();
   final AuthService _authService = Get.find();
-  
+
   // All products fetched from server (source of truth)
   final RxList<MarketProductModel> _allProducts = <MarketProductModel>[].obs;
-  
+
   // Filtered/Searched products (what we show in UI)
   final RxList<MarketProductModel> displayProducts = <MarketProductModel>[].obs;
   final RxBool isLoading = false.obs;
@@ -134,25 +135,39 @@ class ParentMarketController extends GetxController {
 
   String getAgeRangeText(AgeRange range) {
     switch (range) {
-      case AgeRange.all: return 'All Ages';
-      case AgeRange.zero_to_two: return '0-2';
-      case AgeRange.three_to_five: return '3-5';
-      case AgeRange.six_to_nine: return '6-9';
-      case AgeRange.ten_to_twelve: return '10-12';
-      case AgeRange.thirteen_to_sixteen: return '13-16';
-      case AgeRange.sixteen_plus: return '16+';
+      case AgeRange.all:
+        return 'All Ages';
+      case AgeRange.zeroToTwo:
+        return '0-2';
+      case AgeRange.threeToFive:
+        return '3-5';
+      case AgeRange.sixToNine:
+        return '6-9';
+      case AgeRange.tenToTwelve:
+        return '10-12';
+      case AgeRange.thirteenToSixteen:
+        return '13-16';
+      case AgeRange.sixteenPlus:
+        return '16+';
     }
   }
 
   (int, int) getAgeRangeValues(AgeRange range) {
     switch (range) {
-      case AgeRange.all: return (0, 99);
-      case AgeRange.zero_to_two: return (0, 2);
-      case AgeRange.three_to_five: return (3, 5);
-      case AgeRange.six_to_nine: return (6, 9);
-      case AgeRange.ten_to_twelve: return (10, 12);
-      case AgeRange.thirteen_to_sixteen: return (13, 16);
-      case AgeRange.sixteen_plus: return (16, 99);
+      case AgeRange.all:
+        return (0, 99);
+      case AgeRange.zeroToTwo:
+        return (0, 2);
+      case AgeRange.threeToFive:
+        return (3, 5);
+      case AgeRange.sixToNine:
+        return (6, 9);
+      case AgeRange.tenToTwelve:
+        return (10, 12);
+      case AgeRange.thirteenToSixteen:
+        return (13, 16);
+      case AgeRange.sixteenPlus:
+        return (16, 99);
     }
   }
 
@@ -160,10 +175,10 @@ class ParentMarketController extends GetxController {
     try {
       isLoading.value = true;
       error.value = '';
-      
+
       final products = await _marketService.fetchAllProducts();
       _allProducts.value = products;
-      
+
       // Set initial budget range based on products
       if (products.isNotEmpty) {
         minBudget.value = products.map((p) => p.price).reduce(min);
@@ -171,9 +186,9 @@ class ParentMarketController extends GetxController {
         selectedMinBudget.value = minBudget.value;
         selectedMaxBudget.value = maxBudget.value;
       }
-      
+
       displayProducts.value = products;
-      isInitialized.value = true;  // Set to true once products are loaded initially
+      isInitialized.value = true; // Set to true once products are loaded initially
     } catch (e) {
       error.value = 'Failed to fetch products: ${e.toString()}';
     } finally {
@@ -184,8 +199,7 @@ class ParentMarketController extends GetxController {
   void applyFilters() {
     var filtered = _allProducts.where((product) {
       // Apply search filter
-      if (searchQuery.isNotEmpty && 
-          !product.name.toLowerCase().contains(searchQuery.value.toLowerCase())) {
+      if (searchQuery.isNotEmpty && !product.name.toLowerCase().contains(searchQuery.value.toLowerCase())) {
         return false;
       }
 
@@ -199,16 +213,14 @@ class ParentMarketController extends GetxController {
 
       // Apply budget filter if active
       if (isBudgetFilterActive.value) {
-        if (product.price < selectedMinBudget.value || 
-            product.price > selectedMaxBudget.value) {
+        if (product.price < selectedMinBudget.value || product.price > selectedMaxBudget.value) {
           return false;
         }
       }
 
       // Apply rating filter if active
       if (isRatingFilterActive.value) {
-        if (product.rating < selectedMinRating.value || 
-            product.rating > selectedMaxRating.value) {
+        if (product.rating < selectedMinRating.value || product.rating > selectedMaxRating.value) {
           return false;
         }
       }
@@ -223,7 +235,7 @@ class ParentMarketController extends GetxController {
     if (loadingItems[product.id!] == true) return;
 
     final initialIsInWishlist = _wishlistService.isInWishlist(product.id!);
-    
+
     try {
       final parentId = _authService.userId;
       if (parentId.isEmpty) {
@@ -268,7 +280,6 @@ class ParentMarketController extends GetxController {
         _wishlistService.wishlistItems.remove(product.id!);
       }
       _wishlistService.wishlistItems.refresh();
-
     } on FirebaseException catch (e) {
       String message = 'Failed to update wishlist';
       if (e.code == 'network-request-failed') {
@@ -276,7 +287,7 @@ class ParentMarketController extends GetxController {
       } else if (e.code == 'permission-denied') {
         message = 'You don\'t have permission to perform this action.';
       }
-      
+
       Get.snackbar(
         'Error',
         message,
@@ -294,7 +305,6 @@ class ParentMarketController extends GetxController {
         _wishlistService.wishlistItems.remove(product.id!);
       }
       _wishlistService.wishlistItems.refresh();
-
     } catch (e) {
       // Restore the initial state
       if (initialIsInWishlist) {
@@ -304,7 +314,7 @@ class ParentMarketController extends GetxController {
       }
       _wishlistService.wishlistItems.refresh();
 
-      print('Failed to update wishlist: ${e.toString()}');
+      Get.log('Failed to update wishlist: ${e.toString()}');
       Get.snackbar(
         'Error',
         'An unexpected error occurred. Please try again.',
@@ -327,9 +337,4 @@ class ParentMarketController extends GetxController {
   bool isInWishlist(String productId) {
     return _wishlistService.isInWishlist(productId);
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-} 
+}

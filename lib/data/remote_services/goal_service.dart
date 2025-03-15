@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,12 +11,12 @@ import 'package:get/get.dart';
 
 import '../models/goal_model.dart';
 import '../models/market_product_model.dart';
+import '../models/notification_model.dart';
 
 class GoalService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String collection = 'goals';
-  final KidService _kidService = Get.find<KidService>();
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<void> createGoal(GoalModel goal) async {
@@ -61,10 +62,10 @@ class GoalService extends GetxService {
       // Create the goal document
       final docRef = await _firestore.collection('goals').add(goal.toJson());
 
-      print("Goal created successfully with ID: ${docRef.id}");
+      Get.log("Goal created successfully with ID: ${docRef.id}");
       return docRef.id;
     } catch (e) {
-      print("Error adding product to goals: $e");
+      Get.log("Error adding product to goals: $e");
       return null;
     }
   }
@@ -153,7 +154,7 @@ class GoalService extends GetxService {
       final QuerySnapshot snapshot = await _firestore
           .collection(collection)
           .where('userId', isEqualTo: userId)
-          .where('status', isEqualTo: GoalStatus.in_progress.toString().split('.').last)
+          .where('status', isEqualTo: GoalStatus.inProgress.toString().split('.').last)
           .orderBy('createdAt', descending: true)
           .get();
 
@@ -211,5 +212,131 @@ class GoalService extends GetxService {
                   id: doc.id,
                 ))
             .toList());
+  }
+
+  Future<void> updateGoalProgressWithRewards(String goalId, double newAmount) async {
+    try {
+      // Use a Firestore transaction to ensure all operations succeed or fail together
+      await _firestore.runTransaction((transaction) async {
+        // STEP 1: PERFORM ALL READS FIRST
+
+        // Read the goal document
+        final goalDoc = await transaction.get(_firestore.collection(collection).doc(goalId));
+        if (!goalDoc.exists) {
+          throw Exception('Goal not found');
+        }
+
+        final goal = GoalModel.fromJson(goalDoc.data()!, id: goalId);
+        final oldAmount = goal.savedAmount;
+        final targetAmount = goal.targetAmount;
+
+        // Calculate percentages for milestone detection
+        final oldPercentage = (oldAmount / targetAmount) * 100;
+        final newPercentage = (newAmount / targetAmount) * 100;
+
+        // Determine if any milestones were reached
+        int coinKidsToAward = 0;
+        String? notificationTitle;
+        String? notificationBody;
+        double? milestonePercentage;
+        NotificationType? notificationType;
+
+        // Check for milestone achievements (25%, 50%, 75%, 100%)
+        if (oldPercentage < 25 && newPercentage >= 25) {
+          coinKidsToAward = 1;
+          notificationTitle = "25% Milestone Reached!";
+          notificationBody = "You've reached 25% of your goal: ${goal.title}";
+          milestonePercentage = 25.0;
+          notificationType = NotificationType.goalMilestone;
+        } else if (oldPercentage < 50 && newPercentage >= 50) {
+          coinKidsToAward = 2;
+          notificationTitle = "50% Milestone Reached!";
+          notificationBody = "You've reached 50% of your goal: ${goal.title}";
+          milestonePercentage = 50.0;
+          notificationType = NotificationType.goalMilestone;
+        } else if (oldPercentage < 75 && newPercentage >= 75) {
+          coinKidsToAward = 3;
+          notificationTitle = "75% Milestone Reached!";
+          notificationBody = "You've reached 75% of your goal: ${goal.title}";
+          milestonePercentage = 75.0;
+          notificationType = NotificationType.goalMilestone;
+        } else if (oldPercentage < 100 && newPercentage >= 100) {
+          coinKidsToAward = 5;
+          notificationTitle = "Goal Achieved!";
+          notificationBody = "Congratulations! You've completed your goal: ${goal.title}";
+          milestonePercentage = 100.0;
+          notificationType = NotificationType.goalCompleted;
+        }
+
+        // Read kid document if needed
+        DocumentSnapshot? kidDoc;
+        if (coinKidsToAward > 0) {
+          kidDoc = await transaction.get(_firestore.collection('kids').doc(goal.userId));
+          if (!kidDoc.exists) {
+            throw Exception('Kid not found');
+          }
+        }
+
+        final kid = KidModel.fromJson(kidDoc!.data() as Map<String, dynamic>);
+
+        // STEP 2: PERFORM ALL WRITES
+
+        // Update the goal with new amount
+        final updatedGoal = goal.copyWith(
+          savedAmount: newAmount,
+          status: newAmount >= targetAmount ? GoalStatus.completed : goal.status,
+          completedAt: newAmount >= targetAmount ? DateTime.now() : null,
+        );
+
+        transaction.update(_firestore.collection(collection).doc(goalId), updatedGoal.toJson());
+
+        // If a milestone was reached, update CoinKids balance and create notification
+        if (coinKidsToAward > 0) {
+          // Update CoinKids balance
+          final currentCoinKids = kid.coinKidsBalance;
+          final newCoinKids = currentCoinKids + coinKidsToAward;
+
+          transaction.update(_firestore.collection('kids').doc(goal.userId), {'coinKidsBalance': newCoinKids});
+
+          // Create notification
+          if (notificationTitle != null && notificationBody != null && milestonePercentage != null && notificationType != null) {
+            final metadata = milestonePercentage == 100.0
+                ? GoalCompletedMetadata(
+                    goalId: goalId,
+                    goalName: goal.title,
+                    targetAmount: goal.targetAmount,
+                    name: kid.name,
+                    photo: kid.avatar,
+                  )
+                : GoalMilestoneMetadata(
+                    goalId: goalId,
+                    goalName: goal.title,
+                    targetAmount: goal.targetAmount,
+                    currentAmount: newAmount,
+                    name: kid.name,
+                    photo: kid.avatar,
+                  );
+
+            final notificationData = NotificationModel(
+              userId: kid.parentId,
+              senderId: kid.kidId,
+              title: notificationTitle,
+              type: notificationType,
+              isRead: false,
+              timestamp: DateTime.now(),
+              metadata: metadata,
+            );
+
+            final notificationRef = _firestore.collection('notifications').doc();
+            transaction.set(notificationRef, notificationData.toJson());
+          }
+        }
+      });
+
+      Get.log("Goal progress updated successfully with rewards and notifications");
+    } catch (e) {
+      Get.log("Error updating goal progress with rewards: $e");
+      throw Exception('Failed to update goal progress: $e');
+    }
   }
 }

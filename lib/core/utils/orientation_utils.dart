@@ -8,11 +8,13 @@ class OrientationUtils {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   // Lock to landscape mode (for kid side)
   static void lockToLandscape() {
     Get.log("orientation is orientationBuilder landscape");
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -24,4 +26,4 @@ class OrientationUtils {
     const double maxParentWidth = 500.0; // Maximum width before centering
     return screenWidth > maxParentWidth;
   }
-} 
+}

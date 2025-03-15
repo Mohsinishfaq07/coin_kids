@@ -1,18 +1,79 @@
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:get/get.dart';
 
 class KidAppBarController extends GetxController {
-  final appState = Get.find<AppStateController>();
+  final AppStateController appState = Get.find<AppStateController>();
 
+  // Visibility flags
+  final showBackButton = false.obs;
   final showProfile = true.obs;
-  final showTotalCard = true.obs;
+  final showTitle = false.obs;
+  final showSearch = false.obs;
   final showSpendingCard = true.obs;
   final showCoinKidsCard = true.obs;
-  final showSearch = false.obs;
-  final showBackButton = false.obs;
-  final showTitle = false.obs;
+  final showTotalCard = true.obs;
+
+  // Showcase flags
+  final showTotalMoneySpotlight = false.obs;
+
   final searchQuery = ''.obs;
   final title = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    showTotalMoneySpotlight.value = SharedPreferencesHelper.getBool(SharedPreferencesHelper.showTotalMoneySpotlight) ?? true;
+  }
+
+  bool shouldShowRequestMoneySpotlight() {
+    if (appState.currentKid.value == null || appState.currentParent.value == null) {
+      return false;
+    }
+
+    final isParentOpened = appState.currentKid.value!.isConnected;
+    final jarNotCreated = appState.currentKid.value!.wallet.spendingJar.color == 0;
+    final noBalance = appState.currentKid.value!.wallet.spendingJar.balance == 0;
+
+    final result = isParentOpened && jarNotCreated && noBalance && showTotalMoneySpotlight.value;
+
+    Get.log("shouldShowRequestMoneySpotlight: $result");
+
+    return result;
+  }
+
+  // Configure the app bar for different screens
+  void configureForHome() {
+    showBackButton.value = false;
+    showProfile.value = true;
+    showTitle.value = false;
+    showSearch.value = false;
+    showSpendingCard.value = true;
+    showCoinKidsCard.value = true;
+    showTotalCard.value = true;
+  }
+
+  void configureForDetail({required String title}) {
+    showBackButton.value = true;
+    showProfile.value = false;
+    showTitle.value = true;
+    showSearch.value = false;
+    showSpendingCard.value = true;
+    showCoinKidsCard.value = true;
+    showTotalCard.value = true;
+    this.title.value = title;
+  }
+
+  void configureForSearch() {
+    showBackButton.value = true;
+    showProfile.value = false;
+    showTitle.value = false;
+    showSearch.value = true;
+    showSpendingCard.value = false;
+    showCoinKidsCard.value = false;
+    showTotalCard.value = true;
+  }
 
   void toggleProfile(bool value) => showProfile.value = value;
 
@@ -36,24 +97,6 @@ class KidAppBarController extends GetxController {
     title.value = newTitle;
   }
 
-  void configureForMarket() {
-    toggleProfile(false);
-    toggleSearch(true);
-    toggleSpendingCard(true);
-    toggleTotalCard(false);
-    toggleCoinKidsCard(false);
-    toggleBackButton(false);
-    toggleTitle(false);
-  }
-
-  void configureForDetail() {
-    toggleProfile(false);
-    toggleSearch(false);
-    toggleSpendingCard(true);
-    toggleBackButton(true);
-    toggleTitle(true);
-  }
-
   void resetToDefault() {
     showBackButton.value = false;
     showProfile.value = true;
@@ -73,6 +116,15 @@ class KidAppBarController extends GetxController {
     toggleTotalCard(false);
     toggleBackButton(true);
     toggleTitle(true);
+  }
+
+  void configureForMarket() {
+    toggleProfile(false);
+    toggleSearch(true);
+    toggleSpendingCard(true);
+    toggleTotalCard(false);
+    toggleBackButton(false);
+    toggleTitle(false);
   }
 
   void configureForTransfer() {

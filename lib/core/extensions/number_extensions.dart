@@ -1,7 +1,7 @@
 extension NumberFormatting on num {
   String toMoneyFormat({bool showSymbol = true}) {
     // Convert to double and round to 2 decimal places
-    final double value = double.parse(this.toStringAsFixed(2));
+    final double value = double.parse(toStringAsFixed(2));
 
     // Split into whole and decimal parts
     final parts = value.toString().split('.');
@@ -18,9 +18,10 @@ extension NumberFormatting on num {
       decimal = decimal.substring(0, 2);
     }
 
-    if (showSymbol)
+    if (showSymbol) {
       return '€$whole.$decimal';
-    else
+    } else {
       return '$whole.$decimal';
+    }
   }
 }

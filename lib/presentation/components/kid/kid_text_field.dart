@@ -153,19 +153,19 @@ class KidTextField extends StatefulWidget {
   final int? maxlength;
 
   const KidTextField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.onChange,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.maxlength,
-  }) : super(key: key);
+  });
 
   @override
-  _KidTextFieldState createState() => _KidTextFieldState();
+  KidTextFieldState createState() => KidTextFieldState();
 }
 
-class _KidTextFieldState extends State<KidTextField> {
+class KidTextFieldState extends State<KidTextField> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
   Color _borderColor = const Color(0xFF848484); // Default grey border color

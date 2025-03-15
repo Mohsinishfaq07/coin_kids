@@ -28,6 +28,7 @@ class QuickTransferTextField extends StatefulWidget {
     this.autoValidateMode,
     this.fillColor = Colors.white,
     this.floatingLabelBehavior,
+    this.initialValue = '',
     super.key,
   });
 
@@ -52,6 +53,7 @@ class QuickTransferTextField extends StatefulWidget {
   final bool readOnly;
   final Color? fillColor;
   final FloatingLabelBehavior? floatingLabelBehavior;
+  final String initialValue;
 
   @override
   State<QuickTransferTextField> createState() => _CustomTextFormFieldState();
@@ -126,6 +128,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
           return oldValue;
         }),
       ],
+      initialValue: widget.initialValue,
       readOnly: widget.readOnly,
       maxLength: widget.maxLength,
       onChanged: widget.onChanged,
@@ -139,8 +142,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
       cursorColor: Colors.blue.shade800,
       autovalidateMode: widget.autoValidateMode ?? AutovalidateMode.disabled,
       cursorHeight: 16.h,
-      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal // Adjust text size as needed
-          ),
+      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal),
 
       decoration: InputDecoration(
         fillColor: Theme.of(context).inputDecorationTheme.fillColor,
@@ -162,7 +164,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(
+          borderSide: BorderSide(
             color: AppColors.textPrimary, // Border color when focused
             width: 2,
           ),
@@ -182,7 +184,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
                 child: widget.prefix is String
                     ? SvgPicture.asset(
                         widget.prefix as String,
-                        color: _prefixContainerColor, // Dynamic color
+                        colorFilter: ColorFilter.mode(_prefixContainerColor, BlendMode.srcIn),
                         width: 20, // Adjust size as needed
                         height: 20,
                       )

@@ -1,7 +1,8 @@
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -63,7 +64,8 @@ class AddChildController extends GetxController {
     selectedAvatarPath.value = avatars[index];
   }
 
-  Future<void> createKid() async {
+  Future<void> createKid(bool isConnected) async {
+    showLoadingDialog("Adding Child");
     try {
       // Validate inputs
       if (childName.value.isEmpty) {
@@ -86,7 +88,7 @@ class AddChildController extends GetxController {
       final parentId = authService.user.value?.uid;
       if (parentId == null) {
         ToastUtil.showToast("User Session Expired");
-        Get.offAll(() => SignInScreen());
+        Get.offAllNamed(Routes.signIn);
         return;
       }
 
@@ -101,18 +103,18 @@ class AddChildController extends GetxController {
       await kidsService.createKid(
         name: childName.value,
         age: age,
-        // Use the parsed age
         parentId: parentId,
         customImagePath: kidImagePath.value,
         selectedAvatarUrl: selectedAvatarPath.value,
+        isConnected: isConnected,
       );
 
       ToastUtil.showToast("Child added successfully");
-      Get.back();
     } catch (e) {
-      print("Failed to add child: $e");
+      Get.log("Failed to add child: $e");
       ToastUtil.showToast("Failed to add child: $e");
     } finally {
+      Get.until((route) => route.settings.name == Routes.parentBase);
       isLoading.value = false;
     }
   }

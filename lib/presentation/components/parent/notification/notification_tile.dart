@@ -1,12 +1,12 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/kids_profile/kid_profile_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as time_ago;
 
 Widget buildNotificationTile(MessagesController controller, NotificationModel notification) {
   return Obx(() {
@@ -14,7 +14,7 @@ Widget buildNotificationTile(MessagesController controller, NotificationModel no
 
     return ListTile(
       selected: isSelected,
-      leading: Container(
+      leading: SizedBox(
         width: 40,
         height: 40,
         child: Stack(
@@ -48,14 +48,14 @@ Widget buildNotificationTile(MessagesController controller, NotificationModel no
       },
       onLongPress: () => controller.toggleSelection(notification.id!),
       title: Text(
-        notification.message,
+        notification.title,
         style: TextStyle(
           fontSize: 14.sp,
           fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
         ),
       ),
       subtitle: Text(
-        notification.timeAgo,
+        time_ago.format(notification.timestamp),
         style: TextStyle(
           fontSize: 12.sp,
           color: Colors.grey,
@@ -84,14 +84,14 @@ Widget buildNotificationTileCompact(KidProfileController controller, Notificatio
       _handleNotificationTap(notification);
     },
     title: Text(
-      notification.message,
+      notification.title,
       style: TextStyle(
         fontSize: 14.sp,
         fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
       ),
     ),
     subtitle: Text(
-      notification.timeAgo,
+      time_ago.format(notification.timestamp),
       style: TextStyle(
         fontSize: 12.sp,
         color: Colors.grey,
@@ -112,17 +112,15 @@ Widget buildNotificationTileCompact(KidProfileController controller, Notificatio
 
 IconData _getNotificationIcon(NotificationType type) {
   switch (type) {
-    case NotificationType.goal_milestone:
+    case NotificationType.goalMilestone:
       return Icons.flag;
-    case NotificationType.goal_completed:
+    case NotificationType.goalCompleted:
       return Icons.emoji_events;
-    case NotificationType.transaction_pending:
+    case NotificationType.transactionPending:
       return Icons.pending;
-    case NotificationType.balance_added:
+    case NotificationType.balanceAdded:
       return Icons.add_card;
-    case NotificationType.wishlist_added:
-      return Icons.favorite;
-    case NotificationType.system_notification:
+    case NotificationType.defaultNotification:
       return Icons.notifications;
     default:
       return Icons.notifications;
@@ -135,15 +133,15 @@ void _handleNotificationTap(NotificationModel notification) {
   }
 
   switch (notification.type) {
-    case NotificationType.goal_milestone:
-    case NotificationType.goal_completed:
-      Get.to(() => KidProfileScreen());
+    case NotificationType.goalMilestone:
+    case NotificationType.goalCompleted:
+      Get.toNamed(Routes.parentKidProfile);
       break;
 
-    case NotificationType.transaction_pending:
-      Get.to(() => QuickTransferPage());
+    case NotificationType.transactionPending:
+      Get.toNamed(Routes.parentQuickTransfer);
       break;
     default:
-      print(notification);
+      Get.log(notification.toString());
   }
 }

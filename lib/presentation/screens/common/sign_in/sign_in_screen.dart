@@ -1,14 +1,13 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dart';
-import 'package:coin_kids/presentation/screens/common/forgot_password.dart';
-import 'package:coin_kids/presentation/screens/common/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,6 +25,7 @@ class SignInScreen extends GetView<SignInController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: const ParentAppBar(
           backgroundColor: Color(0xFFCAF0FF),
           title: "Welcome Back!",
@@ -33,7 +33,7 @@ class SignInScreen extends GetView<SignInController> {
           centerTitle: false,
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: AppColors.background,
           ),
           child: Padding(
@@ -75,7 +75,7 @@ class SignInScreen extends GetView<SignInController> {
                         },
                         obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: controller.showPassword.value ? Assets.icEye : Assets.icEyeHide,
+                        suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
                         onSuffixTap: () {
                           controller.showPassword.value = !controller.showPassword.value;
                         },
@@ -93,11 +93,11 @@ class SignInScreen extends GetView<SignInController> {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () {
-                          Get.to(() => ForgotPasswordScreen());
+                          Get.toNamed(Routes.forgetPassword);
                         },
                         child: Text(
                           "Forgot Password?",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12),
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -109,7 +109,7 @@ class SignInScreen extends GetView<SignInController> {
                       size: Size(0.8.sw, 50),
                       child: Text(
                         "Sign In",
-                        style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                        style: AppTextStyle.appButton,
                       ),
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
@@ -136,7 +136,7 @@ class SignInScreen extends GetView<SignInController> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.off(() => SignupScreen());
+                            Get.offNamed(Routes.signUp);
                           },
                           child: Text(
                             "SignUp",

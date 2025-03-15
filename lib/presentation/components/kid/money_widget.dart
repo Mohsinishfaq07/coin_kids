@@ -13,24 +13,28 @@ import 'package:marquee/marquee.dart';
 class MoneyWidget extends StatelessWidget {
   final double amount;
   final VoidCallback? onAddTap;
+  final VoidCallback? onCardTap;
   final String? rightIconPath;
   final bool showAddButton;
   final Color backgroundColor;
   final BorderRadius? borderRadius;
   final double? iconSize;
-  final isLocked;
+  final bool isLocked;
+  final Key? showcaseKey;
 
   const MoneyWidget({
-    Key? key,
+    super.key,
     required this.amount,
     this.onAddTap,
+    this.onCardTap,
     this.rightIconPath,
     this.showAddButton = true,
     this.backgroundColor = const Color(0xFF015486),
     this.borderRadius,
     this.iconSize,
     this.isLocked = false,
-  }) : super(key: key);
+    this.showcaseKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,7 @@ class MoneyWidget extends StatelessWidget {
     final defaultIconSize = 36.r;
     final addButtonSize = 24.r;
 
-    return Container(
+    Widget moneyCard = SizedBox(
       height: containerHeight,
       child: Stack(
         children: [
@@ -47,60 +51,75 @@ class MoneyWidget extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                Container(
-                  height: containerHeight,
-                  width: min(100.w, Get.width / 6),
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    borderRadius: borderRadius ?? BorderRadius.circular(10.r),
-                  ),
-                  alignment: Alignment.center,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final text = amount.toMoneyFormat();
-                      final textStyle = AppTextStyle.headingMedium.copyWith(
-                        color: AppColors.textOnPrimary,
-                      );
+                GestureDetector(
+                  onTap: onCardTap,
+                  child: Container(
+                    height: containerHeight,
+                    width: min(100.w, Get.width / 6),
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: borderRadius ?? BorderRadius.circular(10.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final text = amount.toMoneyFormat();
+                        final textStyle = AppTextStyle.headingMedium.copyWith(
+                          color: AppColors.textOnPrimary,
+                        );
 
-                      final textPainter = TextPainter(
-                        text: TextSpan(text: text, style: textStyle),
-                        maxLines: 1,
-                        textDirection: TextDirection.ltr,
-                      )..layout(maxWidth: double.infinity);
+                        final textPainter = TextPainter(
+                          text: TextSpan(text: text, style: textStyle),
+                          maxLines: 1,
+                          textDirection: TextDirection.ltr,
+                        )..layout(maxWidth: double.infinity);
 
-                      final wouldOverflow = textPainter.width > (constraints.maxWidth - 24.w);
+                        final wouldOverflow = textPainter.width > (constraints.maxWidth - 24.w);
 
-                      return SizedBox(
-                        height: containerHeight,
-                        width: constraints.maxWidth - 24.w,
-                        child: wouldOverflow
-                            ? Center(
-                                child: Marquee(
-                                  text: text,
-                                  style: textStyle,
-                                  scrollAxis: Axis.horizontal,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  blankSpace: 20.w,
-                                  velocity: 30.0,
-                                  accelerationDuration: const Duration(seconds: 1),
-                                  accelerationCurve: Curves.linear,
-                                  decelerationDuration: const Duration(milliseconds: 500),
-                                  decelerationCurve: Curves.easeOut,
+                        return SizedBox(
+                          height: containerHeight,
+                          width: constraints.maxWidth - 24.w,
+                          child: wouldOverflow
+                              ? Center(
+                                  child: Marquee(
+                                    text: text,
+                                    style: textStyle,
+                                    scrollAxis: Axis.horizontal,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    blankSpace: 20.w,
+                                    velocity: 30.0,
+                                    accelerationDuration: const Duration(seconds: 1),
+                                    accelerationCurve: Curves.linear,
+                                    decelerationDuration: const Duration(milliseconds: 500),
+                                    decelerationCurve: Curves.easeOut,
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    text,
+                                    style: textStyle,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              )
-                            : Center(
-                                child: Text(
-                                  text,
-                                  style: textStyle,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
+                if (isLocked)
+                  Container(
+                    height: containerHeight,
+                    width: min(100.w, Get.width / 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.r),
+                      color: const Color(0xff000000).withValues(alpha: 0.7),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(Assets.icLock),
+                    ),
+                  ),
                 if (rightIconPath != null)
                   Positioned(
                     right: -(iconSize ?? defaultIconSize) / 2,
@@ -127,22 +146,14 @@ class MoneyWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (isLocked)
-            Container(
-              height: containerHeight,
-              width: min(100.w, Get.width / 6),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.r), color: const Color(0xff000000).withValues(alpha: 0.46)),
-            ),
-          if (isLocked)
-            Positioned(
-              left: min(100.w, Get.width / 6) / 2 - 12,
-              top: 4,
-              child: Center(
-                child: SvgPicture.asset(Assets.icLock),
-              ),
-            )
         ],
       ),
     );
+
+    if (showcaseKey != null) {
+      return moneyCard;
+    }
+
+    return moneyCard;
   }
 }

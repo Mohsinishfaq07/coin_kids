@@ -12,10 +12,9 @@ import 'package:get/get.dart';
 class AddMoneyScreen extends GetView<AddMoneyController> {
   final AmountAdditionMode mode;
 
-  const AddMoneyScreen({
-    Key? key,
-    required this.mode,
-  }) : super(key: key);
+  AddMoneyScreen({
+    super.key,
+  }) : mode = Get.arguments as AmountAdditionMode;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +23,9 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(
+          image: const DecorationImage(
             image: AssetImage(Assets.kidBg),
             fit: BoxFit.cover,
           ),
@@ -42,7 +41,8 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                   onTap: () => Get.back(),
                   baseColor: AppColors.btnColorOrange,
                   iconPath: Assets.icBack,
-                  size: 36,
+                  size: 40,
+                  iconSize: 20,
                 ),
               ),
             ),

@@ -22,92 +22,95 @@ class AddChildScreen extends GetView<AddChildController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const ParentAppBar(
         showBackButton: true,
         title: "Add your child",
         centerTitle: false,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.background,
-        ),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Child Name Field
-                  ParentTextField(
-                    maxLength: 8,
-                    titleText: "Child name",
-                    hintText: "Enter your child name",
-                    onChanged: (value) => controller.childName.value = value.trim(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter child name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // Child Age Field
-                  ParentTextField(
-                    maxLength: 2,
-                    titleText: "Age",
-                    hintText: "Enter child's age",
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => controller.childAge.value = value.trim(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter child age';
-                      }
-
-                      final intValue = int.tryParse(value);
-                      if (intValue == null) {
-                        return 'Please enter a valid number';
-                      }
-
-                      if (intValue < 3 && intValue > 25) {
-                        return 'Age must be between 1 to 25 yo';
-                      }
-
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 19.h),
-
-                  // Avatar Selection Title
-                  Text(
-                    "Select Avatar",
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // Avatar Selection
-                  SizedBox(height: 450.h, child: _buildAvatarGrid(context)),
-
-                  // Add Child Button
-                  Center(
-                    child: AppButton(
-                      size: Size(0.8.sw, 50),
-                      child: Text(
-                        "Add child",
-                        style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
-                      ),
-                      onPressed: () async {
-                        if (controller.isLoading.value) return;
-
-                        if (_formKey.currentState?.validate() ?? false) {
-                          await controller.createKid();
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Child Name Field
+                    ParentTextField(
+                      maxLength: 8,
+                      titleText: "Child name",
+                      hintText: "Enter your child name",
+                      onChanged: (value) => controller.childName.value = value.trim(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter child name';
                         }
+                        return null;
                       },
                     ),
-                  ),
-                ],
+                    SizedBox(height: 16.h),
+
+                    // Child Age Field
+                    ParentTextField(
+                      maxLength: 2,
+                      titleText: "Age",
+                      hintText: "Enter child's age",
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => controller.childAge.value = value.trim(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter child age';
+                        }
+
+                        final intValue = int.tryParse(value);
+                        if (intValue == null) {
+                          return 'Please enter a valid number';
+                        }
+
+                        if (intValue < 3 && intValue > 25) {
+                          return 'Age must be between 1 to 25 yo';
+                        }
+
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 19.h),
+
+                    // Avatar Selection Title
+                    Text(
+                      "Select Avatar",
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                    ),
+                    SizedBox(height: 12.h),
+
+                    // Avatar Selection
+                    SizedBox(height: 0.55.sh, child: _buildAvatarGrid(context)),
+
+                    // Add Child Button
+                    Center(
+                      child: AppButton(
+                        size: Size(0.8.sw, 50),
+                        child: Text(
+                          "Add child",
+                          style: AppTextStyle.appButton,
+                        ),
+                        onPressed: () async {
+                          if (controller.isLoading.value) return;
+
+                          if (_formKey.currentState?.validate() ?? false) {
+                            await controller.createKid(true);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

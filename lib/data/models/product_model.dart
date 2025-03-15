@@ -44,4 +44,4 @@ class ProductModel {
       'url': url,
     };
   }
-} 
+}

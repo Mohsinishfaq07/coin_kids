@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,11 +35,11 @@ class ParentDrawerController extends GetxController {
 
       if (pickedFile != null) {
         try {
-          await _parentService.updateParentPhoto(File(pickedFile.path));
           ToastUtil.showToast("Uploading Image");
+          await _parentService.updateParentPhoto(File(pickedFile.path));
         } catch (e) {
           ToastUtil.showToast("Failed to upload Image: $e");
-          print(e);
+          Get.log(e.toString(), isError: true);
         }
       }
     } catch (e) {

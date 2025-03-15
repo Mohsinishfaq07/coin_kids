@@ -4,6 +4,7 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ParentTextField extends StatelessWidget {
   final String titleText; // Required title for the field
@@ -45,7 +46,7 @@ class ParentTextField extends StatelessWidget {
     this.suffixSvgPath,
     this.nextFocusNode,
     this.enabled = true,
-    this.inputFormatter = null,
+    this.inputFormatter,
     super.key,
   }) : assert(controller == null || initialValue == null, 'Cannot provide both a controller and an initialValue');
 
@@ -99,7 +100,7 @@ class ParentTextField extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: AppColors.textPrimary,
                   width: 2,
                 ),
@@ -128,6 +129,22 @@ class ParentTextField extends StatelessWidget {
                   suffixIcon,
                   color: suffixIconColor ?? Colors.grey,
                   size: 24.sp,
+                ),
+              ),
+            ),
+          ),
+        if (suffixSvgPath != null)
+          Positioned(
+            right: 12.w,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: onSuffixTap,
+                child: SvgPicture.asset(
+                  suffixSvgPath!,
+                  color: suffixIconColor ?? Colors.grey,
+                  width: 24.sp,
                 ),
               ),
             ),

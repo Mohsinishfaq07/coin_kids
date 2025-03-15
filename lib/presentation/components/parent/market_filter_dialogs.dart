@@ -9,26 +9,26 @@ class AgeRangeDialog extends StatelessWidget {
   final Function(AgeRange) onSelect;
 
   const AgeRangeDialog({
-    Key? key,
+    super.key,
     required this.selectedRange,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   String getAgeRangeText(AgeRange range) {
     switch (range) {
       case AgeRange.all:
         return 'All Ages';
-      case AgeRange.zero_to_two:
+      case AgeRange.zeroToTwo:
         return '0-2 years';
-      case AgeRange.three_to_five:
+      case AgeRange.threeToFive:
         return '3-5 years';
-      case AgeRange.six_to_nine:
+      case AgeRange.sixToNine:
         return '6-9 years';
-      case AgeRange.ten_to_twelve:
+      case AgeRange.tenToTwelve:
         return '10-12 years';
-      case AgeRange.thirteen_to_sixteen:
+      case AgeRange.thirteenToSixteen:
         return '13-16 years';
-      case AgeRange.sixteen_plus:
+      case AgeRange.sixteenPlus:
         return '16+ years';
     }
   }
@@ -83,7 +83,7 @@ class RangeFilterDialog extends StatefulWidget {
   final String Function(double) labelFormat;
 
   const RangeFilterDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.minValue,
     required this.maxValue,
@@ -91,7 +91,7 @@ class RangeFilterDialog extends StatefulWidget {
     required this.currentMax,
     required this.onSelect,
     required this.labelFormat,
-  }) : super(key: key);
+  });
 
   @override
   State<RangeFilterDialog> createState() => _RangeFilterDialogState();

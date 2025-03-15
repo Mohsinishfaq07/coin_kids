@@ -42,17 +42,13 @@ class ParentHomeController extends GetxController {
         kidsList.add(kids.first);
       }
     } catch (e) {
-      print('Error fetching kids list: $e');
+      Get.log('Error fetching kids list: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
   // Clean up worker when controller is destroyed
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   void insertTestData() async {
     final userId = Get.find<AuthService>().user.value?.uid;

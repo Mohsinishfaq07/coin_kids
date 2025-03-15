@@ -17,6 +17,8 @@ import 'package:image_picker/image_picker.dart';
 class EditChildScreen extends GetView<EditChildController> {
   final _formKey = GlobalKey<FormState>();
 
+  EditChildScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,95 +28,92 @@ class EditChildScreen extends GetView<EditChildController> {
         centerTitle: false,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Child Name Field
-                  Obx(() {
-                    return ParentTextField(
-                      maxLength: 8,
-                      initialValue: controller.childName.value,
-                      hintText: controller.childName.value,
-                      onChanged: (value) => controller.childName.value = value.trim(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter child name';
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Child Name Field
+                Obx(() {
+                  return ParentTextField(
+                    maxLength: 8,
+                    initialValue: controller.childName.value,
+                    hintText: controller.childName.value,
+                    onChanged: (value) => controller.childName.value = value.trim(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter child name';
+                      }
+                      return null;
+                    },
+                  );
+                }),
+                SizedBox(height: 16.h),
+
+                // Child Age Field
+                Obx(() {
+                  return ParentTextField(
+                    initialValue: controller.childAge.value,
+                    hintText: controller.childAge.value,
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => controller.childAge.value = value.trim(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter child age';
+                      }
+
+                      final intValue = int.tryParse(value);
+                      if (intValue == null) {
+                        return 'Please enter a valid number';
+                      }
+
+                      if (intValue < 1 && intValue > 25) {
+                        return 'Age must be between 1 to 25 yo';
+                      }
+
+                      return null;
+                    },
+                  );
+                }),
+                SizedBox(height: 19.h),
+
+                // Avatar Selection Title
+                Text(
+                  "Select Avatar",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                ),
+                SizedBox(height: 12.h),
+
+                // Avatar Selection
+                Expanded(
+                  child: _buildAvatarGrid(context),
+                ),
+
+                // Add Child Button
+                SafeArea(
+                  child: Center(
+                    child: AppButton(
+                      size: Size(0.8.sw, 50),
+                      child: Text(
+                        "Save Changes",
+                        style: AppTextStyle.appButton,
+                      ),
+                      onPressed: () async {
+                        if (controller.isLoading.value) return;
+
+                        if (_formKey.currentState?.validate() ?? false) {
+                          await controller.updateKid();
                         }
-                        return null;
                       },
-                    );
-                  }),
-                  SizedBox(height: 16.h),
-
-                  // Child Age Field
-                  Obx(() {
-                    return ParentTextField(
-                      initialValue: controller.childAge.value,
-                      hintText: controller.childAge.value,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) => controller.childAge.value = value.trim(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter child age';
-                        }
-
-                        final intValue = int.tryParse(value);
-                        if (intValue == null) {
-                          return 'Please enter a valid number';
-                        }
-
-                        if (intValue < 1 && intValue > 25) {
-                          return 'Age must be between 1 to 25 yo';
-                        }
-
-                        return null;
-                      },
-                    );
-                  }),
-                  SizedBox(height: 19.h),
-
-                  // Avatar Selection Title
-                  Text(
-                    "Select Avatar",
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                    ),
                   ),
-                  SizedBox(height: 12.h),
-
-                  // Avatar Selection
-                  SizedBox(height: 450.h, child: _buildAvatarGrid(context)),
-
-                  // Add Child Button
-                  Center(
-                    child: Obx(() =>
-                        AppButton(
-                          size: Size(0.8.sw, 50),
-                          child: Text(
-                            "Save Changes",
-                            style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
-                          ),
-                          onPressed: () async {
-                            if (controller.isLoading.value) return;
-
-                            if (_formKey.currentState?.validate() ?? false) {
-                              await controller.updateKid();
-                            }
-                          },
-                        )),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -166,42 +165,40 @@ class EditChildScreen extends GetView<EditChildController> {
           // Predefined avatars
           final avatarIndex = index - 1;
           return Obx(
-                () =>
-                GestureDetector(
-                  onTap: () => controller.selectAvatar(avatarIndex),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
-                        width: 2,
-                      ),
+            () => GestureDetector(
+              onTap: () => controller.selectAvatar(avatarIndex),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(60.r),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(60.r),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(60.r),
-                          child: CachedNetworkImage(
-                            imageUrl: controller.avatars[avatarIndex],
-                            height: 60.h,
-                            width: 60.w,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.buttonPrimary,
-                                  ),
-                                ),
-                            errorWidget: (context, url, error) => _buildErrorWidget(),
+                      child: CachedNetworkImage(
+                        imageUrl: controller.avatars[avatarIndex],
+                        height: 60.h,
+                        width: 60.w,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.buttonPrimary,
                           ),
                         ),
-                        if (controller.selectedAvatar.value == avatarIndex) _buildSelectedOverlay(),
-                      ],
+                        errorWidget: (context, url, error) => _buildErrorWidget(),
+                      ),
                     ),
-                  ),
+                    if (controller.selectedAvatar.value == avatarIndex) _buildSelectedOverlay(),
+                  ],
                 ),
+              ),
+            ),
           );
         },
       );
@@ -244,13 +241,12 @@ class EditChildScreen extends GetView<EditChildController> {
               height: 60.h,
               width: 60.w,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.buttonPrimary,
-                    ),
-                  ),
+              placeholder: (context, url) => Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.buttonPrimary,
+                ),
+              ),
               errorWidget: (context, url, error) => _buildErrorWidget(),
             ),
           ),

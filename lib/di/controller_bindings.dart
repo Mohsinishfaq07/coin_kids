@@ -84,14 +84,9 @@ class ControllerBindings extends Bindings {
 
     //KID
     Get.lazyPut<KidOnboardingController>(() => KidOnboardingController(), fenix: true);
-
-    Get.put<VerticalNavBarController>(VerticalNavBarController(), permanent: true);
-    Get.put<KidBaseController>(KidBaseController(), permanent: true);
-    Get.put<KidAppBarController>(KidAppBarController(), permanent: true);
-
-    // Get.lazyPut<KidAppBarController>(() => KidAppBarController(), fenix: true);
-    // Get.lazyPut<KidBaseController>(() => KidBaseController(), fenix: true);
-    // Get.lazyPut<VerticalNavBarController>(() => VerticalNavBarController(), fenix: true);
+    Get.lazyPut<VerticalNavBarController>(() => VerticalNavBarController(Get.find<KidAppBarController>()), fenix: true);
+    Get.lazyPut<KidAppBarController>(() => KidAppBarController(), fenix: true);
+    Get.lazyPut<KidBaseController>(() => KidBaseController(), fenix: true);
     Get.lazyPut<DragAndDropMoneyController>(() => DragAndDropMoneyController(), fenix: true);
     Get.lazyPut<KidMarketController>(() => KidMarketController(), fenix: true);
     Get.lazyPut<KidWishlistController>(() => KidWishlistController(), fenix: true);

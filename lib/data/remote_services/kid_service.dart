@@ -53,6 +53,7 @@ class KidService {
     required String parentId,
     String? customImagePath,
     String? selectedAvatarUrl,
+    required bool isConnected,
   }) async {
     try {
       String avatarUrl = selectedAvatarUrl ?? '';
@@ -72,6 +73,7 @@ class KidService {
         wallet: wallet,
         coinKidsBalance: -1.0,
         createdAt: DateTime.now(),
+        isConnected: isConnected,
         kidId: '', // Will be updated after creation
       );
 
@@ -335,7 +337,7 @@ class KidService {
         }).toList();
       });
     } catch (e) {
-      print("Error streaming kids: $e");
+      Get.log("Error streaming kids: $e");
       return Stream.value([]);
     }
   }
@@ -349,7 +351,7 @@ class KidService {
       await prefs.setStringList(_avatarCacheKey, urls);
       await prefs.setInt(_avatarCacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
     } catch (e) {
-      print('Failed to cache avatar URLs: $e');
+      Get.log('Failed to cache avatar URLs: $e');
     }
   }
 
@@ -375,7 +377,7 @@ class KidService {
 
       return prefs.getStringList(_avatarCacheKey) ?? [];
     } catch (e) {
-      print('Failed to get cached avatars: $e');
+      Get.log('Failed to get cached avatars: $e');
       return [];
     }
   }
@@ -406,7 +408,7 @@ class KidService {
         await file.writeAsBytes(response.bodyBytes);
       }
     } catch (e) {
-      print('Failed to cache avatar image: $e');
+      Get.log('Failed to cache avatar image: $e');
     }
   }
 
@@ -432,7 +434,7 @@ class KidService {
 
       return null;
     } catch (e) {
-      print('Failed to get local avatar path: $e');
+      Get.log('Failed to get local avatar path: $e');
       return null;
     }
   }
@@ -442,7 +444,7 @@ class KidService {
     // Create a hash of the URL to use as filename
     final bytes = utf8.encode(url);
     final digest = base64Encode(bytes);
-    return digest.replaceAll('/', '_').replaceAll('+', '-') + '.jpg';
+    return '${digest.replaceAll('/', '_').replaceAll('+', '-')}.jpg';
   }
 
   // Clear avatar cache
@@ -458,7 +460,7 @@ class KidService {
         await dir.delete(recursive: true);
       }
     } catch (e) {
-      print('Failed to clear avatar cache: $e');
+      Get.log('Failed to clear avatar cache: $e');
     }
   }
 }

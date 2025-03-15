@@ -38,27 +38,16 @@ class CustomThemeData {
   Color activeIconColor = const Color(0xffA421D9);
 
   Color borderColor = const Color(0xffCBE5F4);
+
   static ThemeData getThemeData() {
     return ThemeData(
       colorSchemeSeed: const Color(0xffA421D9),
       // primaryColor: const Color(0xffA421D9),
       textTheme: TextTheme(
-        bodyLarge: GoogleFonts.openSans(
-            color: const Color(0xff015486),
-            fontSize: 24.0,
-            fontWeight: FontWeight.w800),
-        bodyMedium: GoogleFonts.openSans(
-            color: const Color(0xff676666),
-            fontSize: 18.0,
-            fontWeight: FontWeight.w400),
-        bodySmall: GoogleFonts.openSans(
-            color: const Color(0xff676666),
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400),
-        headlineMedium: GoogleFonts.openSans(
-            color: const Color(0xff015486),
-            fontSize: 18.0,
-            fontWeight: FontWeight.w800),
+        bodyLarge: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 24.0, fontWeight: FontWeight.w800),
+        bodyMedium: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 18.0, fontWeight: FontWeight.w400),
+        bodySmall: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 14.0, fontWeight: FontWeight.w400),
+        headlineMedium: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 18.0, fontWeight: FontWeight.w800),
       ),
       buttonTheme: ButtonThemeData(
         shape: RoundedRectangleBorder(
@@ -67,17 +56,14 @@ class CustomThemeData {
         buttonColor: const Color(0xffA421D9),
       ),
       scaffoldBackgroundColor: Colors.white,
-      appBarTheme:  const AppBarTheme(
+      appBarTheme: const AppBarTheme(
         color: Color(0xFFCAF0FF),
         elevation: 0.0,
       ),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: Colors.white38,
         filled: true,
-        hintStyle: GoogleFonts.openSans(
-            color: const Color(0xff015486),
-            fontSize: 14.0,
-            fontWeight: FontWeight.w700),
+        hintStyle: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 14.0, fontWeight: FontWeight.w700),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(
@@ -92,8 +78,7 @@ class CustomThemeData {
             width: 2.0,
           ),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
       ),
       cardTheme: CardTheme(
         shape: RoundedRectangleBorder(

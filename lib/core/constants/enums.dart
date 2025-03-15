@@ -1,19 +1,19 @@
 enum UserRole {
-  NONE,
-  PARENT,
-  CHILD,
+  none,
+  parent,
+  child,
 }
 
 enum UserGender {
-  None,
-  Male,
-  Female,
+  none,
+  male,
+  female,
 }
 
 enum KidProfileTabs {
-  Jars,
-  Notifications,
-  Goals,
+  jars,
+  notifications,
+  goals,
 }
 
 enum Jars {
@@ -22,7 +22,7 @@ enum Jars {
 }
 
 enum JarState {
-  null_jar,
+  nullJar,
   empty,
   filled,
 }

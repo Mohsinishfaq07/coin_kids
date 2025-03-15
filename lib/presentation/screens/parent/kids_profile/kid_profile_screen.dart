@@ -1,22 +1,23 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/edit_child/edit_child_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/basic_info_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/goals_tab_widget.dart';
 import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/jars_tab_widget.dart';
-import 'package:coin_kids/presentation/screens/parent/kids_profile/widgets/notification_tab_widget.dart';
-import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class KidProfileScreen extends GetView<KidProfileController> {
+  const KidProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +27,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
         showBackButton: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Column(
@@ -42,45 +43,54 @@ class KidProfileScreen extends GetView<KidProfileController> {
                   KidButton.iconWithTitle(
                     title: 'Quick\nTransfer',
                     iconPath: Assets.icTransfer,
-                    onTap: () => Get.to(() => QuickTransferPage()),
+                    onTap: () => Get.toNamed(Routes.parentQuickTransfer),
                     baseColor: AppColors.colorPrimary,
+                    iconSize: 28.w,
+                    size: 50.w,
+                    belowTextStyle: AppTextStyle.bodyMedium,
                   ),
                   KidButton.iconWithTitle(
                     title: 'Schedule\nAllowance',
-                    iconPath: Assets.icScheduleAllowance,
+                    iconPath: Assets.icCalender,
                     onTap: () {
                       ToastUtil.showToast("Coming soon...");
                     },
-                    baseColor: AppColors.colorPrimary,
+                    baseColor: AppColors.iconDisabled,
+                    iconSize: 22.w,
+                    size: 50.w,
+                    belowTextStyle: AppTextStyle.bodyMedium,
                   ),
                   KidButton.iconWithTitle(
                     title: 'Edit\nProfile',
                     iconPath: Assets.icEdit,
-                    onTap: () => Get.to(() => EditChildScreen()),
+                    onTap: () => Get.toNamed(Routes.parentUpdateChild),
                     baseColor: AppColors.colorPrimary,
+                    belowTextStyle: AppTextStyle.bodyMedium,
+                    iconSize: 20.w,
+                    size: 50.w,
                   )
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w),
+            SizedBox(
+              width: 0.8.sw,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildTabSwitcher(KidProfileTabs.Jars, 'assets/kidManageIcons/coin.svg'),
-                  _buildTabSwitcher(KidProfileTabs.Notifications, 'assets/Frame.svg'),
-                  _buildTabSwitcher(KidProfileTabs.Goals, 'assets/kidManageIcons/goalIcon.svg'),
+                  Expanded(child: _buildTabSwitcher(KidProfileTabs.jars, Assets.icCoinEuro)),
+                  //_buildTabSwitcher(KidProfileTabs.notifications, Assets.icEmojiMessage),
+                  Expanded(child: _buildTabSwitcher(KidProfileTabs.goals, Assets.icGoalYellow)),
                 ],
               ),
             ),
             Obx(() {
               switch (controller.currentType.value) {
-                case KidProfileTabs.Jars:
+                case KidProfileTabs.jars:
                   return JarsTabWidget();
-                case KidProfileTabs.Notifications:
-                  return NotificationTabWidget();
-                case KidProfileTabs.Goals:
+                case KidProfileTabs.goals:
                   return GoalsTabWidget();
+                default:
+                  return JarsTabWidget();
               }
             }),
           ],
@@ -94,10 +104,10 @@ class KidProfileScreen extends GetView<KidProfileController> {
           containerColor: controller.currentType.value == type ? AppColors.colorPrimary : const Color(0xFFEDFAFF),
           assetPath: assetPath,
           onTap: () => controller.currentType.value = type,
-          topRight: type == KidProfileTabs.Goals ? 10.0 : 0.0,
-          bottomRight: type == KidProfileTabs.Goals ? 10.0 : 0.0,
-          topLeft: type == KidProfileTabs.Jars ? 10.0 : 0.0,
-          bottomLeft: type == KidProfileTabs.Jars ? 10.0 : 0.0,
+          topRight: type == KidProfileTabs.goals ? 10.0 : 0.0,
+          bottomRight: type == KidProfileTabs.goals ? 10.0 : 0.0,
+          topLeft: type == KidProfileTabs.jars ? 10.0 : 0.0,
+          bottomLeft: type == KidProfileTabs.jars ? 10.0 : 0.0,
         ));
   }
 
@@ -128,8 +138,8 @@ class KidProfileScreen extends GetView<KidProfileController> {
           padding: EdgeInsets.all(12.h),
           child: SvgPicture.asset(
             assetPath,
-            height: 22.h,
-            width: 22.w,
+            height: 26.r,
+            width: 26.r,
           ),
         ),
       ),

@@ -1,12 +1,15 @@
+import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/share_utils.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,6 +27,7 @@ class SignupScreen extends GetView<SignupController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: ParentAppBar(
           backgroundColor: Color(0xFFCAF0FF),
           title: "Let's Get Start!",
@@ -31,7 +35,7 @@ class SignupScreen extends GetView<SignupController> {
           centerTitle: false,
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: AppColors.background,
           ),
           child: Padding(
@@ -90,7 +94,7 @@ class SignupScreen extends GetView<SignupController> {
                         titleText: 'Password',
                         obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: controller.showPassword.value ? Assets.icEye : Assets.icEyeHide,
+                        suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
                         onSuffixTap: () {
                           controller.showPassword.value = !controller.showPassword.value;
                         },
@@ -113,7 +117,7 @@ class SignupScreen extends GetView<SignupController> {
                             titleText: 'Confirm Password',
                             obscureText: controller.showPassword.value,
                             suffixIconColor: AppColors.textPrimary,
-                            suffixSvgPath: controller.showPassword.value ? Assets.icEye : Assets.icEyeHide,
+                            suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
                             onSuffixTap: () {
                               controller.showPassword.value = !controller.showPassword.value;
                             },
@@ -138,18 +142,18 @@ class SignupScreen extends GetView<SignupController> {
                         size: Size(0.8.sw, 50),
                         child: Text(
                           "Sign up",
-                          style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary, fontWeight: FontWeight.w700),
+                          style: AppTextStyle.appButton,
                         ),
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
                             try {
                               controller.signUpWithEmail();
                             } catch (e) {
-                              print("Error: $e");
+                              Get.log("Error: $e");
                             }
                           } else {
                             // If the form is not valid, show error messages
-                            print("Form validation failed");
+                            Get.log("Form validation failed");
                           }
                         },
                       ),
@@ -164,7 +168,7 @@ class SignupScreen extends GetView<SignupController> {
                         ),
                         GestureDetector(
                             onTap: () {
-                              Get.off(() => SignInScreen());
+                              Get.offNamed(Routes.signIn);
                             },
                             child: Text(
                               "LOGIN",
@@ -190,7 +194,7 @@ class SignupScreen extends GetView<SignupController> {
                         try {
                           await controller.signInWithGoogle();
                         } catch (e) {
-                          print("Error: $e");
+                          Get.log("Error: $e");
                         }
                       },
                       child: Row(
@@ -209,34 +213,6 @@ class SignupScreen extends GetView<SignupController> {
                       ),
                     ),
                     SizedBox(height: 16.h),
-
-                    // Apple Login Button
-                    // ElevatedButton(
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: Colors.black,
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //     ),
-                    //     fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                    //   ),
-                    //   onPressed: () {
-                    //     // controller.signinWithApple();
-                    //   },
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       Padding(
-                    //         padding: EdgeInsets.only(right: 10.w),
-                    //         child: SvgPicture.asset(AppAssets.appleIconSvg, height: 24),
-                    //       ),
-                    //       Text(
-                    //         "Sign in with Apple",
-                    //         style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                    //       ),
-                    //       SizedBox.shrink()
-                    //     ],
-                    //   ),
-                    // ),
 
                     SizedBox(height: 80.h),
                     // Terms and Signup Button
@@ -262,6 +238,10 @@ class SignupScreen extends GetView<SignupController> {
                                 decoration: TextDecoration.underline,
                                 fontSize: 12,
                               ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  ShareUtils.openLink(termAndCondition);
+                                },
                             ),
                             TextSpan(
                               text: " & ",
@@ -278,6 +258,10 @@ class SignupScreen extends GetView<SignupController> {
                                 decoration: TextDecoration.underline,
                                 fontSize: 12,
                               ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  ShareUtils.openLink(privacyPolicy);
+                                },
                             ),
                           ],
                         ),

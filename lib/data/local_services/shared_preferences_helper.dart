@@ -10,6 +10,8 @@ class SharedPreferencesHelper {
   static String goalAchievementNotificationEnabled = "hasShownKidsZoneShowcase";
   static String moneyRequestNotificationEnabled = "hasShownKidsZoneShowcase";
   static String showcaseMoneyJarKey = "showcaseMoneyJarKey";
+  static String showKidsNotifications = "showKidsNotifications";
+  static String showTotalMoneySpotlight = "showTotalMoneySpotlight";
 
   // Initialize SharedPreferences
   static Future<void> init() async {

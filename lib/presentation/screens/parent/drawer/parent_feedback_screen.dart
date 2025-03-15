@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ParentFeedbackScreen extends GetView<ParentFeedbackController> {
-  const ParentFeedbackScreen({Key? key}) : super(key: key);
+  const ParentFeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class ParentFeedbackScreen extends GetView<ParentFeedbackController> {
         showBackButton: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Column(
@@ -116,25 +116,17 @@ class ParentFeedbackScreen extends GetView<ParentFeedbackController> {
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
+            SafeArea(
+              child: Center(
+                child: AppButton(
+                  size: Size(0.8.sw,50),
+                  backgroundColor: AppColors.buttonPrimary,
+                  onPressed: controller.submitFeedback,
+                  child: Text(
+                    "Send Feedback",
+                    style: AppTextStyle.appButton,
                   ),
-                ],
-              ),
-              child: AppButton(
-                child: Text(
-                  "Send Feedback",
-                  style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary),
                 ),
-                backgroundColor: AppColors.buttonPrimary,
-                onPressed: controller.submitFeedback,
               ),
             ),
           ],

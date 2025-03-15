@@ -10,10 +10,10 @@ class GoalListItem extends StatelessWidget {
   final VoidCallback? onTap;
 
   const GoalListItem({
-    Key? key,
+    super.key,
     required this.goal,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +88,8 @@ class GoalListItem extends StatelessWidget {
                 // Goal Title
                 Expanded(
                   child: Text(
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     goal.title,
                     style: TextStyle(
                       fontSize: 16.sp,
@@ -100,10 +102,13 @@ class GoalListItem extends StatelessWidget {
             ),
 
             // New Custom Progress Bar
-            CustomProgressBar(
-              progress: progress,
-              currentValue: goal.savedAmount,
-              totalValue: goal.targetAmount,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: CustomProgressBar(
+                progress: progress,
+                currentValue: goal.savedAmount,
+                totalValue: goal.targetAmount,
+              ),
             ),
 
             SizedBox(height: 16.h), // Increased spacing for dot indicator value

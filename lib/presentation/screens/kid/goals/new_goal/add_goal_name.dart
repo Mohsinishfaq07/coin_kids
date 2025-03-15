@@ -1,17 +1,19 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/new_goal/add_goal_amount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AddGoalNameScreen extends GetView<KidGoalsController> {
+  const AddGoalNameScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -28,9 +30,9 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +52,7 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
                     hintText: "e.g Electric Bike ",
                     onChange: (val) {
                       controller.setTitle(val.trim());
-                      print("TITLE IS" + controller.newGoal.value.title);
+                      Get.log("TITLE IS${controller.newGoal.value.title}");
                     },
                   ),
                 ],
@@ -67,7 +69,7 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
                     if (controller.newGoal.value.title.isEmpty) {
                       ToastUtil.showToast('Goal Name Could Not be empty');
                     } else {
-                      Get.to(() => AddGoalAmountScreen());
+                      Get.toNamed(Routes.kidAddGoalAmount);
                     }
                   },
                   text: 'Next',

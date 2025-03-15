@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class KidOnboardingScreen extends GetView<KidOnboardingController> {
-  const KidOnboardingScreen({Key? key}) : super(key: key);
+  const KidOnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,4 +21,4 @@ class KidOnboardingScreen extends GetView<KidOnboardingController> {
       }
     });
   }
-} 
+}

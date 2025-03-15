@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
@@ -8,13 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class KidNameScreen extends GetView<KidOnboardingController> {
-  const KidNameScreen({Key? key}) : super(key: key);
+  const KidNameScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return KidOnboardingBaseScreen(
       showBackButton: false,
-      // onBackPressed: () => Get.offAll(() => RoleSelectionScreen()),
       title: 'Welcome to CoinKids!',
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -54,7 +54,7 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                     },
                     text: 'Next',
                     baseColor: AppColors.btnColorGreen,
-                    iconPath: "assets/arrorDirectionNoShadow.svg",
+                    iconPath: Assets.icEmailSent,
                     iconPosition: IconPosition.right,
                   ),
                 ),

@@ -15,7 +15,7 @@ class SplashScreen extends GetView<SplashController> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Stack(

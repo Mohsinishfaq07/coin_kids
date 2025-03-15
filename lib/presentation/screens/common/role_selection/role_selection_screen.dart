@@ -9,13 +9,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class RoleSelectionScreen extends GetView<RoleSelectionController> {
-  RoleSelectionScreen({super.key});
+  const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: SingleChildScrollView(
@@ -24,7 +25,9 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(
+                  height: kTextTabBarHeight + 20.h,
+                ),
                 Text(
                   "Are you a parent or a child?",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -37,7 +40,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                   title: "I’m a Parent",
                   description: "Give allowances",
                   onTap: () async {
-                    controller.finalizeRole(UserRole.PARENT);
+                    controller.finalizeRole(UserRole.parent);
                   },
                   description1: "Support your child's",
                   description2: "Financial journey  ",
@@ -48,7 +51,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                   title: "I’m a Child",
                   description: "Receive Allowance",
                   onTap: () async {
-                    controller.finalizeRole(UserRole.CHILD);
+                    controller.finalizeRole(UserRole.child);
                   },
                   description1: 'Set up saving goals',
                   description2: '',
@@ -110,7 +113,7 @@ class OptionCard extends StatelessWidget {
                 child: SvgPicture.asset(
                   imagePath,
                   fit: BoxFit.contain,
-                  color: imageColor,
+                  colorFilter: imageColor != null ? ColorFilter.mode(imageColor!, BlendMode.srcIn) : null,
                 ),
               ),
             ),
@@ -152,7 +155,7 @@ class OptionCard extends StatelessWidget {
                       SvgPicture.asset(
                         Assets.icSupport,
                         height: 18.h,
-                        color: Colors.transparent,
+                        colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.clear),
                       ),
                       const SizedBox(width: 12),
                       Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)),

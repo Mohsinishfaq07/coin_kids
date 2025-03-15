@@ -23,7 +23,7 @@ class ParentChangePinScreen extends GetView<ParentChangePinController> {
         showBackButton: true,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         child: Form(
@@ -150,7 +150,7 @@ class ParentChangePinScreen extends GetView<ParentChangePinController> {
                       backgroundColor: AppColors.buttonPrimary,
                       child: Text(
                         "Save Changes",
-                        style: AppTextStyle.bodyMedium.copyWith(color: AppColors.textOnPrimary),
+                        style: AppTextStyle.appButton,
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {

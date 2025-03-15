@@ -2,11 +2,11 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
-import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -63,7 +63,8 @@ class DragAndDropMoneyController extends GetxController {
 
   @override
   void onClose() {
-    // Reset state when closing
+    appBarController.resetToDefault();
+
     reset();
     super.onClose();
   }
@@ -122,24 +123,33 @@ class DragAndDropMoneyController extends GetxController {
     if (isComplete) {
       Get.back();
       ToastUtil.showToast("Great job counting! 🎉");
+    } else {
+      ToastUtil.showToast("Keep Counting! $remainingAmount is left");
     }
   }
 
   Future<void> _handleTransfer() async {
-    final currentKid = appState.currentKid.value;
-    if (currentKid != null) {
-      await kidService.transferBetweenJars(
-        currentKid.kidId,
-        sourceJarId,
-        targetJarId,
-        totalValue.value,
-      );
+    showLoadingDialog('Creating you jar');
+    try {
+      final currentKid = appState.currentKid.value;
+      if (currentKid != null) {
+        await kidService
+            .transferBetweenJars(
+          currentKid.kidId,
+          sourceJarId,
+          targetJarId,
+          totalValue.value,
+        )
+            .timeout(Duration(seconds: 15), onTimeout: () {
+          throw Exception("Timeout error, Check internet connection");
+        });
 
-      appBarController.resetToDefault();
-
-      Get.close(2);
-
-      ToastUtil.showToast("Transfer complete! 🎉");
+        ToastUtil.showToast("Transfer complete! 🎉");
+      }
+    } catch (e) {
+      Get.log(e.toString(), isError: true);
+    } finally {
+      Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
 
@@ -162,7 +172,7 @@ class DragAndDropMoneyController extends GetxController {
 
     if (kid == null) {
       ToastUtil.showToast("Session Expired");
-      Get.offAll(SignInScreen());
+      Get.offAllNamed(Routes.signIn);
     }
 
     final spendingJar = kid!.wallet.spendingJar;
@@ -173,22 +183,22 @@ class DragAndDropMoneyController extends GetxController {
       if (jarCreationController.jarType == Jars.spendingJar) {
         if (isComplete) {
           final finalBalance = spendingJar.balance + totalValue.value;
-          print('final Balance Spend $finalBalance');
+          Get.log('final Balance Spend $finalBalance');
           jarCreationController.kidService.updateSpendingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
         } else {
           ToastUtil.showToast("${remainingAmount.toMoneyFormat()} remaining");
         }
       } else {
-        print('final Balance Total ${totalValue.value}');
+        Get.log('final Balance Total ${totalValue.value}');
         final finalBalance = savingJar.balance + totalValue.value;
-        print('final Balance Save $finalBalance');
+        Get.log('final Balance Save $finalBalance');
 
         jarCreationController.kidService.updateSavingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
       }
     } catch (e) {
-      print(e);
+      Get.log(e.toString(), isError: true);
     } finally {
-      Get.until((route) => route.settings.name == '/KidBaseScreen');
+      Get.until((route) => route.settings.name == Routes.kidBase);
     }
 
     if (jarCreationController.jarType == Jars.spendingJar) {

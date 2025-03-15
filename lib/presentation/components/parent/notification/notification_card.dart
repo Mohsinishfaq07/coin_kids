@@ -1,8 +1,8 @@
+import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
-import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,89 +12,57 @@ class NotificationCard extends StatelessWidget {
   final NotificationModel notification;
   final bool isSelected;
   final VoidCallback? onTap;
-  final Function(String)? onActionPressed;
+  final Function(NotificationActionId)? onActionPressed;
 
   const NotificationCard({
-    Key? key,
+    super.key,
     required this.notification,
     this.isSelected = false,
     this.onTap,
     this.onActionPressed,
-  }) : super(key: key);
+  });
 
   String _getTitle() {
-    final metadata = notification.metadata;
-    if (metadata == null) return notification.message;
-
-    switch (metadata.type) {
-      case NotificationType.goal_milestone:
-        final goalMetadata = metadata as GoalMilestoneMetadata;
-        return 'Goal Progress: ${goalMetadata.goalName}';
-      case NotificationType.transaction_pending:
-      case NotificationType.transaction_approved:
-      case NotificationType.transaction_rejected:
-        final transactionMetadata = metadata as TransactionMetadata;
-        return 'Transaction ${metadata.type.toString().split('_').last}: \$${transactionMetadata.amount}';
-      case NotificationType.balance_added:
-      case NotificationType.balance_removed:
-        final balanceMetadata = metadata as BalanceMetadata;
-        return '${metadata.type == NotificationType.balance_added ? 'Added' : 'Removed'} \$${balanceMetadata.amount} from ${balanceMetadata.jarName}';
-      case NotificationType.wishlist_added:
-        final wishlistMetadata = metadata as WishlistMetadata;
-        return 'New Wishlist Item: ${wishlistMetadata.itemName}';
-      case NotificationType.system_notification:
-        final systemMetadata = metadata as SystemNotificationMetadata;
-        return systemMetadata.title;
-      case NotificationType.goal_completed:
-        final goalMetadata = metadata as GoalCompletedMetadata;
-        return 'Goal Completed: ${goalMetadata.goalName}';
-    }
+    return notification.title;
   }
 
-  String _getDescription() {
+  String _getDesc() {
     final metadata = notification.metadata;
-    if (metadata == null) return '';
+    if (metadata == null) return notification.title;
 
     switch (metadata.type) {
-      case NotificationType.goal_milestone:
+      case NotificationType.goalMilestone:
         final goalMetadata = metadata as GoalMilestoneMetadata;
-        return 'Progress: ${(goalMetadata.progressPercentage * 100).toStringAsFixed(0)}% (\$${goalMetadata.currentAmount} of \$${goalMetadata.targetAmount})';
-      case NotificationType.transaction_pending:
-      case NotificationType.transaction_approved:
-      case NotificationType.transaction_rejected:
-        final transactionMetadata = metadata as TransactionMetadata;
-        return transactionMetadata.note ?? 'No note provided';
-      case NotificationType.balance_added:
-      case NotificationType.balance_removed:
-        final balanceMetadata = metadata as BalanceMetadata;
-        return 'New Balance: \$${balanceMetadata.newBalance}';
-      case NotificationType.wishlist_added:
-        final wishlistMetadata = metadata as WishlistMetadata;
-        return 'Price: \$${wishlistMetadata.price}';
-      case NotificationType.system_notification:
-        return notification.message;
-      case NotificationType.goal_completed:
+        return goalMetadata.goalName;
+
+      case NotificationType.transactionPending:
+        final data = metadata as TransactionPendingMetadata;
+        return '${data.name} request ${data.amount}';
+
+      case NotificationType.goalCompleted:
         final goalMetadata = metadata as GoalCompletedMetadata;
-        return 'Achieved \$${goalMetadata.targetAmount} goal in ${goalMetadata.achievementDuration}! 🎉';
-    }
-  }
+        return '${goalMetadata.name} Completed Goal <b>${goalMetadata.goalName}, saved ${goalMetadata.targetAmount}</b>';
 
-  String? _getImageUrl() {
-    final metadata = notification.metadata;
-    if (metadata == null) return notification.imageUrl;
+      case NotificationType.balanceAdded:
+      case NotificationType.balanceRemoved:
+        final balanceMetadata = metadata as BalanceMetadata;
+        final action = metadata.type == NotificationType.balanceAdded ? "added to" : "deducted from";
+        return "${balanceMetadata.amount.toMoneyFormat()} $action balance";
 
-    if (metadata is WishlistMetadata) {
-      return metadata.imageUrl;
-    } else if (metadata is GoalCompletedMetadata) {
-      return metadata.imageUrl;
+      case NotificationType.defaultNotification:
+      default:
+        return notification.title;
     }
-    return notification.imageUrl;
   }
 
   String? _getKidAvatarUrl() {
     final metadata = notification.metadata;
     if (metadata is GoalCompletedMetadata) {
-      return metadata.kidAvatarUrl;
+      return metadata.photo;
+    } else if (metadata is TransactionPendingMetadata) {
+      return metadata.photo;
+    } else if (metadata is GoalMilestoneMetadata) {
+      return metadata.photo;
     }
     return null;
   }
@@ -103,13 +71,58 @@ class NotificationCard extends StatelessWidget {
     final metadata = notification.metadata;
     if (metadata == null) return [];
 
+    if (metadata is TransactionPendingMetadata) {
+      if (metadata.status == TransactionPendingStatus.approved || 
+          metadata.status == TransactionPendingStatus.declined) {
+        return [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: Text(
+              metadata.status == TransactionPendingStatus.approved 
+                ? "Request Approved" 
+                : "Request Declined",
+              style: AppTextStyle.bodyMedium.copyWith(color: metadata.status == TransactionPendingStatus.approved? AppColors.notificationPositive : AppColors.notificationWarning),
+            ),
+          ),
+        ];
+      }
+      return metadata.actions.map((action) {
+        Color buttonColor;
+        switch (action.type) {
+          case NotificationActionType.critical:
+            buttonColor = AppColors.critical;
+            break;
+          case NotificationActionType.secondary:
+            buttonColor = AppColors.colorSecondary;
+            break;
+          default:
+            buttonColor = AppColors.colorPrimary;
+        }
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: ElevatedButton(
+            onPressed: () => onActionPressed?.call(action.id),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: buttonColor,
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+            ),
+            child: Text(
+              action.label,
+              style: AppTextStyle.bodyMedium.copyWith(color: Colors.white),
+            ),
+          ),
+        );
+      }).toList();
+    }
+
     return metadata.actions.map((action) {
       Color buttonColor;
       switch (action.type) {
-        case 'critical':
+        case NotificationActionType.critical:
           buttonColor = AppColors.critical;
           break;
-        case 'secondary':
+        case NotificationActionType.secondary:
           buttonColor = AppColors.colorSecondary;
           break;
         default:
@@ -135,7 +148,6 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = _getImageUrl();
     final kidAvatarUrl = _getKidAvatarUrl();
     final actionButtons = _getActionButtons();
 
@@ -162,6 +174,7 @@ class NotificationCard extends StatelessWidget {
                       CircleAvatarWidget(
                         size: 40,
                         imagePath: kidAvatarUrl,
+                        imageType: ImageType.network,
                       ),
                       SizedBox(width: 12.w),
 
@@ -174,40 +187,29 @@ class NotificationCard extends StatelessWidget {
                               _getTitle(),
                               style: AppTextStyle.bodyLarge.copyWith(
                                 color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700
                               ),
                             ),
-                            SizedBox(height: 4.h),
+                            SizedBox(height: 1.h),
                             Text(
                               timeago.format(notification.timestamp),
                               style: AppTextStyle.bodyMedium.copyWith(
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              _getDescription(),
-                              style: AppTextStyle.bodyLarge.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
+                            if (_getDesc().isNotEmpty) SizedBox(height: 12.h),
+                            if (_getDesc().isNotEmpty)
+                              Text(
+                                _getDesc(),
+                                style: AppTextStyle.bodyMedium.copyWith(
+                                  color: AppColors.textPrimary,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
                           ],
                         ),
                       ),
-
-                      // Notification Image
-                      if (imageUrl != null) ...[
-                        SizedBox(width: 12.w),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.r),
-                          child: CachedNetworkImageWidget(
-                            imageUrl: imageUrl,
-                            width: 60.w,
-                            height: 60.w,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -220,7 +222,7 @@ class NotificationCard extends StatelessWidget {
                     child: Container(
                       width: 8.r,
                       height: 8.r,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.colorPrimary,
                         shape: BoxShape.circle,
                       ),

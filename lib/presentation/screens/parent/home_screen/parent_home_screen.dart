@@ -2,14 +2,11 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_home_controller.dart';
-import 'package:coin_kids/presentation/screens/parent/add_child/add_child_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/drawer/parent_drawer_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/kids_profile/kid_profile_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/transfer/quick_transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +14,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ParentsHomeScreen extends GetView<ParentHomeController> {
+  const ParentsHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +32,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Get.to(ParentDrawer());
+                  Get.toNamed(Routes.parentDrawer);
                 },
                 child: Obx(
                   () {
@@ -63,7 +62,8 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
           ),
         ),
         body: Container(
-          decoration: const BoxDecoration(
+          height: Get.height,
+          decoration: BoxDecoration(
             gradient: AppColors.background,
           ),
           child: Obx(
@@ -79,7 +79,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                 // No kids available
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Center(
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
                         Padding(
@@ -96,26 +96,31 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                           height: 177.h,
                           width: 328.w,
                           decoration: ShapeDecoration(
-                              color: const Color(0xFFEDFAFF),
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              shadows: [BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0)]),
+                            color: AppColors.cardPrimary,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1.w, color: AppColors.cardBorder),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            shadows: [
+                              BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0),
+                            ],
+                          ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              SizedBox(height: 12.h),
                               Text("Almost There!", style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 12.h),
                               Text("Starting by adding your first child.",
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
                               SizedBox(height: 26.h),
                               AppButton(
+                                size: Size(0.5.sw, 50.h),
                                 onPressed: () {
-                                  Get.to(() => AddChildScreen());
+                                  Get.toNamed(Routes.parentAddChild);
                                 },
-                                child: Text("Add Child"),
+                                child: Text("Add Child", style: AppTextStyle.appButton),
                               )
                             ],
                           ),
@@ -151,12 +156,12 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             ),
                           )),
                       SizedBox(
-                        height: 150, // Set a fixed height for the horizontal list
+                        height: 150.h, // Set a fixed height for the horizontal list
                         child: Obx(() {
                           return ListView.builder(
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.all(16),
-                            itemCount: controller.kidsList.length + 1,
+                            itemCount: controller.kidsList.length < 2 ? controller.kidsList.length + 1 : 2,
                             itemBuilder: (context, index) {
                               if (index == controller.kidsList.length) {
                                 // Last item: Add circle
@@ -175,8 +180,8 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                             border: Border.all(color: AppColors.iconDisabled, width: 2),
                                             borderRadius: BorderRadius.circular(40),
                                           ),
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(14.0),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(14.0),
                                             child: Icon(
                                               Icons.add, // Add icon
                                               color: AppColors.iconDisabled,
@@ -205,7 +210,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Get.to(() => KidProfileScreen());
+                                      Get.toNamed(Routes.parentKidProfile);
                                     },
                                     child: Column(
                                       children: [
@@ -256,10 +261,13 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                               children: [
                                 AppButton(
                                   onPressed: () {
-                                    Get.to(() => QuickTransferPage());
+                                    Get.toNamed(Routes.parentQuickTransfer);
                                   },
                                   size: Size(183.w, 50.h),
-                                  child: Text("Quick Transfer"),
+                                  child: Text(
+                                    "Quick Transfer",
+                                    style: AppTextStyle.appButton,
+                                  ),
                                 ),
                                 const SizedBox(height: 20),
                                 Padding(

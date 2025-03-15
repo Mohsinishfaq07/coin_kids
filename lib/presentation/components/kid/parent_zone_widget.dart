@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ParentZoneWidget extends StatelessWidget {
-  const ParentZoneWidget({Key? key}) : super(key: key);
+  const ParentZoneWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,8 @@ class ParentZoneWidget extends StatelessWidget {
                 "Parent\nZone",
                 textAlign: TextAlign.center,
                 style: AppTextStyle.labelSmall.copyWith(
-                  color: AppColors.KidZoneParent,
-                  fontWeight: MyFontWeight.ExtraBold.fontWeight,
+                  color: AppColors.kidZoneParent,
+                  fontWeight: MyFontWeight.extraBold.fontWeight,
                 ),
               ),
               SizedBox(height: 4.h),

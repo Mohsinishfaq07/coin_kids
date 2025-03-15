@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
 class ShareUtils {
   static const String supportEmail = "support@coinkids.com";
@@ -25,6 +26,13 @@ $storeLink
 ''';
 
     await Share.share(shareText);
+  }
+
+  static Future<void> openLink(destination) async {
+    final Uri url = Uri.parse(destination);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch privacy policy');
+    }
   }
 
   static Future<void> openPrivacyPolicy() async {
@@ -83,7 +91,7 @@ $additionalText
         throw Exception('Could not launch email app');
       }
     } catch (e) {
-      print('Error sending feedback: $e');
+      Get.log('Error sending feedback: $e');
       rethrow;
     }
   }

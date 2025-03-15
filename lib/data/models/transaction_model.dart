@@ -1,18 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum TransactionType {
-  earn,
-  spend,
-  transfer,
-  reward
-}
+enum TransactionType { earn, spend, transfer, reward }
 
-enum TransactionStatus {
-  pending,
-  approved,
-  rejected,
-  completed
-}
+enum TransactionStatus { pending, approved, rejected, completed }
 
 class TransactionModel {
   final String? id; // Optional for new transactions
@@ -113,4 +103,4 @@ class TransactionModel {
         return TransactionStatus.pending; // Default value
     }
   }
-} 
+}

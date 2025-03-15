@@ -13,8 +13,8 @@ class CustomTimeline extends StatelessWidget {
 
   const CustomTimeline({
     required this.items,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class CustomTimeline extends StatelessWidget {
         },
         indicatorBuilder: (_, index) {
           return ContainerIndicator(
-            child: Container(
+            child: SizedBox(
               width: 40.w,
               height: 40.w,
               child: Center(

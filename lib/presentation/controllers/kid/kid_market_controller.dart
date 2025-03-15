@@ -4,14 +4,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
-import 'package:coin_kids/data/models/notification_metadata.dart';
-import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
-import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/market_service.dart';
-import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +20,6 @@ import '../parent/parent_market_controller.dart';
 class KidMarketController extends GetxController {
   final MarketService _marketService = Get.find<MarketService>();
   final WishlistService _wishlistService = Get.find<WishlistService>();
-  final NotificationService _notificationService = Get.find<NotificationService>();
   final AppStateController _appState = Get.find();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
   final GoalService goalSerive = Get.find<GoalService>();
@@ -143,17 +139,17 @@ class KidMarketController extends GetxController {
     switch (range) {
       case AgeRange.all:
         return 'All Ages';
-      case AgeRange.zero_to_two:
+      case AgeRange.zeroToTwo:
         return '0-2';
-      case AgeRange.three_to_five:
+      case AgeRange.threeToFive:
         return '3-5';
-      case AgeRange.six_to_nine:
+      case AgeRange.sixToNine:
         return '6-9';
-      case AgeRange.ten_to_twelve:
+      case AgeRange.tenToTwelve:
         return '10-12';
-      case AgeRange.thirteen_to_sixteen:
+      case AgeRange.thirteenToSixteen:
         return '13-16';
-      case AgeRange.sixteen_plus:
+      case AgeRange.sixteenPlus:
         return '16+';
     }
   }
@@ -162,17 +158,17 @@ class KidMarketController extends GetxController {
     switch (range) {
       case AgeRange.all:
         return (0, 99);
-      case AgeRange.zero_to_two:
+      case AgeRange.zeroToTwo:
         return (0, 2);
-      case AgeRange.three_to_five:
+      case AgeRange.threeToFive:
         return (3, 5);
-      case AgeRange.six_to_nine:
+      case AgeRange.sixToNine:
         return (6, 9);
-      case AgeRange.ten_to_twelve:
+      case AgeRange.tenToTwelve:
         return (10, 12);
-      case AgeRange.thirteen_to_sixteen:
+      case AgeRange.thirteenToSixteen:
         return (13, 16);
-      case AgeRange.sixteen_plus:
+      case AgeRange.sixteenPlus:
         return (16, 99);
     }
   }
@@ -321,7 +317,7 @@ class KidMarketController extends GetxController {
       }
       _wishlistService.wishlistItems.refresh();
 
-      print('Failed to update wishlist: ${e.toString()}');
+      Get.log('Failed to update wishlist: ${e.toString()}');
       Get.snackbar(
         'Error',
         'An unexpected error occurred. Please try again.',
@@ -375,7 +371,7 @@ class KidMarketController extends GetxController {
 
   @override
   void onClose() {
-    appBarController.resetToDefault();
+    // appBarController.resetToDefault();
     scrollController.dispose();
     super.onClose();
   }
@@ -392,30 +388,11 @@ class KidMarketController extends GetxController {
       }
 
       ToastUtil.showToast("Goal Added");
-
-      final auth = Get.find<AuthService>();
-
-      _notificationService.createNotification(
-        NotificationModel(
-          userId: auth.userId,
-          senderId: _appState.currentKid.value!.kidId,
-          type: NotificationType.goal_milestone,
-          message: "${_appState.currentKid.value!.name} added a new Goal",
-          metadata: GoalMilestoneMetadata(
-            goalId: goalId,
-            goalName: product.name,
-            targetAmount: product.price,
-            currentAmount: 0,
-            progressPercentage: 0,
-          ),
-          timestamp: DateTime.now(),
-        ),
-      );
     } catch (e) {
-      print(e);
+      Get.log(e.toString(), isError: true);
       ToastUtil.showToast("Fail to add Goal");
     } finally {
-      Get.close(2);
+      Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
 }

@@ -1,16 +1,38 @@
-# coin_kids
+##Status
 
-A new Flutter project.
+# Common
 
-## Getting Started
+1. Signup (Done) ✔
+2. Role Selection -> (Done)
+3. SignIn (Done) ✔
+4. Forgot Password (Done)
+5. Splash (Done)
+6. Intro (Done)
 
-This project is a starting point for a Flutter application.
+# Parent
 
-A few resources to get you started if this is your first Flutter project:
+1. Parent Home (Done)
+2. Quick Transfer (Done)
+3. Add Child (Done) ✔
+4. Update Child (Done)
+5. Kid Profile - (Done)
+6. Messages - (Done)
+7. Drawer (Done)
+8. Shop
+9. Shop Item
+10. Pin Screen
+11. Edit Parent Profile
+12. Feedback (Done)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Kid
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# TODO:
+
+1. Parent Messages red dot (DONE)
+
+
+2. Money Request dialog , case parent exist, 0 money
+2. Validate screen on different screen sizes
+3. Show Hands
+4. Market Placeholder
+5. Child market filters
