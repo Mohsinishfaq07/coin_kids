@@ -79,7 +79,8 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
               children: [
                 // Notification count
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.r),
@@ -135,7 +136,8 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                       overflow: TextOverflow.clip,
                     ),
 
-                    if (getNotificationDescription(notification).isNotEmpty) SizedBox(height: 4.h),
+                    if (getNotificationDescription(notification).isNotEmpty)
+                      SizedBox(height: 4.h),
 
                     // Message
                     if (getNotificationDescription(notification).isNotEmpty)
@@ -193,7 +195,9 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                       widget.onDismissAll();
                     }
                   },
-                  text: currentIndex < widget.notifications.length - 1 ? "Next" : "Got it!",
+                  text: currentIndex < widget.notifications.length - 1
+                      ? "Next"
+                      : "Got it!",
                   baseColor: AppColors.btnColorGreen,
                 ),
 
@@ -202,9 +206,13 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                 // Next button (only if multiple notifications)
                 if (hasMultipleNotifications)
                   Opacity(
-                    opacity: currentIndex < widget.notifications.length - 1 ? 1.0 : 0.3,
+                    opacity: currentIndex < widget.notifications.length - 1
+                        ? 1.0
+                        : 0.3,
                     child: KidButton.iconOnly(
-                      onTap: currentIndex < widget.notifications.length - 1 ? nextNotification : () {},
+                      onTap: currentIndex < widget.notifications.length - 1
+                          ? nextNotification
+                          : () {},
                       baseColor: AppColors.btnColorOrange,
                       iconPath: Assets.icNext,
                       size: 40.r,
@@ -224,12 +232,12 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
 
     switch (notification.type) {
       case NotificationType.balanceRemoved:
+      case NotificationType.goalRejected:
         iconPath = Assets.emojiSad;
         break;
       case NotificationType.balanceAdded:
-        iconPath = Assets.icCoinEuro;
-        break;
       case NotificationType.transactionApproved:
+      case NotificationType.goalApproved:
         iconPath = Assets.icCoinEuro;
         break;
       case NotificationType.transactionRejected:
@@ -253,28 +261,39 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
   }
 
   String getNotificationDescription(NotificationModel notification) {
-    if (notification.type == NotificationType.balanceAdded || notification.type == NotificationType.balanceRemoved) {
+    if (notification.type == NotificationType.balanceAdded ||
+        notification.type == NotificationType.balanceRemoved) {
       final BalanceMetadata metaData = notification.metadata as BalanceMetadata;
       if (metaData.type == NotificationType.balanceAdded) {
         String text = "You received ${metaData.amount.toMoneyFormat()}";
-        if (metaData.message != null || metaData.message!.isNotEmpty) {
+        if (metaData.message != null && metaData.message!.isNotEmpty) {
           text = "$text\nMessage: ${metaData.message}";
         }
         return text;
       } else {
         String text = "${metaData.amount.toMoneyFormat()} Deducted from you";
-        if (metaData.message != null || metaData.message!.isNotEmpty) {
+        if (metaData.message != null && metaData.message!.isNotEmpty) {
           text = "$text\nMessage: ${metaData.message}";
         }
         return text;
       }
-    } else if (notification.type == NotificationType.transactionApproved || notification.type == NotificationType.transactionRejected) {
-      final TransactionMetadata metaData = notification.metadata as TransactionMetadata;
+    } else if (notification.type == NotificationType.transactionApproved ||
+        notification.type == NotificationType.transactionRejected) {
+      final TransactionMetadata metaData =
+          notification.metadata as TransactionMetadata;
       if (metaData.type == NotificationType.transactionApproved) {
         return "${metaData.amount.toMoneyFormat()} added to your account";
       } else if (metaData.type == NotificationType.transactionRejected) {
         return "${metaData.amount.toMoneyFormat()} money request rejected.";
       }
+    } else if (notification.type == NotificationType.goalApproved) {
+      final GoalApprovedMetadata metaData =
+          notification.metadata as GoalApprovedMetadata;
+      return "${metaData.name} has approved your goal '${metaData.goalName}'";
+    } else if (notification.type == NotificationType.goalRejected) {
+      final GoalRejectedMetadata metaData =
+          notification.metadata as GoalRejectedMetadata;
+      return "${metaData.name} has rejected your goal '${metaData.goalName}'";
     }
 
     return "";

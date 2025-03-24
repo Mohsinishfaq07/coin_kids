@@ -13,6 +13,8 @@ enum NotificationType {
   transactionRejected, // Transaction was rejected
   balanceAdded, // Money added to account
   balanceRemoved, // Money remove to account
+  goalApproved, // Goal was approved by parent
+  goalRejected, // Goal was rejected by parent
 
   //Common
   defaultNotification,
@@ -45,7 +47,9 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json, {String? id}) {
     final type = _stringToNotificationType(json['type'] ?? '');
-    final metadata = json['metadata'] != null ? _parseMetadata(type, json['metadata']) : null;
+    final metadata = json['metadata'] != null
+        ? _parseMetadata(type, json['metadata'])
+        : null;
 
     return NotificationModel(
       id: id,
@@ -82,10 +86,17 @@ class NotificationModel {
     );
   }
 
-  static NotificationMetadata? _parseMetadata(NotificationType type, Map<String, dynamic> json) {
+  static NotificationMetadata? _parseMetadata(
+      NotificationType type, Map<String, dynamic> json) {
     switch (type) {
       case NotificationType.goalMilestone:
         return GoalMilestoneMetadata.fromJson(json);
+      case NotificationType.goalCompleted:
+        return GoalCompletedMetadata.fromJson(json);
+      case NotificationType.goalApproved:
+        return GoalApprovedMetadata.fromJson(json);
+      case NotificationType.goalRejected:
+        return GoalRejectedMetadata.fromJson(json);
       case NotificationType.transactionPending:
         return TransactionPendingMetadata.fromJson(json);
       case NotificationType.balanceAdded:

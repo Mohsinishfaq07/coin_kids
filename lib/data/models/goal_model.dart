@@ -94,13 +94,16 @@ class GoalModel {
         return GoalStatus.completed;
       case 'rejected':
         return GoalStatus.rejected;
+      case 'approved':
+        return GoalStatus.approved;
       default:
         return GoalStatus.inProgress;
     }
   }
 
   // Calculate progress percentage
-  double get progressPercentage => (savedAmount / targetAmount * 100).clamp(0, 100);
+  double get progressPercentage =>
+      (savedAmount / targetAmount * 100).clamp(0, 100);
 
   // Check if goal is achievable with current balance
   bool isAchievableWithBalance(double balance) {

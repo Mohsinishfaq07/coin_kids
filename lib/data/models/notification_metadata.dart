@@ -79,7 +79,10 @@ class GoalMilestoneMetadata extends NotificationMetadata {
 
   @override
   List<NotificationAction> get actions => [
-        NotificationAction(id: NotificationActionId.positive, label: 'View details', type: NotificationActionType.primary),
+        NotificationAction(
+            id: NotificationActionId.positive,
+            label: 'View details',
+            type: NotificationActionType.primary),
       ];
 }
 
@@ -119,7 +122,10 @@ class GoalCompletedMetadata extends NotificationMetadata {
 
   @override
   List<NotificationAction> get actions => [
-        NotificationAction(id: NotificationActionId.positive, label: 'View details', type: NotificationActionType.primary),
+        NotificationAction(
+            id: NotificationActionId.positive,
+            label: 'View details',
+            type: NotificationActionType.primary),
       ];
 }
 
@@ -140,7 +146,8 @@ class TransactionPendingMetadata extends NotificationMetadata {
 
   factory TransactionPendingMetadata.fromJson(Map<String, dynamic> json) {
     // Convert string status name back to enum
-    TransactionPendingStatus status = TransactionPendingStatus.pending; // Default value
+    TransactionPendingStatus status =
+        TransactionPendingStatus.pending; // Default value
 
     if (json['status'] != null) {
       // Try to match the string name to an enum value
@@ -189,8 +196,14 @@ class TransactionPendingMetadata extends NotificationMetadata {
 
   @override
   List<NotificationAction> get actions => [
-        NotificationAction(id: NotificationActionId.negative, label: 'Decline', type: NotificationActionType.critical),
-        NotificationAction(id: NotificationActionId.positive, label: 'Accept', type: NotificationActionType.primary),
+        NotificationAction(
+            id: NotificationActionId.negative,
+            label: 'Decline',
+            type: NotificationActionType.critical),
+        NotificationAction(
+            id: NotificationActionId.positive,
+            label: 'Accept',
+            type: NotificationActionType.primary),
       ];
 }
 
@@ -202,7 +215,8 @@ class TransactionMetadata extends NotificationMetadata {
     required NotificationType type,
   }) : super(type);
 
-  factory TransactionMetadata.fromJson(Map<String, dynamic> json, NotificationType type) {
+  factory TransactionMetadata.fromJson(
+      Map<String, dynamic> json, NotificationType type) {
     return TransactionMetadata(
       amount: json['amount'] ?? 0.0,
       type: type,
@@ -228,7 +242,8 @@ class BalanceMetadata extends NotificationMetadata {
     required NotificationType type,
   }) : super(type);
 
-  factory BalanceMetadata.fromJson(Map<String, dynamic> json, NotificationType type) {
+  factory BalanceMetadata.fromJson(
+      Map<String, dynamic> json, NotificationType type) {
     return BalanceMetadata(
       amount: (json['amount'] ?? 0.0).toDouble(),
       message: (json['message'] ?? ""),
@@ -244,4 +259,92 @@ class BalanceMetadata extends NotificationMetadata {
 
   @override
   List<NotificationAction> get actions => [];
+}
+
+class GoalApprovedMetadata extends NotificationMetadata {
+  final String goalId;
+  final String goalName;
+  final double targetAmount;
+  final String name;
+  final String photo;
+
+  GoalApprovedMetadata({
+    required this.goalId,
+    required this.goalName,
+    required this.targetAmount,
+    required this.name,
+    required this.photo,
+  }) : super(NotificationType.goalApproved);
+
+  factory GoalApprovedMetadata.fromJson(Map<String, dynamic> json) {
+    return GoalApprovedMetadata(
+      goalId: json['goalId'] ?? '',
+      goalName: json['goalName'] ?? '',
+      targetAmount: (json['targetAmount'] ?? 0.0).toDouble(),
+      name: json['name'] ?? '',
+      photo: json['photo'] ?? '',
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'goalId': goalId,
+        'goalName': goalName,
+        'targetAmount': targetAmount,
+        'name': name,
+        'photo': photo,
+      };
+
+  @override
+  List<NotificationAction> get actions => [
+        NotificationAction(
+          id: NotificationActionId.positive,
+          label: 'View details',
+          type: NotificationActionType.primary,
+        ),
+      ];
+}
+
+class GoalRejectedMetadata extends NotificationMetadata {
+  final String goalId;
+  final String goalName;
+  final double targetAmount;
+  final String name;
+  final String photo;
+
+  GoalRejectedMetadata({
+    required this.goalId,
+    required this.goalName,
+    required this.targetAmount,
+    required this.name,
+    required this.photo,
+  }) : super(NotificationType.goalRejected);
+
+  factory GoalRejectedMetadata.fromJson(Map<String, dynamic> json) {
+    return GoalRejectedMetadata(
+      goalId: json['goalId'] ?? '',
+      goalName: json['goalName'] ?? '',
+      targetAmount: (json['targetAmount'] ?? 0.0).toDouble(),
+      name: json['name'] ?? '',
+      photo: json['photo'] ?? '',
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'goalId': goalId,
+        'goalName': goalName,
+        'targetAmount': targetAmount,
+        'name': name,
+        'photo': photo,
+      };
+
+  @override
+  List<NotificationAction> get actions => [
+        NotificationAction(
+          id: NotificationActionId.positive,
+          label: 'View details',
+          type: NotificationActionType.primary,
+        ),
+      ];
 }

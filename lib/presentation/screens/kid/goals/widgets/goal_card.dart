@@ -84,10 +84,21 @@ class GoalCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    Text(
+                      goal.status.name,
+                      style: AppTextStyle.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     // Progress Section
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (goal.status != GoalStatus.approved &&
+                            goal.status != GoalStatus.rejected && goal.status != GoalStatus.completed)
                         // Progress Bar
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10.r),

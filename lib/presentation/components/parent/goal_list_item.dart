@@ -91,15 +91,39 @@ class GoalListItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      LinearProgressIndicator(
-                        value: goal.savedAmount / goal.targetAmount,
-                        backgroundColor: AppColors.colorPrimary.withValues(alpha: 0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(_getStatusColor(goal.status)),
-                        minHeight: 8.h,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20.r),
+                      if (goal.status != GoalStatus.approved &&
+                          goal.status != GoalStatus.rejected )
+                        LinearProgressIndicator(
+                          value: goal.savedAmount / goal.targetAmount,
+                          backgroundColor:
+                              AppColors.colorPrimary.withValues(alpha: 0.1),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              _getStatusColor(goal.status)),
+                          minHeight: 8.h,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.r),
+                          ),
                         ),
-                      ),
+                      if (goal.status == GoalStatus.approved) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          'Goal Approved',
+                          style: AppTextStyle.bodySmall.copyWith(
+                            color: AppColors.btnColorGreen,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                      if (goal.status == GoalStatus.rejected) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          'Goal Rejected',
+                          style: AppTextStyle.bodySmall.copyWith(
+                            color: AppColors.critical,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -170,6 +194,8 @@ class GoalListItem extends StatelessWidget {
         return AppColors.colorPrimary;
       case GoalStatus.rejected:
         return AppColors.critical;
+      case GoalStatus.approved:
+        return AppColors.btnColorGreen;
       default:
         return AppColors.textPrimary;
     }
@@ -183,6 +209,8 @@ class GoalListItem extends StatelessWidget {
         return 'In Progress';
       case GoalStatus.rejected:
         return 'Rejected';
+      case GoalStatus.approved:
+        return 'Approved';
       default:
         return '';
     }

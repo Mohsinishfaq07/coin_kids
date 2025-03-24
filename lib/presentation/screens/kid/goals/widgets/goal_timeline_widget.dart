@@ -20,21 +20,42 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
   @override
   Widget build(BuildContext context) {
     final List<TimelineItem> items = [
-      TimelineItem(
-        date: goal.completedAt.toString(),
-        title: "Congratulations!",
-        subtitle: "You completed your Goal",
-        photo: Assets.icBadge,
-        imageType: ImageType.asset,
-        isCompleted: true,
-      ),
-      TimelineItem(
-        date: "08/04",
-        title: "Parents Review",
-        subtitle: "Let you parent buy it for you",
-        photo: controller.appState.currentParent.value?.imageUrl ?? "",
-        imageType: ImageType.network,
-      ),
+      if (goal.status == GoalStatus.completed ||
+          goal.status == GoalStatus.approved || goal.status == GoalStatus.rejected )
+        TimelineItem(
+          date: goal.completedAt.toString(),
+          title: "Congratulations!",
+          subtitle: "You completed your Goal",
+          photo: Assets.icBadge,
+          imageType: ImageType.asset,
+          isCompleted: true,
+        ),
+      if (goal.status == GoalStatus.approved)
+        TimelineItem(
+          date: goal.completedAt.toString(),
+          title: "Goal Approved!",
+          subtitle: "Your parent has approved your goal",
+          photo: controller.appState.currentParent.value?.imageUrl ?? "",
+          imageType: ImageType.network,
+          isCompleted: true,
+        ),
+      if (goal.status == GoalStatus.rejected)
+        TimelineItem(
+          date: goal.completedAt.toString(),
+          title: "Goal Rejected",
+          subtitle: "Your parent has rejected this goal",
+          photo: controller.appState.currentParent.value?.imageUrl ?? "",
+          imageType: ImageType.network,
+          isCompleted: false,
+        ),
+      if (goal.status == GoalStatus.completed)
+        TimelineItem(
+          date: "08/04",
+          title: "Parents Review",
+          subtitle: "Let your parent buy it for you",
+          photo: controller.appState.currentParent.value?.imageUrl ?? "",
+          imageType: ImageType.network,
+        ),
     ];
 
     return Scaffold(

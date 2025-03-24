@@ -22,6 +22,7 @@ class MessagesController extends GetxController {
   final isLoadingMore = false.obs;
   final hasMoreData = true.obs;
 
+
   DocumentSnapshot? _lastDocument;
   final refreshController = RefreshController(initialRefresh: false);
 

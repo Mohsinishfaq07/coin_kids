@@ -10,7 +10,8 @@ class NotificationService extends GetxService {
   final int pageSize = 20; // Number of notifications per page
 
   // Create new notification
-  Future<DocumentReference> createNotification(NotificationModel notification) async {
+  Future<DocumentReference> createNotification(
+      NotificationModel notification) async {
     try {
       return await _firestore.collection(collection).add(notification.toJson());
     } catch (e) {
@@ -23,15 +24,21 @@ class NotificationService extends GetxService {
     return _firestore
         .collection(collection)
         .where('userId', isEqualTo: userId)
+        .where('isRead', isEqualTo: false)
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => NotificationModel.fromJson(doc.data(), id: doc.id)).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => NotificationModel.fromJson(doc.data(), id: doc.id))
+            .toList());
   }
 
   // Mark notification as read
   Future<void> markAsRead(String notificationId) async {
     try {
-      await _firestore.collection(collection).doc(notificationId).update({'isRead': true});
+      await _firestore
+          .collection(collection)
+          .doc(notificationId)
+          .update({'isRead': true});
     } catch (e) {
       throw Exception('Failed to mark notification as read: ${e.toString()}');
     }
@@ -41,7 +48,11 @@ class NotificationService extends GetxService {
   Future<void> markAllAsRead(String userId) async {
     try {
       final batch = _firestore.batch();
-      final notifications = await _firestore.collection(collection).where('userId', isEqualTo: userId).where('isRead', isEqualTo: false).get();
+      final notifications = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .get();
 
       for (var doc in notifications.docs) {
         batch.update(doc.reference, {'isRead': true});
@@ -49,7 +60,8 @@ class NotificationService extends GetxService {
 
       await batch.commit();
     } catch (e) {
-      throw Exception('Failed to mark all notifications as read: ${e.toString()}');
+      throw Exception(
+          'Failed to mark all notifications as read: ${e.toString()}');
     }
   }
 
@@ -64,14 +76,22 @@ class NotificationService extends GetxService {
 
   // Get unread notifications count
   Stream<int> getUnreadCount(String userId) {
-    return _firestore.collection(collection).where('userId', isEqualTo: userId).where('isRead', isEqualTo: false).snapshots().map((snapshot) => snapshot.docs.length);
+    return _firestore
+        .collection(collection)
+        .where('userId', isEqualTo: userId)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
   }
 
   // Delete all notifications for a user
   Future<void> deleteAllNotifications(String userId) async {
     try {
       final batch = _firestore.batch();
-      final notifications = await _firestore.collection(collection).where('userId', isEqualTo: userId).get();
+      final notifications = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .get();
 
       for (var doc in notifications.docs) {
         batch.delete(doc.reference);
@@ -84,12 +104,21 @@ class NotificationService extends GetxService {
   }
 
   // Get notifications by type
-  Future<List<NotificationModel>> getNotificationsByType(String userId, NotificationType type) async {
+  Future<List<NotificationModel>> getNotificationsByType(
+      String userId, NotificationType type) async {
     try {
-      final QuerySnapshot snapshot =
-          await _firestore.collection(collection).where('userId', isEqualTo: userId).where('type', isEqualTo: type.toString().split('.').last).orderBy('timestamp', descending: true).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .where('type', isEqualTo: type.toString().split('.').last)
+          .orderBy('timestamp', descending: true)
+          .get();
 
-      return snapshot.docs.map((doc) => NotificationModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => NotificationModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch notifications by type: ${e.toString()}');
     }
@@ -101,14 +130,22 @@ class NotificationService extends GetxService {
     DocumentSnapshot? lastDocument,
   }) async {
     try {
-      Query query = _firestore.collection('notifications').where('userId', isEqualTo: userId).orderBy('timestamp', descending: true).limit(pageSize);
+      Query query = _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .orderBy('timestamp', descending: true)
+          .limit(pageSize);
 
       if (lastDocument != null) {
         query = query.startAfterDocument(lastDocument);
       }
 
       final snapshot = await query.get();
-      final notifications = snapshot.docs.map((doc) => NotificationModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      final notifications = snapshot.docs
+          .map((doc) => NotificationModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
 
       return PaginationResult(
         notifications,
@@ -132,7 +169,8 @@ class NotificationService extends GetxService {
       }
       await batch.commit();
     } catch (e) {
-      throw Exception('Failed to update selected notifications: ${e.toString()}');
+      throw Exception(
+          'Failed to update selected notifications: ${e.toString()}');
     }
   }
 
@@ -146,16 +184,25 @@ class NotificationService extends GetxService {
       }
       await batch.commit();
     } catch (e) {
-      throw Exception('Failed to delete selected notifications: ${e.toString()}');
+      throw Exception(
+          'Failed to delete selected notifications: ${e.toString()}');
     }
   }
 
   // Get all notifications for a user (non-paginated)
   Future<List<NotificationModel>> getAllNotifications(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore.collection(collection).where('userId', isEqualTo: userId).orderBy('timestamp', descending: true).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .orderBy('timestamp', descending: true)
+          .get();
 
-      return snapshot.docs.map((doc) => NotificationModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => NotificationModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       Get.log('Failed to fetch all notifications: ${e.toString()}');
       return []; // Return empty list instead of throwing to handle errors gracefully
@@ -163,11 +210,21 @@ class NotificationService extends GetxService {
   }
 
   // Get all unread notifications for a user
-  Future<List<NotificationModel>> getAllUnreadNotifications(String userId) async {
+  Future<List<NotificationModel>> getAllUnreadNotifications(
+      String userId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore.collection(collection).where('userId', isEqualTo: userId).where('isRead', isEqualTo: false).orderBy('timestamp', descending: true).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .where('isRead', isEqualTo: false)
+          .orderBy('timestamp', descending: true)
+          .get();
 
-      return snapshot.docs.map((doc) => NotificationModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => NotificationModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       Get.log('Failed to fetch unread notifications: ${e.toString()}');
       return []; // Return empty list instead of throwing to handle errors gracefully
@@ -175,9 +232,13 @@ class NotificationService extends GetxService {
   }
 
   // Mark notification as read
-  Future<void> updatePendingTransactionStatus(String notificationId, TransactionPendingStatus status) async {
+  Future<void> updatePendingTransactionStatus(
+      String notificationId, TransactionPendingStatus status) async {
     try {
-      await _firestore.collection(collection).doc(notificationId).update({'metadata.status': status.name});
+      await _firestore
+          .collection(collection)
+          .doc(notificationId)
+          .update({'metadata.status': status.name});
     } catch (e) {
       throw Exception('Failed to mark notification as read: ${e.toString()}');
     }

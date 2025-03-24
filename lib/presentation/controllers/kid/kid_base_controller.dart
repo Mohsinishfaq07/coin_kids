@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
@@ -18,7 +19,8 @@ class KidBaseController extends GetxController {
   // Dependencies
   final AppStateController _appStateController = Get.find<AppStateController>();
   final RoleController _roleController = Get.find<RoleController>();
-  final VerticalNavBarController navigationController = Get.find<VerticalNavBarController>();
+  final VerticalNavBarController navigationController =
+      Get.find<VerticalNavBarController>();
   final NotificationService _notificationService = NotificationService();
 
   final AppStateController appState = Get.find<AppStateController>();
@@ -28,17 +30,48 @@ class KidBaseController extends GetxController {
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
-  final RxList<NotificationModel> unreadNotifications = <NotificationModel>[].obs;
+  final RxList<NotificationModel> unreadNotifications =
+      <NotificationModel>[].obs;
   final RxBool isProcessingNotifications = false.obs;
   final RxInt unreadNotificationCount = 0.obs;
 
   var showJarShowcase = true.obs;
+
+  // Add stream subscription
+  StreamSubscription? _notificationSubscription;
 
   @override
   void onInit() {
     super.onInit();
     OrientationUtils.lockToLandscape();
     _initializeKid();
+    _setupNotificationListener();
+  }
+
+  void _setupNotificationListener() {
+    if (currentKid.value == null) return;
+
+    _notificationSubscription?.cancel();
+    _notificationSubscription = _notificationService
+        .getNotificationsStream(currentKid.value!.kidId)
+        .listen((notifications) {
+      // Only process notifications if we're in kid mode
+      final currentRole = SharedPreferencesHelper.getString(
+          SharedPreferencesHelper.lastLoggedInRole);
+      if (currentRole != UserRole.child.name) return;
+
+      unreadNotifications.value = notifications;
+      unreadNotificationCount.value = notifications.length;
+
+      bool shouldShowNotification = SharedPreferencesHelper.getBool(
+              SharedPreferencesHelper.showKidsNotifications) ??
+          true;
+      if (notifications.isNotEmpty && shouldShowNotification) {
+        SharedPreferencesHelper.saveBool(
+            SharedPreferencesHelper.showKidsNotifications, false);
+        showNotificationsDialog();
+      }
+    });
   }
 
   void _initializeKid() {
@@ -46,7 +79,7 @@ class KidBaseController extends GetxController {
     ever(_appStateController.currentKid, (KidModel? kid) {
       currentKid.value = kid;
       if (kid != null) {
-        fetchAllNotifications();
+        _setupNotificationListener(); // Update listener when kid changes
       }
     });
   }
@@ -58,7 +91,8 @@ class KidBaseController extends GetxController {
       isProcessingNotifications.value = true;
 
       // Get all notifications for the current kid using the stream
-      final notifications = await _notificationService.getAllUnreadNotifications(currentKid.value!.kidId);
+      final notifications = await _notificationService
+          .getAllUnreadNotifications(currentKid.value!.kidId);
 
       // Filter to only unread notifications and sort by timestamp (newest first)
       unreadNotifications.value = notifications;
@@ -68,9 +102,12 @@ class KidBaseController extends GetxController {
       Get.log("Fetched ${unreadNotifications.length} unread notifications");
 
       // Show notifications if there are any
-      bool shouldShowNotification = SharedPreferencesHelper.getBool(SharedPreferencesHelper.showKidsNotifications) ?? true;
+      bool shouldShowNotification = SharedPreferencesHelper.getBool(
+              SharedPreferencesHelper.showKidsNotifications) ??
+          true;
       if (unreadNotifications.isNotEmpty && shouldShowNotification) {
-        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showKidsNotifications, false);
+        SharedPreferencesHelper.saveBool(
+            SharedPreferencesHelper.showKidsNotifications, false);
         showNotificationsDialog();
       }
     } catch (e) {
@@ -83,8 +120,11 @@ class KidBaseController extends GetxController {
   bool shouldShowJarSpotLight() {
     final jarCreated = appState.currentKid.value!.wallet.spendingJar.color != 0;
     final isParentOpened = appState.currentKid.value!.isConnected;
-    final hasShownEarlier = SharedPreferencesHelper.getBool(SharedPreferencesHelper.showcaseMoneyJarKey) ?? false;
-    final hasBalance = appState.currentKid.value!.wallet.spendingJar.balance != 0;
+    final hasShownEarlier = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.showcaseMoneyJarKey) ??
+        false;
+    final hasBalance =
+        appState.currentKid.value!.wallet.spendingJar.balance != 0;
 
     Get.log('$jarCreated, $isParentOpened, $hasShownEarlier, $hasBalance');
 
@@ -103,8 +143,12 @@ class KidBaseController extends GetxController {
   void showNotificationsDialog() {
     if (unreadNotifications.isEmpty) return;
 
-    if (appBarController.shouldShowRequestMoneySpotlight()) return;
+    // Only show notifications in kid mode
+    final currentRole = SharedPreferencesHelper.getString(
+        SharedPreferencesHelper.lastLoggedInRole);
+    if (currentRole != UserRole.child.name) return;
 
+    if (appBarController.shouldShowRequestMoneySpotlight()) return;
     if (shouldShowJarSpotLight()) return;
 
     final BuildContext context = Get.context!;
@@ -112,11 +156,12 @@ class KidBaseController extends GetxController {
     // Use a transparent barrier
     showGeneralDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.3),
+      barrierColor: Colors.black.withOpacity(0.3),
       barrierDismissible: false,
       barrierLabel: "Notifications",
       transitionDuration: Duration(milliseconds: 200),
-      pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
+      pageBuilder: (BuildContext buildContext, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
         return SafeArea(
           child: Material(
             type: MaterialType.transparency,
@@ -126,7 +171,8 @@ class KidBaseController extends GetxController {
                 onDismissSingle: (notification) {
                   // Mark single notification as read
                   _notificationService.markAsRead(notification.id!);
-                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showKidsNotifications, true);
+                  SharedPreferencesHelper.saveBool(
+                      SharedPreferencesHelper.showKidsNotifications, true);
                 },
                 onDismissAll: () {
                   // Mark all as read and close dialog
@@ -137,7 +183,8 @@ class KidBaseController extends GetxController {
                     Navigator.of(context).pop();
                   }
 
-                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showKidsNotifications, true);
+                  SharedPreferencesHelper.saveBool(
+                      SharedPreferencesHelper.showKidsNotifications, true);
                 },
               ),
             ),
@@ -149,7 +196,8 @@ class KidBaseController extends GetxController {
 
   void markNotificationAsRead(String notificationId) {
     _notificationService.markAsRead(notificationId);
-    unreadNotifications.removeWhere((notification) => notification.id == notificationId);
+    unreadNotifications
+        .removeWhere((notification) => notification.id == notificationId);
     unreadNotificationCount.value = unreadNotifications.length;
   }
 
@@ -175,13 +223,16 @@ class KidBaseController extends GetxController {
   }
 
   void startJarCreation(Jars jarType) {
-    final JarCreationController jarCreationController = Get.find<JarCreationController>();
+    final JarCreationController jarCreationController =
+        Get.find<JarCreationController>();
     jarCreationController.jarType = jarType;
   }
 
   @override
   void onClose() {
-    SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showKidsNotifications, true);
+    _notificationSubscription?.cancel();
+    SharedPreferencesHelper.saveBool(
+        SharedPreferencesHelper.showKidsNotifications, true);
     super.onClose();
   }
 }

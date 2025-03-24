@@ -136,7 +136,8 @@ class DragAndDropMoneyController extends GetxController {
       Get.back();
       ToastUtil.showToast("Great job counting! 🎉");
     } else {
-      ToastUtil.showToast("Keep Counting! ${remainingAmount.toMoneyFormat()} is left");
+      ToastUtil.showToast(
+          "Keep Counting! ${remainingAmount.toMoneyFormat()} is left");
     }
   }
 
@@ -196,7 +197,11 @@ class DragAndDropMoneyController extends GetxController {
         if (isComplete) {
           final finalBalance = spendingJar.balance + totalValue.value;
           Get.log('final Balance Spend $finalBalance');
-          jarCreationController.kidService.updateSpendingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
+          jarCreationController.kidService.updateSpendingJar(
+              kid.kidId, finalBalance,
+              color: jarCreationController
+                  .colors[jarCreationController.selectedColorIndex.value]
+                  .value);
         } else {
           ToastUtil.showToast("${remainingAmount.toMoneyFormat()} remaining");
         }
@@ -205,7 +210,10 @@ class DragAndDropMoneyController extends GetxController {
         final finalBalance = savingJar.balance + totalValue.value;
         Get.log('final Balance Save $finalBalance');
 
-        jarCreationController.kidService.updateSavingJar(kid.kidId, finalBalance, color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].toARGB32());
+        jarCreationController.kidService.updateSavingJar(
+            kid.kidId, finalBalance,
+            color: jarCreationController
+                .colors[jarCreationController.selectedColorIndex.value].value);
       }
     } catch (e) {
       Get.log(e.toString(), isError: true);
@@ -329,9 +337,11 @@ class DragAndDropMoneyController extends GetxController {
   ];
 
   // Remove old maps as they're now organized in rows
-  Map<String, double> get billsList => Map.fromEntries(billRows.expand((row) => row).toList());
+  Map<String, double> get billsList =>
+      Map.fromEntries(billRows.expand((row) => row).toList());
 
-  Map<String, double> get coinsList => Map.fromEntries(coinRows.expand((row) => row).toList());
+  Map<String, double> get coinsList =>
+      Map.fromEntries(coinRows.expand((row) => row).toList());
 
   String get screenTitle {
     switch (mode) {
@@ -356,7 +366,8 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   Future<void> checkFirstTime() async {
-    isFirstTime.value = SharedPreferencesHelper.getBool('drag_drop_tutorial_shown') ?? true;
+    isFirstTime.value =
+        SharedPreferencesHelper.getBool('drag_drop_tutorial_shown') ?? true;
     if (isFirstTime.value) {
       // Small delay to ensure screen is built
       await Future.delayed(const Duration(milliseconds: 500));

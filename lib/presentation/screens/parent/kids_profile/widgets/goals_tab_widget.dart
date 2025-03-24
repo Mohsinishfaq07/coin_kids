@@ -30,8 +30,12 @@ class GoalsTabWidget extends GetView<KidProfileController> {
               return GoalListItem(
                 goal: goalData,
                 onTap: () {},
-                onReject: goalData.status == GoalStatus.completed ? () => controller.handleRejectGoal(goalData) : null,
-                onBuy: goalData.status == GoalStatus.completed ? () => controller.handleBuyGoal(goalData) : null,
+                onReject: goalData.status == GoalStatus.completed
+                    ? () => controller.handleRejectGoal(goalData)
+                    : null,
+                onBuy: goalData.status == GoalStatus.completed
+                    ? () => controller.handleBuyGoal(goalData)
+                    : null,
               );
             },
           );

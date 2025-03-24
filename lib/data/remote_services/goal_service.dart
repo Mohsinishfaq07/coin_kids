@@ -24,15 +24,24 @@ class GoalService extends BaseService {
     return withTimeout(
       () async {
         await _firestore.runTransaction((transaction) async {
-          // STEP 1: Create the goal document first to get the ID
-          final goalRef = _firestore.collection(collection).doc();
-          final String goalId = goalRef.id;
-
+          // STEP 1: PERFORM ALL READS FIRST
           String? goalPhotoUrl;
+          DocumentSnapshot? kidDoc;
 
-          // STEP 2: If there's a photo, upload it to Storage
+          if (isFirstGoal) {
+            kidDoc = await transaction
+                .get(_firestore.collection('kids').doc(goal.userId));
+            if (!kidDoc.exists) {
+              throw Exception('Kid not found');
+            }
+          }
+
+          // STEP 2: If there's a photo, upload it to Storage (this is not part of the transaction)
           if (goal.photo != null && goal.photo!.isNotEmpty) {
-            final String fileName = 'goals/$goalId.${goal.photo!.split('.').last}';
+            final goalRef = _firestore.collection(collection).doc();
+            final String goalId = goalRef.id;
+            final String fileName =
+                'goals/$goalId.${goal.photo!.split('.').last}';
             final Reference ref = _storage.ref().child(fileName);
 
             final UploadTask uploadTask = ref.putFile(File(goal.photo!));
@@ -40,7 +49,10 @@ class GoalService extends BaseService {
             goalPhotoUrl = await snapshot.ref.getDownloadURL();
           }
 
-          // STEP 3: Create the goal with the photo URL
+          // STEP 3: PERFORM ALL WRITES
+          final goalRef = _firestore.collection(collection).doc();
+          final String goalId = goalRef.id;
+
           final goalToCreate = goal.copyWith(
             id: goalId,
             photo: goalPhotoUrl ?? '',
@@ -48,17 +60,9 @@ class GoalService extends BaseService {
 
           transaction.set(goalRef, goalToCreate.toJson());
 
-          // STEP 4: If this is the first goal, update the kid's CoinKids balance
-          if (isFirstGoal) {
-            final kidRef = _firestore.collection('kids').doc(goal.userId);
-            final kidDoc = await transaction.get(kidRef);
-
-            if (!kidDoc.exists) {
-              throw Exception('Kid not found');
-            }
-
-            // Update CoinKids balance to 2 (as per your current logic)
-            transaction.update(kidRef, {'coinKidsBalance': 2});
+          // Update CoinKids balance if this is the first goal
+          if (isFirstGoal && kidDoc != null) {
+            transaction.update(kidDoc.reference, {'coinKidsBalance': 2});
           }
         });
       },
@@ -78,7 +82,8 @@ class GoalService extends BaseService {
       final appState = Get.find<AppStateController>();
 
       // Create goal from product
-      final goal = GoalModel.fromProduct(appState.currentKid.value!.kidId, product);
+      final goal =
+          GoalModel.fromProduct(appState.currentKid.value!.kidId, product);
 
       // Create the goal document
       final docRef = await _firestore.collection('goals').add(goal.toJson());
@@ -94,7 +99,8 @@ class GoalService extends BaseService {
   // Fetch goal by ID
   Future<GoalModel?> fetchGoalById(String goalId) async {
     try {
-      final DocumentSnapshot doc = await _firestore.collection(collection).doc(goalId).get();
+      final DocumentSnapshot doc =
+          await _firestore.collection(collection).doc(goalId).get();
 
       if (!doc.exists) {
         return null;
@@ -109,9 +115,16 @@ class GoalService extends BaseService {
   // Fetch all goals for a user
   Future<List<GoalModel>> fetchUserGoals(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore.collection(collection).where('userId', isEqualTo: userId).orderBy('createdAt', descending: true).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .get();
 
-      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch user goals: ${e.toString()}');
     }
@@ -120,7 +133,10 @@ class GoalService extends BaseService {
   // Update goal
   Future<void> updateGoal(GoalModel goal) async {
     try {
-      await _firestore.collection(collection).doc(goal.id).update(goal.toJson());
+      await _firestore
+          .collection(collection)
+          .doc(goal.id)
+          .update(goal.toJson());
     } catch (e) {
       throw Exception('Failed to update goal: ${e.toString()}');
     }
@@ -134,7 +150,8 @@ class GoalService extends BaseService {
 
       final updatedGoal = goal.copyWith(
         savedAmount: newAmount,
-        status: newAmount >= goal.targetAmount ? GoalStatus.completed : goal.status,
+        status:
+            newAmount >= goal.targetAmount ? GoalStatus.completed : goal.status,
         completedAt: newAmount >= goal.targetAmount ? DateTime.now() : null,
       );
 
@@ -159,11 +176,15 @@ class GoalService extends BaseService {
       final QuerySnapshot snapshot = await _firestore
           .collection(collection)
           .where('userId', isEqualTo: userId)
-          .where('status', isEqualTo: GoalStatus.completed.toString().split('.').last)
+          .where('status',
+              isEqualTo: GoalStatus.completed.toString().split('.').last)
           .orderBy('completedAt', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch completed goals: ${e.toString()}');
     }
@@ -175,21 +196,28 @@ class GoalService extends BaseService {
       final QuerySnapshot snapshot = await _firestore
           .collection(collection)
           .where('userId', isEqualTo: userId)
-          .where('status', isEqualTo: GoalStatus.inProgress.toString().split('.').last)
+          .where('status',
+              isEqualTo: GoalStatus.inProgress.toString().split('.').last)
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => GoalModel.fromJson(doc.data() as Map<String, dynamic>,
+              id: doc.id))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch in-progress goals: ${e.toString()}');
     }
   }
 
   // Fetch achievable goals
-  Future<List<GoalModel>> fetchAchievableGoals(String userId, double balance) async {
+  Future<List<GoalModel>> fetchAchievableGoals(
+      String userId, double balance) async {
     try {
       final goals = await fetchInProgressGoals(userId);
-      return goals.where((goal) => goal.isAchievableWithBalance(balance)).toList();
+      return goals
+          .where((goal) => goal.isAchievableWithBalance(balance))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch achievable goals: ${e.toString()}');
     }
@@ -202,6 +230,19 @@ class GoalService extends BaseService {
       await updateGoal(updatedGoal);
     } catch (e) {
       throw Exception('Failed to cancel goal: ${e.toString()}');
+    }
+  }
+
+  // Approve goal
+  Future<void> approveGoal(GoalModel goal) async {
+    try {
+      final updatedGoal = goal.copyWith(
+        status: GoalStatus.approved,
+        completedAt: DateTime.now(),
+      );
+      await updateGoal(updatedGoal);
+    } catch (e) {
+      throw Exception('Failed to approve goal: ${e.toString()}');
     }
   }
 
@@ -220,19 +261,23 @@ class GoalService extends BaseService {
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => GoalModel.fromJson(doc.data(), id: doc.id)).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => GoalModel.fromJson(doc.data(), id: doc.id))
+            .toList());
 
     return stream;
   }
 
-  Future<void> updateGoalProgressWithRewards(String goalId, double newAmount) async {
+  Future<void> updateGoalProgressWithRewards(
+      String goalId, double newAmount) async {
     try {
       // Use a Firestore transaction to ensure all operations succeed or fail together
       await _firestore.runTransaction((transaction) async {
         // STEP 1: PERFORM ALL READS FIRST
 
         // Read the goal document
-        final goalDoc = await transaction.get(_firestore.collection(collection).doc(goalId));
+        final goalDoc = await transaction
+            .get(_firestore.collection(collection).doc(goalId));
         if (!goalDoc.exists) {
           throw Exception('Goal not found');
         }
@@ -274,7 +319,8 @@ class GoalService extends BaseService {
         } else if (oldPercentage < 100 && newPercentage >= 100) {
           coinKidsToAward = 5;
           notificationTitle = "Goal Achieved!";
-          notificationBody = "Congratulations! You've completed your goal: ${goal.title}";
+          notificationBody =
+              "Congratulations! You've completed your goal: ${goal.title}";
           milestonePercentage = 100.0;
           notificationType = NotificationType.goalCompleted;
         }
@@ -282,7 +328,8 @@ class GoalService extends BaseService {
         // Read kid document if needed
         DocumentSnapshot? kidDoc;
         if (coinKidsToAward > 0) {
-          kidDoc = await transaction.get(_firestore.collection('kids').doc(goal.userId));
+          kidDoc = await transaction
+              .get(_firestore.collection('kids').doc(goal.userId));
           if (!kidDoc.exists) {
             Get.log("Kid document not found for userId: ${goal.userId}");
             throw Exception('Kid not found for userId: ${goal.userId}');
@@ -304,11 +351,13 @@ class GoalService extends BaseService {
           // Update the goal with new amount
           final updatedGoal = goal.copyWith(
             savedAmount: newAmount,
-            status: newAmount >= targetAmount ? GoalStatus.completed : goal.status,
+            status:
+                newAmount >= targetAmount ? GoalStatus.completed : goal.status,
             completedAt: newAmount >= targetAmount ? DateTime.now() : null,
           );
 
-          transaction.update(_firestore.collection(collection).doc(goalId), updatedGoal.toJson());
+          transaction.update(_firestore.collection(collection).doc(goalId),
+              updatedGoal.toJson());
 
           // If a milestone was reached, update CoinKids balance and create notification
           if (coinKidsToAward > 0) {
@@ -316,10 +365,14 @@ class GoalService extends BaseService {
             final currentCoinKids = kid.coinKidsBalance;
             final newCoinKids = currentCoinKids + coinKidsToAward;
 
-            transaction.update(_firestore.collection('kids').doc(goal.userId), {'coinKidsBalance': newCoinKids});
+            transaction.update(_firestore.collection('kids').doc(goal.userId),
+                {'coinKidsBalance': newCoinKids});
 
             // Create notification
-            if (notificationTitle != null && notificationBody != null && milestonePercentage != null && notificationType != null) {
+            if (notificationTitle != null &&
+                notificationBody != null &&
+                milestonePercentage != null &&
+                notificationType != null) {
               final metadata = milestonePercentage == 100.0
                   ? GoalCompletedMetadata(
                       goalId: goalId,
@@ -347,7 +400,8 @@ class GoalService extends BaseService {
                 metadata: metadata,
               );
 
-              final notificationRef = _firestore.collection('notifications').doc();
+              final notificationRef =
+                  _firestore.collection('notifications').doc();
               transaction.set(notificationRef, notificationData.toJson());
             }
           }
@@ -355,15 +409,18 @@ class GoalService extends BaseService {
           // If no kidDoc is needed (no rewards), just update the goal
           final updatedGoal = goal.copyWith(
             savedAmount: newAmount,
-            status: newAmount >= targetAmount ? GoalStatus.completed : goal.status,
+            status:
+                newAmount >= targetAmount ? GoalStatus.completed : goal.status,
             completedAt: newAmount >= targetAmount ? DateTime.now() : null,
           );
 
-          transaction.update(_firestore.collection(collection).doc(goalId), updatedGoal.toJson());
+          transaction.update(_firestore.collection(collection).doc(goalId),
+              updatedGoal.toJson());
         }
       });
 
-      Get.log("Goal progress updated successfully with rewards and notifications");
+      Get.log(
+          "Goal progress updated successfully with rewards and notifications");
     } catch (e) {
       Get.log("Error updating goal progress with rewards: $e");
       throw Exception('Failed to update goal progress: $e');

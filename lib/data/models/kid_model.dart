@@ -12,7 +12,7 @@ class WalletJar {
   factory WalletJar.fromJson(Map<String, dynamic> json) {
     return WalletJar(
       balance: (json['balance'] ?? 0.0).toDouble(),
-      color: json['color'],
+      color: json['color'] ?? 0,
     );
   }
 
