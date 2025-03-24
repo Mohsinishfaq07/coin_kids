@@ -5,16 +5,13 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 
 import 'firebase_options.dart';
-
-class ShowcaseManager {
-  static final GlobalKey parentToKidNavShowcaseKey = GlobalKey();
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,20 +21,27 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Disable App Check for development
   await FirebaseAppCheck.instance.activate(
     webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.debug,
+    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttestWithDeviceCheckFallback,
   );
 
   SharedPreferencesHelper.init();
 
-  runApp(
-    DevicePreview(
-      enabled: false,
-      builder: (context) => MyApp(), // Wrap your app
-    ),
-  );
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]).then((_) {
+    runApp(
+      DevicePreview(
+        enabled: false,
+        builder: (context) => MyApp(), // Wrap your app
+      ),
+    );
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -52,17 +56,6 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       locale: DevicePreview.locale(context),
       builder: (context, child) {
-        // First wrap with ResponsiveWrapper
-        child = ResponsiveBreakpoints.builder(
-          breakpoints: [
-            const Breakpoint(start: 0, end: 450, name: MOBILE),
-            const Breakpoint(start: 451, end: 800, name: TABLET),
-            const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-            const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-          ],
-          child: child!,
-        );
-
         // Then apply DevicePreview
         final devicePreviewChild = DevicePreview.appBuilder(context, child);
 

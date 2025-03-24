@@ -6,7 +6,7 @@ class ToastUtil {
   static void showToast(String message, {Color? color}) {
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: color ?? AppColors.colorPrimary,
       textColor: Colors.white,
@@ -18,7 +18,7 @@ class ToastUtil {
     final error = message.toString().substring(11);
     Fluttertoast.showToast(
       msg: error,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: AppColors.notificationCritical,
       textColor: Colors.white,

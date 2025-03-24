@@ -57,8 +57,8 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
       onTap: onBackPressed ?? () => Get.back(),
       baseColor: AppColors.btnColorOrange,
       iconPath: Assets.icBack,
-      size: 40,
-      iconSize: 20,
+      size: 40.r,
+      iconSize: 20.r,
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class GoalCard extends StatelessWidget {
@@ -44,7 +45,7 @@ class GoalCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-                  color: AppColors.iconDisabled.withValues(alpha: 0.2),
+                  color: AppColors.iconDisabled.withValues(alpha: 0.1),
                 ),
                 child: goal.photo != null && goal.photo!.isNotEmpty
                     ? ClipRRect(
@@ -55,8 +56,11 @@ class GoalCard extends StatelessWidget {
                         ),
                       )
                     : Center(
-                        child: Image.asset(
-                          Assets.phProducts,
+                        child: Padding(
+                          padding: REdgeInsets.all(8),
+                          child: SvgPicture.asset(
+                            Assets.phGoalImage,
+                          ),
                         ),
                       ),
               ),

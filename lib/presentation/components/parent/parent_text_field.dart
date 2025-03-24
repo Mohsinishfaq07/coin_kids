@@ -143,7 +143,7 @@ class ParentTextField extends StatelessWidget {
                 onTap: onSuffixTap,
                 child: SvgPicture.asset(
                   suffixSvgPath!,
-                  color: suffixIconColor ?? Colors.grey,
+                  colorFilter: ColorFilter.mode(suffixIconColor ?? Colors.grey, BlendMode.srcIn),
                   width: 24.sp,
                 ),
               ),

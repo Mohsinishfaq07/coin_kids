@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_market_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,32 +42,34 @@ class AgeRangeDialog extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.all(16.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Select Age Range',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Select Age Range',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            ...AgeRange.values.map(
-              (range) => RadioListTile<AgeRange>(
-                title: Text(getAgeRangeText(range)),
-                value: range,
-                groupValue: selectedRange,
-                onChanged: (value) {
-                  if (value != null) {
-                    onSelect(value);
-                    Get.back();
-                  }
-                },
-                activeColor: AppColors.colorPrimary,
+              SizedBox(height: 16.h),
+              ...AgeRange.values.map(
+                (range) => RadioListTile<AgeRange>(
+                  title: Text(getAgeRangeText(range)),
+                  value: range,
+                  groupValue: selectedRange,
+                  onChanged: (value) {
+                    if (value != null) {
+                      onSelect(value);
+                      Get.back();
+                    }
+                  },
+                  activeColor: AppColors.colorPrimary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -119,10 +122,7 @@ class _RangeFilterDialogState extends State<RangeFilterDialog> {
           children: [
             Text(
               widget.title,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyle.bodyMedium,
             ),
             SizedBox(height: 24.h),
             RangeSlider(
@@ -148,7 +148,10 @@ class _RangeFilterDialogState extends State<RangeFilterDialog> {
               children: [
                 TextButton(
                   onPressed: () => Get.back(),
-                  child: Text('Cancel'),
+                  child: Text(
+                    'Cancel',
+                    style: AppTextStyle.bodyMedium.copyWith(color: Colors.white),
+                  ),
                 ),
                 SizedBox(width: 8.w),
                 ElevatedButton(
@@ -159,7 +162,10 @@ class _RangeFilterDialogState extends State<RangeFilterDialog> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.colorPrimary,
                   ),
-                  child: Text('Apply'),
+                  child: Text(
+                    'Apply',
+                    style: AppTextStyle.bodyMedium.copyWith(color: Colors.white),
+                  ),
                 ),
               ],
             ),

@@ -29,24 +29,21 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
   @override
   Widget build(BuildContext context) {
+
+    Get.log("UI_TAG Parent Base");
+
     return OrientationAwareBuilder(
       builder: (context, orientation) {
         return OrientationTransition(
           toPortrait: true,
           showInstruction: Get.arguments ?? false == true,
-          child: orientation == Orientation.portrait ? _buildParentUI(context, Get.width) : _buildParentUI(context, 360.0),
+          child: orientation == Orientation.portrait ? _buildParentUI(context) : _buildEmptyLandscapeUI(context),
         );
       },
     );
   }
 
-  Widget _buildParentUI(BuildContext context, screenWidth) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.currentIndex.value != 0) {
-        controller.currentIndex.value = 0;
-      }
-    });
-
+  Widget _buildEmptyLandscapeUI(BuildContext context) {
     return PopScope(
       canPop: false, // Block default back behavior
       onPopInvokedWithResult: (didPop, result) async {
@@ -55,70 +52,108 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
           if (shouldExit) Get.back();
         }
       },
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: screenWidth),
-        child: Scaffold(
-          body: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: screenWidth),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: AppColors.background,
-              ),
-              child: Obx(
-                () => controller.screens[controller.currentIndex.value],
-              ),
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  Assets.icRotatePortrait,
+                  width: 100.w,
+                  height: 100.w,
+                ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Text(
+                    'Please rotate your device to portrait mode',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
           ),
-          bottomNavigationBar: SafeArea(
-            child: ShowCaseWidget(
-                onComplete: (index, key) {},
-                builder: (context) {
-                  _startShowcase(context);
+        ),
+      ),
+    );
+  }
 
-                  return Obx(() {
-                    return Visibility(
-                      visible: controller.appState.hasKid.value,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 15,
-                              offset: Offset(0, -2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildNavItem(
-                              iconPath: Assets.icHome,
-                              label: 'Home',
-                              index: 0,
-                            ),
-                            _buildNavItem(
-                              iconPath: Assets.icMessage,
-                              label: 'Messages',
-                              index: 1,
-                            ),
-                            _buildNavItem(
-                              iconPath: Assets.icCart,
-                              label: 'Shop',
-                              index: 2,
-                            ),
-                            _buildNavItem(
-                              iconPath: Assets.icCoinStar,
-                              label: 'Kids Zone',
-                              index: 3,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  });
-                }),
+  Widget _buildParentUI(BuildContext context) {
+    return PopScope(
+      canPop: false, // Block default back behavior
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          bool shouldExit = await showExitConfirmation(context);
+          if (shouldExit) Get.back();
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
           ),
+          child: Obx(
+            () => controller.screens[controller.currentIndex.value],
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: ShowCaseWidget(
+              onComplete: (index, key) {},
+              builder: (context) {
+                _startShowcase(context);
+
+                return Obx(() {
+                  return Visibility(
+                    visible: controller.appState.hasKid.value,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 15,
+                            offset: Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildNavItem(
+                            iconPath: Assets.icHome,
+                            label: 'Home',
+                            index: 0,
+                          ),
+                          _buildNavItem(
+                            iconPath: Assets.icMessage,
+                            label: 'Messages',
+                            index: 1,
+                          ),
+                          _buildNavItem(
+                            iconPath: Assets.icCart,
+                            label: 'Shop',
+                            index: 2,
+                          ),
+                          _buildNavItem(
+                            iconPath: Assets.icCoinStar,
+                            label: 'Kids Zone',
+                            index: 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                });
+              }),
         ),
       ),
     );

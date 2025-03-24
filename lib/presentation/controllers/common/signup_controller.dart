@@ -1,5 +1,4 @@
 import 'package:coin_kids/core/constants/enums.dart';
-import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
@@ -18,12 +17,6 @@ class SignupController extends GetxController {
   final showPassword = true.obs;
 
   final isLoading = false.obs;
-
-  @override
-  void onInit() {
-    OrientationUtils.lockToPortrait();
-    super.onInit();
-  }
 
   Future<void> signUpWithEmail() async {
     try {

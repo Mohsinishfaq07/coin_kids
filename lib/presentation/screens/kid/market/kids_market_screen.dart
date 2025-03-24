@@ -3,8 +3,9 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/product_detail_dialog.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
-import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,7 +23,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
         final double screenWidth = constraints.maxWidth;
         final int crossAxisCount = _calculateCrossAxisCount(screenWidth);
         final double cardWidth = (screenWidth - (crossAxisCount + 1) * 8.w) / crossAxisCount;
-        final double cardHeight = cardWidth * 1.35;
+        final double cardHeight = cardWidth * 1.40;
 
         return SizedBox(
           width: constraints.maxWidth,
@@ -34,10 +35,9 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                 child: Column(
                   children: [
                     SizedBox(height: 4.h),
-                    // Search and Filter Section with Animation
                     Obx(() => AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          height: controller.showFilters.value ? 24.h : 0,
+                          height: controller.showFilters.value ? 36.r : 0,
                           child: SingleChildScrollView(
                             physics: const NeverScrollableScrollPhysics(),
                             child: Row(
@@ -59,7 +59,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                         selectedValue: controller.isAgeFilterActive.value ? controller.getAgeRangeText(controller.selectedAgeRange.value) : null,
                                         isSelected: controller.isAgeFilterActive.value,
                                         iconPath: Assets.icCalender,
-                                        onTap: () => _showAgeRangeDialog(),
+                                        onTap: _showAgeRangeDialog,
                                       ),
                                       SizedBox(width: 8.w),
                                       MarketFilterChip(
@@ -153,10 +153,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                           child: GridView.builder(
                             controller: controller.scrollController,
                             physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.only(
-                              top: 4.h,
-                              bottom: 12.h,
-                            ),
+                            padding: EdgeInsets.only(top: 4.h, bottom: 12.h, right: 30.r),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: crossAxisCount,
                               crossAxisSpacing: 8.w,
@@ -199,7 +196,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                   onTap: () => Get.toNamed(Routes.kidWishlist),
                   child: Container(
                     clipBehavior: Clip.hardEdge,
-                    width: 26.h,
+                    width: 36.r,
                     decoration: BoxDecoration(
                       color: AppColors.textPrimary,
                       borderRadius: BorderRadius.only(
@@ -231,32 +228,34 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Obx(() {
-                              final count = controller.wishlistItemCount.value;
-                              if (count > 0) {
-                                return Container(
-                                  margin: EdgeInsets.only(left: 8.w),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w,
-                                    vertical: 2.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: Text(
-                                    count.toString(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                      fontFamily: 'Open Sans',
-                                      fontWeight: FontWeight.w600,
+                            Obx(
+                              () {
+                                final count = controller.wishlistItemCount.value;
+                                if (count > 0) {
+                                  return Container(
+                                    margin: EdgeInsets.only(left: 8.w),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 2.h,
                                     ),
-                                  ),
-                                );
-                              }
-                              return SizedBox.shrink();
-                            }),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Text(
+                                      count.toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return SizedBox.shrink();
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -272,44 +271,38 @@ class KidsMarketScreen extends GetView<KidMarketController> {
   }
 
   void _showAgeRangeDialog() {
-    Get.dialog(
-      AgeRangeDialog(
-        selectedRange: controller.selectedAgeRange.value,
-        onSelect: controller.setAgeRange,
-      ),
+    AgeFilterDialog.show(
+      selectedRange: controller.selectedAgeRange.value,
+      onSelect: controller.setAgeRange,
     );
   }
 
   void _showBudgetDialog() {
-    Get.dialog(
-      RangeFilterDialog(
-        title: 'Select Budget Range',
-        minValue: controller.minBudget.value,
-        maxValue: controller.maxBudget.value,
-        currentMin: controller.selectedMinBudget.value,
-        currentMax: controller.selectedMaxBudget.value,
-        onSelect: controller.setBudgetRange,
-        labelFormat: (value) => '€${value.toStringAsFixed(0)}',
-      ),
+    RangeSliderDialog.show(
+      title: 'Select Budget Range',
+      minValue: controller.minBudget.value,
+      maxValue: controller.maxBudget.value,
+      currentMin: controller.selectedMinBudget.value,
+      currentMax: controller.selectedMaxBudget.value,
+      onSelect: controller.setBudgetRange,
+      labelFormat: (value) => '€${value.toStringAsFixed(0)}',
     );
   }
 
   void _showRatingDialog() {
-    Get.dialog(
-      RangeFilterDialog(
-        title: 'Select Rating Range',
-        minValue: controller.minRating.value,
-        maxValue: controller.maxRating.value,
-        currentMin: controller.selectedMinRating.value,
-        currentMax: controller.selectedMaxRating.value,
-        onSelect: controller.setRatingRange,
-        labelFormat: (value) => value.toStringAsFixed(1),
-      ),
+    RangeSliderDialog.show(
+      title: 'Select Rating Range',
+      minValue: controller.minRating.value,
+      maxValue: controller.maxRating.value,
+      currentMin: controller.selectedMinRating.value,
+      currentMax: controller.selectedMaxRating.value,
+      onSelect: controller.setRatingRange,
+      labelFormat: (value) => value.toStringAsFixed(1),
     );
   }
 
   int _calculateCrossAxisCount(double screenWidth) {
-    final double targetCardWidth = 180.w;
+    final double targetCardWidth = 180.r;
     int count = (screenWidth / targetCardWidth).floor();
     return count.clamp(2, 4);
   }

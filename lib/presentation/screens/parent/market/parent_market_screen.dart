@@ -3,10 +3,11 @@ import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
-import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_market_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -189,40 +190,62 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
   }
 
   void _showAgeRangeDialog(ParentMarketController controller) {
-    Get.dialog(
-      AgeRangeDialog(
-        selectedRange: controller.selectedAgeRange.value,
-        onSelect: controller.setAgeRange,
-      ),
+    AgeFilterDialog.show(
+      selectedRange: controller.selectedAgeRange.value,
+      onSelect: controller.setAgeRange,
     );
+    // Get.dialog(
+    //   AgeRangeDialog(
+    //     selectedRange: controller.selectedAgeRange.value,
+    //     onSelect: controller.setAgeRange,
+    //   ),
+    // );
   }
 
   void _showBudgetDialog(ParentMarketController controller) {
-    Get.dialog(
-      RangeFilterDialog(
-        title: 'Select Budget Range',
-        minValue: controller.minBudget.value,
-        maxValue: controller.maxBudget.value,
-        currentMin: controller.selectedMinBudget.value,
-        currentMax: controller.selectedMaxBudget.value,
-        onSelect: controller.setBudgetRange,
-        labelFormat: (value) => '€${value.toStringAsFixed(0)}',
-      ),
+    RangeSliderDialog.show(
+      title: 'Select Budget Range',
+      minValue: controller.minBudget.value,
+      maxValue: controller.maxBudget.value,
+      currentMin: controller.selectedMinBudget.value,
+      currentMax: controller.selectedMaxBudget.value,
+      onSelect: controller.setBudgetRange,
+      labelFormat: (value) => '€${value.toStringAsFixed(0)}',
     );
+    // Get.dialog(
+    //   RangeFilterDialog(
+    //     title: 'Select Budget Range',
+    //     minValue: controller.minBudget.value,
+    //     maxValue: controller.maxBudget.value,
+    //     currentMin: controller.selectedMinBudget.value,
+    //     currentMax: controller.selectedMaxBudget.value,
+    //     onSelect: controller.setBudgetRange,
+    //     labelFormat: (value) => '€${value.toStringAsFixed(0)}',
+    //   ),
+    // );
   }
 
   void _showRatingDialog(ParentMarketController controller) {
-    Get.dialog(
-      RangeFilterDialog(
-        title: 'Select Rating Range',
-        minValue: controller.minRating.value,
-        maxValue: controller.maxRating.value,
-        currentMin: controller.selectedMinRating.value,
-        currentMax: controller.selectedMaxRating.value,
-        onSelect: controller.setRatingRange,
-        labelFormat: (value) => value.toStringAsFixed(1),
-      ),
+    RangeSliderDialog.show(
+      title: 'Select Rating Range',
+      minValue: controller.minRating.value,
+      maxValue: controller.maxRating.value,
+      currentMin: controller.selectedMinRating.value,
+      currentMax: controller.selectedMaxRating.value,
+      onSelect: controller.setRatingRange,
+      labelFormat: (value) => value.toStringAsFixed(1),
     );
+    // Get.dialog(
+    //   RangeFilterDialog(
+    //     title: 'Select Rating Range',
+    //     minValue: controller.minRating.value,
+    //     maxValue: controller.maxRating.value,
+    //     currentMin: controller.selectedMinRating.value,
+    //     currentMax: controller.selectedMaxRating.value,
+    //     onSelect: controller.setRatingRange,
+    //     labelFormat: (value) => value.toStringAsFixed(1),
+    //   ),
+    // );
   }
 
   Widget _buildProductCard(MarketProductModel product) {

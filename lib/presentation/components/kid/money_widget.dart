@@ -38,8 +38,8 @@ class MoneyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final containerHeight = 19.h;
-    final defaultIconSize = 36.r;
+    final containerHeight = 30.r;
+    final defaultIconSize = 28.r;
     final addButtonSize = 24.r;
 
     Widget moneyCard = SizedBox(
@@ -117,13 +117,13 @@ class MoneyWidget extends StatelessWidget {
                       color: const Color(0xff000000).withValues(alpha: 0.7),
                     ),
                     child: Center(
-                      child: SvgPicture.asset(Assets.icLock),
+                      child: Image.asset(Assets.icBtnLock),
                     ),
                   ),
                 if (rightIconPath != null)
                   Positioned(
                     right: -(iconSize ?? defaultIconSize) / 2,
-                    top: 0.h,
+                    top: (containerHeight / 2) - ((iconSize ?? defaultIconSize) / 2),
                     child: SvgPicture.asset(
                       rightIconPath!,
                       height: iconSize ?? defaultIconSize,

@@ -23,24 +23,17 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
       TimelineItem(
         date: goal.completedAt.toString(),
         title: "Congratulations!",
-        subtitle: "You completed PlayStation 5",
+        subtitle: "You completed your Goal",
         photo: Assets.icBadge,
         imageType: ImageType.asset,
         isCompleted: true,
       ),
       TimelineItem(
         date: "08/04",
-        title: "Need Moms review",
-        subtitle: "let's mom order it for you",
+        title: "Parents Review",
+        subtitle: "Let you parent buy it for you",
         photo: controller.appState.currentParent.value?.imageUrl ?? "",
         imageType: ImageType.network,
-      ),
-      TimelineItem(
-        date: "10/04",
-        title: "Expected delivery",
-        subtitle: "Yohoo! you will get is soon",
-        photo: Assets.icFlagGreen,
-        imageType: ImageType.asset,
       ),
     ];
 

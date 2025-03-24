@@ -23,24 +23,25 @@ class KidAvatarContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = 44.0;
+    final containerHeight = 30.r;
+    final iconSize = 30.r;
     return SizedBox(
-      height: 22.h,
+      height: containerHeight + 10.r,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: EdgeInsets.only(left: iconSize / 2),
+              padding: EdgeInsets.only(left: iconSize / 2 + 12.r),
               child: Container(
-                height: 20.h,
+                height: containerHeight,
                 alignment: Alignment.centerRight,
                 decoration: BoxDecoration(
                   color: AppColors.textPrimary,
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(14.r),
-                    bottomRight: Radius.circular(14.r),
+                    topRight: Radius.circular(10.r),
+                    bottomRight: Radius.circular(10.r),
                   ),
                   border: Border.all(color: const Color(0xff0095e5), width: 2.w),
                 ),
@@ -61,13 +62,13 @@ class KidAvatarContainer extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: SizedBox(
-              height: iconSize,
-              width: iconSize,
+              height: containerHeight + 10.r,
+              width: containerHeight + 10.r,
               child: CircleAvatarWidget(
                 imagePath: avatarUrl,
                 imageType: ImageType.network,
-                placeholderAsset: Assets.icPerson,
-                errorAsset: Assets.icPerson,
+                placeholderAsset: Assets.icAvatarPlaceholder,
+                errorAsset: Assets.icAvatarPlaceholder,
               ),
             ),
           ),

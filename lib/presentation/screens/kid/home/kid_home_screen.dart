@@ -75,7 +75,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             child: JarWidget(
                               jarState: JarState.nullJar,
                               jarName: "+ Add Money",
-                              height: 0.4.sh,
+                              height: 0.45.sh,
                               onTap: () {
                                 controller.startJarCreation(Jars.spendingJar);
                                 Get.toNamed(Routes.kidJarColorSelection);
@@ -100,7 +100,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               showAmount: true,
                               amount: spendingJar.balance,
                               jarColor: Color(spendingJar.color),
-                              height: 0.3.sh,
+                              height: 0.45.sh,
                               onTap: () {
                                 if (spendingJar.balance <= 0) {
                                   return;
@@ -135,7 +135,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 JarWidget(
                                   jarState: JarState.nullJar,
                                   jarName: "+ Add Savings",
-                                  height: 0.3.sh,
+                                  height: 0.45.sh,
                                   onTap: () {
                                     controller.startJarCreation(Jars.savingJar);
                                     Get.toNamed(Routes.kidJarColorSelection);
@@ -152,7 +152,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                   jarName: "Saving",
                                   jarColor: Color(savingJar.color),
                                   amount: savingJar.balance,
-                                  height: 0.3.sh,
+                                  height: 0.45.sh,
                                   onTap: () {
                                     if (savingJar.balance <= 0) {
                                       return;
@@ -179,6 +179,41 @@ class KidHomeScreen extends GetView<KidBaseController> {
                         child: GestureDetector(
                           onTap: () {
                             controller.switchToParentMode();
+                            // final currentPin = controller.appState.currentParent.value?.pin;
+                            // final isFirstTime = currentPin == null;
+                            //
+                            //
+                            // ParentPinDialog.show(
+                            //   isFirstTime: isFirstTime,
+                            //   onPinSubmit: (pin) {
+                            //     if (isFirstTime) {
+                            //       // For first time, validate birth year
+                            //       final birthYear = int.tryParse(pin);
+                            //       if (birthYear != null && DateTime.now().year - birthYear >= 25) {
+                            //         //TODO: Upload pin to parent
+                            //         // controller.appState.currentParent.value?.pin = pin;
+                            //         controller.switchToParentMode();
+                            //       } else {
+                            //         Fluttertoast.showToast(
+                            //           msg: "Invalid birth year",
+                            //           backgroundColor: Colors.red,
+                            //           textColor: Colors.white,
+                            //         );
+                            //       }
+                            //     } else {
+                            //       // For subsequent times, check against saved PIN
+                            //       if (pin == currentPin) {
+                            //         controller.switchToParentMode();
+                            //       } else {
+                            //         Fluttertoast.showToast(
+                            //           msg: "Incorrect PIN",
+                            //           backgroundColor: Colors.red,
+                            //           textColor: Colors.white,
+                            //         );
+                            //       }
+                            //     }
+                            //   },
+                            // );
                           },
                           child: ParentZoneWidget(),
                         ),

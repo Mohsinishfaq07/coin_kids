@@ -36,7 +36,7 @@ Widget buildGoalsEmptyState(VoidCallback onTap) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Image.asset(Assets.phGoals, height: 100.h),
+      Image.asset(Assets.phGoalImage, height: 100.h),
       SizedBox(height: 16.h),
       Text(
         'No Goals yet',

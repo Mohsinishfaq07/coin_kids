@@ -10,6 +10,7 @@ import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_w
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart' show GoalTimelineWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class GoalDetailsScreen extends GetView<KidGoalsController> {
@@ -26,6 +27,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: KidAppBarComponent(
         onBackPressed: () {
           controller.appBar.resetToDefault();
@@ -95,15 +97,18 @@ class GoalCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 2.h),
-          Text(
-            goal.title,
-            style: AppTextStyle.headingLarge.copyWith(
-              fontWeight: FontWeight.w800,
-              color: AppColors.colorPrimary,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              goal.title,
+              style: AppTextStyle.headingMedium.copyWith(
+                fontWeight: FontWeight.w800,
+                color: AppColors.colorPrimary,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
           // Image Container
           Expanded(
@@ -121,9 +126,13 @@ class GoalCard extends StatelessWidget {
                       ),
                     )
                   : Center(
-                      child: Image.asset(
-                        Assets.phProducts,
-                      ),
+                      child: Assets.phGoalImage2.endsWith("svg")
+                          ? SvgPicture.asset(
+                              Assets.phGoalImage2,
+                            )
+                          : Image.asset(
+                              Assets.phGoalImage2,
+                            ),
                     ),
             ),
           ),

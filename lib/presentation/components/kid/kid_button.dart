@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class KidButton extends StatelessWidget {
   final VoidCallback onTap;
   final String? text;
   final Color baseColor;
+  final Color? iconColor;
   final String? iconPath;
   final IconPosition iconPosition;
   final double? width;
@@ -40,12 +42,14 @@ class KidButton extends StatelessWidget {
     this.textStyle,
     this.belowTextStyle,
     this.maxWidth = 300,
+    this.iconColor,
   });
 
   // Factory constructor for icon-only button
   factory KidButton.iconOnly({
     required VoidCallback onTap,
     required Color baseColor,
+    Color? iconColor,
     required String iconPath,
     double size = 50,
     bool showShadowOverlay = true,
@@ -58,6 +62,7 @@ class KidButton extends StatelessWidget {
       iconPosition: IconPosition.center,
       width: size,
       height: size,
+      iconColor: iconColor,
       showShadowOverlay: showShadowOverlay,
       iconSize: iconSize ?? (size * 0.5),
     );
@@ -67,6 +72,7 @@ class KidButton extends StatelessWidget {
   factory KidButton.iconWithTitle({
     required VoidCallback onTap,
     required Color baseColor,
+    Color? iconColor,
     required String iconPath,
     required String title,
     double size = 60,
@@ -84,6 +90,7 @@ class KidButton extends StatelessWidget {
       iconPosition: IconPosition.center,
       width: size,
       height: size,
+      iconColor: iconColor,
       showShadowOverlay: showShadowOverlay,
       iconSize: iconSize ?? (size * 0.5),
       showTitleBelow: true,
@@ -224,42 +231,60 @@ class KidButton extends StatelessWidget {
     return MainAxisAlignment.center;
   }
 
+  Widget _buildText(bool shouldEllipsize, TextStyle textStyle) {
+    if (width != null) {
+      return Flexible(
+        child: AutoSizeText(
+          text!,
+          style: textStyle,
+          maxLines: 1,
+          textAlign: TextAlign.center,
+          minFontSize: 10,
+          maxFontSize: fontSize?.toDouble() ?? 22,
+          stepGranularity: 0.5,
+          overflow: TextOverflow.ellipsis,
+        ),
+      );
+    }
+
+    return Expanded(
+      child: Text(
+        text!,
+        style: textStyle,
+        overflow: shouldEllipsize ? TextOverflow.ellipsis : TextOverflow.visible,
+        softWrap: !shouldEllipsize,
+        maxLines: 1,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   List<Widget> _buildContent(bool isIconOnly, double containerWidth) {
     if (isIconOnly && iconPath != null) {
       return [_buildIcon(isIconOnly)];
     }
 
     final List<Widget> widgets = [];
+    final mTextStyle = textStyle ??
+        AppTextStyle.headingMedium.copyWith(
+          color: Colors.white,
+          fontSize: fontSize ?? 22,
+        );
+
+    final double spacing = 4.w;
 
     if (iconPath != null && (iconPosition == IconPosition.left || iconPosition == IconPosition.center)) {
-      widgets.add(
-        _buildIcon(isIconOnly),
-      );
+      widgets.add(_buildIcon(isIconOnly));
+      widgets.add(SizedBox(width: spacing));
     }
 
     if (text != null) {
-      final bool shouldEllipsize = width != null || (maxWidth != null && containerWidth >= maxWidth!);
-
-      widgets.add(SizedBox(width: 4.w,));
-      widgets.add(
-        Expanded(
-          child: Text(
-            text!,
-            style: textStyle ??
-                AppTextStyle.headingMedium.copyWith(
-                  color: Colors.white,
-                  fontSize: fontSize ?? 22,
-                ),
-            overflow: shouldEllipsize ? TextOverflow.ellipsis : TextOverflow.visible,
-            softWrap: !shouldEllipsize,
-            maxLines: 1,
-          ),
-        ),
-      );
-      widgets.add(SizedBox(width: 4.w,));
+      final bool shouldEllipsize = maxWidth != null && containerWidth >= maxWidth!;
+      widgets.add(_buildText(shouldEllipsize, mTextStyle));
     }
 
     if (iconPath != null && iconPosition == IconPosition.right) {
+      widgets.add(SizedBox(width: spacing));
       widgets.add(_buildIcon(isIconOnly));
     }
 
@@ -286,7 +311,7 @@ class KidButton extends StatelessWidget {
         iconPath!,
         fit: BoxFit.cover,
         height: iconHeight,
-        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        colorFilter: iconColor == null ? null : ColorFilter.mode(iconColor!, BlendMode.srcIn),
       ),
     );
   }

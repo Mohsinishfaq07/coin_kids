@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -28,6 +29,9 @@ class DragAndDropMoneyController extends GetxController {
   // Toggle between bills and coins
   final isShowingBills = true.obs;
 
+  final Rx<Offset> jarOffset = Offset(0, 0).obs;
+  final Rx<Offset> moneyOffset = Offset(0, 0).obs;
+
   // Current amount being added
   final totalValue = 0.0.obs;
 
@@ -42,10 +46,18 @@ class DragAndDropMoneyController extends GetxController {
   late final String sourceJarId;
   late final String targetJarId;
 
+  // Add these variables
+  final isFirstTime = true.obs;
+  final isTutorialPlaying = false.obs;
+  AnimationController? tutorialAnimationController;
+  Animation<Offset>? dragAnimation;
+
   @override
   void onInit() {
     super.onInit();
     _initializeMode();
+    // Check if it's first time from SharedPreferences
+    checkFirstTime();
   }
 
   @override
@@ -124,7 +136,7 @@ class DragAndDropMoneyController extends GetxController {
       Get.back();
       ToastUtil.showToast("Great job counting! 🎉");
     } else {
-      ToastUtil.showToast("Keep Counting! $remainingAmount is left");
+      ToastUtil.showToast("Keep Counting! ${remainingAmount.toMoneyFormat()} is left");
     }
   }
 
@@ -341,5 +353,24 @@ class DragAndDropMoneyController extends GetxController {
       case DragAndDropMode.transferMoney:
         return "Transfer";
     }
+  }
+
+  Future<void> checkFirstTime() async {
+    isFirstTime.value = SharedPreferencesHelper.getBool('drag_drop_tutorial_shown') ?? true;
+    if (isFirstTime.value) {
+      // Small delay to ensure screen is built
+      await Future.delayed(const Duration(milliseconds: 500));
+      showTutorial();
+    }
+  }
+
+  void showTutorial() {
+    isTutorialPlaying.value = true;
+  }
+
+  void endTutorial() async {
+    isTutorialPlaying.value = false;
+    await SharedPreferencesHelper.saveBool('drag_drop_tutorial_shown', false);
+    isFirstTime.value = false;
   }
 }

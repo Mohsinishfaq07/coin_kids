@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class GoalProgressWidget extends GetView<KidGoalsController> {
   const GoalProgressWidget(this.goal, {super.key});
@@ -29,7 +31,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10.h),
+          SizedBox(height: 50.h),
           Center(
             child: Text(
               'Goal Progress',
@@ -48,125 +50,85 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 onTap: () => controller.decrementProgress(goal),
               ),
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    double sliderWidth = constraints.maxWidth - 12.w; // Adjust for padding
-
-                    return Stack(clipBehavior: Clip.none, children: [
-                      Obx(() {
-                        return Positioned(
-                          bottom: 2.h,
-                          left: (controller.progressValue.value / 100) * sliderWidth, // Move indicator to thumb position
-                          child: GestureDetector(
-                            onTap: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text("Enter Value"),
-                                  content: TextField(
-                                    controller: controller.textController,
-                                    keyboardType: TextInputType.number,
-                                    onSubmitted: (val) {
-                                      controller.progressValue.value = double.tryParse(val) ?? 0.0;
-                                      controller.textController.text = '';
-                                      Get.back();
-                                    },
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        controller.progressValue.value = double.tryParse(controller.textController.text) ?? 0.0;
-                                        controller.textController.text = '';
-                                        Get.back();
-                                      },
-                                      child: Text("OK"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                      child: Text("Cancel"),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w),
-                              decoration: BoxDecoration(
-                                  color: AppColors.buttonSecondary,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(50.r),
-                                  ),
-                                  border: Border.all(color: AppColors.btnColorOrange, width: 2)),
-                              child: Text(controller.progressValue.value.toMoneyFormat()),
-                            ),
-                          ),
-                        );
-                      }),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildProgressFlag(Assets.icGoalYellow),
-                                _buildProgressFlag(Assets.icFlagBlue),
-                                _buildProgressFlag(Assets.icFlagGreen),
-                              ],
-                            ),
-                          ),
-                          Obx(() {
-                            return SliderTheme(
-                              data: SliderThemeData(
-                                trackHeight: 10.h,
-                                activeTrackColor: AppColors.colorPrimary,
-                                inactiveTrackColor: AppColors.colorPrimary.withValues(alpha: 0.2),
-                                thumbColor: AppColors.btnColorOrange,
-                                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 12.w),
+                child: Column(
+                  children: [
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       _buildProgressFlag(Assets.icGoalYellow),
+                    //       _buildProgressFlag(Assets.icFlagBlue),
+                    //       _buildProgressFlag(Assets.icFlagGreen),
+                    //     ],
+                    //   ),
+                    // ),
+                    Obx(
+                      () {
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            SfSliderTheme(
+                              data: SfSliderThemeData(
+                                activeTrackHeight: 15.h,
+                                inactiveTrackHeight: 15.h,
+                                trackCornerRadius: 50.r,
+                                activeTrackColor: AppColors.btnColorOrange,
+                                inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
+                                thumbColor: Colors.transparent,
+                                thumbRadius: 15.r,
                               ),
-                              child: Slider(
+                              child: SfSlider(
                                 value: controller.progressValue.value,
                                 min: 0,
                                 max: goal.targetAmount,
+                                interval: goal.targetAmount / 4,
+                                stepSize: controller.progressStep,
+                                showDividers: true,
+                                shouldAlwaysShowTooltip: true,
+                                tooltipTextFormatterCallback: (_, text) {
+                                  return double.parse(text).toMoneyFormat();
+                                },
+                                labelFormatterCallback: (_, text) {
+                                  return double.parse(text).toMoneyFormat();
+                                },
                                 onChanged: (value) => controller.updateProgress(value),
+                                showLabels: true,
+                                showTicks: true,
+                                enableTooltip: true,
+                                thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
                               ),
-                            );
-                          }),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(height: 15.h),
-                                // Container(
-                                //   padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                //   child: Text("€0"),
-                                //   decoration: BoxDecoration(
-                                //       color: AppColors.buttonSecondary,
-                                //       borderRadius: BorderRadius.all(
-                                //         Radius.circular(50.r),
-                                //       ),
-                                //       border: Border.all(color: AppColors.btnColorOrange, width: 2)),
-                                // ),
-                                // Container(
-                                //   padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                //   decoration: BoxDecoration(
-                                //       color: AppColors.buttonSecondary,
-                                //       borderRadius: BorderRadius.all(
-                                //         Radius.circular(50.r),
-                                //       ),
-                                //       border: Border.all(color: AppColors.btnColorOrange, width: 2)),
-                                //   child: Text(goal.targetAmount.toMoneyFormat()),
-                                // ),
-                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ]);
-                  },
+                            Positioned(
+                              left: 18.w,
+                              right: 0,
+                              top: -8.h,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    SvgPicture.asset(
+                                      Assets.icGoalYellow,
+                                      width: 24.w,
+                                    ),
+                                    SvgPicture.asset(
+                                      Assets.icFlagBlue,
+                                      width: 24.w,
+                                    ),
+                                    SvgPicture.asset(
+                                      Assets.icFlagGreen,
+                                      width: 24.w,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
               KidButton.iconOnly(
@@ -226,13 +188,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
     );
   }
 
-  Widget _buildProgressFlag(assetImage) {
-    return SvgPicture.asset(
-      assetImage,
-      width: 28,
-    );
-  }
-
   void _showDeleteDialog(BuildContext context) {
     KidDialog.show(
       dismissible: true,
@@ -254,7 +209,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
           text: "Yes",
           onTap: () async {
             await controller.deleteGoal(goal.id!);
-            Get.until((route) => route.settings.name == Routes.kidBase);
           },
           baseColor: AppColors.btnColorGreen,
           iconPath: Assets.icTick,

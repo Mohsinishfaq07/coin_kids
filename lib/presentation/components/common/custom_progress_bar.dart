@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,8 +22,8 @@ class CustomProgressBar extends StatelessWidget {
     required this.currentValue,
     required this.totalValue,
     this.height = 12,
-    this.dotIndicatorPath = 'assets/dot_indicator.svg',
-    this.flagIconPath = 'assets/flag.svg',
+    this.dotIndicatorPath = Assets.icCoinEuro,
+    this.flagIconPath = Assets.icGoalYellow,
   });
 
   @override

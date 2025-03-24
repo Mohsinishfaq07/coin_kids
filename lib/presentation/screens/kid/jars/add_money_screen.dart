@@ -20,6 +20,26 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      resizeToAvoidBottomInset: true,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          right: 24.w,
+          bottom: 24.w,
+          left: 24.w,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            KidButton(
+              onTap: () => controller.handleNextButton(mode),
+              baseColor: AppColors.btnColorGreen,
+              text: "Next",
+              iconPath: Assets.icTick,
+              iconPosition: IconPosition.left,
+            ),
+          ],
+        ),
+      ),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -30,37 +50,38 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 16.h),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16.h),
+              Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: KidButton.iconOnly(
                   onTap: () => Get.back(),
                   baseColor: AppColors.btnColorOrange,
                   iconPath: Assets.icBack,
-                  size: 40,
-                  iconSize: 20,
+                  size: 40.r,
+                  iconSize: 20.r,
                 ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              _getScreenTitle(),
-              style: AppTextStyle.headingLarge,
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  SizedBox(width: 178.w),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 32.w),
+              SizedBox(height: 16.h),
+              Center(
+                child: Text(
+                  _getScreenTitle(),
+                  style: AppTextStyle.headingLarge,
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: 40.h,
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        width: 0.5.sw,
                         child: KidTextField(
                           keyboardType: TextInputType.number,
                           hintText: "e.g 10.50",
@@ -71,20 +92,10 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: KidButton(
-                      onTap: () => controller.handleNextButton(mode),
-                      baseColor: AppColors.btnColorGreen,
-                      text: "Next",
-                      iconPath: Assets.icTick,
-                      iconPosition: IconPosition.left,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

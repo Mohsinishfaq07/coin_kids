@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -65,9 +66,63 @@ class JarWidget extends StatelessWidget {
     return color ?? _parseColor(colorHex);
   }
 
+  // Helper method to ensure font size is multiple of step granularity
+  double _adjustFontSize(double fontSize, double stepGranularity) {
+    return (fontSize / stepGranularity).floor() * stepGranularity;
+  }
+
+  Widget _buildAmountText(String text, TextStyle baseStyle, double containerWidth, double containerHeight) {
+    // Calculate if text would fit at minimum size
+    final textSpan = TextSpan(
+      text: text,
+      style: baseStyle.copyWith(fontSize: 8), // Check with minimum font size
+    );
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout(maxWidth: containerWidth);
+
+    // If text is too long even at minimum size, use marquee
+    if (textPainter.width > containerWidth) {
+      return SizedBox(
+        height: containerHeight,
+        width: containerWidth,
+        child: Marquee(
+          text: text,
+          style: baseStyle.copyWith(fontSize: 8),
+          scrollAxis: Axis.horizontal,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          blankSpace: 20.0,
+          velocity: 30.0,
+          startPadding: 10.0,
+          accelerationDuration: const Duration(seconds: 1),
+          accelerationCurve: Curves.linear,
+          decelerationDuration: const Duration(milliseconds: 500),
+          decelerationCurve: Curves.easeOut,
+        ),
+      );
+    }
+
+    // Otherwise use AutoSizeText
+    return Center(
+      child: AutoSizeText(
+        text,
+        style: baseStyle,
+        maxLines: 1,
+        minFontSize: 8,
+        maxFontSize: _adjustFontSize(baseStyle.fontSize ?? 14, 0.5),
+        stepGranularity: 0.5,
+        overflow: TextOverflow.visible,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = height * 0.8;
+
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
@@ -101,7 +156,7 @@ class JarWidget extends StatelessWidget {
                 ),
               ),
 
-            // Amount Display with fixed width and marquee
+            // Amount Display with auto-sizing text and marquee
             if (showAmount && amount != null)
               Positioned(
                 bottom: 0,
@@ -128,43 +183,16 @@ class JarWidget extends StatelessWidget {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final text = '${amount?.toMoneyFormat(showSymbol: true)}';
-                      final textStyle = AppTextStyle.bodyMedium.copyWith(
+                      final baseStyle = AppTextStyle.bodyMedium.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w800,
                       );
 
-                      // Check if text would overflow
-                      final textPainter = TextPainter(
-                        text: TextSpan(text: text, style: textStyle),
-                        maxLines: 1,
-                        textDirection: TextDirection.ltr,
-                      )..layout(maxWidth: double.infinity);
-
-                      final wouldOverflow = textPainter.width > constraints.maxWidth;
-
-                      return SizedBox(
-                        height: moneyTextBoxSize.toDouble(),
-                        width: constraints.maxWidth,
-                        child: wouldOverflow
-                            ? Marquee(
-                                text: text,
-                                style: textStyle,
-                                scrollAxis: Axis.horizontal,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                blankSpace: 20,
-                                velocity: 30.0,
-                                accelerationDuration: const Duration(seconds: 1),
-                                accelerationCurve: Curves.linear,
-                                decelerationDuration: const Duration(milliseconds: 500),
-                                decelerationCurve: Curves.easeOut,
-                              )
-                            : Text(
-                                text,
-                                style: textStyle,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                      return _buildAmountText(
+                        text,
+                        baseStyle,
+                        constraints.maxWidth,
+                        moneyTextBoxSize.toDouble(),
                       );
                     },
                   ),
@@ -178,25 +206,32 @@ class JarWidget extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Tag background
                     SvgPicture.asset(
                       Assets.jarTag,
                       width: tagWidth ?? width * 0.9,
                     ),
 
-                    // Jar name text
+                    // Jar name text with auto-sizing and marquee
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        jarName,
-                        style: textStyle ??
-                            AppTextStyle.bodyMedium.copyWith(
-                              color: textColor ?? AppColors.textPrimary,
-                              fontWeight: FontWeight.w800,
-                            ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: SizedBox(
+                        width: (tagWidth ?? width * 0.9) - 16,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final baseStyle = textStyle ??
+                                AppTextStyle.bodyMedium.copyWith(
+                                  color: textColor ?? AppColors.textPrimary,
+                                  fontWeight: FontWeight.w800,
+                                );
+
+                            return _buildAmountText(
+                              jarName,
+                              baseStyle,
+                              constraints.maxWidth,
+                              24, // Height for jar name text
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

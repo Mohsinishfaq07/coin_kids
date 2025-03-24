@@ -13,6 +13,7 @@ class ParentZoneWidget extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomRight,
       child: Container(
+        padding: REdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.textOnPrimary,
           borderRadius: BorderRadius.only(
@@ -20,27 +21,24 @@ class ParentZoneWidget extends StatelessWidget {
             topRight: Radius.circular(80.r),
           ),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(2.h),
-                child: SvgPicture.asset(
-                  Assets.icParentZone,
-                  height: 30.h,
-                ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              Assets.icParentZone,
+              width: 40.r,
+              height: 40.r,
+            ),
+            Text(
+              "Parent\nZone",
+              textAlign: TextAlign.center,
+              style: AppTextStyle.labelSmall.copyWith(
+                color: AppColors.kidZoneParent,
+                fontWeight: MyFontWeight.extraBold.fontWeight,
               ),
-              Text(
-                "Parent\nZone",
-                textAlign: TextAlign.center,
-                style: AppTextStyle.labelSmall.copyWith(
-                  color: AppColors.kidZoneParent,
-                  fontWeight: MyFontWeight.extraBold.fontWeight,
-                ),
-              ),
-              SizedBox(height: 4.h),
-            ],
-          ),
+            ),
+            SizedBox(height: 4.h),
+          ],
         ),
       ),
     );

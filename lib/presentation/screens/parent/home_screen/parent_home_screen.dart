@@ -93,7 +93,6 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                           ),
                         ),
                         Container(
-                          height: 177.h,
                           width: 328.w,
                           decoration: ShapeDecoration(
                             color: AppColors.cardPrimary,
@@ -218,7 +217,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                           return CircleAvatarWidget(
                                             imagePath: controller.appState.currentKid.value?.avatar ?? "",
                                             imageType: ImageType.network,
-                                            errorAsset: Assets.icPerson,
+                                            errorAsset: Assets.icAvatarPlaceholder,
                                             size: 50.r,
                                           );
                                         }),

@@ -52,7 +52,7 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
                         showAmount: true,
                         amount: spendingJar.balance,
                         jarColor: Color(spendingJar.color),
-                        height: 180,
+                        height: 0.45.sh,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 40.w),
@@ -85,7 +85,7 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
                         showAmount: true,
                         amount: savingJar.balance,
                         jarColor: Color(savingJar.color),
-                        height: 180,
+                        height: 0.45.sh,
                       ),
                     ],
                   ),
@@ -106,7 +106,7 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
       onTap: onTap,
       child: Image.asset(
         imagePath,
-        width: 130.w,
+        height: 0.15.sh,
       ),
     );
   }

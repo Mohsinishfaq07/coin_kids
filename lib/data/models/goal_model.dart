@@ -3,10 +3,11 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 
 import 'market_product_model.dart';
 
-enum GoalStatus { inProgress, completed, cancelled, pending, deleted }
+enum GoalStatus { inProgress, completed, rejected, approved }
 
 class GoalModel {
   final String? id;
+  final String? productUrl;
   final String userId;
   final String title;
   final String? photo;
@@ -18,6 +19,7 @@ class GoalModel {
 
   GoalModel({
     this.id,
+    this.productUrl,
     required this.userId,
     required this.title,
     required this.photo,
@@ -31,6 +33,7 @@ class GoalModel {
   factory GoalModel.fromJson(Map<String, dynamic> json, {String? id}) {
     return GoalModel(
       id: id,
+      productUrl: json['productUrl'],
       userId: json['userId'] ?? '',
       title: json['title'] ?? '',
       photo: json['photo'] ?? '',
@@ -45,6 +48,7 @@ class GoalModel {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
+      'productUrl': productUrl,
       'title': title,
       'photo': photo,
       'targetAmount': targetAmount,
@@ -57,6 +61,7 @@ class GoalModel {
 
   GoalModel copyWith({
     String? id,
+    String? productId,
     String? userId,
     String? title,
     double? targetAmount,
@@ -68,6 +73,7 @@ class GoalModel {
   }) {
     return GoalModel(
       id: id ?? this.id,
+      productUrl: productId ?? productUrl,
       userId: userId ?? this.userId,
       title: title ?? this.title,
       photo: photo ?? this.photo,
@@ -86,8 +92,8 @@ class GoalModel {
         return GoalStatus.inProgress;
       case 'completed':
         return GoalStatus.completed;
-      case 'cancelled':
-        return GoalStatus.cancelled;
+      case 'rejected':
+        return GoalStatus.rejected;
       default:
         return GoalStatus.inProgress;
     }
@@ -118,6 +124,7 @@ class GoalModel {
   factory GoalModel.fromProduct(String kidId, MarketProductModel product) {
     return GoalModel(
       userId: kidId,
+      productUrl: product.url,
       title: product.name,
       photo: product.imageUrl,
       targetAmount: product.price,

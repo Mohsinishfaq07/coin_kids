@@ -58,6 +58,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
                     baseColor: AppColors.iconDisabled,
                     iconSize: 22.w,
                     size: 50.w,
+                    iconColor: Colors.white,
                     belowTextStyle: AppTextStyle.bodyMedium,
                   ),
                   KidButton.iconWithTitle(

@@ -68,6 +68,7 @@ class KidMarketController extends GetxController {
     ever(appBarController.searchQuery, (query) {
       updateSearch(query);
     });
+
     fetchProducts();
     _initializeWishlist();
     _setupWishlistListener();
@@ -83,8 +84,8 @@ class KidMarketController extends GetxController {
   }
 
   void updateSearch(String query) {
-    appBarController.updateSearchQuery(query);
-    searchQuery.value = query;
+    searchQuery.value = query.trim();
+    applyFilters(); // Apply filters immediately when search changes
   }
 
   void setFilter(FilterType type) {
@@ -101,6 +102,7 @@ class KidMarketController extends GetxController {
       isAgeFilterActive.value = true;
     }
     selectedAgeRange.value = range;
+    applyFilters();
   }
 
   void setBudgetRange(double min, double max) {
@@ -133,6 +135,8 @@ class KidMarketController extends GetxController {
     isBudgetFilterActive.value = false;
     isRatingFilterActive.value = false;
     activeFilter.value = FilterType.all;
+    searchQuery.value = '';
+    applyFilters();
   }
 
   String getAgeRangeText(AgeRange range) {
@@ -140,17 +144,17 @@ class KidMarketController extends GetxController {
       case AgeRange.all:
         return 'All Ages';
       case AgeRange.zeroToTwo:
-        return '0-2';
+        return '0-2 years';
       case AgeRange.threeToFive:
-        return '3-5';
+        return '3-5 years';
       case AgeRange.sixToNine:
-        return '6-9';
+        return '6-9 years';
       case AgeRange.tenToTwelve:
-        return '10-12';
+        return '10-12 years';
       case AgeRange.thirteenToSixteen:
-        return '13-16';
+        return '13-16 years';
       case AgeRange.sixteenPlus:
-        return '16+';
+        return '16+ years';
     }
   }
 
@@ -199,10 +203,16 @@ class KidMarketController extends GetxController {
   }
 
   void applyFilters() {
+    if (_allProducts.isEmpty) return;
+
     var filtered = _allProducts.where((product) {
       // Apply search filter
-      if (searchQuery.isNotEmpty && !product.name.toLowerCase().contains(searchQuery.value.toLowerCase())) {
-        return false;
+      if (searchQuery.value.isNotEmpty) {
+        final query = searchQuery.value.toLowerCase();
+        final name = product.name.toLowerCase();
+        if (!name.contains(query)) {
+          return false;
+        }
       }
 
       // Apply age filter if active
@@ -354,13 +364,16 @@ class KidMarketController extends GetxController {
   }
 
   void _setupListeners() {
+    // Listen to all filter changes and apply filters
     ever(searchQuery, (_) => applyFilters());
-    ever(activeFilter, (_) => applyFilters());
     ever(selectedAgeRange, (_) => applyFilters());
     ever(selectedMinBudget, (_) => applyFilters());
     ever(selectedMaxBudget, (_) => applyFilters());
     ever(selectedMinRating, (_) => applyFilters());
     ever(selectedMaxRating, (_) => applyFilters());
+    ever(isAgeFilterActive, (_) => applyFilters());
+    ever(isBudgetFilterActive, (_) => applyFilters());
+    ever(isRatingFilterActive, (_) => applyFilters());
   }
 
   void _setupWishlistListener() {

@@ -73,10 +73,13 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(
-                          Assets.icCamera,
-                          height: 40.h,
-                          width: 40.h,
+                        GestureDetector(
+                          onTap: controller.pickImageFromCamera,
+                          child: SvgPicture.asset(
+                            Assets.icCamera,
+                            height: 64.r,
+                            width: 64.r,
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         KidButton(

@@ -14,14 +14,38 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class AddGoalImageScreen extends GetView<KidGoalsController> {
-  const AddGoalImageScreen({
-    super.key,
-  });
+  const AddGoalImageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      extendBody: true,
+      resizeToAvoidBottomInset: true,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          right: 24.w,
+          bottom: 24.w,
+          left: 24.w,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Obx(() {
+              return KidButton(
+                onTap: () async {
+                  controller.screenMode.value = GoalSummaryScreenMode.create;
+                  Get.toNamed(Routes.kidGoalSummary);
+                },
+                baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? AppColors.btnColorGreen : AppColors.btnColorOrange,
+                text: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? 'Next' : 'Skip',
+                iconPath: Assets.icNext,
+                iconPosition: IconPosition.right,
+              );
+            }),
+          ],
+        ),
+      ),
       appBar: KidAppBarComponent(
         onBackPressed: () {
           Get.back();
@@ -32,108 +56,87 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(
+            image: AssetImage(Assets.kidBg),
+            fit: BoxFit.cover,
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 30.h),
-            Text(
-              'Add a Image for you Goal📸',
-              style: AppTextStyle.headingLarge,
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 152.w,
-                  ),
-                  Obx(
-                    () {
-                      return Container(
-                        width: 0.4.sw,
-                        height: 0.6.sh,
-                        decoration: BoxDecoration(
-                          color: AppColors.iconOnPrimary,
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    Assets.icCamera,
-                                    height: 40.h,
-                                    width: 40.h,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  KidButton(
-                                    onTap: () async {
-                                      await controller.pickFromGallery();
-                                    },
-                                    baseColor: AppColors.btnColorOrange,
-                                    text: 'Add Photo',
-                                    iconPath: Assets.icAdd,
-                                    iconPosition: IconPosition.left,
-                                  ),
-                                ],
-                              )
-                            : Stack(
-                                children: [
-                                  Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      child: Image.file(
-                                        File(controller.newGoal.value.photo!),
-                                        fit: BoxFit.contain,
-                                        height: 0.5.sh,
-                                        width: double.infinity,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 0,
-                                    child: KidButton.iconOnly(
-                                      onTap: () {
-                                        controller.removePhoto();
-                                      },
-                                      baseColor: AppColors.btnColorOrange,
-                                      iconPath: Assets.icCross,
-                                      size: 30.w,
-                                      iconSize: 16.w,
-                                    ),
-                                  )
-                                ],
-                              ),
-                      );
-                    },
-                  ),
-                  Obx(
-                    () {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 24.w, bottom: 6.h),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: KidButton(
-                            onTap: () async {
-                              controller.screenMode.value = GoalSummaryScreenMode.create;
-                              Get.toNamed(Routes.kidGoalSummary);
-                            },
-                            baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? AppColors.btnColorGreen : AppColors.btnColorOrange,
-                            text: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? 'Next' : 'Skip',
-                            iconPath: Assets.icNext,
-                            iconPosition: IconPosition.right,
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: ScreenUtil().statusBarHeight + 60.h),
+              Center(
+                child: Text(
+                  'Add a Image for you Goal📸',
+                  style: AppTextStyle.headingLarge,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 30.h),
+              Obx(
+                () => Container(
+                  constraints: BoxConstraints(maxWidth: 0.6.sw),
+                  padding: REdgeInsets.symmetric(vertical: 24, horizontal: 48),
+                  decoration: BoxDecoration(
+                    color: AppColors.iconOnPrimary,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: controller.pickImageFromCamera,
+                              child: SvgPicture.asset(
+                                Assets.icCamera,
+                                height: 64.r,
+                                width: 64.r,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            KidButton(
+                              onTap: () async {
+                                await controller.pickFromGallery();
+                              },
+                              baseColor: AppColors.btnColorOrange,
+                              text: 'Add Photo',
+                              iconPath: Assets.icAdd,
+                              iconPosition: IconPosition.left,
+                            ),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            Center(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20.r),
+                                child: Image.file(
+                                  File(controller.newGoal.value.photo!),
+                                  fit: BoxFit.cover,
+                                  height: 0.5.sh,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              child: KidButton.iconOnly(
+                                onTap: () {
+                                  controller.removePhoto();
+                                },
+                                baseColor: AppColors.btnColorOrange,
+                                iconPath: Assets.icCross,
+                                size: 30.w,
+                                iconSize: 16.w,
+                              ),
+                            )
+                          ],
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

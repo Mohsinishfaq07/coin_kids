@@ -21,7 +21,34 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
     });
 
     return Scaffold(
+      extendBody: true,
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: true,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          right: 24.w,
+          bottom: 24.w,
+          left: 24.w,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            KidButton(
+              iconPosition: IconPosition.right,
+              iconPath: Assets.icNext,
+              onTap: () async {
+                if (controller.newGoal.value.title.isEmpty) {
+                  ToastUtil.showToast('Goal Name Could Not be empty');
+                } else {
+                  Get.toNamed(Routes.kidAddGoalAmount);
+                }
+              },
+              text: 'Next',
+              baseColor: AppColors.btnColorGreen,
+            ),
+          ],
+        ),
+      ),
       appBar: KidAppBarComponent(
         onBackPressed: () {
           Get.back();
@@ -32,52 +59,35 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(
+            image: AssetImage(Assets.kidBg),
+            fit: BoxFit.cover,
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(height: 40.h),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 40.h),
+                Center(
+                  child: Text(
                     'What are you saving for 🎯',
                     style: AppTextStyle.headingLarge,
                   ),
-                  SizedBox(height: 20.h),
-                  KidTextField(
-                    keyboardType: TextInputType.name,
-                    hintText: "e.g Electric Bike ",
-                    onChange: (val) {
-                      controller.setTitle(val.trim());
-                      Get.log("TITLE IS${controller.newGoal.value.title}");
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 32.w, bottom: 12.h),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: KidButton(
-                  iconPosition: IconPosition.right,
-                  iconPath: Assets.icNext,
-                  onTap: () async {
-                    if (controller.newGoal.value.title.isEmpty) {
-                      ToastUtil.showToast('Goal Name Could Not be empty');
-                    } else {
-                      Get.toNamed(Routes.kidAddGoalAmount);
-                    }
-                  },
-                  text: 'Next',
-                  baseColor: AppColors.btnColorGreen,
                 ),
-              ),
+                SizedBox(height: 30.h),
+                KidTextField(
+                  keyboardType: TextInputType.name,
+                  hintText: "e.g Electric Bike ",
+                  onChange: (val) {
+                    controller.setTitle(val.trim());
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

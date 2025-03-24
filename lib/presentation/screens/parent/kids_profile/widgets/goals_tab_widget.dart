@@ -1,3 +1,4 @@
+import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/goal_list_item.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
@@ -17,17 +18,20 @@ class GoalsTabWidget extends GetView<KidProfileController> {
           }
 
           if (controller.goals.isEmpty) {
-            return buildGoalsEmptyState(() {});
+            return buildGoalsEmptyState(() {
+              controller.fetchGoals();
+            });
           }
 
           return ListView.builder(
             itemCount: controller.goals.length,
             itemBuilder: (context, index) {
               var goalData = controller.goals[index];
-
               return GoalListItem(
                 goal: goalData,
                 onTap: () {},
+                onReject: goalData.status == GoalStatus.completed ? () => controller.handleRejectGoal(goalData) : null,
+                onBuy: goalData.status == GoalStatus.completed ? () => controller.handleBuyGoal(goalData) : null,
               );
             },
           );

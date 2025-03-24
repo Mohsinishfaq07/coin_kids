@@ -53,9 +53,7 @@ class KidDialog extends StatelessWidget {
               bottom: contentPadding.bottom / 1.5,
             ),
             decoration: BoxDecoration(
-              color: backgroundColor ?? AppColors.colorPrimary,
-              borderRadius: BorderRadius.circular(24.r),
-            ),
+                color: backgroundColor ?? AppColors.colorPrimary, borderRadius: BorderRadius.circular(24.r), image: DecorationImage(image: AssetImage(Assets.kidDialogBgPng), fit: BoxFit.fill)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

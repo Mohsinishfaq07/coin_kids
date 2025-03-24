@@ -1,20 +1,11 @@
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/utils/orientation_utils.dart';
 
 class RoleController extends GetxController {
-  Rx<Orientation> currentOrientation = Orientation.portrait.obs;
-
-  void updateOrientation(Orientation newOrientation) {
-    if (currentOrientation.value != newOrientation) {
-      currentOrientation.value = newOrientation;
-    }
-  }
-
   // Add a debounce mechanism
   DateTime? _lastSwitchTime;
   final _debounceTime = Duration(seconds: 5); // Prevent multiple calls within 2 seconds
@@ -35,7 +26,6 @@ class RoleController extends GetxController {
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.parent.name);
 
     OrientationUtils.lockToPortrait();
-    updateOrientation(Orientation.portrait);
 
     if (!(Get.currentRoute == Routes.parentBase)) {
       Get.offAllNamed(Routes.parentBase, arguments: shouldShowInstruction);
@@ -51,8 +41,7 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
-    // OrientationUtils.lockToLandscape();
-    updateOrientation(Orientation.landscape);
+    OrientationUtils.lockToLandscape();
     if (!(Get.currentRoute == Routes.kidBase)) {
       Get.offAllNamed(Routes.kidBase, arguments: shouldShowInstruction);
     }
@@ -67,8 +56,7 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
-    // OrientationUtils.lockToLandscape();
-    updateOrientation(Orientation.landscape);
+    OrientationUtils.lockToLandscape();
     if (!(Get.currentRoute == Routes.kidOnboarding)) {
       Get.offAllNamed(Routes.kidOnboarding, arguments: shouldShowInstruction);
     }

@@ -15,8 +15,6 @@ class SplashController extends GetxController {
   void onInit() {
     _checkLoginStatus();
 
-    // OrientationUtils.lockToPortrait();
-
     super.onInit();
   }
 

@@ -19,6 +19,33 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      extendBody: true,
+      resizeToAvoidBottomInset: true,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          right: 24.w,
+          bottom: 24.w,
+          left: 24.w,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            KidButton(
+              onTap: () {
+                if (controller.newGoal.value.targetAmount == 0.0) {
+                  ToastUtil.showToast('Goal Amount Could Not be empty');
+                } else {
+                  Get.toNamed(Routes.kidAddGoalImage);
+                }
+              },
+              baseColor: AppColors.btnColorGreen,
+              text: "Next",
+              iconPath: Assets.icNext,
+              iconPosition: IconPosition.right,
+            ),
+          ],
+        ),
+      ),
       appBar: KidAppBarComponent(
         onBackPressed: () {
           Get.back();
@@ -30,57 +57,35 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
         decoration: BoxDecoration(
           gradient: AppColors.background,
           image: const DecorationImage(
-              image: AssetImage(
-                Assets.kidBg,
-              ),
-              fit: BoxFit.cover),
+            image: AssetImage(Assets.kidBg),
+            fit: BoxFit.cover,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(height: 40.h),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 40.h),
+                Center(
+                  child: Text(
                     'How much does it cost 💸',
                     style: AppTextStyle.headingLarge,
                   ),
-                  SizedBox(height: 20.h),
-                  KidTextField(
-                    hintText: 0.toMoneyFormat(),
-                    onChange: (value) {
-                      double? parsedValue = double.tryParse(value);
-
-                      controller.setAmount(parsedValue ?? 0.0);
-                    },
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 32.w, bottom: 12.h),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: KidButton(
-                  onTap: () {
-                    if (controller.newGoal.value.targetAmount == 0.0) {
-                      ToastUtil.showToast('Goal Amount Could Not be empty');
-                    } else {
-                      Get.toNamed(Routes.kidAddGoalImage);
-                    }
-                  },
-                  baseColor: AppColors.btnColorGreen,
-                  text: "Next",
-                  iconPath: Assets.icNext,
-                  iconPosition: IconPosition.right,
                 ),
-              ),
-            )
-          ],
+                SizedBox(height: 30.h),
+                KidTextField(
+                  hintText: 0.toMoneyFormat(),
+                  onChange: (value) {
+                    double? parsedValue = double.tryParse(value);
+                    controller.setAmount(parsedValue ?? 0.0);
+                  },
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

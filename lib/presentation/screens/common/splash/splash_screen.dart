@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/splash_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,10 @@ class SplashScreen extends GetView<SplashController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      OrientationUtils.lockToPortrait();
+    });
+
     controller.onInit();
 
     return Scaffold(

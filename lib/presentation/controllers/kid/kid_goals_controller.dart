@@ -6,7 +6,6 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
-import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -75,7 +74,7 @@ class KidGoalsController extends GetxController {
   final RxString goalId = ''.obs;
 
   final RxDouble progressValue = 0.0.obs;
-  final double progressStep = 0.25;
+  final double progressStep = 0.01;
 
   @override
   void onClose() {
@@ -116,6 +115,8 @@ class KidGoalsController extends GetxController {
   }
 
   Future<void> pickFromGallery() async {
+    if (isPickingImage.value) return; // Prevent multiple calls
+    isPickingImage.value = true;
     try {
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
@@ -130,6 +131,8 @@ class KidGoalsController extends GetxController {
       }
     } catch (e) {
       ToastUtil.showToast("Failed to pick and save image: $e");
+    } finally {
+      isPickingImage.value = false;
     }
   }
 
@@ -140,7 +143,10 @@ class KidGoalsController extends GetxController {
     try {
       final pickedImage = await picker.pickImage(source: ImageSource.camera);
       if (pickedImage != null) {
-        newGoal.value.copyWith(photo: pickedImage.path);
+        Get.log("Path is: ${pickedImage.path}");
+        setPhoto(pickedImage.path);
+      } else {
+        ToastUtil.showToast("No Image Selected");
       }
     } catch (e) {
       Get.log("Error picking image: $e");
@@ -150,12 +156,15 @@ class KidGoalsController extends GetxController {
   }
 
   Future<void> deleteGoal(String goalId) async {
+    showLoadingDialog("Deleting Goal ...");
     try {
-      await _goalService.deleteGoal(goalId);
-      Get.back();
+      await _goalService.deleteGoal(goalId).timeout(Duration(seconds: 15), onTimeout: () {
+        throw Exception("Request Timeout");
+      });
     } catch (e) {
       Get.log('Error deleting goal: $e');
-      Get.back();
+    } finally {
+      Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
 
@@ -164,7 +173,7 @@ class KidGoalsController extends GetxController {
 
     _goalsSubscription = _goalService.streamUserGoals(kidId).listen(
       (goalsList) {
-        goals.value = goalsList.where((goal) => goal.status != GoalStatus.deleted).toList();
+        goals.value = goalsList.toList();
         isLoading.value = false;
       },
       onError: (error) {
@@ -178,14 +187,13 @@ class KidGoalsController extends GetxController {
     showLoadingDialog("Creating Goal ...");
 
     try {
+      final isFirstGoal = appState.currentKid.value!.coinKidsBalance == -1;
       final goal = newGoal.value.copyWith(userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
-      await _goalService.createGoal(goal);
 
-      if (appState.currentKid.value!.coinKidsBalance == -1) {
-        final kidService = Get.find<KidService>();
-        await kidService.updateCoinKidsBalance(appState.currentKid.value!.kidId, 0);
+      // Pass isFirstGoal flag to createGoal
+      await _goalService.createGoal(goal, isFirstGoal);
 
-        //Usage
+      if (isFirstGoal) {
         KidDialog.show(
           emoji: Assets.icCoinStar,
           title: 'WoW',
@@ -214,16 +222,14 @@ class KidGoalsController extends GetxController {
         );
 
         resetNewGoal();
-
         return;
       }
 
       resetNewGoal();
-
       Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
       ToastUtil.showExceptionToast(e);
-      Get.back();
+      Get.until((route) => route.settings.name == Routes.kidBase);
       Get.log(e.toString(), isError: true);
     }
   }
@@ -281,7 +287,9 @@ class KidGoalsController extends GetxController {
       }
 
       // Use the transaction method to update progress with rewards
-      await _goalService.updateGoalProgressWithRewards(goalId, newAmount);
+      await _goalService.updateGoalProgressWithRewards(goalId, newAmount).timeout(Duration(seconds: 15), onTimeout: () {
+        throw Exception("Request Timeout");
+      });
 
       Get.back();
 
@@ -298,10 +306,13 @@ class KidGoalsController extends GetxController {
         } else if (percentage >= 25 && (goal.savedAmount / goal.targetAmount) * 100 < 25) {
           _showMilestoneDialog("Great Job!", "You just reach your first milestone", 2, Assets.icClap);
         }
+      } else {
+        Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       Get.log('Error saving progress: $e');
       ToastUtil.showExceptionToast(e);
+      Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
 
@@ -350,7 +361,7 @@ class KidGoalsController extends GetxController {
         KidButton(
           text: 'Continue',
           onTap: () {
-            Get.back();
+            Get.until((route) => route.settings.name == Routes.kidBase);
           },
           baseColor: AppColors.btnColorGreen,
         ),

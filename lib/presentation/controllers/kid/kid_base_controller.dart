@@ -41,12 +41,6 @@ class KidBaseController extends GetxController {
     _initializeKid();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    fetchAllNotifications();
-  }
-
   void _initializeKid() {
     currentKid.value = _appStateController.currentKid.value;
     ever(_appStateController.currentKid, (KidModel? kid) {

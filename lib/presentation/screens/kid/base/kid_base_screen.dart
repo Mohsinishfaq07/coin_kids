@@ -12,6 +12,7 @@ import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/market/kids_market_screen.dart';
 import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
@@ -19,24 +20,21 @@ class KidBaseScreen extends GetView<KidBaseController> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchAllNotifications();
-    });
+    Get.log("UI_TAG Kid Base");
+
+    bool args;
+    try {
+      args = Get.arguments as bool;
+    } catch (e) {
+      args = false;
+    }
 
     return OrientationBuilder(
       builder: (context, orientation) {
-        if (orientation == Orientation.landscape) {
-          return _buildKidUI(context);
-        }
         return OrientationTransition(
           toPortrait: false,
-          showInstruction: Get.arguments ?? false == true,
-          child: Center(
-            child: Text(
-              "Please rotate your device to landscape mode",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
+          showInstruction: args == true,
+          child: orientation == Orientation.portrait ? _buildEmptyPortraitUI(context) : _buildKidUI(context),
         );
       },
     );
@@ -52,6 +50,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Obx(() {
           final kid = controller.currentKid.value;
           if (kid == null) {
@@ -70,6 +69,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
               children: [
                 // Usage in UI
                 KidAppBarComponent(
+                  onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
                   onAddMoneyTap: () {
                     final isConnected = controller.appState.currentKid.value!.isConnected;
                     //Set According to Arguments
@@ -115,5 +115,49 @@ class KidBaseScreen extends GetView<KidBaseController> {
           return const SizedBox.shrink();
       }
     });
+  }
+
+  Widget _buildEmptyPortraitUI(BuildContext context) {
+    return PopScope(
+      canPop: false, // Block default back behavior
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          bool shouldExit = await showExitConfirmation(context);
+          if (shouldExit) Get.back();
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  Assets.icRotateLandscape,
+                  width: 100.w,
+                  height: 100.w,
+                ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Text(
+                    'Please rotate your device to landscape mode',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

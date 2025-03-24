@@ -18,44 +18,53 @@ class KidNameScreen extends GetView<KidOnboardingController> {
       title: 'Welcome to CoinKids!',
       body: LayoutBuilder(
         builder: (context, constraints) {
-          // Use constraints to make layout responsive in landscape
           final maxWidth = constraints.maxWidth;
           final maxHeight = constraints.maxHeight;
 
           return Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: maxWidth * 0.04, // 10% padding on sides
-              vertical: maxHeight * 0.05, // 5% padding top/bottom
+              horizontal: maxWidth * 0.04,
+              vertical: maxHeight * 0.05,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "What's your name?",
                   style: AppTextStyle.headingMedium,
                 ),
                 SizedBox(height: maxHeight * 0.05),
-                SizedBox(
-                  width: maxWidth * 0.4, // 40% of screen width
-                  child: KidTextField(
-                    maxlength: 10,
-                    hintText: "Enter your name",
-                    onChange: (value) {
-                      controller.setName(value);
-                    },
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: maxWidth * 0.4,
+                        child: KidTextField(
+                          maxlength: 10,
+                          hintText: "Enter your name",
+                          onChange: (value) {
+                            controller.setName(value);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const Spacer(),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: KidButton(
-                    onTap: () {
-                      controller.proceedToAge();
-                    },
-                    text: 'Next',
-                    baseColor: AppColors.btnColorGreen,
-                    iconPath: Assets.icEmailSent,
-                    iconPosition: IconPosition.right,
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom, // Add padding for keyboard
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: KidButton(
+                      onTap: () {
+                        controller.proceedToAge();
+                      },
+                      text: 'Next',
+                      baseColor: AppColors.btnColorGreen,
+                      iconPath: Assets.icNext,
+                      iconPosition: IconPosition.right,
+                    ),
                   ),
                 ),
               ],

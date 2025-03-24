@@ -1,7 +1,13 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -39,7 +45,6 @@ class KidOnboardingController extends GetxController {
 
   bool get isLoading => _isLoading.value;
 
-  // Age options as defined in original controller
   final ageList = ['6', '7', '8', '9', '10', '11', '12', '13', '14+'];
 
   @override
@@ -152,19 +157,54 @@ class KidOnboardingController extends GetxController {
   Future<void> _completeOnboarding() async {
     try {
       _isLoading.value = true;
+      showLoadingDialog("Creating Profile");
 
       final parentId = authService.user.value?.uid;
       if (parentId == null) {
-        ToastUtil.showToast("User not authenticated");
+        ToastUtil.showToast("Session Expired");
+        Get.offAllNamed(Routes.signIn);
         return;
       }
 
-      await kidsService.createKid(name: _name.value, age: _age.value, parentId: parentId, customImagePath: _customImagePath.value, selectedAvatarUrl: _selectedAvatarUrl.value, isConnected: false);
+      await kidsService
+          .createKid(name: _name.value, age: _age.value, parentId: parentId, customImagePath: _customImagePath.value, selectedAvatarUrl: _selectedAvatarUrl.value, isConnected: false)
+          .timeout(
+        Duration(seconds: 15),
+        onTimeout: () {
+          throw Exception("Slow or No Internet Connection");
+        },
+      );
 
-      ToastUtil.showToast("Profile created successfully!");
-      Get.offAllNamed(Routes.kidBase);
+      KidDialog.show(
+        emoji: Assets.icHappyStar,
+        title: "Profile Created",
+        subtitle: "Let's Start My Journey",
+        buttons: [
+          KidButton(
+              text: "Let's Go",
+              onTap: () {
+                Get.offAllNamed(Routes.kidBase);
+              },
+              baseColor: AppColors.btnColorGreen),
+        ],
+      );
     } catch (e) {
-      ToastUtil.showToast("Failed to create profile: $e");
+      Get.back();
+      KidDialog.show(
+        emoji: Assets.emojiSad,
+        title: "Oops!",
+        subtitle: "SomeThing went wrong",
+        extraContent: Text(e.toString()),
+        buttons: [
+          KidButton(
+            text: "Retry",
+            onTap: () {
+              _completeOnboarding();
+            },
+            baseColor: AppColors.btnColorRed,
+          ),
+        ],
+      );
     } finally {
       _isLoading.value = false;
     }

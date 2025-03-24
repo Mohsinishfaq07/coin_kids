@@ -5,7 +5,7 @@ class ParentModel {
   final String email;
   final String password;
   final String name;
-  final String pin;
+  final String? pin;
   final DateTime createdAt;
   final int dob;
   final String gender;
@@ -16,7 +16,7 @@ class ParentModel {
     required this.email,
     required this.password,
     required this.name,
-    required this.pin,
+    this.pin,
     required this.createdAt,
     required this.dob,
     required this.gender,
@@ -28,7 +28,7 @@ class ParentModel {
       email: json['email'] ?? '',
       password: json['password'] ?? '',
       name: json['name'] ?? '',
-      pin: json['pin'] ?? 0,
+      pin: json['pin'],
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dob: (json['dob']) ?? DateTime.now().millisecondsSinceEpoch,
       gender: json['gender'] ?? '',

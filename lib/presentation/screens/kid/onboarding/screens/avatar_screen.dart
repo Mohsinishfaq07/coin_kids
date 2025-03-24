@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
@@ -68,8 +69,9 @@ class KidAvatarScreen extends GetView<KidOnboardingController> {
             child: KidButton(
               onTap: controller.completeOnboarding,
               text: 'Done',
-              baseColor: AppColors.colorPrimary,
+              baseColor: AppColors.btnColorGreen,
               width: 120.w,
+              iconPath: Assets.icTick,
             ),
           ),
         ],

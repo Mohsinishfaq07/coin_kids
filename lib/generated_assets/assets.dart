@@ -111,6 +111,8 @@ class Assets {
   static const String jarShadow = 'assets/jar/jar_shadow.png';
   static const String jarTag = 'assets/jar/jar_tag.svg';
   static const String kidBg = 'assets/kid_bg.png';
+  static const String kidDialogBg = 'assets/kid_dialog_bg.svg';
+  static const String kidDialogBgPng = 'assets/kid_dialog_bg_png.png';
   static const String moneyJar = 'assets/on_board/money_jar.json';
   static const String newCartAnimation = 'assets/newCartAnimation.json';
   static const String openSansBold = 'assets/fonts/OpenSans-Bold.ttf';
@@ -120,7 +122,8 @@ class Assets {
   static const String openSansRegular = 'assets/fonts/OpenSans-Regular.ttf';
   static const String openSansSemiBold = 'assets/fonts/OpenSans-SemiBold.ttf';
   static const String parentBgCloud = 'assets/parent_bg_cloud.svg';
-  static const String phGoals = 'assets/placeholders/ph_goals.png';
+  static const String phGoalImage = 'assets/placeholders/ph_goal_image.svg';
+  static const String phGoalImage2 = 'assets/placeholders/ph_goal_image_2.svg';
   static const String phInternet = 'assets/placeholders/ph_internet.png';
   static const String phJar = 'assets/placeholders/ph_jar.png';
   static const String phMessages = 'assets/placeholders/ph_messages.png';

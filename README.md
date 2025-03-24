@@ -1,19 +1,17 @@
 ##Status
 
 # Common
-
-1. Signup (Done) ✔
+1. Signup (Done)
 2. Role Selection -> (Done)
-3. SignIn (Done) ✔
+3. SignIn (Done)
 4. Forgot Password (Done)
 5. Splash (Done)
 6. Intro (Done)
 
 # Parent
-
 1. Parent Home (Done)
 2. Quick Transfer (Done)
-3. Add Child (Done) ✔
+3. Add Child (Done)
 4. Update Child (Done)
 5. Kid Profile - (Done)
 6. Messages - (Done)
@@ -25,6 +23,19 @@
 12. Feedback (Done)
 
 # Kid
+1. Onboarding
+    a. Name
+    b. Age
+    c. Avatar
+2. Kid Base Screen
+3. Kid Home Screen
+4. Kid Goals
+5. Kid Shop
+6. Transfer between jars
+7. Drag and drop money
+8. Add/Request Money Screen
+
+
 
 # TODO:
 
