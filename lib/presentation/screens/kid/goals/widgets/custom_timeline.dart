@@ -36,9 +36,23 @@ class CustomTimeline extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(items[index].title, style: AppTextStyle.headingMedium.copyWith(color: items[index].isCompleted ? AppColors.buttonPrimary : AppColors.iconDisabled)),
+                Text(items[index].title,
+                    style: AppTextStyle.headingMedium.copyWith(
+                        color: items[index].isCompleted
+                            ? AppColors.buttonPrimary
+                            :
+                            // AppColors.textPrimary
+                            items[index].isRejected
+                                ? AppColors.critical
+                                : AppColors.textPrimary)),
                 if (items[index].subtitle != null)
-                  Text(items[index].subtitle!, style: AppTextStyle.headingSmall.copyWith(color: items[index].isCompleted ? AppColors.buttonPrimary : AppColors.iconDisabled)),
+                  Text(items[index].subtitle!,
+                      style: AppTextStyle.headingSmall.copyWith(
+                          color: items[index].isRejected
+                              ? AppColors.critical
+                              : items[index].isCompleted
+                                  ? AppColors.buttonPrimary
+                                  : AppColors.iconDisabled)),
               ],
             ),
           );
@@ -54,28 +68,31 @@ class CustomTimeline extends StatelessWidget {
                         items[index].photo,
                         width: 36.w,
                         height: 36.w,
-                        colorFilter: ColorFilter.mode(items[index].isCompleted ? Colors.transparent : AppColors.iconDisabled, BlendMode.srcATop),
+                        colorFilter: ColorFilter.mode(
+                            items[index].isCompleted
+                                ? Colors.transparent
+                                : AppColors.iconDisabled,
+                            BlendMode.srcATop),
                       )
                     : Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.buttonPrimary,width: 2.w),
-                    borderRadius: BorderRadius.circular(30.r)
-
-                  ),
-                      
-                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(30.r),
-
-                        child: CachedNetworkImageWidget(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.buttonPrimary, width: 2.w),
+                            borderRadius: BorderRadius.circular(30.r)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30.r),
+                          child: CachedNetworkImageWidget(
                             imageUrl: items[index].photo,
                             width: 36.w,
                             height: 36.w,
                             errorAsset: Assets.icAvatarPlaceholder,
                             fit: BoxFit.cover,
-                            iconColor: items[index].isCompleted ? null : AppColors.iconDisabled,
+                            iconColor: items[index].isCompleted
+                                ? null
+                                : AppColors.iconDisabled,
                           ),
+                        ),
                       ),
-                    ),
               ),
             ),
           );
@@ -86,7 +103,9 @@ class CustomTimeline extends StatelessWidget {
                   color: AppColors.colorPrimary,
                 )
               : DashedLineConnector(
-                  color: items[index].isCompleted ? AppColors.colorPrimary : AppColors.iconDisabled,
+                  color: items[index].isCompleted
+                      ? AppColors.colorPrimary
+                      : AppColors.iconDisabled,
                 );
         },
       ),
@@ -101,6 +120,7 @@ class TimelineItem {
   final String photo;
   final ImageType imageType;
   final bool isCompleted;
+  final bool isRejected;
 
   TimelineItem({
     required this.date,
@@ -109,5 +129,6 @@ class TimelineItem {
     required this.photo,
     required this.imageType,
     this.isCompleted = false,
+    this.isRejected = false,
   });
 }

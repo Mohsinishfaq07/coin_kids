@@ -80,6 +80,7 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
           photo: controller.appState.currentParent.value?.imageUrl ?? "",
           imageType: ImageType.network,
           isCompleted: false,
+          isRejected: true,
         ),
       if (goal.status == GoalStatus.completed)
         TimelineItem(
@@ -89,8 +90,6 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
           photo: controller.appState.currentParent.value?.imageUrl ?? "",
           imageType: ImageType.network,
         ),
-
-
     ];
 
     return Scaffold(
@@ -111,12 +110,16 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
                   child: Column(
                     children: [
                       CustomTimeline(items: items),
-                      SizedBox(height: 10.h,),
+                      SizedBox(
+                        height: 10.h,
+                      ),
                       if (goal.status == GoalStatus.completed)
-                      KidButton(onTap: (){
-                        controller.switchToParentMode();
-                      }, baseColor:AppColors.buttonPrimary,
-                      text: "Go to Parent Zone "),
+                        KidButton(
+                            onTap: () {
+                              controller.switchToParentMode();
+                            },
+                            baseColor: AppColors.buttonPrimary,
+                            text: "Go to Parent Zone "),
                     ],
                   ),
                 ),
