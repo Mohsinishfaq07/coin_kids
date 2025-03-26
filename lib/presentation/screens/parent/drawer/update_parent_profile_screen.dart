@@ -65,6 +65,38 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                         initialDate: DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0),
                         firstDate: DateTime(1900),
                         lastDate: DateTime.now(),
+                        builder: (context, child) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Theme(
+                              data: ThemeData(
+                                primaryColor: AppColors.buttonPrimary,
+                                colorScheme: ColorScheme.light(
+                                  primary: AppColors.buttonPrimary,
+                                  onPrimary: Colors.white,
+                                  onSurface: AppColors.textPrimary,
+                                ),
+                                textTheme: TextTheme(
+                                  titleMedium: AppTextStyle.bodyMedium,
+                                  labelMedium: AppTextStyle.bodyMedium,
+                                  bodyMedium: AppTextStyle.bodyMedium,
+                                  bodyLarge: AppTextStyle.bodyLarge,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    textStyle: AppTextStyle.bodyMedium,
+                                    foregroundColor: AppColors.buttonPrimary,
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            ),
+                          );
+                        },
                       );
                       if (pickedDate != null) {
                         controller.birthday.value = pickedDate;

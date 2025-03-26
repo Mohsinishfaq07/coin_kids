@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
@@ -176,43 +178,44 @@ class SignupScreen extends GetView<SignupController> {
                             )),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 16.h, bottom: 24.h),
-                      child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
-                    ),
-
-                    // Google Login Button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    if (Platform.isAndroid) ...[
+                      Padding(
+                        padding: EdgeInsets.only(top: 16.h, ),
+                        child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
+                      ),
+                      // Google Login Button
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                         ),
-                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
+                        onPressed: () async {
+                          try {
+                            await controller.signInWithGoogle();
+                          } catch (e) {
+                            Get.log("Error: $e");
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                              child: SvgPicture.asset(Assets.icGoogle, height: 24),
+                            ),
+                            Text(
+                              "Sign in with Google",
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                            ),
+                            SizedBox.shrink()
+                          ],
+                        ),
                       ),
-                      onPressed: () async {
-                        try {
-                          await controller.signInWithGoogle();
-                        } catch (e) {
-                          Get.log("Error: $e");
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                            child: SvgPicture.asset(Assets.icGoogle, height: 24),
-                          ),
-                          Text(
-                            "Sign in with Google",
-                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                          ),
-                          SizedBox.shrink()
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
+                      SizedBox(height: 16.h),
+                    ],
 
                     SizedBox(height: 80.h),
                     // Terms and Signup Button
