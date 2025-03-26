@@ -297,7 +297,7 @@ class GoalService extends BaseService {
         double? milestonePercentage;
         NotificationType? notificationType;
 
-        // Check for milestone achievements (25%, 50%, 75%, 100%)
+       /* // Check for milestone achievements (25%, 50%, 75%, 100%)
         if (oldPercentage < 25 && newPercentage >= 25) {
           coinKidsToAward = 1;
           notificationTitle = "25% Milestone Reached!";
@@ -316,7 +316,8 @@ class GoalService extends BaseService {
           notificationBody = "You've reached 75% of your goal: ${goal.title}";
           milestonePercentage = 75.0;
           notificationType = NotificationType.goalMilestone;
-        } else if (oldPercentage < 100 && newPercentage >= 100) {
+        } else*/
+        if (newPercentage == 100) {
           coinKidsToAward = 5;
           notificationTitle = "Goal Achieved!";
           notificationBody =
@@ -360,7 +361,8 @@ class GoalService extends BaseService {
               updatedGoal.toJson());
 
           // If a milestone was reached, update CoinKids balance and create notification
-          if (coinKidsToAward > 0) {
+          // if (coinKidsToAward > 0) {
+          if (coinKidsToAward >= 0) {
             // Update CoinKids balance
             final currentCoinKids = kid.coinKidsBalance;
             final newCoinKids = currentCoinKids + coinKidsToAward;
@@ -373,22 +375,23 @@ class GoalService extends BaseService {
                 notificationBody != null &&
                 milestonePercentage != null &&
                 notificationType != null) {
-              final metadata = milestonePercentage == 100.0
-                  ? GoalCompletedMetadata(
+              final metadata =
+              // milestonePercentage == 100.0 ?
+              GoalCompletedMetadata(
                       goalId: goalId,
                       goalName: goal.title,
                       targetAmount: goal.targetAmount,
-                      name: kid.name,
-                      photo: kid.avatar,
-                    )
-                  : GoalMilestoneMetadata(
-                      goalId: goalId,
-                      goalName: goal.title,
-                      targetAmount: goal.targetAmount,
-                      currentAmount: newAmount,
                       name: kid.name,
                       photo: kid.avatar,
                     );
+                  // :GoalMilestoneMetadata(
+                  //     goalId: goalId,
+                  //     goalName: goal.title,
+                  //     targetAmount: goal.targetAmount,
+                  //     currentAmount: newAmount,
+                  //     name: kid.name,
+                  //     photo: kid.avatar,
+                  //   );
 
               final notificationData = NotificationModel(
                 userId: kid.parentId,

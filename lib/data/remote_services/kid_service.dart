@@ -18,18 +18,21 @@ class KidService {
   // Cache keys
   static const String _avatarCacheKey = 'cached_avatars';
   static const String _avatarCacheTimestampKey = 'cached_avatars_timestamp';
-  static const Duration _cacheExpiration = Duration(days: 7); // Cache expires after 7 days
+  static const Duration _cacheExpiration =
+      Duration(days: 7); // Cache expires after 7 days
 
   // Fetch kid data by ID
   Future<KidModel?> fetchKidById(String kidId) async {
     try {
-      final DocumentSnapshot doc = await _firestore.collection('kids').doc(kidId).get();
+      final DocumentSnapshot doc =
+          await _firestore.collection('kids').doc(kidId).get();
 
       if (!doc.exists) {
         return null;
       }
 
-      return KidModel.fromJson(doc.data() as Map<String, dynamic>, documentId: kidId);
+      return KidModel.fromJson(doc.data() as Map<String, dynamic>,
+          documentId: kidId);
     } catch (e) {
       throw Exception('Failed to fetch kid data: ${e.toString()}');
     }
@@ -38,9 +41,14 @@ class KidService {
   // Fetch kids by parent ID
   Future<List<KidModel>> fetchKidsByParentId(String parentId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore.collection('kids').where('parentId', isEqualTo: parentId).get();
+      final QuerySnapshot snapshot = await _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: parentId)
+          .get();
 
-      return snapshot.docs.map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      return snapshot.docs
+          .map((doc) => KidModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Failed to fetch kids: ${e.toString()}');
     }
@@ -78,12 +86,14 @@ class KidService {
       );
 
       // Create kid document and get ID
-      final DocumentReference docRef = await _firestore.collection('kids').add(kid.toJson());
+      final DocumentReference docRef =
+          await _firestore.collection('kids').add(kid.toJson());
       final String kidId = docRef.id;
 
       // If custom image provided, upload it
       if (customImagePath != null && customImagePath.isNotEmpty) {
-        final String fileName = 'user_avatars/kids/$kidId.${customImagePath.split('.').last}';
+        final String fileName =
+            'user_avatars/kids/$kidId.${customImagePath.split('.').last}';
         final Reference ref = _storage.ref().child(fileName);
 
         final UploadTask uploadTask = ref.putFile(File(customImagePath));
@@ -99,7 +109,10 @@ class KidService {
         kidId: kidId,
         avatar: avatarUrl,
       );
-      await _firestore.collection('kids').doc(kidId).update(updatedKid.toJson());
+      await _firestore
+          .collection('kids')
+          .doc(kidId)
+          .update(updatedKid.toJson());
 
       return kidId;
     } catch (e) {
@@ -126,7 +139,8 @@ class KidService {
   }
 
   // Update saving jar balance
-  Future<void> updateSavingJar(String kidId, double newBalance, {dynamic color}) async {
+  Future<void> updateSavingJar(String kidId, double newBalance,
+      {dynamic color}) async {
     final appState = Get.find<AppStateController>();
     final kid = appState.currentKid.value;
     if (kid == null) return;
@@ -150,7 +164,8 @@ class KidService {
   }
 
   // Update spending jar balance
-  Future<void> updateSpendingJar(String kidId, double newBalance, {dynamic color}) async {
+  Future<void> updateSpendingJar(String kidId, double newBalance,
+      {dynamic color}) async {
     try {
       if (color != null) {
         await _firestore.collection('kids').doc(kidId).update({
@@ -240,7 +255,8 @@ class KidService {
   }
 
   // Fetch all predefined avatars from Firebase Storage with caching
-  Future<List<String>> fetchPredefinedAvatars({bool forceRefresh = false}) async {
+  Future<List<String>> fetchPredefinedAvatars(
+      {bool forceRefresh = false}) async {
     try {
       // Check if we have cached avatars and they're not expired
       if (!forceRefresh) {
@@ -276,7 +292,8 @@ class KidService {
   // Upload custom avatar image and get URL
   Future<String> uploadCustomAvatar(File imageFile) async {
     try {
-      final String fileName = 'user_avatars/${DateTime.now().millisecondsSinceEpoch}.${imageFile.path.split('.').last}';
+      final String fileName =
+          'user_avatars/${DateTime.now().millisecondsSinceEpoch}.${imageFile.path.split('.').last}';
       final Reference ref = _storage.ref().child(fileName);
 
       final UploadTask uploadTask = ref.putFile(imageFile);
@@ -294,7 +311,11 @@ class KidService {
 
   // Stream to count number of kids for a parent
   Stream<int> streamKidsCount(String parentId) {
-    return _firestore.collection('kids').where('parentId', isEqualTo: parentId).snapshots().map((snapshot) => snapshot.docs.length);
+    return _firestore
+        .collection('kids')
+        .where('parentId', isEqualTo: parentId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
   }
 
   // Stream to check if parent has any kids
@@ -328,7 +349,11 @@ class KidService {
 
   Stream<List<KidModel>> streamKids(String parentId) {
     try {
-      return _firestore.collection('kids').where('parentId', isEqualTo: parentId).snapshots().map((snapshot) {
+      return _firestore
+          .collection('kids')
+          .where('parentId', isEqualTo: parentId)
+          .snapshots()
+          .map((snapshot) {
         return snapshot.docs.map((doc) {
           return KidModel.fromJson(
             doc.data(),
@@ -342,6 +367,15 @@ class KidService {
     }
   }
 
+  // Stream kid data by ID
+  Stream<KidModel?> streamKid(String kidId) {
+    return _firestore.collection('kids').doc(kidId).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return KidModel.fromJson(doc.data() as Map<String, dynamic>,
+          documentId: doc.id);
+    });
+  }
+
   // CACHING METHODS
 
   // Cache avatar URLs in SharedPreferences
@@ -349,7 +383,8 @@ class KidService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setStringList(_avatarCacheKey, urls);
-      await prefs.setInt(_avatarCacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
+      await prefs.setInt(
+          _avatarCacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
     } catch (e) {
       Get.log('Failed to cache avatar URLs: $e');
     }

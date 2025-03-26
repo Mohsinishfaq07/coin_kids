@@ -120,9 +120,12 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             if (isSpendingJarCreated && isSavingJarCreated) ...[
                               SizedBox(width: 20.w),
                               KidButton.iconOnly(
+
+
                                 onTap: () {
                                   Get.toNamed(Routes.kidMoneyTransfer);
                                 },
+
                                 baseColor: AppColors.colorPrimary,
                                 iconPath: Assets.icTransfer,
                               ),

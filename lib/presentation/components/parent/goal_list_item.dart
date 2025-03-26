@@ -170,7 +170,7 @@ class GoalListItem extends StatelessWidget {
                       onPressed: onBuy ?? () {},
                       backgroundColor: AppColors.btnColorGreen,
                       child: Text(
-                        "Buy It",
+                        "Approve",
                         style: AppTextStyle.bodyMedium.copyWith(
                           color: Colors.white,
                         ),
@@ -196,9 +196,7 @@ class GoalListItem extends StatelessWidget {
         return AppColors.critical;
       case GoalStatus.approved:
         return AppColors.btnColorGreen;
-      default:
-        return AppColors.textPrimary;
-    }
+      }
   }
 
   String _getStatusText(GoalStatus status) {

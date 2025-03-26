@@ -8,6 +8,7 @@ import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -55,6 +56,41 @@ class KidProfileController extends GetxController {
 
       final fetchedGoals =
           await goalsService.fetchUserGoals(appState.currentKid.value!.kidId);
+
+      // Sort goals based on priority:
+      // 1. In-progress goals first
+      // 2. Within in-progress, modified goals (with saved amount) first
+      // 3. Then other goals (completed, approved, rejected)
+      fetchedGoals.sort((a, b) {
+        // First priority: In-progress goals come first
+        if (a.status == GoalStatus.inProgress &&
+            b.status != GoalStatus.inProgress) {
+          return -1;
+        }
+        if (a.status != GoalStatus.inProgress &&
+            b.status == GoalStatus.inProgress) {
+          return 1;
+        }
+
+        // Second priority: For in-progress goals, sort by modification
+        if (a.status == GoalStatus.inProgress &&
+            b.status == GoalStatus.inProgress) {
+          if (a.savedAmount > 0 && b.savedAmount == 0) return -1;
+          if (a.savedAmount == 0 && b.savedAmount > 0) return 1;
+          return b.createdAt.compareTo(a.createdAt); // Then by creation date
+        }
+
+        // Third priority: For non-in-progress goals, sort by completion date
+        if (a.status != GoalStatus.inProgress &&
+            b.status != GoalStatus.inProgress) {
+          final aDate = a.completedAt ?? a.createdAt;
+          final bDate = b.completedAt ?? b.createdAt;
+          return bDate.compareTo(aDate); // Most recent first
+        }
+
+        return 0;
+      });
+
       goals.clear();
       goals.assignAll(fetchedGoals);
     } catch (e) {
@@ -113,7 +149,27 @@ class KidProfileController extends GetxController {
       );
 
       if (result == true) {
+        // Get the current kid
+        final kid = appState.currentKid.value;
+        if (kid == null) {
+          ToastUtil.showToast('Session Expired. Login Again');
+          Get.offAllNamed(Routes.signIn);
+          return;
+        }
+
+        // Get the kid service
+        final kidService = Get.find<KidService>();
+
+        // Calculate new spending jar balance by adding the goal's saved amount
+        final newSpendingBalance =
+            kid.wallet.spendingJar.balance + goal.savedAmount;
+
+        // Update spending jar balance to refund the amount
+        await kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
+
+        // Update goal status
         await goalsService.cancelGoal(goal);
+
         // Update local state
         goals[goals.indexWhere((g) => g.id == goal.id)] =
             goal.copyWith(status: GoalStatus.rejected);
@@ -137,7 +193,7 @@ class KidProfileController extends GetxController {
         );
 
         await _notificationService.createNotification(notification);
-        ToastUtil.showToast('Goal rejected successfully');
+        ToastUtil.showToast('Goal rejected and amount refunded successfully');
       }
     } catch (e) {
       ToastUtil.showToast('Failed to reject goal');

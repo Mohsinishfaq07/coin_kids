@@ -46,7 +46,9 @@ class NotificationCard extends StatelessWidget {
       case NotificationType.balanceAdded:
       case NotificationType.balanceRemoved:
         final balanceMetadata = metadata as BalanceMetadata;
-        final action = metadata.type == NotificationType.balanceAdded ? "added to" : "deducted from";
+        final action = metadata.type == NotificationType.balanceAdded
+            ? "added to"
+            : "deducted from";
         return "${balanceMetadata.amount.toMoneyFormat()} $action balance";
 
       case NotificationType.defaultNotification:
@@ -72,16 +74,19 @@ class NotificationCard extends StatelessWidget {
     if (metadata == null) return [];
 
     if (metadata is TransactionPendingMetadata) {
-      if (metadata.status == TransactionPendingStatus.approved || 
+      if (metadata.status == TransactionPendingStatus.approved ||
           metadata.status == TransactionPendingStatus.declined) {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Text(
-              metadata.status == TransactionPendingStatus.approved 
-                ? "Request Approved" 
-                : "Request Declined",
-              style: AppTextStyle.bodyMedium.copyWith(color: metadata.status == TransactionPendingStatus.approved? AppColors.notificationPositive : AppColors.notificationWarning),
+              metadata.status == TransactionPendingStatus.approved
+                  ? "Request Approved"
+                  : "Request Declined",
+              style: AppTextStyle.bodyMedium.copyWith(
+                  color: metadata.status == TransactionPendingStatus.approved
+                      ? AppColors.notificationPositive
+                      : AppColors.notificationWarning),
             ),
           ),
         ];
@@ -156,7 +161,9 @@ class NotificationCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.colorSecondary.withValues(alpha: 0.1) : const Color(0xFFEDFAFF),
+          color: isSelected
+              ? AppColors.colorSecondary.withValues(alpha: 0.1)
+              : const Color(0xFFEDFAFF),
           border: Border.all(color: const Color(0xFFCBE5F4)),
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -186,9 +193,8 @@ class NotificationCard extends StatelessWidget {
                             Text(
                               _getTitle(),
                               style: AppTextStyle.bodyLarge.copyWith(
-                                color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w700
-                              ),
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700),
                             ),
                             SizedBox(height: 1.h),
                             Text(

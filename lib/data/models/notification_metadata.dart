@@ -24,7 +24,8 @@ class NotificationAction {
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'id': id,
         'label': label,
         'type': type,
@@ -70,7 +71,8 @@ class GoalMilestoneMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'goalId': goalId,
         'goalName': goalName,
         'targetAmount': targetAmount,
@@ -78,7 +80,8 @@ class GoalMilestoneMetadata extends NotificationMetadata {
       };
 
   @override
-  List<NotificationAction> get actions => [
+  List<NotificationAction> get actions =>
+      [
         NotificationAction(
             id: NotificationActionId.positive,
             label: 'View details',
@@ -112,7 +115,8 @@ class GoalCompletedMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'goalId': goalId,
         'goalName': goalName,
         'targetAmount': targetAmount,
@@ -121,10 +125,15 @@ class GoalCompletedMetadata extends NotificationMetadata {
       };
 
   @override
-  List<NotificationAction> get actions => [
+  List<NotificationAction> get actions =>
+      [
+        NotificationAction(
+            id: NotificationActionId.negative,
+            label: 'Reject',
+            type: NotificationActionType.critical),
         NotificationAction(
             id: NotificationActionId.positive,
-            label: 'View details',
+            label: 'Approve',
             type: NotificationActionType.primary),
       ];
 }
@@ -173,7 +182,8 @@ class TransactionPendingMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'amount': amount,
         'name': name,
         'photo': photo,
@@ -195,7 +205,8 @@ class TransactionPendingMetadata extends NotificationMetadata {
   }
 
   @override
-  List<NotificationAction> get actions => [
+  List<NotificationAction> get actions =>
+      [
         NotificationAction(
             id: NotificationActionId.negative,
             label: 'Decline',
@@ -215,8 +226,8 @@ class TransactionMetadata extends NotificationMetadata {
     required NotificationType type,
   }) : super(type);
 
-  factory TransactionMetadata.fromJson(
-      Map<String, dynamic> json, NotificationType type) {
+  factory TransactionMetadata.fromJson(Map<String, dynamic> json,
+      NotificationType type) {
     return TransactionMetadata(
       amount: json['amount'] ?? 0.0,
       type: type,
@@ -224,7 +235,8 @@ class TransactionMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'amount': amount,
       };
 
@@ -242,8 +254,8 @@ class BalanceMetadata extends NotificationMetadata {
     required NotificationType type,
   }) : super(type);
 
-  factory BalanceMetadata.fromJson(
-      Map<String, dynamic> json, NotificationType type) {
+  factory BalanceMetadata.fromJson(Map<String, dynamic> json,
+      NotificationType type) {
     return BalanceMetadata(
       amount: (json['amount'] ?? 0.0).toDouble(),
       message: (json['message'] ?? ""),
@@ -252,7 +264,8 @@ class BalanceMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'amount': amount,
         'message': message,
       };
@@ -287,7 +300,8 @@ class GoalApprovedMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'goalId': goalId,
         'goalName': goalName,
         'targetAmount': targetAmount,
@@ -296,7 +310,8 @@ class GoalApprovedMetadata extends NotificationMetadata {
       };
 
   @override
-  List<NotificationAction> get actions => [
+  List<NotificationAction> get actions =>
+      [
         NotificationAction(
           id: NotificationActionId.positive,
           label: 'View details',
@@ -331,7 +346,8 @@ class GoalRejectedMetadata extends NotificationMetadata {
   }
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'goalId': goalId,
         'goalName': goalName,
         'targetAmount': targetAmount,
@@ -340,7 +356,8 @@ class GoalRejectedMetadata extends NotificationMetadata {
       };
 
   @override
-  List<NotificationAction> get actions => [
+  List<NotificationAction> get actions =>
+      [
         NotificationAction(
           id: NotificationActionId.positive,
           label: 'View details',

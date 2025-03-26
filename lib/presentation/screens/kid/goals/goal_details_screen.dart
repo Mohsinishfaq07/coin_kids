@@ -7,7 +7,8 @@ import 'package:coin_kids/presentation/components/common/cached_network_image_wi
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_widget.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart' show GoalTimelineWidget;
+import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart'
+    show GoalTimelineWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,27 +45,40 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
           ),
         ),
         child: Obx(() {
-          var goal = controller.goals.firstWhere((item) => item.id == goalId);
-          return Row(
-            children: [
-              // Left side with goal card (35% width)
-              Container(
-                color: AppColors.iconPrimary,
-                width: MediaQuery.of(context).size.width * 0.35,
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: GoalCard(goal: goal),
+          try {
+            var goal = controller.goals.firstWhere((item) => item.id == goalId);
+            return Row(
+              children: [
+                // Left side with goal card (35% width)
+                Container(
+                  color: AppColors.iconPrimary,
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.w),
+                      child: GoalCard(goal: goal),
+                    ),
                   ),
                 ),
-              ),
-              // Right side with controls
-              Expanded(
-                child: goal.savedAmount != goal.targetAmount ? GoalProgressWidget(goal) : GoalTimelineWidget(goal: goal),
-                // child: GoalTimelineScreen(goal: goal),
-              ),
-            ],
-          );
+                // Right side with controls
+
+                //
+
+                Expanded(
+                  child: goal.savedAmount != goal.targetAmount
+                      ? GoalProgressWidget(goal)
+                      : GoalTimelineWidget(goal: goal),
+                  // child: GoalTimelineScreen(goal: goal),
+                ),
+              ],
+            );
+          } catch (e) {
+            // If goal is not found, navigate back
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Get.back();
+            });
+            return const SizedBox.shrink();
+          }
         }),
       ),
     );

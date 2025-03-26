@@ -36,9 +36,9 @@ class CustomTimeline extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(items[index].title, style: AppTextStyle.headingMedium.copyWith(color: items[index].isCompleted ? AppColors.textPrimary : AppColors.iconDisabled)),
+                Text(items[index].title, style: AppTextStyle.headingMedium.copyWith(color: items[index].isCompleted ? AppColors.buttonPrimary : AppColors.iconDisabled)),
                 if (items[index].subtitle != null)
-                  Text(items[index].subtitle!, style: AppTextStyle.headingSmall.copyWith(color: items[index].isCompleted ? AppColors.textPrimary : AppColors.iconDisabled)),
+                  Text(items[index].subtitle!, style: AppTextStyle.headingSmall.copyWith(color: items[index].isCompleted ? AppColors.buttonPrimary : AppColors.iconDisabled)),
               ],
             ),
           );
@@ -56,14 +56,26 @@ class CustomTimeline extends StatelessWidget {
                         height: 36.w,
                         colorFilter: ColorFilter.mode(items[index].isCompleted ? Colors.transparent : AppColors.iconDisabled, BlendMode.srcATop),
                       )
-                    : CachedNetworkImageWidget(
-                        imageUrl: items[index].photo,
-                        width: 36.w,
-                        height: 36.w,
-                        errorAsset: Assets.icAvatarPlaceholder,
-                        fit: BoxFit.contain,
-                        iconColor: items[index].isCompleted ? null : AppColors.iconDisabled,
+                    : Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.buttonPrimary,width: 2.w),
+                    borderRadius: BorderRadius.circular(30.r)
+
+                  ),
+                      
+                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30.r),
+
+                        child: CachedNetworkImageWidget(
+                            imageUrl: items[index].photo,
+                            width: 36.w,
+                            height: 36.w,
+                            errorAsset: Assets.icAvatarPlaceholder,
+                            fit: BoxFit.cover,
+                            iconColor: items[index].isCompleted ? null : AppColors.iconDisabled,
+                          ),
                       ),
+                    ),
               ),
             ),
           );

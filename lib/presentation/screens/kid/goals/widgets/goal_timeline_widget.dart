@@ -1,7 +1,9 @@
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/custom_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,11 +19,42 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
     super.key,
   });
 
+  void _showDeleteDialog(BuildContext context) {
+    KidDialog.show(
+      dismissible: true,
+      emoji: Assets.icCoinStar,
+      title: "Delete Goal?",
+      subtitle: "Are you sure you want to delete this goal?",
+      buttons: [
+        KidButton(
+          text: "No",
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorOrange,
+          iconPath: Assets.icCross,
+          iconPosition: IconPosition.left,
+        ),
+        SizedBox(width: 16.w),
+        KidButton(
+          text: "Yes",
+          onTap: () async {
+            await controller.deleteGoal(goal.id!);
+          },
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icTick,
+          iconPosition: IconPosition.left,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<TimelineItem> items = [
       if (goal.status == GoalStatus.completed ||
-          goal.status == GoalStatus.approved || goal.status == GoalStatus.rejected )
+          goal.status == GoalStatus.approved ||
+          goal.status == GoalStatus.rejected)
         TimelineItem(
           date: goal.completedAt.toString(),
           title: "Congratulations!",
@@ -56,6 +89,8 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
           photo: controller.appState.currentParent.value?.imageUrl ?? "",
           imageType: ImageType.network,
         ),
+
+
     ];
 
     return Scaffold(
@@ -67,13 +102,39 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.only(top: 24.h),
-          child: Center(
-            child: SingleChildScrollView(
-              child: CustomTimeline(items: items),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 24.h),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CustomTimeline(items: items),
+                      SizedBox(height: 10.h,),
+                      if (goal.status == GoalStatus.completed)
+                      KidButton(onTap: (){
+                        controller.switchToParentMode();
+                      }, baseColor:AppColors.buttonPrimary,
+                      text: "Go to Parent Zone "),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              bottom: 24.h,
+              right: 24.w,
+              child: KidButton.iconWithTitle(
+                size: 50,
+                title: "Delete",
+                belowTextStyle: TextStyle(color: AppColors.textPrimary),
+                baseColor: AppColors.critical,
+                iconPath: Assets.icBin,
+                onTap: () => _showDeleteDialog(context),
+              ),
+            ),
+          ],
         ),
       ),
     );

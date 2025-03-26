@@ -23,8 +23,9 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
       builder: (context, constraints) {
         final double screenWidth = constraints.maxWidth;
         final int crossAxisCount = _calculateCrossAxisCount(screenWidth);
-        final double cardWidth = (screenWidth - (crossAxisCount + 1) * 8.w) / crossAxisCount;
-        final double cardHeight = cardWidth * 1.35;
+        final double cardWidth =
+            (screenWidth - (crossAxisCount + 1) * 7.w) / crossAxisCount;
+        final double cardHeight = cardWidth * 1.2.h;
 
         return SizedBox(
           width: constraints.maxWidth,
@@ -32,7 +33,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
           child: Stack(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Obx(() {
                   if (controller.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
@@ -50,14 +51,18 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 8.w,
+                      crossAxisSpacing: 6.w,
                       mainAxisSpacing: 8.h,
                       childAspectRatio: cardWidth / cardHeight,
                     ),
                     itemCount: controller.goals.length,
                     itemBuilder: (context, index) {
                       final goal = controller.goals[index];
-                      return GoalCard(goal: goal);
+                      return GoalCard(
+                        goal: goal,
+                        isConnected:
+                            controller.currentKid.value?.isConnected ?? false,
+                      );
                     },
                   );
                 }),
@@ -86,8 +91,11 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
   }
 
   int _calculateCrossAxisCount(double screenWidth) {
-    final double targetCardWidth = 180.w;
+    final double targetCardWidth = 150.w;
     int count = (screenWidth / targetCardWidth).floor();
-    return count.clamp(2, 4);
+    return count.clamp(2, 5);
   }
+// final double targetCardWidth = 180.w;
+// int count = (screenWidth / targetCardWidth).floor();
+// return count.clamp(1, 6);
 }

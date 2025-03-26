@@ -2,10 +2,17 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
+import 'package:coin_kids/data/remote_services/goal_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
+import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -14,14 +21,16 @@ import '../../../data/models/notification_model.dart';
 import '../../../data/remote_services/notification_service.dart';
 
 class MessagesController extends GetxController {
-  final NotificationService _notificationService = Get.find<NotificationService>();
+  final NotificationService _notificationService =
+      Get.find<NotificationService>();
   final selectedNotifications = <String>[].obs;
   final notifications = <NotificationModel>[].obs;
   final unreadNotificationsCount = 0.obs;
   final isLoading = true.obs;
   final isLoadingMore = false.obs;
   final hasMoreData = true.obs;
-
+  final GoalService goalService = Get.find<GoalService>();
+  final appState = Get.find<AppStateController>();
 
   DocumentSnapshot? _lastDocument;
   final refreshController = RefreshController(initialRefresh: false);
@@ -49,7 +58,8 @@ class MessagesController extends GetxController {
       return;
     }
 
-    _notificationCountSubscription = _notificationService.getUnreadCount(userId).listen((int count) {
+    _notificationCountSubscription =
+        _notificationService.getUnreadCount(userId).listen((int count) {
       unreadNotificationsCount.value = count;
     });
   }
@@ -145,17 +155,21 @@ class MessagesController extends GetxController {
     }
   }
 
-  Future<void> updatePendingTransactionStatus(String notificationId, TransactionPendingStatus status) async {
+  Future<void> updatePendingTransactionStatus(
+      String notificationId, TransactionPendingStatus status) async {
     try {
       final index = notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
-        final metaData = notifications[index].metadata as TransactionPendingMetadata;
+        final metaData =
+            notifications[index].metadata as TransactionPendingMetadata;
         metaData.copyWith(status: status);
-        notifications[index] = notifications[index].copyWith(metadata: metaData);
+        notifications[index] =
+            notifications[index].copyWith(metadata: metaData);
         notifications.refresh();
       }
 
-      await _notificationService.updatePendingTransactionStatus(notificationId, status);
+      await _notificationService.updatePendingTransactionStatus(
+          notificationId, status);
     } catch (e) {
       Get.log('Error updating status: $e');
     }
@@ -178,7 +192,8 @@ class MessagesController extends GetxController {
 
   Future<void> deleteSelected() async {
     try {
-      await _notificationService.deleteSelectedNotifications(selectedNotifications);
+      await _notificationService
+          .deleteSelectedNotifications(selectedNotifications);
       notifications.removeWhere((n) => selectedNotifications.contains(n.id));
       selectedNotifications.clear();
       ToastUtil.showToast('Notifications deleted');
@@ -191,7 +206,8 @@ class MessagesController extends GetxController {
   Future<void> deleteNotification(String notificationId) async {
     try {
       await _notificationService.deleteNotification(notificationId);
-      notifications.removeWhere((notification) => notification.id == notificationId);
+      notifications
+          .removeWhere((notification) => notification.id == notificationId);
     } catch (e) {
       Get.log('Error deleting notification: $e');
       ToastUtil.showToast('Failed to delete notification');
@@ -235,32 +251,168 @@ class MessagesController extends GetxController {
     }
   }
 
-  void handleActionClick(NotificationModel notification, NotificationActionId actionId) {
+  Future<void> handleActionClick(
+      NotificationModel notification, NotificationActionId actionId) async {
     if (notification.type == NotificationType.transactionPending) {
       Get.log(notification.type.name);
       if (actionId == NotificationActionId.positive) {
         final metadata = notification.metadata as TransactionPendingMetadata;
-        Get.toNamed(Routes.parentQuickTransfer, arguments: {
-          'amount': metadata.amount,
-          'mode': TransferMode.requestedMoney,
-        });
+        // Get.toNamed(Routes.parentQuickTransfer, arguments: {
+        //   'amount': metadata.amount,
+        //   'mode': TransferMode.requestedMoney,
+        // });
         Get.log(notification.id!);
-        markAsRead(notification.id!);
-        updatePendingTransactionStatus(notification.id!, TransactionPendingStatus.approved);
+        await markAsRead(notification.id!);
+        await updatePendingTransactionStatus(
+            notification.id!, TransactionPendingStatus.approved);
       } else if (actionId == NotificationActionId.negative) {
         Get.log(notification.id!);
-        markAsRead(notification.id!);
-        updatePendingTransactionStatus(notification.id!, TransactionPendingStatus.declined);
+        await markAsRead(notification.id!);
+        await updatePendingTransactionStatus(
+            notification.id!, TransactionPendingStatus.declined);
       }
     } else if (notification.type == NotificationType.goalMilestone) {
       if (actionId == NotificationActionId.positive) {
-        markAsRead(notification.id!);
+        await markAsRead(notification.id!);
         Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
       }
     } else if (notification.type == NotificationType.goalCompleted) {
-      if (actionId == NotificationActionId.positive) {
-        markAsRead(notification.id!);
-        Get.toNamed(Routes.parentKidProfile, arguments: 2);
+      final metadata = notification.metadata as GoalCompletedMetadata;
+      await markAsRead(notification.id!);
+
+      try {
+        // Fetch the goal directly using goalService
+        final goal = await goalService.fetchGoalById(metadata.goalId);
+        if (goal == null) {
+          ToastUtil.showToast('Goal not found');
+          return;
+        }
+
+        if (actionId == NotificationActionId.positive) {
+          // Show approval confirmation dialog
+          final shouldApprove = await Get.dialog<bool>(
+            AppParentDialog(
+              iconPath: Assets.icCoinEuro,
+              title: "Approve goal",
+              // subtitle: "Are you sure you want to approve this purchase?",
+              buttons: [
+                DialogButton(
+                  text: "Cancel",
+                  onPressed: () => Get.back(result: false),
+                  backgroundColor: AppColors.btnColorOrange,
+                  textColor: Colors.white,
+                ),
+                DialogButton(
+                  text: "Approve",
+                  onPressed: () => Get.back(result: true),
+                  backgroundColor: AppColors.btnColorGreen,
+                  textColor: Colors.white,
+                ),
+              ],
+            ),
+          );
+
+          if (shouldApprove == true) {
+            // Approve the goal
+            await goalService.approveGoal(goal);
+
+            // Create notification for the kid
+            final notification = NotificationModel(
+              userId: goal.userId,
+              senderId: Get.find<AuthService>().user.value?.uid ?? '',
+              title: "Goal Approved!",
+              type: NotificationType.goalApproved,
+              isRead: false,
+              timestamp: DateTime.now(),
+              metadata: GoalApprovedMetadata(
+                goalId: goal.id!,
+                goalName: goal.title,
+                targetAmount: goal.targetAmount,
+                name: appState.currentParent.value?.name ?? '',
+                photo: appState.currentParent.value?.imageUrl ?? '',
+              ),
+            );
+
+            await _notificationService.createNotification(notification);
+            ToastUtil.showToast('Goal approved successfully');
+          }
+        } else if (actionId == NotificationActionId.negative) {
+          // Show rejection confirmation dialog
+          final shouldReject = await Get.dialog<bool>(
+            AppParentDialog(
+              iconPath: Assets.icCoinEuro,
+              title: "Confirm Rejection",
+              subtitle: "Are you sure you want to reject this goal?",
+              buttons: [
+                DialogButton(
+                  text: "Cancel",
+                  onPressed: () => Get.back(result: false),
+                  backgroundColor: AppColors.btnColorGreen,
+                  textColor: Colors.white,
+                ),
+                DialogButton(
+                  text: "Reject",
+                  onPressed: () => Get.back(result: true),
+                  backgroundColor: AppColors.critical,
+                  textColor: Colors.white,
+                ),
+              ],
+            ),
+          );
+
+          if (shouldReject == true) {
+            // Get the current kid
+            final kid = appState.currentKid.value;
+            if (kid == null) {
+              ToastUtil.showToast('Session Expired. Login Again');
+              Get.offAllNamed(Routes.signIn);
+              return;
+            }
+
+            // Get the kid service
+            final kidService = Get.find<KidService>();
+
+            // Calculate new spending jar balance by adding the goal's saved amount
+            final newSpendingBalance =
+                kid.wallet.spendingJar.balance + goal.savedAmount;
+
+            // Update spending jar balance to refund the amount
+            await kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
+
+            // Update goal status
+            await goalService.cancelGoal(goal);
+
+            // Create notification for the kid
+            final notification = NotificationModel(
+              userId: goal.userId,
+              senderId: Get.find<AuthService>().user.value?.uid ?? '',
+              title: "Goal Rejected",
+              type: NotificationType.goalRejected,
+              isRead: false,
+              timestamp: DateTime.now(),
+              metadata: GoalRejectedMetadata(
+                goalId: goal.id!,
+                goalName: goal.title,
+                targetAmount: goal.targetAmount,
+                name: appState.currentParent.value?.name ?? '',
+                photo: appState.currentParent.value?.imageUrl ?? '',
+              ),
+            );
+
+            await _notificationService.createNotification(notification);
+            ToastUtil.showToast(
+                'Goal rejected and amount refunded successfully');
+          }
+        }
+
+        // Remove the notification after successful action
+        await deleteNotification(notification.id!);
+
+        // Refresh the notifications list
+        await fetchNotifications(refresh: true);
+      } catch (e) {
+        ToastUtil.showToast('Failed to process goal action: ${e.toString()}');
+        Get.log('Error processing goal action: $e');
       }
     }
   }

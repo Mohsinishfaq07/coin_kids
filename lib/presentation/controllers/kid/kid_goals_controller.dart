@@ -5,11 +5,14 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
+import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
@@ -23,6 +26,10 @@ import 'package:image_picker/image_picker.dart';
 class KidGoalsController extends GetxController {
   final appBar = Get.find<KidAppBarController>();
   final appState = Get.find<AppStateController>();
+  final _goalService = Get.find<GoalService>();
+  final _kidService = Get.find<KidService>();
+  final RoleController _roleController = Get.find<RoleController>();
+
 
   final TextEditingController textController = TextEditingController();
 
@@ -43,8 +50,19 @@ class KidGoalsController extends GetxController {
 
   // Stream subscription
   StreamSubscription<List<GoalModel>>? _goalsSubscription;
+  StreamSubscription<KidModel?>? _kidSubscription;
+  void switchToParentMode() {
+    final isKidConnected = currentKid.value?.isConnected ?? false;
+    if (!isKidConnected) {
+      final kidService = Get.find<KidService>();
+      kidService.updateKid(
+        currentKid.value!.kidId,
+        currentKid.value!.copyWith(isConnected: true),
+      );
+    }
 
-  final GoalService _goalService = Get.find<GoalService>();
+    _roleController.switchToParentMode(true);
+  }
 
   final Rx<GoalModel> oldGoal = Rx<GoalModel>(
     GoalModel(
@@ -70,15 +88,19 @@ class KidGoalsController extends GetxController {
     ),
   );
 
-  final Rx<GoalSummaryScreenMode> screenMode = Rx<GoalSummaryScreenMode>(GoalSummaryScreenMode.create);
+  final Rx<GoalSummaryScreenMode> screenMode =
+      Rx<GoalSummaryScreenMode>(GoalSummaryScreenMode.create);
   final RxString goalId = ''.obs;
 
   final RxDouble progressValue = 0.0.obs;
   final double progressStep = 0.01;
 
+  Rx<KidModel?> currentKid = Rx<KidModel?>(null);
+
   @override
   void onClose() {
     _goalsSubscription?.cancel();
+    _kidSubscription?.cancel();
     super.onClose();
   }
 
@@ -158,21 +180,101 @@ class KidGoalsController extends GetxController {
   Future<void> deleteGoal(String goalId) async {
     showLoadingDialog("Deleting Goal ...");
     try {
-      await _goalService.deleteGoal(goalId).timeout(Duration(seconds: 15), onTimeout: () {
+      // Get the current goal
+      final goal = await _goalService.fetchGoalById(goalId);
+      if (goal == null) {
+        ToastUtil.showToast("Goal not found");
+        Get.back();
+        return;
+      }
+
+      // Get the current kid
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        ToastUtil.showToast("Session Expired");
+        Get.offAllNamed(Routes.signIn);
+        return;
+      }
+
+      // Only refund if goal is completed and kid is connected
+      if (goal.status == GoalStatus.completed && kid.isConnected ||
+          goal.status == GoalStatus.inProgress && kid.isConnected) {
+        // Calculate new spending jar balance by adding the goal's saved amount
+        final newSpendingBalance =
+            kid.wallet.spendingJar.balance + goal.savedAmount;
+
+        // Update spending jar balance to refund the amount
+        await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
+      }
+
+      // Navigate back to base screen before deleting the goal
+      Get.back(); // Close loading dialog
+      Get.back(); // Close delete confirmation dialog
+      Get.until((route) => route.settings.name == Routes.kidBase);
+
+      // Delete the goal after navigation
+      await _goalService.deleteGoal(goalId).timeout(Duration(seconds: 15),
+          onTimeout: () {
         throw Exception("Request Timeout");
       });
+
+      ToastUtil.showToast('Goal deleted successfully');
     } catch (e) {
       Get.log('Error deleting goal: $e');
-    } finally {
-      Get.until((route) => route.settings.name == Routes.kidBase);
+      ToastUtil.showToast('Failed to delete goal');
+      Get.back(); // Close loading dialog
     }
   }
 
   void startListeningToGoals(String kidId) {
     isLoading.value = true;
 
+    // Start listening to kid data
+    _kidSubscription = _kidService.streamKid(kidId).listen(
+      (kidData) {
+        currentKid.value = kidData;
+      },
+      onError: (error) {
+        Get.log('Error fetching kid data: $error');
+      },
+    );
+
     _goalsSubscription = _goalService.streamUserGoals(kidId).listen(
       (goalsList) {
+        // Sort goals based on priority:
+        // 1. In-progress goals first
+        // 2. Within in-progress, modified goals (with saved amount) first
+        // 3. Then other goals (completed, approved, rejected)
+        goalsList.sort((a, b) {
+          // First priority: In-progress goals come first
+          if (a.status == GoalStatus.inProgress &&
+              b.status != GoalStatus.inProgress) {
+            return -1;
+          }
+          if (a.status != GoalStatus.inProgress &&
+              b.status == GoalStatus.inProgress) {
+            return 1;
+          }
+
+          // Second priority: For in-progress goals, sort by modification
+          if (a.status == GoalStatus.inProgress &&
+              b.status == GoalStatus.inProgress) {
+            if (a.savedAmount > 0 && b.savedAmount == 0) return -1;
+            if (a.savedAmount == 0 && b.savedAmount > 0) return 1;
+            return b.createdAt.compareTo(a.createdAt); // Then by creation date
+          }
+
+          // Third priority: For non-in-progress goals, sort by completion date
+          if (a.status != GoalStatus.inProgress &&
+              b.status != GoalStatus.inProgress) {
+            final aDate = a.completedAt ?? a.createdAt;
+            final bDate = b.completedAt ?? b.createdAt;
+            return bDate.compareTo(aDate); // Most recent first
+          }
+
+          return 0;
+        });
+
         goals.value = goalsList.toList();
         isLoading.value = false;
       },
@@ -188,7 +290,8 @@ class KidGoalsController extends GetxController {
 
     try {
       final isFirstGoal = appState.currentKid.value!.coinKidsBalance == -1;
-      final goal = newGoal.value.copyWith(userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
+      final goal = newGoal.value.copyWith(
+          userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
 
       // Pass isFirstGoal flag to createGoal
       await _goalService.createGoal(goal, isFirstGoal);
@@ -207,7 +310,8 @@ class KidGoalsController extends GetxController {
                 height: 20.w,
               ),
               SizedBox(width: 4.w),
-              Text("+2 CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+              Text("+2 CoinKids",
+                  style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
             ],
           ),
           buttons: [
@@ -242,7 +346,8 @@ class KidGoalsController extends GetxController {
 
       showLoadingDialog("Updating Goal...");
 
-      final goal = newGoal.value.copyWith(userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
+      final goal = newGoal.value.copyWith(
+          userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
       await _goalService.updateGoal(goal);
 
       resetNewGoal();
@@ -257,61 +362,111 @@ class KidGoalsController extends GetxController {
   }
 
   void incrementProgress(GoalModel goal) {
-    final newValue = (progressValue.value + progressStep).clamp(0.0, goal.targetAmount);
+    final newValue =
+        (progressValue.value + progressStep).clamp(0.0, goal.targetAmount);
     updateProgress(newValue);
   }
 
   void decrementProgress(GoalModel goal) {
-    final newValue = (progressValue.value - progressStep).clamp(0.0, goal.targetAmount);
+    final newValue =
+        (progressValue.value - progressStep).clamp(0.0, goal.targetAmount);
     updateProgress(newValue);
   }
 
   void updateProgress(double value) {
+    final kid = appState.currentKid.value;
+    if (kid == null) return;
+
+    final spendingBalance = kid.wallet.spendingJar.balance;
+    final currentSavedAmount = progressValue.value;
+    final difference = value - currentSavedAmount;
+
+    // If increasing progress, check if we have enough spending balance
+    if (difference > 0 && difference > spendingBalance) {
+      // ToastUtil.showToast("Not enough money in spending jar");
+      return;
+    }
+
     progressValue.value = value;
-    textController.text = value.toMoneyFormat(showSymbol: false);
   }
 
   Future<void> saveProgress(String goalId) async {
     try {
       showLoadingDialog("Updating Progress");
+
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        ToastUtil.showToast("Session Expired");
+        Get.offAllNamed(Routes.signIn);
+        return;
+      }
+
       // Get the current goal to compare values
-      final goal = goals.firstWhere((item) => item.id == goalId);
-
-      // Get the current value from the slider
-      final newAmount = progressValue.value;
-
-      // If the value hasn't changed, do nothing
-      if (newAmount == goal.savedAmount) {
+      final goal = await _goalService.fetchGoalById(goalId);
+      if (goal == null) {
+        ToastUtil.showToast("Goal not found");
         Get.back();
         return;
       }
 
-      // Use the transaction method to update progress with rewards
-      await _goalService.updateGoalProgressWithRewards(goalId, newAmount).timeout(Duration(seconds: 15), onTimeout: () {
-        throw Exception("Request Timeout");
-      });
+      // Calculate the difference in progress
+      final difference = progressValue.value - goal.savedAmount;
+
+      // If no change in progress, just return
+      if (difference == 0) {
+        Get.back();
+        return;
+      }
+
+      // Check if we have enough spending balance when increasing progress
+      if (difference > 0) {
+        final spendingBalance = kid.wallet.spendingJar.balance;
+        if (difference > spendingBalance) {
+          ToastUtil.showToast("Not enough money in spending jar");
+          Get.back();
+          return;
+        }
+      }
+
+      // Update the goal progress
+      await _goalService.updateGoalProgressWithRewards(
+          goalId, progressValue.value);
+
+      // Update spending jar balance
+      final newSpendingBalance = kid.wallet.spendingJar.balance - difference;
+      await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
 
       Get.back();
 
-      // Only show milestone dialogs if the amount is increasing
-      if (newAmount > goal.savedAmount) {
-        final percentage = (newAmount / goal.targetAmount) * 100;
+      // Show milestone dialogs if the amount is increasing
+      if (difference > 0) {
+        final percentage = (progressValue.value / goal.targetAmount) * 100;
+        final oldPercentage = (goal.savedAmount / goal.targetAmount) * 100;
 
-        if (percentage >= 100 && goal.savedAmount < goal.targetAmount) {
+        if (percentage >= 100 && oldPercentage < 100) {
           _showGoalCompletedDialog(goal.targetAmount);
-        } else if (percentage >= 75 && (goal.savedAmount / goal.targetAmount) * 100 < 75) {
-          _showMilestoneDialog("So Close!", "You're 75% closer to reaching your PS5", 3, Assets.icConfetti);
-        } else if (percentage >= 50 && (goal.savedAmount / goal.targetAmount) * 100 < 50) {
-          _showMilestoneDialog("Halfway There! ", "Amazing work! Keep saving.", 2, Assets.icHappyStar);
-        } else if (percentage >= 25 && (goal.savedAmount / goal.targetAmount) * 100 < 25) {
-          _showMilestoneDialog("Great Job!", "You just reach your first milestone", 2, Assets.icClap);
+        } else if (percentage >= 75 && oldPercentage < 75) {
+          _showMilestoneDialog(
+              "So Close!",
+              "You're 75% closer to reaching your goal",
+              //"You're 75% closer to reaching your ${goal.title}",
+              3,
+              Assets.icConfetti);
+        } else if (percentage >= 50 && oldPercentage < 50) {
+          _showMilestoneDialog("Halfway There!", "Amazing work! Keep saving.",
+              2, Assets.icHappyStar);
+        } else if (percentage >= 25 && oldPercentage < 25) {
+          _showMilestoneDialog("Great Job!",
+              "You just reached your first milestone", 2, Assets.icClap);
+        } else {
+          Get.until((route) => route.settings.name == Routes.kidBase);
         }
       } else {
         Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       Get.log('Error saving progress: $e');
-      ToastUtil.showExceptionToast(e);
+      ToastUtil.showToast('Failed to save progress');
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
@@ -340,7 +495,8 @@ class KidGoalsController extends GetxController {
     );
   }
 
-  void _showMilestoneDialog(String title, String subtitle, int coinKids, String emoji) {
+  void _showMilestoneDialog(
+      String title, String subtitle, int coinKids, String emoji) {
     KidDialog.show(
       emoji: emoji,
       title: title,
@@ -354,7 +510,8 @@ class KidGoalsController extends GetxController {
             height: 20.w,
           ),
           SizedBox(width: 4.w),
-          Text("+$coinKids CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+          Text("+$coinKids CoinKids",
+              style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
         ],
       ),
       buttons: [
@@ -373,7 +530,8 @@ class KidGoalsController extends GetxController {
     KidDialog.show(
       emoji: Assets.icTrophy,
       title: 'You Did It!',
-      subtitle: 'Congratulations, ${appState.currentKid.value!.name}, You\'ve reached\nyour savings goal ${amount.toMoneyFormat()}',
+      subtitle:
+          'Congratulations, ${appState.currentKid.value!.name}, You\'ve reached\nyour savings goal ${amount.toMoneyFormat()}',
       extraContent: Column(
         children: [
           SizedBox(height: 8.h),
@@ -386,7 +544,8 @@ class KidGoalsController extends GetxController {
                 height: 20.w,
               ),
               SizedBox(width: 4.w),
-              Text("+10 CoinKids", style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+              Text("+10 CoinKids",
+                  style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
             ],
           ),
         ],
