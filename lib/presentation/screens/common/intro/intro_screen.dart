@@ -18,112 +18,110 @@ class IntroScreen extends GetView<IntroController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.background,
-          ),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 46.h),
-                  child: SvgPicture.asset(
-                    Assets.parentBgCloud,
-                    width: 360.w,
-                    fit: BoxFit.fitWidth,
-                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.background,
+        ),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.only(top: 46.h),
+                child: SvgPicture.asset(
+                  Assets.parentBgCloud,
+                  width: 360.w,
+                  fit: BoxFit.fitWidth,
                 ),
               ),
-              Center(
-                child: CarouselSlider(
-                  items: controller.pages,
-                  carouselController: controller.carouselController,
-                  options: CarouselOptions(
-                    aspectRatio: 1.0,
-                    enableInfiniteScroll: false,
-                    enlargeCenterPage: true,
-                    viewportFraction: 1.0,
-                    onPageChanged: (index, reason) {
-                      controller.updatePageIndex(index);
-                    },
-                  ),
+            ),
+            Center(
+              child: CarouselSlider(
+                items: controller.pages,
+                carouselController: controller.carouselController,
+                options: CarouselOptions(
+                  aspectRatio: 1.0,
+                  enableInfiniteScroll: false,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.0,
+                  onPageChanged: (index, reason) {
+                    controller.updatePageIndex(index);
+                  },
                 ),
               ),
-              Positioned(
-                bottom: 22.h,
-                left: 0,
-                right: 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Obx(() {
-                      return controller.pageIndex.value == controller.pages.length - 1
-                          ? AppButton(
-                              onPressed: () {
-                                Get.offNamed(Routes.signUp);
-                              },
-                              size: Size(0.8.sw, 50),
-                              child: Text(
-                                "Done",
-                                style: AppTextStyle.appButton,
-                              ),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      controller.carouselController.animateToPage(
-                                        controller.pages.length - 1,
-                                        duration: const Duration(milliseconds: 500),
-                                        curve: Curves.ease,
-                                      );
-                                    },
-                                    child: Text(
-                                      "Skip",
-                                      style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
-                                    ),
-                                  ),
-                                  Obx(() {
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: List.generate(controller.pages.length, (index) {
-                                        return AnimatedContainer(
-                                          duration: const Duration(milliseconds: 300),
-                                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                                          width: controller.pageIndex.value == index ? 10 : 10,
-                                          height: 10,
-                                          decoration: BoxDecoration(
-                                            color: controller.pageIndex.value == index ? AppColors.iconPrimary : AppColors.iconDisabled,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        );
-                                      }),
+            ),
+            Positioned(
+              bottom: 22.h,
+              left: 0,
+              right: 0,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Obx(() {
+                    return controller.pageIndex.value == controller.pages.length - 1
+                        ? AppButton(
+                            onPressed: () {
+                              Get.offNamed(Routes.signUp);
+                            },
+                            size: Size(0.8.sw, 50),
+                            child: Text(
+                              "Done",
+                              style: AppTextStyle.appButton,
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    controller.carouselController.animateToPage(
+                                      controller.pages.length - 1,
+                                      duration: const Duration(milliseconds: 500),
+                                      curve: Curves.ease,
                                     );
-                                  }),
-                                  AppIconButton(
-                                    onPressed: () {
-                                      controller.carouselController.animateToPage(
-                                        controller.pageIndex.value + 1,
-                                        duration: const Duration(milliseconds: 500),
-                                        curve: Curves.ease,
-                                      );
-                                    },
-                                    icon: const Icon(Icons.arrow_forward_rounded),
+                                  },
+                                  child: Text(
+                                    "Skip",
+                                    style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
                                   ),
-                                ],
-                              ),
-                            );
-                    }),
-                  ],
-                ),
+                                ),
+                                Obx(() {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(controller.pages.length, (index) {
+                                      return AnimatedContainer(
+                                        duration: const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                        width: controller.pageIndex.value == index ? 10 : 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          color: controller.pageIndex.value == index ? AppColors.iconPrimary : AppColors.iconDisabled,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      );
+                                    }),
+                                  );
+                                }),
+                                AppIconButton(
+                                  onPressed: () {
+                                    controller.carouselController.animateToPage(
+                                      controller.pageIndex.value + 1,
+                                      duration: const Duration(milliseconds: 500),
+                                      curve: Curves.ease,
+                                    );
+                                  },
+                                  icon: const Icon(Icons.arrow_forward_rounded),
+                                ),
+                              ],
+                            ),
+                          );
+                  }),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
