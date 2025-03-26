@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -66,4 +67,4 @@ class AppColors {
   static Color btnColorGreen = Color(0xFF19B859);
   static Color btnColorOrange = Color(0xFFFF9E29);
   static Color btnColorRed = Color(0xFFF6612F);
-}
+ }

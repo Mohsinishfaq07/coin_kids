@@ -22,6 +22,7 @@ import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dar
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_transfer_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_wishlist_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/change_language_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/edit_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/messages_controller.dart';
@@ -81,6 +82,8 @@ class ControllerBindings extends Bindings {
     Get.lazyPut<ParentWishlistController>(() => ParentWishlistController(), fenix: true);
     Get.lazyPut<ParentChangePinController>(() => ParentChangePinController(), fenix: true);
     Get.lazyPut<ParentFeedbackController>(() => ParentFeedbackController(), fenix: true);
+    Get.lazyPut<ChangeLanguageController>(() => ChangeLanguageController(),
+        fenix: true);
 
     //KID
     Get.lazyPut<KidOnboardingController>(() => KidOnboardingController(), fenix: true);

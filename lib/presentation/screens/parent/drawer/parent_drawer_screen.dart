@@ -9,6 +9,7 @@ import 'package:coin_kids/presentation/components/common/circle_avatar_widget.da
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_drawer_controller.dart';
+import 'package:coin_kids/presentation/screens/parent/drawer/change_language_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -188,7 +189,10 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildProfileRowWithArrow("Languages (coming soon)", Assets.icGlobal, isComingSoon: true),
+                            _buildProfileRowWithArrow(
+
+                                onTap: () => Get.to(() => ChangeLanguage()),
+                                "Languages (coming soon)", Assets.icGlobal, isComingSoon: true),
                             SizedBox(
                               height: 31.h,
                             ),

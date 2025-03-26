@@ -72,6 +72,8 @@ dependencies:
   timeago: ^3.2.2
   timelines_plus: ^1.0.6
   firebase_app_check: ^0.3.2+4
+  flutter_localizations:
+    sdk: flutter
   
 
   http: any

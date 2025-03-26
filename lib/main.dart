@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/theme/light_theme.dart';
+import 'package:coin_kids/core/translations/app_translations.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/di/controller_bindings.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'firebase_options.dart';
 
@@ -24,8 +26,11 @@ void main() async {
   // Disable App Check for development
   await FirebaseAppCheck.instance.activate(
     webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-    appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttestWithDeviceCheckFallback,
+    androidProvider:
+        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode
+        ? AppleProvider.debug
+        : AppleProvider.appAttestWithDeviceCheckFallback,
   );
 
   SharedPreferencesHelper.init();
@@ -54,7 +59,6 @@ class MyApp extends StatelessWidget {
       theme: CustomThemeData.getThemeData(),
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
       builder: (context, child) {
         // Then apply DevicePreview
         final devicePreviewChild = DevicePreview.appBuilder(context, child);
@@ -66,6 +70,20 @@ class MyApp extends StatelessWidget {
         );
       },
       initialBinding: ControllerBindings(),
+      translations: AppTranslations(),
+      fallbackLocale: const Locale('en', 'US'),
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('es', 'ES'),
+        Locale('ar', 'SA'),
+        Locale('fr', 'FR'),
+        Locale('de', 'DE'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       initialRoute: Routes.splash,
       getPages: AppPages.pages,
     );
@@ -84,7 +102,9 @@ class OrientationAwareBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrientationBuilder(
       builder: (context, orientation) {
-        final designSize = orientation == Orientation.portrait ? const Size(360, 800) : const Size(800, 360);
+        final designSize = orientation == Orientation.portrait
+            ? const Size(360, 800)
+            : const Size(800, 360);
 
         return ScreenUtilInit(
           designSize: designSize,
