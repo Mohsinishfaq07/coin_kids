@@ -126,11 +126,13 @@ class KidProfileController extends GetxController {
 
   Future<void> handleRejectGoal(GoalModel goal) async {
     try {
+      final kidName = appState.currentKid.value?.name ?? "child";
       final result = await Get.dialog<bool>(
         AppParentDialog(
           iconPath: Assets.icCoinEuro,
           title: "Confirm Rejection",
-          subtitle: "Are you sure you want to reject this goal?",
+          subtitle:
+              "An amount of ${goal.targetAmount.toMoneyFormat()} will be refunded in $kidName's account",
           buttons: [
             DialogButton(
               text: "Cancel",
@@ -201,13 +203,17 @@ class KidProfileController extends GetxController {
     }
   }
 
-  Future<void> handleBuyGoal(GoalModel goal) async {
+  Future<void> handleApproveGoal(GoalModel goal) async {
     try {
+      // Get current kid's name
+      final kidName = appState.currentKid.value?.name ?? "child";
+
       final result = await Get.dialog<bool>(
         AppParentDialog(
           iconPath: Assets.icCoinEuro,
-          title: "Confirm Purchase",
-          subtitle: "Are you sure you want to approve this purchase?",
+          title: "Approve Goal",
+          subtitle:
+              "An amount of ${goal.targetAmount.toMoneyFormat()} will be deducted from $kidName's account",
           buttons: [
             DialogButton(
               text: "Cancel",
@@ -216,7 +222,7 @@ class KidProfileController extends GetxController {
               textColor: Colors.white,
             ),
             DialogButton(
-              text: "Proceed",
+              text: "Approve",
               onPressed: () => Get.back(result: true),
               backgroundColor: AppColors.btnColorGreen,
               textColor: Colors.white,

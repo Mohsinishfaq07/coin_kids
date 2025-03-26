@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
@@ -10,6 +11,7 @@ import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
 import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +33,8 @@ class MessagesController extends GetxController {
   final hasMoreData = true.obs;
   final GoalService goalService = Get.find<GoalService>();
   final appState = Get.find<AppStateController>();
-
   DocumentSnapshot? _lastDocument;
   final refreshController = RefreshController(initialRefresh: false);
-
   StreamSubscription? _notificationCountSubscription;
 
   @override
@@ -281,6 +281,7 @@ class MessagesController extends GetxController {
       await markAsRead(notification.id!);
 
       try {
+        final kidName = appState.currentKid.value?.name ?? "child";
         // Fetch the goal directly using goalService
         final goal = await goalService.fetchGoalById(metadata.goalId);
         if (goal == null) {
@@ -293,9 +294,10 @@ class MessagesController extends GetxController {
           final shouldApprove = await Get.dialog<bool>(
             AppParentDialog(
               iconPath: Assets.icCoinEuro,
-              title: "Approve goal",
-              // subtitle: "Are you sure you want to approve this purchase?",
-              buttons: [
+              title: "Approve Goal",
+              subtitle:
+              "An amount of ${goal.targetAmount.toMoneyFormat()} will be deducted from $kidName's account",
+               buttons: [
                 DialogButton(
                   text: "Cancel",
                   onPressed: () => Get.back(result: false),
@@ -342,7 +344,7 @@ class MessagesController extends GetxController {
             AppParentDialog(
               iconPath: Assets.icCoinEuro,
               title: "Confirm Rejection",
-              subtitle: "Are you sure you want to reject this goal?",
+            subtitle:   "An amount of ${goal.targetAmount.toMoneyFormat()} will be refunded from $kidName's account",
               buttons: [
                 DialogButton(
                   text: "Cancel",

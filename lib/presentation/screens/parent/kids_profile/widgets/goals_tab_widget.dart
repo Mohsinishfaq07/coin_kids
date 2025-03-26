@@ -34,7 +34,7 @@ class GoalsTabWidget extends GetView<KidProfileController> {
                     ? () => controller.handleRejectGoal(goalData)
                     : null,
                 onBuy: goalData.status == GoalStatus.completed
-                    ? () => controller.handleBuyGoal(goalData)
+                    ? () => controller.handleApproveGoal(goalData)
                     : null,
               );
             },

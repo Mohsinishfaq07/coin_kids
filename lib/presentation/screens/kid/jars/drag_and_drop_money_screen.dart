@@ -119,7 +119,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                           children: [
                                             for (final moneyItem in rows[rowIndex])
                                               Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.w),
+                                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.w),
                                                 child: SizedBox(
                                                   width: isShowingBills
                                                       ? availableWidth * 0.30.w // Bills are wider

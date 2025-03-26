@@ -142,7 +142,7 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   Future<void> _handleTransfer() async {
-    showLoadingDialog('Creating you jar');
+    showLoadingDialog('Transferring...');
     try {
       final currentKid = appState.currentKid.value;
       if (currentKid != null) {
