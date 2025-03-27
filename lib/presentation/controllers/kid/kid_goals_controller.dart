@@ -390,7 +390,7 @@ class KidGoalsController extends GetxController {
     progressValue.value = value;
   }
 
-  Future<void> saveProgress(String goalId) async {
+  Future<void> saveProgress(String goalId, {int? rewardCoins}) async {
     try {
       showLoadingDialog("Updating Progress");
 
@@ -449,7 +449,6 @@ class KidGoalsController extends GetxController {
           _showMilestoneDialog(
               "So Close!",
               "You're 75% closer to reaching your goal",
-              //"You're 75% closer to reaching your ${goal.title}",
               3,
               Assets.icConfetti);
         } else if (percentage >= 50 && oldPercentage < 50) {

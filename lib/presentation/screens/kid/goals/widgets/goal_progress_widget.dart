@@ -179,7 +179,26 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 text: 'Done',
                 baseColor: AppColors.btnColorGreen,
                 iconPath: Assets.icTick,
-                onTap: () => controller.saveProgress(goal.id!),
+                // onTap: () => controller.saveProgress(goal.id!),
+                onTap: () {
+                  // Calculate percentage achieved
+                  double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
+                  int rewardCoins = 0;
+
+                  // Check milestones and assign rewards
+                  if (progressPercentage >= 100) {
+                    rewardCoins = 10; // 100% milestone
+                  } else if (progressPercentage >= 75) {
+                    rewardCoins = 3;  // 75% milestone
+                  } else if (progressPercentage >= 50) {
+                    rewardCoins = 2;  // 50% milestone
+                  } else if (progressPercentage >= 25) {
+                    rewardCoins = 2;  // 25% milestone
+                  }
+
+                  // Save progress and award coins if milestone reached
+                  controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                },
               ),
             ],
           ),

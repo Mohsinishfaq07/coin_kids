@@ -167,6 +167,7 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
                                 rightIconPath: Assets.icCoinStar,
                                 iconSize: 28.w,
                                 isLocked: controller.appState.currentKid.value!.coinKidsBalance == -1.0,
+                                showSymbol: false,
                                 onCardTap: () {
                                   // Handle CoinKids card tap if needed
                                 },

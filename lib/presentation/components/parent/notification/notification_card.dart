@@ -22,9 +22,9 @@ class NotificationCard extends StatelessWidget {
     this.onActionPressed,
   });
 
-  String _getTitle() {
-    return notification.title;
-  }
+  // String _getTitle() {
+  //   return notification.title;
+  // }
 
   String _getDesc() {
     final metadata = notification.metadata;
@@ -41,7 +41,7 @@ class NotificationCard extends StatelessWidget {
 
       case NotificationType.goalCompleted:
         final goalMetadata = metadata as GoalCompletedMetadata;
-        return '${goalMetadata.name} Completed Goal <b>${goalMetadata.goalName}, saved ${goalMetadata.targetAmount}</b>';
+        return '${goalMetadata.name} Completed a goal   ';
 
       case NotificationType.balanceAdded:
       case NotificationType.balanceRemoved:
@@ -57,6 +57,7 @@ class NotificationCard extends StatelessWidget {
     }
   }
 
+
   String? _getKidAvatarUrl() {
     final metadata = notification.metadata;
     if (metadata is GoalCompletedMetadata) {
@@ -68,6 +69,7 @@ class NotificationCard extends StatelessWidget {
     }
     return null;
   }
+
 
   List<Widget> _getActionButtons() {
     final metadata = notification.metadata;
@@ -190,19 +192,8 @@ class NotificationCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              _getTitle(),
-                              style: AppTextStyle.bodyLarge.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            SizedBox(height: 1.h),
-                            Text(
-                              timeago.format(notification.timestamp),
-                              style: AppTextStyle.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
+
+
                             if (_getDesc().isNotEmpty) SizedBox(height: 12.h),
                             if (_getDesc().isNotEmpty)
                               Text(
@@ -213,6 +204,13 @@ class NotificationCard extends StatelessWidget {
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            SizedBox(height: 1.h),
+                            Text(
+                              timeago.format(notification.timestamp),
+                              style: AppTextStyle.bodyMedium.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -317,9 +317,25 @@ class GoalService extends BaseService {
           milestonePercentage = 75.0;
           notificationType = NotificationType.goalMilestone;
         } else*/
+        if (oldPercentage < 25 && newPercentage >= 25) {
+          coinKidsToAward = 2;
+          milestonePercentage = 25.0;
+
+        } if (oldPercentage < 50 && newPercentage >= 50) {
+          coinKidsToAward = 2;
+          milestonePercentage = 50.0;
+
+        }
+        if (oldPercentage < 75 && newPercentage >= 75) {
+          coinKidsToAward = 3;
+          milestonePercentage = 75.0;
+
+        }
+
+
         if (newPercentage == 100) {
-          coinKidsToAward = 5;
-          notificationTitle = "Goal Achieved!";
+          coinKidsToAward = 10;
+          notificationTitle = "Completed a goal";
           notificationBody =
               "Congratulations! You've completed your goal: ${goal.title}";
           milestonePercentage = 100.0;
@@ -369,6 +385,7 @@ class GoalService extends BaseService {
 
             transaction.update(_firestore.collection('kids').doc(goal.userId),
                 {'coinKidsBalance': newCoinKids});
+            print("this is new coin kid " + "$newCoinKids");
 
             // Create notification
             if (notificationTitle != null &&

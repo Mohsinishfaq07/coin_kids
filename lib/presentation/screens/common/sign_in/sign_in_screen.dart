@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -145,6 +146,7 @@ class SignInScreen extends GetView<SignInController> {
                         ),
                       ],
                     ),
+                    if (Platform.isAndroid)
                     Padding(
                       padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
                       child: Text("OR",
@@ -154,39 +156,40 @@ class SignInScreen extends GetView<SignInController> {
                               )),
                     ),
 
-                    // Google Login Button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    // Google Login Button - Show only on Android
+                    if (Platform.isAndroid)
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
                         ),
-                        fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
-                      ),
-                      onPressed: () async {
-                        await controller.signInWithGoogle();
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                            child: SvgPicture.asset(Assets.icGoogle, height: 24),
-                          ),
-                          Text(
-                            "Sign in with Google",
-                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                            child: SizedBox(
-                              height: 24,
-                              width: 24,
+                        onPressed: () async {
+                          await controller.signInWithGoogle();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                              child: SvgPicture.asset(Assets.icGoogle, height: 24),
                             ),
-                          ),
-                        ],
+                            Text(
+                              "Sign in with Google",
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                              child: SizedBox(
+                                height: 24,
+                                width: 24,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                     SizedBox(height: 16.h),
                   ],
                 ),

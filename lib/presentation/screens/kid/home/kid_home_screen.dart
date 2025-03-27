@@ -122,12 +122,15 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             // Transfer Button (show only if both jars exist)
                             if (isSpendingJarCreated && isSavingJarCreated) ...[
                               SizedBox(width: 20.w),
-                              KidButton.iconOnly(
+                              KidButton.iconWithTitle(
+
+
                                 onTap: () {
                                   Get.toNamed(Routes.kidMoneyTransfer);
                                 },
                                 baseColor: AppColors.colorPrimary,
-                                iconPath: Assets.icTransfer,
+                                iconPath: Assets.icTransfer, title: 'Transfer',
+
                               ),
                               SizedBox(width: 20.w),
                             ],

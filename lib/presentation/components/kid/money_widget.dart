@@ -21,6 +21,7 @@ class MoneyWidget extends StatelessWidget {
   final double? iconSize;
   final bool isLocked;
   final Key? showcaseKey;
+  final bool showSymbol;
 
   const MoneyWidget({
     super.key,
@@ -34,6 +35,7 @@ class MoneyWidget extends StatelessWidget {
     this.iconSize,
     this.isLocked = false,
     this.showcaseKey,
+    this.showSymbol = true,
   });
 
   @override
@@ -63,7 +65,7 @@ class MoneyWidget extends StatelessWidget {
                     alignment: Alignment.center,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        final text = amount.toMoneyFormat();
+                        final text = amount.toMoneyFormat(showSymbol: showSymbol);
                         final textStyle = AppTextStyle.headingMedium.copyWith(
                           color: AppColors.textOnPrimary,
                         );

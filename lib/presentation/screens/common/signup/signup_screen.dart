@@ -216,8 +216,9 @@ class SignupScreen extends GetView<SignupController> {
                       ),
                       SizedBox(height: 16.h),
                     ],
+                    SizedBox(height: 16.h),
 
-                    SizedBox(height: 80.h),
+
                     // Terms and Signup Button
                     Padding(
                       padding: EdgeInsets.only(left: 24.w, right: 24.w, bottom: 10.h),
