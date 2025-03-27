@@ -128,13 +128,10 @@ class GoalCompletedMetadata extends NotificationMetadata {
   List<NotificationAction> get actions =>
       [
         NotificationAction(
-            id: NotificationActionId.negative,
-            label: 'Reject',
-            type: NotificationActionType.critical),
-        NotificationAction(
-            id: NotificationActionId.positive,
-            label: 'Approve',
-            type: NotificationActionType.primary),
+          id: NotificationActionId.positive,
+          label: 'See details',
+          type: NotificationActionType.primary,
+        ),
       ];
 }
 

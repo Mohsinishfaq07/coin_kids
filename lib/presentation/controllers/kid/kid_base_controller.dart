@@ -151,6 +151,12 @@ class KidBaseController extends GetxController {
     if (appBarController.shouldShowRequestMoneySpotlight()) return;
     if (shouldShowJarSpotLight()) return;
 
+    // Add a safety check here to ensure we have notifications
+    if (unreadNotifications.isEmpty || unreadNotifications.first == null) {
+      Get.log("No valid notifications to show");
+      return;
+    }
+
     final BuildContext context = Get.context!;
 
     // Use a transparent barrier

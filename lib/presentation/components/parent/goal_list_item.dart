@@ -2,9 +2,11 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 class GoalListItem extends StatelessWidget {
   final GoalModel goal;
@@ -67,8 +69,17 @@ class GoalListItem extends StatelessWidget {
                       height: 60.w,
                       fit: BoxFit.cover,
                     ),
+                  )
+                else
+                  SvgPicture.asset(
+                    Assets.icGoal,
+                    width: 60.w,
+                    height: 60.w,
+                    fit: BoxFit.cover,
                   ),
+
                 SizedBox(width: 16.w),
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +95,7 @@ class GoalListItem extends StatelessWidget {
                 ),
               ],
             ),
+
             SizedBox(height: 16.h),
             Row(
               children: [
@@ -157,7 +169,7 @@ class GoalListItem extends StatelessWidget {
                       onPressed: onReject ?? () {},
                       backgroundColor: AppColors.critical,
                       child: Text(
-                        "Reject",
+                        "Decline",
                         style: AppTextStyle.bodyMedium.copyWith(
                           color: Colors.white,
                         ),
@@ -209,8 +221,6 @@ class GoalListItem extends StatelessWidget {
         return 'Rejected';
       case GoalStatus.approved:
         return 'Approved';
-      default:
-        return '';
-    }
+      }
   }
 }

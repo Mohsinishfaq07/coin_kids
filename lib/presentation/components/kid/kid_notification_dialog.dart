@@ -38,10 +38,11 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
 
   void nextNotification() {
     if (currentIndex < widget.notifications.length - 1) {
+      final currentNotification = widget.notifications[currentIndex];
       setState(() {
         currentIndex++;
       });
-      widget.onDismissSingle(widget.notifications[currentIndex - 1]);
+      widget.onDismissSingle(currentNotification);
     }
   }
 
@@ -55,6 +56,12 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // Add safety check
+    if (widget.notifications.isEmpty) {
+      Get.log("No notifications to display");
+      return const SizedBox.shrink();
+    }
+
     final notification = widget.notifications[currentIndex];
     final hasMultipleNotifications = widget.notifications.length > 1;
 

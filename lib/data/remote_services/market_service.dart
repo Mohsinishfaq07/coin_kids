@@ -124,4 +124,24 @@ class MarketService {
       throw Exception('Failed to fetch products within budget: ${e.toString()}');
     }
   }
+
+  // Fetch product by URL
+  Future<MarketProductModel?> fetchProductByUrl(String url) async {
+    try {
+      final QuerySnapshot snapshot = await _firestore
+          .collection(collection)
+          .where('url', isEqualTo: url)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        return null;
+      }
+
+      final doc = snapshot.docs.first;
+      return MarketProductModel.fromJson(doc.data() as Map<String, dynamic>, id: doc.id);
+    } catch (e) {
+      throw Exception('Failed to fetch product by URL: ${e.toString()}');
+    }
+  }
 }

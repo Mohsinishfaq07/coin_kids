@@ -9,6 +9,7 @@ import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -22,6 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 class KidProfileController extends GetxController {
   final appState = Get.find<AppStateController>();
   final goalsService = Get.find<GoalService>();
+  final marketService = Get.find<MarketService>();
   final Rx<KidProfileTabs> currentType = KidProfileTabs.jars.obs;
 
   final NotificationService _notificationService =
@@ -132,16 +134,16 @@ class KidProfileController extends GetxController {
           iconPath: Assets.icCoinEuro,
           title: "Confirm Rejection",
           subtitle:
-              "An amount of ${goal.targetAmount.toMoneyFormat()} will be refunded in $kidName's account",
+              "${goal.targetAmount.toMoneyFormat()} will be refunded to $kidName's wallet",
           buttons: [
             DialogButton(
               text: "Cancel",
               onPressed: () => Get.back(result: false),
-              backgroundColor: AppColors.btnColorGreen,
+              backgroundColor: AppColors.btnColorOrange,
               textColor: Colors.white,
             ),
             DialogButton(
-              text: "Reject",
+              text: "Decline",
               onPressed: () => Get.back(result: true),
               backgroundColor: AppColors.critical,
               textColor: Colors.white,
@@ -211,9 +213,10 @@ class KidProfileController extends GetxController {
       final result = await Get.dialog<bool>(
         AppParentDialog(
           iconPath: Assets.icCoinEuro,
-          title: "Approve Goal",
+          title: "Confirm Approval",
           subtitle:
-              "An amount of ${goal.targetAmount.toMoneyFormat()} will be deducted from $kidName's account",
+              "${goal.targetAmount.toMoneyFormat()} will be deducted from $kidName's wallet",
+
           buttons: [
             DialogButton(
               text: "Cancel",
@@ -269,25 +272,54 @@ class KidProfileController extends GetxController {
 
       await _notificationService.createNotification(notification);
 
-      // Create MarketProductModel from goal data
-      final product = MarketProductModel(
-        id: goal.id,
-        name: goal.title,
-        price: goal.targetAmount,
-        rating: 5.0, // Default rating
-        minAge: 0, // Default age range
-        maxAge: 99, // Default age range
-        imageUrl: goal.photo ?? '',
-        url: goal.productUrl ?? '',
-        about: [''], // Empty about list as default
-      );
-
-      // Navigate to product detail screen
-      Get.toNamed(Routes.parentProductDetails, arguments: product);
+      // Fetch the actual product details instead of creating a dummy one
+      if (goal.productUrl != null) {
+        final product = await marketService.fetchProductByUrl(goal.productUrl!);
+        if (product != null) {
+          // Navigate to product detail screen with the actual product data
+          Get.toNamed(Routes.parentProductDetails, arguments: product);
+        } else {
+          Get.snackbar(
+            'Error',
+            'Product details not found',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      }
 
       ToastUtil.showToast('Goal approved successfully');
     } catch (e) {
       ToastUtil.showToast('Failed to approve goal');
+      Get.log('Error approving goal: $e', isError: true);
+    }
+  }
+
+  Future<void> navigateToProductDetails(GoalModel goal) async {
+    if (goal.productUrl != null) {
+      try {
+        final product = await marketService.fetchProductByUrl(goal.productUrl!);
+        if (product != null) {
+          Get.toNamed(Routes.parentProductDetails, arguments: product);
+        } else {
+          Get.snackbar(
+            'Error',
+            'Product not found',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to load product details',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     }
   }
 
