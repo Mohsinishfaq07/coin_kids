@@ -132,7 +132,7 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   void _handleCountingComplete() {
-    if (isComplete) {
+    if (isComplete()) {
       Get.back();
       ToastUtil.showToast("Great job counting! 🎉");
     } else {
@@ -172,11 +172,13 @@ class DragAndDropMoneyController extends GetxController {
 
   bool canAddAmount(double amount) {
     final newTotal = totalValue.value + amount;
-    return newTotal <= targetAmount;
+     return newTotal <= targetAmount;
+    // const epsilon = 0.001;
+    // return (newTotal - targetAmount).abs() < epsilon || newTotal < targetAmount;
   }
 
   Future<void> createJar() async {
-    if (jarCreationController.jarType == Jars.spendingJar && !isComplete) {
+    if (jarCreationController.jarType == Jars.spendingJar && !isComplete()) {
       ToastUtil.showToast("Enter all amount");
       return;
     }
@@ -194,7 +196,7 @@ class DragAndDropMoneyController extends GetxController {
     try {
       showLoadingDialog("Creating Jar");
       if (jarCreationController.jarType == Jars.spendingJar) {
-        if (isComplete) {
+        if (isComplete()) {
           final finalBalance = spendingJar.balance + totalValue.value;
           Get.log('final Balance Spend $finalBalance');
           jarCreationController.kidService.updateSpendingJar(
@@ -256,8 +258,10 @@ class DragAndDropMoneyController extends GetxController {
 
   double get remainingAmount => targetAmount - totalValue.value;
 
-  bool get isComplete => totalValue.value == targetAmount;
-
+  // bool get isComplete => totalValue.value == targetAmount;
+  bool isComplete() {
+    return double.parse(totalValue.value.toStringAsFixed(2)) == targetAmount;
+  }
   RxDouble spendingAmount = 0.0.obs; // Changed to RxDouble
   RxDouble savingAmount = 0.0.obs; // Changed to RxDouble
   var clickedIndex = 0.obs; // Observable for the text

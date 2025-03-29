@@ -86,7 +86,8 @@ class QuickTransferController extends GetxController {
                 text: "Close",
                 onPressed: () async {
                   parentBaseController.showKidsZoneShowcase.value = true;
-                  Get.offNamed(Routes.parentBase);
+                  Get.close(3);
+               //   Get.offNamed(Routes.parentBase);
                   // Get.until((route) => route.settings.name == Routes.parentBase);
                 },
               ),

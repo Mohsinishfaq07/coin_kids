@@ -143,7 +143,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                     children: [
                       Obx(() {
                         return AppButton(
-                          size: Size(125.w, 50.h),
+                            size: Size(120.w, 45.h),
                           backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                           onPressed: () async {
                             if (controller.amount.value.isEmpty) {
@@ -174,7 +174,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       }),
                       Obx(() {
                         return AppButton(
-                          size: Size(125.w, 50.h),
+                            size: Size(120.w, 45.h),
                           backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                           onPressed: () {
                             controller.sendMoney();

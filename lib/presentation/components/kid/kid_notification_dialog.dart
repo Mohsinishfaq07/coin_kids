@@ -244,8 +244,10 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
         break;
       case NotificationType.balanceAdded:
       case NotificationType.transactionApproved:
+      iconPath = Assets.icCoinEuro;
       case NotificationType.goalApproved:
-        iconPath = Assets.icCoinEuro;
+        // iconPath = Assets.icCoinEuro;
+      iconPath = Assets.icStar;
         break;
       case NotificationType.transactionRejected:
         iconPath = Assets.emojiSad;
@@ -296,11 +298,13 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
     } else if (notification.type == NotificationType.goalApproved) {
       final GoalApprovedMetadata metaData =
           notification.metadata as GoalApprovedMetadata;
-      return "${metaData.name} has approved your goal '${metaData.goalName}'";
+      // return "${metaData.name} has approved your goal '${metaData.goalName}'";
+      return "it'll arrive soon ";
     } else if (notification.type == NotificationType.goalRejected) {
       final GoalRejectedMetadata metaData =
           notification.metadata as GoalRejectedMetadata;
-      return "${metaData.name} has rejected your goal '${metaData.goalName}'";
+      // return "${metaData.name} has rejected your goal '${metaData.goalName}'";
+      return "The amount ${metaData.targetAmount} will be refunded";
     }
 
     return "";

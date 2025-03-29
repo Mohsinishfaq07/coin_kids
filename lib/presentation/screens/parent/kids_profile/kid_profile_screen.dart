@@ -36,8 +36,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
           children: [
             BasicInfoWidget(),
             Padding(
-              padding: EdgeInsets.only(top: 45.h, bottom: 46.h),
-              child: Row(
+              padding: EdgeInsets.only(top: 45.h, bottom: 30.h),              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   KidButton.iconWithTitle(
@@ -73,15 +72,17 @@ class KidProfileScreen extends GetView<KidProfileController> {
                 ],
               ),
             ),
-            SizedBox(
-              width: 0.8.sw,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(child: _buildTabSwitcher(KidProfileTabs.jars, Assets.icCoinEuro)),
-                  //_buildTabSwitcher(KidProfileTabs.notifications, Assets.icEmojiMessage),
-                  Expanded(child: _buildTabSwitcher(KidProfileTabs.goals, Assets.icGoalYellow)),
-                ],
+            Padding(
+              padding:  EdgeInsets.only(bottom: 8.h),              child: SizedBox(
+                width: 0.8.sw,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(child: _buildTabSwitcher(KidProfileTabs.jars, Assets.icCoinEuro)),
+                    //_buildTabSwitcher(KidProfileTabs.notifications, Assets.icEmojiMessage),
+                    Expanded(child: _buildTabSwitcher(KidProfileTabs.goals, Assets.icGoalYellow)),
+                  ],
+                ),
               ),
             ),
             Obx(() {

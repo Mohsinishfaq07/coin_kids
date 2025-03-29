@@ -13,7 +13,7 @@ class BasicInfoWidget extends GetView<KidProfileController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 36.h),
+      padding: EdgeInsets.only(top: 30.h),
       child: Center(
         child: Container(
           width: 126.w,

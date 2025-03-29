@@ -180,7 +180,7 @@ class SignupScreen extends GetView<SignupController> {
                     ),
                     if (Platform.isAndroid) ...[
                       Padding(
-                        padding: EdgeInsets.only(top: 16.h, ),
+                        padding: EdgeInsets.only(top: 16.h,bottom: 16.h ),
                         child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
                       ),
                       // Google Login Button
@@ -221,7 +221,7 @@ class SignupScreen extends GetView<SignupController> {
 
                     // Terms and Signup Button
                     Padding(
-                      padding: EdgeInsets.only(left: 24.w, right: 24.w, bottom: 10.h),
+                      padding: EdgeInsets.only(left: 24.w, right: 24.w, top: MediaQuery.of(context).size.height* 0.1.h),
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(

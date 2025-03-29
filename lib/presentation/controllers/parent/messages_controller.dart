@@ -250,6 +250,15 @@ class MessagesController extends GetxController {
       ToastUtil.showToast('Failed to mark all as read');
     }
   }
+  Future<bool> _checkGoalExists(String goalId) async {
+    try {
+      final goal = await goalService.fetchGoalById(goalId);
+      return goal != null;
+    } catch (e) {
+      Get.log('Error checking goal existence: $e');
+      return false;
+    }
+  }
 
   Future<void> handleActionClick(
       NotificationModel notification, NotificationActionId actionId) async {
@@ -279,7 +288,15 @@ class MessagesController extends GetxController {
     } else if (notification.type == NotificationType.goalCompleted) {
       if (actionId == NotificationActionId.positive) {
         await markAsRead(notification.id!);
-        Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
+        final metadata = notification.metadata as GoalCompletedMetadata;
+        bool goalExists = await _checkGoalExists(metadata.goalId);
+        if (goalExists) {
+          Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
+        } else {
+          ToastUtil.showToast("The goal no longer exists");
+
+        }
+        // Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
       }
       // final metadata = notification.metadata as GoalCompletedMetadata;
       // await markAsRead(notification.id!);

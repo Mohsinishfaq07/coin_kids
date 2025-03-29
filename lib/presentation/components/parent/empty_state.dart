@@ -2,15 +2,17 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 Widget buildNotificationEmptyState(VoidCallback onTap) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Image.asset(
-        Assets.phMessages,
-        height: 100,
-      ),
+      // Image.asset(
+      //   Assets.phMessages,
+      //   height: 100,
+      // ),
+      SvgPicture.asset(Assets.phGoalImage, height: 100.h),
       SizedBox(height: 16.h),
       Text(
         'No notifications yet',
