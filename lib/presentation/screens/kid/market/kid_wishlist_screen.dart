@@ -19,8 +19,10 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
       builder: (context, constraints) {
         final double screenWidth = constraints.maxWidth;
         final int crossAxisCount = _calculateCrossAxisCount(screenWidth);
-        final double cardWidth = (screenWidth - (crossAxisCount + 1) * 16.w) / crossAxisCount;
-        final double cardHeight = cardWidth * 1.2; // Slightly shorter than market cards
+        final double cardWidth =
+            (screenWidth - (crossAxisCount + 1) * 16.w) / crossAxisCount;
+        final double cardHeight =
+            cardWidth * 1.2; // Slightly shorter than market cards
 
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -129,6 +131,7 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                     product: item.product!,
                     onAddToGoal: () {
                       Get.back();
+                      controller.addToGoal(item);
                     },
                   ),
                   barrierDismissible: true,

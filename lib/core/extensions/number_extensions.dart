@@ -1,5 +1,10 @@
 extension NumberFormatting on num {
-  String toMoneyFormat({bool showSymbol = true}) {
+  String toMoneyFormat({bool showSymbol = true, bool showDecimals = true}) {
+    if (!showDecimals) {
+      // For non-decimal display, just return the integer part
+      return showSymbol ? '€${toInt()}' : '${toInt()}';
+    }
+
     // Convert to double and round to 2 decimal places
     final double value = double.parse(toStringAsFixed(2));
 

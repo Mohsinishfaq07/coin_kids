@@ -86,25 +86,24 @@ class DragAndDropMoneyController extends GetxController {
 
     switch (mode) {
       case DragAndDropMode.jarCreation:
-        targetAmount = jarCreationController.amount.value;
+        targetAmount = _roundToTwoDecimals(jarCreationController.amount.value);
         break;
 
       case DragAndDropMode.countMoney:
         final jarName = Get.arguments['jarId'] as String;
         if (jarName == Jars.spendingJar.name) {
           final jar = appState.currentKid.value?.wallet.spendingJar;
-          targetAmount = jar?.balance ?? 0.0;
+          targetAmount = _roundToTwoDecimals(jar?.balance ?? 0.0);
         } else {
           final jar = appState.currentKid.value?.wallet.savingJar;
-          targetAmount = jar?.balance ?? 0.0;
+          targetAmount = _roundToTwoDecimals(jar?.balance ?? 0.0);
         }
-
         break;
 
       case DragAndDropMode.transferMoney:
         sourceJarId = Get.arguments['sourceJarId'] as String;
         targetJarId = Get.arguments['targetJarId'] as String;
-        targetAmount = Get.arguments['amount'] as double;
+        targetAmount = _roundToTwoDecimals(Get.arguments['amount'] as double);
         break;
     }
   }
@@ -151,7 +150,7 @@ class DragAndDropMoneyController extends GetxController {
           currentKid.kidId,
           sourceJarId,
           targetJarId,
-          totalValue.value,
+          _roundToTwoDecimals(totalValue.value),
         )
             .timeout(Duration(seconds: 15), onTimeout: () {
           throw Exception("Timeout error, Check internet connection");
@@ -172,7 +171,7 @@ class DragAndDropMoneyController extends GetxController {
 
   bool canAddAmount(double amount) {
     final newTotal = totalValue.value + amount;
-     return newTotal <= targetAmount;
+    return newTotal <= targetAmount;
     // const epsilon = 0.001;
     // return (newTotal - targetAmount).abs() < epsilon || newTotal < targetAmount;
   }
@@ -197,7 +196,8 @@ class DragAndDropMoneyController extends GetxController {
       showLoadingDialog("Creating Jar");
       if (jarCreationController.jarType == Jars.spendingJar) {
         if (isComplete()) {
-          final finalBalance = spendingJar.balance + totalValue.value;
+          final finalBalance = _roundToTwoDecimals(
+              spendingJar.balance + _roundToTwoDecimals(totalValue.value));
           Get.log('final Balance Spend $finalBalance');
           jarCreationController.kidService.updateSpendingJar(
               kid.kidId, finalBalance,
@@ -208,8 +208,10 @@ class DragAndDropMoneyController extends GetxController {
           ToastUtil.showToast("${remainingAmount.toMoneyFormat()} remaining");
         }
       } else {
-        Get.log('final Balance Total ${totalValue.value}');
-        final finalBalance = savingJar.balance + totalValue.value;
+        final roundedTotal = _roundToTwoDecimals(totalValue.value);
+        Get.log('final Balance Total $roundedTotal');
+        final finalBalance =
+            _roundToTwoDecimals(savingJar.balance + roundedTotal);
         Get.log('final Balance Save $finalBalance');
 
         jarCreationController.kidService.updateSavingJar(
@@ -222,17 +224,22 @@ class DragAndDropMoneyController extends GetxController {
     } finally {
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
+  }
 
-    if (jarCreationController.jarType == Jars.spendingJar) {
-    } else {}
+  // Helper method to round to 2 decimal places
+  double _roundToTwoDecimals(double value) {
+    return double.parse(value.toStringAsFixed(2));
   }
 
   Future<bool> tryAddAmount(double amount) async {
-    if (!canAddAmount(amount)) {
+    final roundedAmount = _roundToTwoDecimals(amount);
+    final newTotal = _roundToTwoDecimals(totalValue.value + roundedAmount);
+
+    if (newTotal > _roundToTwoDecimals(targetAmount)) {
       await HapticFeedback.heavyImpact();
       Get.snackbar(
         'Cannot Add Amount',
-        'You can only add ${remainingAmount.toStringAsFixed(2)}€',
+        'You can only add ${_roundToTwoDecimals(remainingAmount).toStringAsFixed(2)}€',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
@@ -241,8 +248,8 @@ class DragAndDropMoneyController extends GetxController {
       return false;
     }
 
-    totalValue.value += amount;
-    addedAmounts.add(amount);
+    totalValue.value = newTotal;
+    addedAmounts.add(roundedAmount);
     updateJarState();
     await HapticFeedback.lightImpact();
     return true;
@@ -256,12 +263,15 @@ class DragAndDropMoneyController extends GetxController {
     }
   }
 
-  double get remainingAmount => targetAmount - totalValue.value;
+  double get remainingAmount =>
+      _roundToTwoDecimals(targetAmount - totalValue.value);
 
   // bool get isComplete => totalValue.value == targetAmount;
   bool isComplete() {
-    return double.parse(totalValue.value.toStringAsFixed(2)) == targetAmount;
+    return _roundToTwoDecimals(totalValue.value) ==
+        _roundToTwoDecimals(targetAmount);
   }
+
   RxDouble spendingAmount = 0.0.obs; // Changed to RxDouble
   RxDouble savingAmount = 0.0.obs; // Changed to RxDouble
   var clickedIndex = 0.obs; // Observable for the text
@@ -272,13 +282,13 @@ class DragAndDropMoneyController extends GetxController {
 
   void resetJar() {
     droppedNotes.clear();
-    totalValue.value = 0.0; // Reset to 0.0
+    totalValue.value = _roundToTwoDecimals(0.0); // Reset to 0.00
   }
 
   Future<void> undoLastAmount() async {
     if (addedAmounts.isNotEmpty) {
       final lastAmount = addedAmounts.last;
-      totalValue.value -= lastAmount;
+      totalValue.value = _roundToTwoDecimals(totalValue.value - lastAmount);
       addedAmounts.removeLast();
       updateJarState();
       await HapticFeedback.mediumImpact();
@@ -295,7 +305,7 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   void reset() {
-    totalValue.value = 0.0;
+    totalValue.value = _roundToTwoDecimals(0.0); // Reset to 0.00
     addedAmounts.clear();
     updateJarState();
   }

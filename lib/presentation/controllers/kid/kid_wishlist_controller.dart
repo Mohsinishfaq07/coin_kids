@@ -2,12 +2,14 @@ import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
 import 'package:get/get.dart';
 
 class KidWishlistController extends GetxController {
   final WishlistService _wishlistService = Get.find<WishlistService>();
   final AppStateController _appState = Get.find();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
+  final marketController = Get.find<KidMarketController>();
 
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
   final RxBool isLoading = false.obs;
@@ -50,6 +52,12 @@ class KidWishlistController extends GetxController {
       wishlistItems.removeWhere((item) => item.productId == productId);
     } catch (e) {
       Get.log('Failed to remove item from wishlist: $e');
+    }
+  }
+
+  void addToGoal(WishlistModel item) {
+    if (item.product != null) {
+      marketController.addToGoal(item.product!);
     }
   }
 }

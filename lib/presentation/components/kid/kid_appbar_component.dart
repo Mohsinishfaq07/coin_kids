@@ -18,7 +18,8 @@ class KidAppBarShowcaseKeys {
   static final GlobalKey totalMoneyCardKey = GlobalKey();
 }
 
-class KidAppBarComponent extends GetView<KidAppBarController> implements PreferredSizeWidget {
+class KidAppBarComponent extends GetView<KidAppBarController>
+    implements PreferredSizeWidget {
   final Widget? leadingWidget;
   final List<Widget>? actionWidgets;
   final VoidCallback? onAddMoneyTap;
@@ -42,8 +43,10 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
         Future.delayed(Duration(milliseconds: 800), () {
           try {
             controller.showTotalMoneySpotlight.value = false;
-            ShowCaseWidget.of(mContext).startShowCase([KidAppBarShowcaseKeys.totalMoneyCardKey]);
-            SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showTotalMoneySpotlight, false);
+            ShowCaseWidget.of(mContext)
+                .startShowCase([KidAppBarShowcaseKeys.totalMoneyCardKey]);
+            SharedPreferencesHelper.saveBool(
+                SharedPreferencesHelper.showTotalMoneySpotlight, false);
           } catch (e) {
             Get.log("Error starting showcase: $e");
           }
@@ -163,11 +166,14 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
                             child: Padding(
                               padding: EdgeInsets.only(right: 40.w),
                               child: MoneyWidget(
-                                amount: kid.coinKidsBalance,
+                                amount: kid.coinKidsBalance.toDouble(),
                                 rightIconPath: Assets.icCoinStar,
                                 iconSize: 28.w,
-                                isLocked: controller.appState.currentKid.value!.coinKidsBalance == -1.0,
+                                isLocked: controller.appState.currentKid.value!
+                                        .coinKidsBalance ==
+                                    -1,
                                 showSymbol: false,
+                                showDecimals: false,
                                 onCardTap: () {
                                   // Handle CoinKids card tap if needed
                                 },
@@ -180,18 +186,25 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
                             visible: controller.showTotalCard.value,
                             child: Padding(
                               padding: EdgeInsets.only(right: 4.w),
-                              child: controller.shouldShowRequestMoneySpotlight()
+                              child: controller
+                                      .shouldShowRequestMoneySpotlight()
                                   ? Showcase(
-                                      key: KidAppBarShowcaseKeys.totalMoneyCardKey,
-                                      description: "Tap here to request money from your parent!",
+                                      key: KidAppBarShowcaseKeys
+                                          .totalMoneyCardKey,
+                                      description:
+                                          "Tap here to request money from your parent!",
                                       descriptionAlignment: Alignment.center,
                                       descriptionTextAlign: TextAlign.center,
-                                      tooltipBackgroundColor: AppColors.colorPrimary,
-                                      descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
+                                      tooltipBackgroundColor:
+                                          AppColors.colorPrimary,
+                                      descTextStyle: AppTextStyle.headingSmall
+                                          .copyWith(color: Colors.white),
                                       targetPadding: EdgeInsets.all(6.h),
-                                      tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
+                                      tooltipPadding: EdgeInsets.symmetric(
+                                          vertical: 10.h, horizontal: 0),
                                       child: MoneyWidget(
-                                        amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
+                                        amount: kid.wallet.spendingJar.balance +
+                                            kid.wallet.savingJar.balance,
                                         rightIconPath: Assets.icCoinEuro,
                                         showAddButton: true,
                                         iconSize: 32.w,
@@ -200,7 +213,8 @@ class KidAppBarComponent extends GetView<KidAppBarController> implements Preferr
                                       ),
                                     )
                                   : MoneyWidget(
-                                      amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
+                                      amount: kid.wallet.spendingJar.balance +
+                                          kid.wallet.savingJar.balance,
                                       rightIconPath: Assets.icCoinEuro,
                                       showAddButton: true,
                                       iconSize: 32.w,

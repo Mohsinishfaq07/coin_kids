@@ -129,34 +129,39 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                   children: [
                     _buildNotificationHeader(notification),
 
-                    SizedBox(height: 8.h),
 
                     // Title
-                    Text(
-                      notification.title,
-                      style: AppTextStyle.headingMedium.copyWith(
-                        color: AppColors.textOnPrimary,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding:  EdgeInsets.all(12.h),
+                      child: Text(
+                        notification.title,
+                        style: AppTextStyle.headingMedium.copyWith(
+                          color: AppColors.textOnPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.clip,
                       ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.clip,
                     ),
 
                     if (getNotificationDescription(notification).isNotEmpty)
-                      SizedBox(height: 4.h),
 
                     // Message
                     if (getNotificationDescription(notification).isNotEmpty)
-                      Text(
-                        getNotificationDescription(notification),
-                        style: AppTextStyle.bodyMedium.copyWith(
-                          color: AppColors.textOnPrimary,
+                      Padding(
+                        padding:  EdgeInsets.all(12.h),
+
+                        child: Text(
+                          getNotificationDescription(notification),
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            color: AppColors.textOnPrimary,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
 
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 10.h),
 
                     // Timestamp
                     Text(

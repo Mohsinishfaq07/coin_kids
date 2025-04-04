@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -74,7 +75,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                 inactiveTrackHeight: 15.h,
                                 trackCornerRadius: 50.r,
                                 activeTrackColor: AppColors.btnColorOrange,
-                                inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
+                                inactiveTrackColor: AppColors.btnColorOrange
+                                    .withValues(alpha: 0.2),
                                 thumbColor: Colors.transparent,
                                 thumbRadius: 15.r,
                               ),
@@ -92,7 +94,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                 labelFormatterCallback: (_, text) {
                                   return double.parse(text).toMoneyFormat();
                                 },
-                                onChanged: (value) => controller.updateProgress(value),
+                                onChanged: (value) =>
+                                    controller.updateProgress(value),
                                 showLabels: true,
                                 showTicks: true,
                                 enableTooltip: true,
@@ -106,7 +109,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     SvgPicture.asset(
                                       Assets.icGoalYellow,
@@ -156,7 +160,14 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         baseColor: AppColors.btnColorGreen,
                         iconPath: Assets.icEdit,
                         onTap: () {
-                          controller.screenMode.value = GoalSummaryScreenMode.edit;
+                          if (goal.productUrl != null &&
+                              goal.productUrl!.isNotEmpty) {
+                            ToastUtil.showToast(
+                                "Market goals cannot be edited");
+                            return;
+                          }
+                          controller.screenMode.value =
+                              GoalSummaryScreenMode.edit;
                           controller.newGoal.value = goal;
                           controller.oldGoal.value = goal;
                           Get.toNamed(Routes.kidGoalSummary);
@@ -182,18 +193,20 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 // onTap: () => controller.saveProgress(goal.id!),
                 onTap: () {
                   // Calculate percentage achieved
-                  double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
+                  double progressPercentage =
+                      (controller.progressValue.value / goal.targetAmount) *
+                          100;
                   int rewardCoins = 0;
 
                   // Check milestones and assign rewards
                   if (progressPercentage >= 100) {
                     rewardCoins = 10; // 100% milestone
                   } else if (progressPercentage >= 75) {
-                    rewardCoins = 3;  // 75% milestone
+                    rewardCoins = 3; // 75% milestone
                   } else if (progressPercentage >= 50) {
-                    rewardCoins = 2;  // 50% milestone
+                    rewardCoins = 2; // 50% milestone
                   } else if (progressPercentage >= 25) {
-                    rewardCoins = 2;  // 25% milestone
+                    rewardCoins = 2; // 25% milestone
                   }
 
                   // Save progress and award coins if milestone reached

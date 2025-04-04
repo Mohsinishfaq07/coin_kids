@@ -22,6 +22,7 @@ class MoneyWidget extends StatelessWidget {
   final bool isLocked;
   final Key? showcaseKey;
   final bool showSymbol;
+  final bool showDecimals;
 
   const MoneyWidget({
     super.key,
@@ -36,6 +37,7 @@ class MoneyWidget extends StatelessWidget {
     this.isLocked = false,
     this.showcaseKey,
     this.showSymbol = true,
+    this.showDecimals = true,
   });
 
   @override
@@ -65,7 +67,10 @@ class MoneyWidget extends StatelessWidget {
                     alignment: Alignment.center,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        final text = amount.toMoneyFormat(showSymbol: showSymbol);
+                        final text = amount.toMoneyFormat(
+                          showSymbol: showSymbol,
+                          showDecimals: showDecimals,
+                        );
                         final textStyle = AppTextStyle.headingMedium.copyWith(
                           color: AppColors.textOnPrimary,
                         );
@@ -76,7 +81,8 @@ class MoneyWidget extends StatelessWidget {
                           textDirection: TextDirection.ltr,
                         )..layout(maxWidth: double.infinity);
 
-                        final wouldOverflow = textPainter.width > (constraints.maxWidth - 24.w);
+                        final wouldOverflow =
+                            textPainter.width > (constraints.maxWidth - 24.w);
 
                         return SizedBox(
                           height: containerHeight,
@@ -87,12 +93,15 @@ class MoneyWidget extends StatelessWidget {
                                     text: text,
                                     style: textStyle,
                                     scrollAxis: Axis.horizontal,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     blankSpace: 20.w,
                                     velocity: 30.0,
-                                    accelerationDuration: const Duration(seconds: 1),
+                                    accelerationDuration:
+                                        const Duration(seconds: 1),
                                     accelerationCurve: Curves.linear,
-                                    decelerationDuration: const Duration(milliseconds: 500),
+                                    decelerationDuration:
+                                        const Duration(milliseconds: 500),
                                     decelerationCurve: Curves.easeOut,
                                   ),
                                 )
@@ -125,7 +134,8 @@ class MoneyWidget extends StatelessWidget {
                 if (rightIconPath != null)
                   Positioned(
                     right: -(iconSize ?? defaultIconSize) / 2,
-                    top: (containerHeight / 2) - ((iconSize ?? defaultIconSize) / 2),
+                    top: (containerHeight / 2) -
+                        ((iconSize ?? defaultIconSize) / 2),
                     child: SvgPicture.asset(
                       rightIconPath!,
                       height: iconSize ?? defaultIconSize,

@@ -33,14 +33,13 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
         decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(
-              width: 0.35.sw,
-              child: _buildImageSection(),
-            ),
+            _buildImageSection(),
             Expanded(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -53,23 +52,23 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   }
 
   Widget _buildImageSection() {
-    return SizedBox(
-      height: 1.sh,
-      width: 0.4.sw,
-      child: Align(
-        alignment: Alignment.center,
-        child: Obx(() {
-          return Container(
-            height: 0.7.sh,
-            width: 0.3.sw,
-            decoration: BoxDecoration(
-              color: AppColors.iconOnPrimary,
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: AppColors.colorPrimary, width: 2),
-            ),
-            child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
-                ? Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
+    return Obx(() {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          height: 0.7.sh,
+          width: 0.3.sw,
+
+          decoration: BoxDecoration(
+            color: AppColors.iconOnPrimary,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: AppColors.colorPrimary, width: 2),
+          ),
+          child: controller.newGoal.value.photo == null ||
+                  controller.newGoal.value.photo!.isEmpty
+              ? Padding(
+                  padding: EdgeInsets.all(20.h),
+                  child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -93,91 +92,91 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                         ),
                       ],
                     ),
-                  )
-                : Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: controller.newGoal.value.photo!.startsWith("https://")
-                              ? CachedNetworkImageWidget(
-                                  imageUrl: controller.newGoal.value.photo!,
-                                  height: 0.5.sh,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.file(
-                                  File(controller.newGoal.value.photo!),
-                                  fit: BoxFit.contain,
-                                  height: 0.5.sh,
-                                  width: double.infinity,
-                                ),
-                        ),
-                      ),
-                      Positioned(
-                          right: -10,
-                          top: -10,
-                          child: KidButton.iconOnly(
-                            onTap: () {
-                              ToastUtil.showToast("Clicked");
-                              controller.removePhoto();
-                            },
-                            baseColor: AppColors.btnColorOrange,
-                            iconPath: Assets.icCross,
-                            size: 30.w,
-                            iconSize: 16.w,
-                          ))
-                    ],
                   ),
-          );
-        }),
-      ),
-    );
+                )
+              : Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: controller.newGoal.value.photo!
+                                .startsWith("https://")
+                            ? CachedNetworkImageWidget(
+                                imageUrl: controller.newGoal.value.photo!,
+                                height: 0.5.sh,
+                                width: double.infinity,
+                                fit: BoxFit.contain,
+                              )
+                            : Image.file(
+                                File(controller.newGoal.value.photo!),
+                                fit: BoxFit.contain,
+                                height: 0.5.sh,
+                                width: double.infinity,
+                              ),
+                      ),
+                    ),
+                    Positioned(
+                        right: -10,
+                        top: -10,
+                        child: KidButton.iconOnly(
+                          onTap: () {
+                            ToastUtil.showToast("Clicked");
+                            controller.removePhoto();
+                          },
+                          baseColor: AppColors.btnColorOrange,
+                          iconPath: Assets.icCross,
+                          size: 30.w,
+                          iconSize: 16.w,
+                        ))
+                  ],
+                ),
+        ),
+      );
+    });
   }
 
   Widget _buildFormSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 16.h),
-              Text('Goal Name', style: AppTextStyle.headingSmall),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 6.h),
-                child: KidTextField(
-                  hintText: controller.newGoal.value.title,
-                  onChange: (value) => controller.newGoal.value.copyWith(title: value.trim()),
-                ),
-              ),
-              Text('Amount', style: AppTextStyle.headingSmall),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 6.h),
-                child: KidTextField(
-                  keyboardType: TextInputType.number,
-                  hintText: controller.newGoal.value.targetAmount.toString(),
-                  onChange: (value) => controller.newGoal.value.copyWith(targetAmount: double.tryParse(value) ?? 0.0),
-                ),
-              ),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(height: 16.h),
+          Text('Goal Name', style: AppTextStyle.headingSmall),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 6.h),
+            child: KidTextField(
+              hintText: controller.newGoal.value.title,
+              onChange: (value) {
+                controller.setTitle(value.trim());
+              },
+            ),
           ),
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: KidButton(
-            onTap: () => _handleButtonPress(),
-            text: _getButtonText(),
-            baseColor: AppColors.btnColorGreen,
-            iconPath: Assets.icTick,
-            iconPosition: IconPosition.left,
+          Text('Amount', style: AppTextStyle.headingSmall),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 6.h),
+            child: KidTextField(
+              keyboardType: TextInputType.number,
+              hintText: controller.newGoal.value.targetAmount.toString(),
+              onChange: (value) {
+                controller.setAmount(double.tryParse(value) ?? 0.0);
+              },
+            ),
           ),
-        ),
-        SizedBox(height: 8.h),
-      ],
+          Align(
+            alignment: Alignment.bottomRight,
+            child: KidButton(
+              onTap: () => _handleButtonPress(),
+              text: _getButtonText(),
+              baseColor: AppColors.btnColorGreen,
+              iconPath: Assets.icTick,
+              iconPosition: IconPosition.left,
+            ),
+          ),
+          SizedBox(height: 8.h),
+        ],
+      ),
     );
   }
 
@@ -194,9 +193,11 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
     switch (controller.screenMode.value) {
       case GoalSummaryScreenMode.create:
         controller.createNewGoal();
+        print("button called createNewGoal");
         break;
       case GoalSummaryScreenMode.edit:
         controller.updateGoal();
+        print("button called updateGoal");
         break;
     }
   }

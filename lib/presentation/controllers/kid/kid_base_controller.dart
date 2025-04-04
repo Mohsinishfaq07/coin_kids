@@ -6,6 +6,7 @@ import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/components/kid/kid_notification_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -45,7 +46,6 @@ class KidBaseController extends GetxController {
     super.onInit();
     OrientationUtils.lockToLandscape();
     _initializeKid();
-    _setupNotificationListener();
   }
 
   void _setupNotificationListener() {
@@ -60,26 +60,64 @@ class KidBaseController extends GetxController {
           SharedPreferencesHelper.lastLoggedInRole);
       if (currentRole != UserRole.child.name) return;
 
-      unreadNotifications.value = notifications;
-      unreadNotificationCount.value = notifications.length;
+      // Filter out notifications that have been read and remove duplicates
+      final uniqueNotifications = <String, NotificationModel>{};
+      for (var notification in notifications.where((n) => !n.isRead)) {
+        // Skip invalid notifications
+        if (notification.id == null) continue;
+        uniqueNotifications[notification.id!] = notification;
+      }
+      final unreadOnly = uniqueNotifications.values.toList();
 
-      bool shouldShowNotification = SharedPreferencesHelper.getBool(
-              SharedPreferencesHelper.showKidsNotifications) ??
-          true;
-      if (notifications.isNotEmpty && shouldShowNotification) {
-        SharedPreferencesHelper.saveBool(
-            SharedPreferencesHelper.showKidsNotifications, false);
-        showNotificationsDialog();
+      // Sort notifications by timestamp in ascending order (oldest to newest)
+      unreadOnly.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      // Only update if the notifications have actually changed and are not empty
+      if (!_areNotificationsEqual(unreadNotifications, unreadOnly) &&
+          unreadOnly.isNotEmpty) {
+        unreadNotifications.value = unreadOnly;
+        unreadNotificationCount.value = unreadOnly.length;
+
+        bool shouldShowNotification = SharedPreferencesHelper.getBool(
+                SharedPreferencesHelper.showKidsNotifications) ??
+            true;
+
+        // Only show dialog if we have NEW unread notifications and haven't shown it yet
+        if (unreadOnly.isNotEmpty &&
+            shouldShowNotification &&
+            !Get.isDialogOpen!) {
+          SharedPreferencesHelper.saveBool(
+              SharedPreferencesHelper.showKidsNotifications, false);
+          showNotificationsDialog();
+        }
       }
     });
   }
 
+  // Helper method to compare notification lists
+  bool _areNotificationsEqual(
+      List<NotificationModel> list1, List<NotificationModel> list2) {
+    if (list1.length != list2.length) return false;
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].id != list2[i].id || list1[i].isRead != list2[i].isRead) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   void _initializeKid() {
     currentKid.value = _appStateController.currentKid.value;
+    // Setup listener initially if kid exists
+    if (currentKid.value != null) {
+      _setupNotificationListener();
+    }
+
     ever(_appStateController.currentKid, (KidModel? kid) {
       currentKid.value = kid;
       if (kid != null) {
-        _setupNotificationListener(); // Update listener when kid changes
+        _setupNotificationListener(); // Only setup listener when kid changes
       }
     });
   }
@@ -94,21 +132,34 @@ class KidBaseController extends GetxController {
       final notifications = await _notificationService
           .getAllUnreadNotifications(currentKid.value!.kidId);
 
-      // Filter to only unread notifications and sort by timestamp (newest first)
-      unreadNotifications.value = notifications;
+      // Filter out notifications that have been read and remove duplicates
+      final uniqueNotifications = <String, NotificationModel>{};
+      for (var notification in notifications.where((n) => !n.isRead)) {
+        uniqueNotifications[notification.id!] = notification;
+      }
+      final unreadOnly = uniqueNotifications.values.toList();
 
-      unreadNotificationCount.value = unreadNotifications.length;
+      // Sort notifications by timestamp in ascending order (oldest to newest)
+      unreadOnly.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-      Get.log("Fetched ${unreadNotifications.length} unread notifications");
+      // Only update if the notifications have actually changed
+      if (!_areNotificationsEqual(unreadNotifications, unreadOnly)) {
+        unreadNotifications.value = unreadOnly;
+        unreadNotificationCount.value = unreadOnly.length;
 
-      // Show notifications if there are any
-      bool shouldShowNotification = SharedPreferencesHelper.getBool(
-              SharedPreferencesHelper.showKidsNotifications) ??
-          true;
-      if (unreadNotifications.isNotEmpty && shouldShowNotification) {
-        SharedPreferencesHelper.saveBool(
-            SharedPreferencesHelper.showKidsNotifications, false);
-        showNotificationsDialog();
+        Get.log("Fetched ${unreadOnly.length} unread notifications");
+
+        // Show notifications if there are any and dialog isn't already open
+        bool shouldShowNotification = SharedPreferencesHelper.getBool(
+                SharedPreferencesHelper.showKidsNotifications) ??
+            true;
+        if (unreadOnly.isNotEmpty &&
+            shouldShowNotification &&
+            !Get.isDialogOpen!) {
+          SharedPreferencesHelper.saveBool(
+              SharedPreferencesHelper.showKidsNotifications, false);
+          showNotificationsDialog();
+        }
       }
     } catch (e) {
       Get.log("Error fetching notifications: $e");
@@ -151,9 +202,20 @@ class KidBaseController extends GetxController {
     if (appBarController.shouldShowRequestMoneySpotlight()) return;
     if (shouldShowJarSpotLight()) return;
 
-    // Add a safety check here to ensure we have notifications
+    // Prevent showing dialog if it's already open
+    if (Get.isDialogOpen!) return;
+
+    // Add a safety check here to ensure we have notifications and they are valid
     if (unreadNotifications.isEmpty || unreadNotifications.first == null) {
       Get.log("No valid notifications to show");
+      return;
+    }
+
+    // Create a local copy of notifications to prevent concurrent modification
+    final List<NotificationModel> currentNotifications =
+        List.from(unreadNotifications);
+    if (currentNotifications.isEmpty) {
+      Get.log("Notifications list became empty");
       return;
     }
 
@@ -168,43 +230,76 @@ class KidBaseController extends GetxController {
       transitionDuration: Duration(milliseconds: 200),
       pageBuilder: (BuildContext buildContext, Animation<double> animation,
           Animation<double> secondaryAnimation) {
-        return SafeArea(
-          child: Material(
-            type: MaterialType.transparency,
-            child: Center(
-              child: KidNotificationDialog(
-                notifications: unreadNotifications,
-                onDismissSingle: (notification) {
-                  // Mark single notification as read
-                  _notificationService.markAsRead(notification.id!);
-                  SharedPreferencesHelper.saveBool(
-                      SharedPreferencesHelper.showKidsNotifications, true);
-                },
-                onDismissAll: () {
-                  // Mark all as read and close dialog
-                  if (currentKid.value != null) {
-                    _notificationService.markAllAsRead(currentKid.value!.kidId);
-                    unreadNotifications.clear();
-                    unreadNotificationCount.value = 0;
-                    Navigator.of(context).pop();
-                  }
+        return WillPopScope(
+          onWillPop: () async {
+            // Handle back button press
+            if (unreadNotifications.isNotEmpty) {
+              markAllNotificationsAsRead();
+            }
+            return true;
+          },
+          child: SafeArea(
+            child: Material(
+              type: MaterialType.transparency,
+              child: Center(
+                child: KidNotificationDialog(
+                  notifications: currentNotifications,
+                  onDismissSingle: (notification) {
+                    // Mark single notification as read
+                    _notificationService.markAsRead(notification.id!);
+                    unreadNotifications
+                        .removeWhere((n) => n.id == notification.id);
+                    unreadNotificationCount.value = unreadNotifications.length;
 
-                  SharedPreferencesHelper.saveBool(
-                      SharedPreferencesHelper.showKidsNotifications, true);
-                },
+                    if (unreadNotifications.isEmpty) {
+                      SharedPreferencesHelper.saveBool(
+                          SharedPreferencesHelper.showKidsNotifications, true);
+                      Get.back(); // Use Get.back() instead of Navigator.pop
+                    }
+                  },
+                  onDismissAll: () {
+                    // Mark all as read and close dialog
+                    if (currentKid.value != null) {
+                      _notificationService
+                          .markAllAsRead(currentKid.value!.kidId);
+                      unreadNotifications.clear();
+                      unreadNotificationCount.value = 0;
+                      Get.back(); // Use Get.back() instead of Navigator.pop
+                    }
+
+                    SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.showKidsNotifications, true);
+                  },
+                ),
               ),
             ),
           ),
         );
       },
-    );
+    ).then((_) {
+      // This will run after dialog is dismissed
+      if (unreadNotifications.isNotEmpty) {
+        markAllNotificationsAsRead();
+      }
+      // Ensure we're back to the main screen
+      if (Get.currentRoute != Routes.kidBase) {
+        Get.offNamed(Routes.kidBase);
+      }
+    });
   }
 
   void markNotificationAsRead(String notificationId) {
     _notificationService.markAsRead(notificationId);
+    // Remove the notification from the local list
     unreadNotifications
         .removeWhere((notification) => notification.id == notificationId);
     unreadNotificationCount.value = unreadNotifications.length;
+
+    // If no more unread notifications, reset the show notification flag
+    if (unreadNotifications.isEmpty) {
+      SharedPreferencesHelper.saveBool(
+          SharedPreferencesHelper.showKidsNotifications, true);
+    }
   }
 
   void markAllNotificationsAsRead() {
@@ -212,6 +307,8 @@ class KidBaseController extends GetxController {
       _notificationService.markAllAsRead(currentKid.value!.kidId);
       unreadNotifications.clear();
       unreadNotificationCount.value = 0;
+      SharedPreferencesHelper.saveBool(
+          SharedPreferencesHelper.showKidsNotifications, true);
     }
   }
 

@@ -144,18 +144,23 @@ class KidService {
     final appState = Get.find<AppStateController>();
     final kid = appState.currentKid.value;
     if (kid == null) return;
-    final spendingValue = kid.wallet.spendingJar.balance - newBalance;
+
+    // Round both balances to 2 decimal places
+    final roundedNewBalance = double.parse(newBalance.toStringAsFixed(2));
+    final roundedSpendingValue = double.parse(
+        (kid.wallet.spendingJar.balance - newBalance).toStringAsFixed(2));
+
     try {
       if (color != null) {
         await _firestore.collection('kids').doc(kidId).update({
-          'wallet.savingJar.balance': newBalance,
-          'wallet.spendingJar.balance': spendingValue,
+          'wallet.savingJar.balance': roundedNewBalance,
+          'wallet.spendingJar.balance': roundedSpendingValue,
           'wallet.savingJar.color': color,
         });
       } else {
         await _firestore.collection('kids').doc(kidId).update({
-          'wallet.savingJar.balance': newBalance,
-          'wallet.spendingJar.balance': spendingValue,
+          'wallet.savingJar.balance': roundedNewBalance,
+          'wallet.spendingJar.balance': roundedSpendingValue,
         });
       }
     } catch (e) {
@@ -167,14 +172,17 @@ class KidService {
   Future<void> updateSpendingJar(String kidId, double newBalance,
       {dynamic color}) async {
     try {
+      // Round the balance to 2 decimal places
+      final roundedBalance = double.parse(newBalance.toStringAsFixed(2));
+
       if (color != null) {
         await _firestore.collection('kids').doc(kidId).update({
-          'wallet.spendingJar.balance': newBalance,
+          'wallet.spendingJar.balance': roundedBalance,
           'wallet.spendingJar.color': color,
         });
       } else {
         await _firestore.collection('kids').doc(kidId).update({
-          'wallet.spendingJar.balance': newBalance,
+          'wallet.spendingJar.balance': roundedBalance,
         });
       }
     } catch (e) {
@@ -199,19 +207,32 @@ class KidService {
       final kidData = kidDoc.data() as Map<String, dynamic>;
       final wallet = kidData['wallet'] as Map<String, dynamic>;
 
-      // Get current balances
-      final fromBalance = (wallet[fromJar]?['balance'] ?? 0.0) as double;
-      final toBalance = (wallet[toJar]?['balance'] ?? 0.0) as double;
+      // Get current balances and round them
+      final fromBalance =
+          double.parse((wallet[fromJar]?['balance'] ?? 0.0).toString());
+      final toBalance =
+          double.parse((wallet[toJar]?['balance'] ?? 0.0).toString());
+
+      // Round all values to 2 decimal places
+      final roundedFromBalance = double.parse(fromBalance.toStringAsFixed(2));
+      final roundedToBalance = double.parse(toBalance.toStringAsFixed(2));
+      final roundedAmount = double.parse(amount.toStringAsFixed(2));
 
       // Validate transfer
-      if (fromBalance < amount) {
+      if (roundedFromBalance < roundedAmount) {
         throw Exception('Insufficient funds in $fromJar');
       }
 
+      // Calculate new balances with proper rounding
+      final newFromBalance =
+          double.parse((roundedFromBalance - roundedAmount).toStringAsFixed(2));
+      final newToBalance =
+          double.parse((roundedToBalance + roundedAmount).toStringAsFixed(2));
+
       // Update balances
       await _firestore.collection('kids').doc(kidId).update({
-        'wallet.$fromJar.balance': fromBalance - amount,
-        'wallet.$toJar.balance': toBalance + amount,
+        'wallet.$fromJar.balance': newFromBalance,
+        'wallet.$toJar.balance': newToBalance,
       });
     } catch (e) {
       throw Exception('Failed to transfer between jars: ${e.toString()}');

@@ -5,13 +5,17 @@ class WalletJar {
   final int color;
 
   WalletJar({
-    required this.balance,
+    required double balance,
     required this.color,
-  });
+  }) : balance = double.parse(balance.toStringAsFixed(2));
 
   factory WalletJar.fromJson(Map<String, dynamic> json) {
+    // First convert to double, then round to 2 decimal places
+    final rawBalance = (json['balance'] ?? 0.0).toDouble();
+    final roundedBalance = double.parse(rawBalance.toStringAsFixed(2));
+
     return WalletJar(
-      balance: (json['balance'] ?? 0.0).toDouble(),
+      balance: roundedBalance,
       color: json['color'] ?? 0,
     );
   }
@@ -91,11 +95,14 @@ class KidModel {
     this.isConnected = false,
   });
 
-  factory KidModel.fromJson(Map<String, dynamic> json, {String documentId = ''}) {
+  factory KidModel.fromJson(Map<String, dynamic> json,
+      {String documentId = ''}) {
     return KidModel(
       kidId: documentId.isNotEmpty ? documentId : json['kidId'] ?? '',
       name: json['name'] ?? '',
-      age: (json['age'] ?? 0) is String ? int.parse(json['age']) : json['age'] ?? 0,
+      age: (json['age'] ?? 0) is String
+          ? int.parse(json['age'])
+          : json['age'] ?? 0,
       avatar: json['avatar'] ?? '',
       parentId: json['parentId'] ?? '',
       wallet: Wallet.fromJson(json['wallet'] ?? {}),
