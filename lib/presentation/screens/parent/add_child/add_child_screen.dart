@@ -105,6 +105,7 @@ class AddChildScreen extends GetView<AddChildController> {
 
                           if (_formKey.currentState?.validate() ?? false) {
                             await controller.createKid(true);
+                            print(" this is whole method ${controller.createKid(true)};");
                           }
                         },
                       ),

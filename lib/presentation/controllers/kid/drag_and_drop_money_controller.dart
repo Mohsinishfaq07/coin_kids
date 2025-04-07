@@ -187,6 +187,7 @@ class DragAndDropMoneyController extends GetxController {
     if (kid == null) {
       ToastUtil.showToast("Session Expired");
       Get.offAllNamed(Routes.signIn);
+      return;
     }
 
     final spendingJar = kid!.wallet.spendingJar;

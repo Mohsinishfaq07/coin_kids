@@ -12,9 +12,7 @@ extension NumberFormatting on num {
     final parts = value.toString().split('.');
     var whole = parts[0];
     var decimal = parts.length > 1 ? parts[1] : '00';
-
-    // Add leading zeros to ensure 2 digits minimum for whole numbers
-    whole = whole.padLeft(2, '0');
+    // whole = whole.padLeft(2, '0');
 
     // Ensure decimal part has exactly 2 digits
     if (decimal.length < 2) {

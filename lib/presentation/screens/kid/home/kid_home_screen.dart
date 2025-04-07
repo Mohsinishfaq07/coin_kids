@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -78,6 +79,22 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               jarName: "+ Add Money",
                               height: 0.45.sh,
                               onTap: () {
+                                final isConnected = controller
+                                    .appState.currentKid.value!.isConnected;
+                                final kidBalance = controller
+                                    .appState
+                                    .currentKid
+                                    .value!
+                                    .wallet
+                                    .spendingJar
+                                    .balance;
+
+                                if (isConnected && kidBalance <= 0) {
+                                  ToastUtil.showToast(
+                                      "Your parent is connected, please request money");
+                                  return;
+                                }
+
                                 controller.startJarCreation(Jars.spendingJar);
                                 Get.toNamed(Routes.kidJarColorSelection);
                               },
@@ -123,14 +140,12 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             if (isSpendingJarCreated && isSavingJarCreated) ...[
                               SizedBox(width: 20.w),
                               KidButton.iconWithTitle(
-
-
                                 onTap: () {
                                   Get.toNamed(Routes.kidMoneyTransfer);
                                 },
                                 baseColor: AppColors.colorPrimary,
-                                iconPath: Assets.icTransfer, title: 'Transfer',
-
+                                iconPath: Assets.icTransfer,
+                                title: 'Transfer',
                               ),
                               SizedBox(width: 20.w),
                             ],

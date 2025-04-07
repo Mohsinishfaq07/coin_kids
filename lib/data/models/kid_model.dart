@@ -146,7 +146,7 @@ class KidModel {
       wallet: wallet ?? this.wallet,
       coinKidsBalance: coinKidsBalance ?? this.coinKidsBalance,
       createdAt: createdAt ?? this.createdAt,
-      isConnected: isConnected ?? false,
+      isConnected: isConnected ?? this.isConnected,
     );
   }
 }

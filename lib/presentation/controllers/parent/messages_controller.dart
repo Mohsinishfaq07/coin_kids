@@ -1,26 +1,17 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/constants/enums.dart';
-import 'package:coin_kids/core/extensions/number_extensions.dart';
-import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
+import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
-import 'package:coin_kids/data/remote_services/kid_service.dart';
+import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
-import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
-import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
-import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import '../../../core/utils/toast_util.dart';
-import '../../../data/models/notification_model.dart';
-import '../../../data/remote_services/notification_service.dart';
 
 class MessagesController extends GetxController {
   final NotificationService _notificationService =
@@ -160,12 +151,12 @@ class MessagesController extends GetxController {
     try {
       final index = notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
-        final metaData =
-            notifications[index].metadata as TransactionPendingMetadata;
-        metaData.copyWith(status: status);
+        final notification = notifications[index];
+        final metaData = notification.metadata as TransactionPendingMetadata;
+        final updatedMetadata = metaData.copyWith(status: status);
         notifications[index] =
-            notifications[index].copyWith(metadata: metaData);
-        notifications.refresh();
+            notification.copyWith(metadata: updatedMetadata, isRead: true);
+        notifications.refresh(); // Force UI update
       }
 
       await _notificationService.updatePendingTransactionStatus(
@@ -250,6 +241,7 @@ class MessagesController extends GetxController {
       ToastUtil.showToast('Failed to mark all as read');
     }
   }
+
   Future<bool> _checkGoalExists(String goalId) async {
     try {
       final goal = await goalService.fetchGoalById(goalId);
@@ -266,10 +258,10 @@ class MessagesController extends GetxController {
       Get.log(notification.type.name);
       if (actionId == NotificationActionId.positive) {
         final metadata = notification.metadata as TransactionPendingMetadata;
-        // Get.toNamed(Routes.parentQuickTransfer, arguments: {
-        //   'amount': metadata.amount,
-        //   'mode': TransferMode.requestedMoney,
-        // });
+        Get.toNamed(Routes.parentQuickTransfer, arguments: {
+          'amount': metadata.amount,
+          'mode': TransferMode.requestedMoney,
+        });
         Get.log(notification.id!);
         await markAsRead(notification.id!);
         await updatePendingTransactionStatus(
@@ -294,14 +286,11 @@ class MessagesController extends GetxController {
           Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
         } else {
           ToastUtil.showToast("The goal no longer exists");
-
         }
         // Get.toNamed(Routes.parentKidProfile, arguments: KidProfileTabs.goals);
       }
       // final metadata = notification.metadata as GoalCompletedMetadata;
       // await markAsRead(notification.id!);
-
-
     }
   }
 }

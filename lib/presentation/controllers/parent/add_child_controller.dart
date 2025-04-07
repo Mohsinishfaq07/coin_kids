@@ -99,6 +99,7 @@ class AddChildController extends GetxController {
       } else {
         age = int.parse(childAge.value);
       }
+      print("$isConnected ye isconnected h ");
 
       await kidsService.createKid(
         name: childName.value,
@@ -107,6 +108,7 @@ class AddChildController extends GetxController {
         customImagePath: kidImagePath.value,
         selectedAvatarUrl: selectedAvatarPath.value,
         isConnected: isConnected,
+
       );
 
       ToastUtil.showToast("Child added successfully");

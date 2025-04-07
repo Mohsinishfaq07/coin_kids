@@ -1,5 +1,4 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/notification/notification_card.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';

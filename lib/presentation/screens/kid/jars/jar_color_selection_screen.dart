@@ -22,7 +22,8 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: AppColors.background,
-          image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
+          image: const DecorationImage(
+              image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
         ),
         child: Column(
           children: [
@@ -75,7 +76,8 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                             controller.selectedColorIndex.value = index;
                           },
                           child: Obx(() {
-                            bool isSelected = controller.selectedColorIndex.value == index;
+                            bool isSelected =
+                                controller.selectedColorIndex.value == index;
                             return Stack(
                               alignment: Alignment.center,
                               children: [
@@ -85,7 +87,10 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                                   decoration: BoxDecoration(
                                     color: controller.colors[index],
                                     shape: BoxShape.circle,
-                                    border: isSelected ? Border.all(color: Colors.white, width: 3.w) : null,
+                                    border: isSelected
+                                        ? Border.all(
+                                            color: Colors.white, width: 3.w)
+                                        : null,
                                   ),
                                 ),
                                 if (isSelected)
@@ -108,10 +113,26 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                     child: KidButton(
                       onTap: () {
                         if (controller.jarType == Jars.spendingJar) {
-                          Get.toNamed(Routes.kidMoneyAddOrRequest, arguments: AmountAdditionMode.jarCreation);
+                          final isConnected = controller
+                                  .appState.currentKid.value?.isConnected ??
+                              false;
+                          if (!isConnected) {
+                            Get.toNamed(Routes.kidMoneyAddOrRequest,
+                                arguments: AmountAdditionMode.jarCreation);
+                          } else {
+                            // If connected, directly go to drag and drop with spending jar balance
+                            controller.amount.value = controller.appState
+                                .currentKid.value!.wallet.spendingJar.balance;
+                            Get.toNamed(
+                              Routes.kidDragAndDrop,
+                              arguments: {
+                                'mode': DragAndDropMode.jarCreation,
+                              },
+                            );
+                          }
                         } else {
-                          controller.amount.value = controller.appState.currentKid.value!.wallet.spendingJar.balance;
-
+                          controller.amount.value = controller.appState
+                              .currentKid.value!.wallet.spendingJar.balance;
                           Get.toNamed(
                             Routes.kidDragAndDrop,
                             arguments: {
