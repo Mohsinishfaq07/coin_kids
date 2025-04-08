@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -14,6 +15,7 @@ import '../models/kid_model.dart';
 class KidService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Cache keys
   static const String _avatarCacheKey = 'cached_avatars';
@@ -313,19 +315,41 @@ class KidService {
   // Upload custom avatar image and get URL
   Future<String> uploadCustomAvatar(File imageFile) async {
     try {
+      final user = _auth.currentUser;
+
+      if (user == null || user.uid.isEmpty) {
+        print("Auth error: User not authenticated"); // Debug log
+        throw Exception('User not authenticated');
+      }
+
       final String fileName =
-          'user_avatars/${DateTime.now().millisecondsSinceEpoch}.${imageFile.path.split('.').last}';
+          'user_avatars/kids/${DateTime.now().millisecondsSinceEpoch}.${imageFile.path.split('.').last}';
       final Reference ref = _storage.ref().child(fileName);
 
+      print("Starting upload to path: $fileName"); // Debug log
       final UploadTask uploadTask = ref.putFile(imageFile);
+
+      // Monitor upload progress
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        print(
+            'Upload progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100}%');
+      }, onError: (e) {
+        print("Upload error during progress: $e");
+      });
+
       final TaskSnapshot snapshot = await uploadTask;
       final String url = await snapshot.ref.getDownloadURL();
+      print("Upload successful, URL: $url"); // Debug log
 
       // Cache the avatar
       await _cacheAvatarImage(url);
 
       return url;
     } catch (e) {
+      print("Upload error: $e"); // Debug log
+      if (e.toString().contains('not-authenticated')) {
+        throw Exception('Please login again to upload image');
+      }
       throw Exception('Failed to upload avatar: $e');
     }
   }

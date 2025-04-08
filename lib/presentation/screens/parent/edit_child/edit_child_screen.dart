@@ -44,7 +44,8 @@ class EditChildScreen extends GetView<EditChildController> {
                     maxLength: 8,
                     initialValue: controller.childName.value,
                     hintText: controller.childName.value,
-                    onChanged: (value) => controller.childName.value = value.trim(),
+                    onChanged: (value) =>
+                        controller.childName.value = value.trim(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter child name';
@@ -58,10 +59,12 @@ class EditChildScreen extends GetView<EditChildController> {
                 // Child Age Field
                 Obx(() {
                   return ParentTextField(
+                    maxLength: 2,
                     initialValue: controller.childAge.value,
                     hintText: controller.childAge.value,
                     keyboardType: TextInputType.number,
-                    onChanged: (value) => controller.childAge.value = value.trim(),
+                    onChanged: (value) =>
+                        controller.childAge.value = value.trim(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter child age';
@@ -85,7 +88,10 @@ class EditChildScreen extends GetView<EditChildController> {
                 // Avatar Selection Title
                 Text(
                   "Select Avatar",
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: CustomThemeData().primaryTextColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp),
                 ),
                 SizedBox(height: 12.h),
 
@@ -152,7 +158,9 @@ class EditChildScreen extends GetView<EditChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: _isCustomImageSelected() ? AppColors.colorPrimary : Colors.transparent,
+                    color: _isCustomImageSelected()
+                        ? AppColors.colorPrimary
+                        : Colors.transparent,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(60.r),
@@ -170,7 +178,9 @@ class EditChildScreen extends GetView<EditChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
+                    color: controller.selectedAvatar.value == avatarIndex
+                        ? AppColors.colorPrimary
+                        : Colors.transparent,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(60.r),
@@ -191,10 +201,12 @@ class EditChildScreen extends GetView<EditChildController> {
                             color: AppColors.buttonPrimary,
                           ),
                         ),
-                        errorWidget: (context, url, error) => _buildErrorWidget(),
+                        errorWidget: (context, url, error) =>
+                            _buildErrorWidget(),
                       ),
                     ),
-                    if (controller.selectedAvatar.value == avatarIndex) _buildSelectedOverlay(),
+                    if (controller.selectedAvatar.value == avatarIndex)
+                      _buildSelectedOverlay(),
                   ],
                 ),
               ),
@@ -206,67 +218,119 @@ class EditChildScreen extends GetView<EditChildController> {
   }
 
   bool _isCustomImageSelected() {
-    return controller.kidImagePath.value.isNotEmpty || (controller.originalAvatar.isNotEmpty && controller.selectedAvatar.value == -1);
+    return controller.kidImagePath.value.isNotEmpty ||
+        (controller.originalAvatar.isNotEmpty &&
+            controller.selectedAvatar.value == -1);
   }
 
   Widget _buildCustomAvatarWidget() {
-    // Show new picked image
-    if (controller.kidImagePath.value.isNotEmpty) {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipRRect(
+    return Obx(() {
+      // Show new picked image from local file
+      if (controller.kidImagePath.value.isNotEmpty &&
+          !controller.kidImagePath.value.startsWith('http')) {
+        print(
+            "Displaying local image from path: ${controller.kidImagePath.value}"); // Debug log
+        return Container(
+          width: 60.w,
+          height: 60.h,
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(60.r),
-            child: Image.file(
-              File(controller.kidImagePath.value),
-              height: 60.h,
-              width: 60.w,
-              fit: BoxFit.cover,
+            border: Border.all(
+              color: AppColors.colorPrimary,
+              width: 2,
             ),
           ),
-          if (_isCustomImageSelected()) _buildSelectedOverlay(),
-        ],
-      );
-    }
-
-    // Show existing custom avatar from network
-    if (controller.originalAvatar.isNotEmpty && !controller.avatars.contains(controller.originalAvatar)) {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(60.r),
-            child: CachedNetworkImage(
-              imageUrl: controller.originalAvatar,
-              height: 60.h,
-              width: 60.w,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.buttonPrimary,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(58.r),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.file(
+                  File(controller.kidImagePath.value),
+                  fit: BoxFit.cover,
                 ),
-              ),
-              errorWidget: (context, url, error) => _buildErrorWidget(),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 24.sp,
+                  ),
+                ),
+              ],
             ),
           ),
-          if (_isCustomImageSelected()) _buildSelectedOverlay(),
-        ],
-      );
-    }
+        );
+      }
 
-    // Show camera icon for picking new image
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.iconPrimary,
-        borderRadius: BorderRadius.circular(60.r),
-      ),
-      child: Icon(
-        Icons.add_a_photo,
-        color: Colors.white,
-        size: 24.sp,
-      ),
-    );
+      // Show image from URL (either newly picked or existing)
+      if ((controller.kidImagePath.value.startsWith('http') ||
+          (controller.originalAvatar.isNotEmpty &&
+              !controller.avatars.contains(controller.originalAvatar)))) {
+        final String imageUrl = controller.kidImagePath.value.startsWith('http')
+            ? controller.kidImagePath.value
+            : controller.originalAvatar;
+
+        return Container(
+          width: 60.w,
+          height: 60.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60.r),
+            border: Border.all(
+              color: AppColors.colorPrimary,
+              width: 2,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(58.r),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.buttonPrimary,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => _buildErrorWidget(),
+                ),
+                if (_isCustomImageSelected())
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 24.sp,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Show camera icon for picking new image
+      return Container(
+        width: 60.w,
+        height: 60.h,
+        decoration: BoxDecoration(
+          color: AppColors.iconPrimary,
+          borderRadius: BorderRadius.circular(60.r),
+        ),
+        child: Icon(
+          Icons.add_a_photo,
+          color: Colors.white,
+          size: 24.sp,
+        ),
+      );
+    });
   }
 
   Widget _buildSelectedOverlay() {

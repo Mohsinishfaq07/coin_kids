@@ -84,8 +84,10 @@ class EditChildController extends GetxController {
   bool hasChanges() {
     return childName.value != originalName ||
         childAge.value != originalAge ||
-        (kidImagePath.value.isNotEmpty && kidImagePath.value != originalAvatar) ||
-        (selectedAvatarPath.value.isNotEmpty && selectedAvatarPath.value != originalAvatar);
+        (kidImagePath.value.isNotEmpty &&
+            kidImagePath.value != originalAvatar) ||
+        (selectedAvatarPath.value.isNotEmpty &&
+            selectedAvatarPath.value != originalAvatar);
   }
 
   Future<void> updateKid() async {
@@ -126,29 +128,45 @@ class EditChildController extends GetxController {
         updates['age'] = int.parse(childAge.value);
       }
 
+      showLoadingDialog("Updating Profile");
+
       // Handle avatar update
-      if (kidImagePath.value.isNotEmpty && kidImagePath.value != originalAvatar) {
-        // Upload new custom image
-        final String avatarUrl = await kidsService.uploadCustomAvatar(File(kidImagePath.value));
-        updates['avatar'] = avatarUrl;
-      } else if (selectedAvatarPath.value.isNotEmpty && selectedAvatarPath.value != originalAvatar) {
+      if (kidImagePath.value.isNotEmpty &&
+          kidImagePath.value != originalAvatar) {
+        try {
+          // Upload new custom image
+          print(
+              "Uploading image from path: ${kidImagePath.value}"); // Debug log
+          final String avatarUrl =
+              await kidsService.uploadCustomAvatar(File(kidImagePath.value));
+          print("Got avatar URL: $avatarUrl"); // Debug log
+          updates['avatar'] =
+              avatarUrl; // Changed from 'user_avatars' to 'avatar'
+        } catch (e) {
+          print("Error uploading avatar: $e"); // Debug log
+          throw Exception("Failed to upload avatar: $e");
+        }
+      } else if (selectedAvatarPath.value.isNotEmpty &&
+          selectedAvatarPath.value != originalAvatar) {
         // Update to new predefined avatar
-        updates['avatar'] = selectedAvatarPath.value;
+        updates['avatar'] =
+            selectedAvatarPath.value; // Changed from 'user_avatars' to 'avatar'
       }
 
-      showLoadingDialog("Updating Profile");
       if (updates.isNotEmpty) {
         await kidsService.updateKid(
-            kid.kidId,
-            kid.copyWith(
-              name: updates['name'] as String? ?? kid.name,
-              age: updates['age'] as int? ?? kid.age,
-              avatar: updates['avatar'] as String? ?? kid.avatar,
-            ));
+          kid.kidId,
+          kid.copyWith(
+            name: updates['name'] as String? ?? kid.name,
+            age: updates['age'] as int? ?? kid.age,
+            avatar: updates['avatar'] as String? ?? kid.avatar,
+          ),
+        );
       }
 
       ToastUtil.showToast("Child updated successfully");
     } catch (e) {
+      print("Update failed: $e"); // Debug log
       ToastUtil.showToast("Failed to update child: $e");
     } finally {
       Get.until((route) => route.settings.name == Routes.parentKidProfile);
@@ -164,11 +182,14 @@ class EditChildController extends GetxController {
       );
 
       if (pickedFile != null) {
+        print("Image picked: ${pickedFile.path}"); // Debug log
         kidImagePath.value = pickedFile.path;
         selectedAvatarPath.value = '';
         selectedAvatar.value = -1;
+        update(); // Force UI update
       }
     } catch (e) {
+      print("Error picking image: $e"); // Debug log
       ToastUtil.showToast("Failed to pick image: $e");
     }
   }
