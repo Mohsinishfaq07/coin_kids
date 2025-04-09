@@ -16,32 +16,16 @@ import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class KidHomeScreen extends GetView<KidBaseController> {
-  KidHomeScreen({super.key});
-
-  final GlobalKey _moneyJarShowcaseKey = GlobalKey();
-
-  Future<void> _markMoneyJarShowcaseAsShown() async {
-    await SharedPreferencesHelper.saveBool(
-        SharedPreferencesHelper.showcaseMoneyJarKey, true);
-  }
-
-  void _startShowcase(BuildContext context) async {
-    if (controller.shouldShowJarSpotLight()) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ShowCaseWidget.of(context).startShowCase([_moneyJarShowcaseKey]);
-        controller.showJarShowcase.value = false;
-        _markMoneyJarShowcaseAsShown();
-      });
-    }
-  }
+  const KidHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ShowCaseWidget(
-      onComplete: (index, key) {},
+      onComplete: (index, key) {
+        controller.showJarShowcase.value = false;
+        controller.markMoneyJarShowcaseAsShown();
+      },
       builder: (context) {
-        _startShowcase(context);
-
         return Obx(
           () {
             final kid = controller.currentKid.value;
@@ -53,6 +37,17 @@ class KidHomeScreen extends GetView<KidBaseController> {
             final savingJar = kid.wallet.savingJar;
             final isSpendingJarCreated = spendingJar.color != 0;
             final isSavingJarCreated = savingJar.color != 0;
+
+            // Check showcase conditions only when the widget is first built
+            if (!controller.hasInitializedShowcase.value) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (controller.shouldShowJarSpotLight() &&
+                    !controller.isNotificationShowing.value) {
+                  controller.startShowcase(context);
+                }
+                controller.hasInitializedShowcase.value = true;
+              });
+            }
 
             return LayoutBuilder(
               builder: (context, constraints) {
@@ -66,7 +61,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                         // Show single null jar when no jars are created
                         Center(
                           child: Showcase(
-                            key: _moneyJarShowcaseKey,
+                            key: controller.moneyJarShowcaseKey,
                             description: getSpotlightDescription(),
                             targetShapeBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24),
