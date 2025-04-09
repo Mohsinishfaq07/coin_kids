@@ -37,7 +37,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                 child: Obx(
                   () {
                     return CircleAvatarWidget(
-                      imagePath: controller.appState.currentParent.value?.imageUrl ?? "",
+                      imagePath:
+                          controller.appState.currentParent.value?.imageUrl ??
+                              "",
                       imageType: ImageType.network,
                       backgroundColor: AppColors.iconPrimary,
                       size: 40.r,
@@ -52,7 +54,8 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                   Obx(() {
                     return Text(
                       controller.appState.currentParent.value?.name ?? "Null",
-                      style: AppTextStyle.headingMedium.copyWith(fontWeight: FontWeight.w800),
+                      style: AppTextStyle.headingMedium
+                          .copyWith(fontWeight: FontWeight.w800),
                     );
                   }),
                   Text("Welcome 👋", style: AppTextStyle.bodySmall)
@@ -97,29 +100,49 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                           decoration: ShapeDecoration(
                             color: AppColors.cardPrimary,
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1.w, color: AppColors.cardBorder),
+                              side: BorderSide(
+                                  width: 1.w, color: AppColors.cardBorder),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             shadows: [
-                              BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0),
+                              BoxShadow(
+                                  color: const Color(0x0F000000),
+                                  blurRadius: 6.r,
+                                  offset: const Offset(0, 0),
+                                  spreadRadius: 0),
                             ],
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(height: 12.h),
-                              Text("Almost There!", style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                              Text("Almost There!",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(
+                                          color: CustomThemeData()
+                                              .primaryButtonColor,
+                                          fontSize: 18.sp)),
                               SizedBox(height: 12.h),
                               Text("Starting by adding your first child.",
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                          color: CustomThemeData()
+                                              .primaryTextColor,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14.sp)),
                               SizedBox(height: 26.h),
                               AppButton(
                                 size: Size(0.5.sw, 50.h),
                                 onPressed: () {
                                   Get.toNamed(Routes.parentAddChild);
                                 },
-                                child: Text("Add Child", style: AppTextStyle.appButton),
+                                child: Text("Add Child",
+                                    style: AppTextStyle.appButton),
                               )
                             ],
                           ),
@@ -155,58 +178,72 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             ),
                           )),
                       SizedBox(
-                        height: 150.h, // Set a fixed height for the horizontal list
+                        // color: Colors.red,
+                        height: MediaQuery.of(context).size.height * 0.16.h,
+                        // height:
+                        //     150.h, // Set a fixed height for the horizontal list
                         child: Obx(() {
                           return ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.all(16),
-                            itemCount: controller.kidsList.length < 2 ? controller.kidsList.length + 1 : 2,
+                            padding: EdgeInsets.all(14.h),
+                            itemCount: controller.kidsList.length < 2
+                                ? controller.kidsList.length + 1
+                                : 2,
                             itemBuilder: (context, index) {
                               if (index == controller.kidsList.length) {
                                 // Last item: Add circle
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
                                   child: GestureDetector(
                                     onTap: () {
                                       if (controller.kidsList.isNotEmpty) {
-                                        ToastUtil.showToast("You have already added a child");
+                                        ToastUtil.showToast(
+                                            "You have already added a child");
                                       }
                                     },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: AppColors.iconDisabled, width: 2),
-                                            borderRadius: BorderRadius.circular(40),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(14.0),
-                                            child: Icon(
-                                              Icons.add, // Add icon
-                                              color: AppColors.iconDisabled,
-                                              size: 30,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: AppColors.iconDisabled,
+                                                  width: 2),
+                                              borderRadius:
+                                                  BorderRadius.circular(40),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(12.0),
+                                              child: Icon(
+                                                Icons.add, // Add icon
+                                                color: AppColors.iconDisabled,
+                                                size: 30,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(height: 10.h),
-                                        Text(
-                                          'Add Member\n(Coming soon)',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppColors.iconDisabled,
-                                            fontSize: 13.sp,
-                                            fontFamily: 'Open Sans',
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.38,
-                                          ),
-                                        )
-                                      ],
+                                          SizedBox(height: 10.h),
+                                          Text(
+                                            'Add Member\n(Coming soon)',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppColors.iconDisabled,
+                                              fontSize: 12.sp,
+                                              fontFamily: 'Open Sans',
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.38,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
                               } else {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
                                   child: GestureDetector(
                                     onTap: () {
                                       Get.toNamed(Routes.parentKidProfile);
@@ -215,16 +252,21 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                       children: [
                                         Obx(() {
                                           return CircleAvatarWidget(
-                                            imagePath: controller.appState.currentKid.value?.avatar ?? "",
+                                            imagePath: controller.appState
+                                                    .currentKid.value?.avatar ??
+                                                "",
                                             imageType: ImageType.network,
-                                            errorAsset: Assets.icAvatarPlaceholder,
+                                            errorAsset:
+                                                Assets.icAvatarPlaceholder,
                                             size: 50.r,
                                           );
                                         }),
                                         SizedBox(height: 10.h),
                                         Obx(() {
                                           return Text(
-                                            controller.appState.currentKid.value?.name ?? "",
+                                            controller.appState.currentKid.value
+                                                    ?.name ??
+                                                "",
                                             style: TextStyle(
                                               color: AppColors.textPrimary,
                                               fontSize: 13.sp,
@@ -243,53 +285,184 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                           );
                         }),
                       ),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(horizontal: 2.w),
+                      //   child: Center(
+                      //     child: Container(
+                      //       // height: 200.h,
+                      //       // width: double.infinity,
+                      //       decoration: BoxDecoration(
+                      //           border: Border.all(
+                      //             color: const Color(0xFFCBE5F4),
+                      //           ),
+                      //           color: const Color(0xFFEDFAFF),
+                      //           borderRadius: BorderRadius.circular(10)),
+                      //       child: Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           AppButton(
+                      //             onPressed: () {
+                      //               Get.toNamed(Routes.parentQuickTransfer);
+                      //             },
+                      //             size: Size(183.w, 50.h),
+                      //             child: Text(
+                      //               "Quick Transfer",
+                      //               style: AppTextStyle.appButton,
+                      //             ),
+                      //           ),
+                      //           const SizedBox(height: 20),
+                      //           Padding(
+                      //             padding: const EdgeInsets.symmetric(
+                      //                 horizontal: 60.0),
+                      //             child: RichText(
+                      //               textAlign: TextAlign.center,
+                      //               text: TextSpan(
+                      //                 children: [
+                      //                   TextSpan(
+                      //                     text: 'Send ',
+                      //                     style: Theme.of(context)
+                      //                         .textTheme
+                      //                         .bodyMedium!
+                      //                         .copyWith(
+                      //                             color: CustomThemeData()
+                      //                                 .primaryButtonColor,
+                      //                             fontWeight: FontWeight.w600),
+                      //                   ),
+                      //                   TextSpan(
+                      //                       text: 'or ',
+                      //                       style: Theme.of(context)
+                      //                           .textTheme
+                      //                           .bodyMedium!
+                      //                           .copyWith(
+                      //                               color: CustomThemeData()
+                      //                                   .secondaryTextColor,
+                      //                               fontWeight:
+                      //                                   FontWeight.w600)),
+                      //                   TextSpan(
+                      //                       text: 'remove ',
+                      //                       style: Theme.of(context)
+                      //                           .textTheme
+                      //                           .bodyMedium!
+                      //                           .copyWith(
+                      //                               color: CustomThemeData()
+                      //                                   .primaryButtonColor,
+                      //                               fontWeight:
+                      //                                   FontWeight.w600)),
+                      //                   TextSpan(
+                      //                       text:
+                      //                           'money from your child\'s account',
+                      //                       style: Theme.of(context)
+                      //                           .textTheme
+                      //                           .bodyMedium!
+                      //                           .copyWith(
+                      //                               color: CustomThemeData()
+                      //                                   .secondaryTextColor,
+                      //                               fontWeight:
+                      //                                   FontWeight.w600)),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           const SizedBox(height: 20),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 2.w),
                         child: Center(
                           child: Container(
-                            height: 200.h,
-                            width: double.infinity,
+                            // height: 200.h,
+                            // width: double.infinity,
                             decoration: BoxDecoration(
                                 border: Border.all(
                                   color: const Color(0xFFCBE5F4),
                                 ),
                                 color: const Color(0xFFEDFAFF),
                                 borderRadius: BorderRadius.circular(10)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AppButton(
-                                  onPressed: () {
-                                    Get.toNamed(Routes.parentQuickTransfer);
-                                  },
-                                  size: Size(183.w, 50.h),
-                                  child: Text(
-                                    "Quick Transfer",
-                                    style: AppTextStyle.appButton,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                                  child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Send ',
-                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
-                                        ),
-                                        TextSpan(text: 'or ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                        TextSpan(text: 'remove ', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
-                                        TextSpan(
-                                            text: 'money from your child\'s account',
-                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                      ],
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.02.h,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AppButton(
+                                    onPressed: () {
+                                      Get.toNamed(Routes.parentQuickTransfer);
+                                    },
+                                    size: Size(183.w, 50.h),
+                                    child: Text(
+                                      "Quick Transfer",
+                                      style: AppTextStyle.appButton,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 20),
-                              ],
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.03.h,
+                                  ),
+                                  // const SizedBox(height: 20),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.height *
+                                              0.06.w,
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Send ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                    color: CustomThemeData()
+                                                        .primaryButtonColor,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                              text: 'or ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                      color: CustomThemeData()
+                                                          .secondaryTextColor,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                          TextSpan(
+                                              text: 'remove ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                      color: CustomThemeData()
+                                                          .primaryButtonColor,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                          TextSpan(
+                                              text:
+                                                  'money from your child\'s account',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                      color: CustomThemeData()
+                                                          .secondaryTextColor,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // const SizedBox(height: 20),
+                                ],
+                              ),
                             ),
                           ),
                         ),

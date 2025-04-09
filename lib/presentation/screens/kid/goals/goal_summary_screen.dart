@@ -68,30 +68,29 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                   controller.newGoal.value.photo!.isEmpty
               ? Padding(
                   padding: EdgeInsets.all(20.h),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: controller.pickImageFromCamera,
-                          child: SvgPicture.asset(
-                            Assets.icCamera,
-                            height: 64.r,
-                            width: 64.r,
-                          ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: controller.pickImageFromCamera,
+                        child: SvgPicture.asset(
+                          Assets.icCamera,
+                          height: 64.r,
+                          width: 64.r,
                         ),
-                        SizedBox(height: 8.h),
-                        KidButton(
-                          onTap: () async {
-                            await controller.pickFromGallery();
-                          },
-                          baseColor: Color(0xFFFF9E29),
-                          text: 'Add Photo',
-                          iconPath: Assets.icAdd,
-                          iconPosition: IconPosition.left,
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 8.h),
+                      KidButton(
+                        onTap: () async {
+                          await controller.pickFromGallery();
+                        },
+                        baseColor: Color(0xFFFF9E29),
+                        text: 'Add Photo',
+                        iconPath: Assets.icAdd,
+                        iconPosition: IconPosition.left,
+                      ),
+                    ],
                   ),
                 )
               : Stack(

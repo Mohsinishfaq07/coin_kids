@@ -227,30 +227,32 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ],
                       ),
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Obx(() {
-                              return _buildToggleRow(
-                                "Goal Achievement",
-                                Assets.icFlag,
-                                controller.goalAchievementSwitch,
-                                () async {
-                                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.goalAchievementNotificationEnabled, true);
-                                },
-                              );
-                            }),
-                            Obx(() {
-                              return _buildToggleRow(
-                                "Money Request",
-                                Assets.icCurrency,
-                                controller.moneyRequestSwitch,
-                                () {
-                                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.moneyRequestNotificationEnabled, true);
-                                },
-                              );
-                            }),
-                          ],
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Obx(() {
+                                return _buildToggleRow(
+                                  "Goal Achievement",
+                                  Assets.icFlag,
+                                  controller.goalAchievementSwitch,
+                                  () async {
+                                    SharedPreferencesHelper.saveBool(SharedPreferencesHelper.goalAchievementNotificationEnabled, true);
+                                  },
+                                );
+                              }),
+                              Obx(() {
+                                return _buildToggleRow(
+                                  "Money Request",
+                                  Assets.icCurrency,
+                                  controller.moneyRequestSwitch,
+                                  () {
+                                    SharedPreferencesHelper.saveBool(SharedPreferencesHelper.moneyRequestNotificationEnabled, true);
+                                  },
+                                );
+                              }),
+                            ],
+                          ),
                         ),
                       ),
                     ),

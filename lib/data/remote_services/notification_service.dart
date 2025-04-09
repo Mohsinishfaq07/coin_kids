@@ -20,17 +20,17 @@ class NotificationService extends GetxService {
   }
 
   // Fetch notifications for a user
-  Stream<List<NotificationModel>> getNotificationsStream(String userId) {
-    return _firestore
-        .collection(collection)
-        .where('userId', isEqualTo: userId)
-        .where('isRead', isEqualTo: false)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => NotificationModel.fromJson(doc.data(), id: doc.id))
-            .toList());
-  }
+  // Stream<List<NotificationModel>> getNotificationsStream(String userId) {
+  //   return _firestore
+  //       .collection(collection)
+  //       .where('userId', isEqualTo: userId)
+  //       .where('isRead', isEqualTo: false)
+  //       .orderBy('timestamp', descending: true)
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //           .map((doc) => NotificationModel.fromJson(doc.data(), id: doc.id))
+  //           .toList());
+  // }
 
   // Mark notification as read
   Future<void> markAsRead(String notificationId) async {
