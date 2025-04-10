@@ -145,6 +145,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
       style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal),
 
       decoration: InputDecoration(
+        counterText: "",
         fillColor: Theme.of(context).inputDecorationTheme.fillColor,
         filled: true,
         contentPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),

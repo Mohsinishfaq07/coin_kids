@@ -94,6 +94,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                   ),
                   SizedBox(height: 12.h),
                   QuickTransferTextField(
+                    maxLength: 8,
                     hintText: 0.toMoneyFormat(),
                     keyboardType: TextInputType.number,
                     onChanged: (val) {

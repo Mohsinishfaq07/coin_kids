@@ -50,6 +50,7 @@ class SignInScreen extends GetView<SignInController> {
 
                     // Email Input
                     ParentTextField(
+                      textInputAction: TextInputAction.next,
                       hintText: 'Email',
                       titleText: 'Email',
                       onChanged: (value) {
@@ -70,6 +71,7 @@ class SignInScreen extends GetView<SignInController> {
                     // PIN Input
                     Obx(() {
                       return ParentTextField(
+                        textInputAction: TextInputAction.done,
                         hintText: 'Password',
                         onChanged: (value) {
                           controller.password.value = value.trim();

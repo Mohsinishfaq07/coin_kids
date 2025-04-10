@@ -51,6 +51,7 @@ class SignupScreen extends GetView<SignupController> {
                       height: 10.h,
                     ),
                     ParentTextField(
+                      textInputAction: TextInputAction.next,
                       hintText: 'Full Name',
                       onChanged: (value) {
                         controller.name.value = value.trim();
@@ -67,6 +68,7 @@ class SignupScreen extends GetView<SignupController> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.h),
                       child: ParentTextField(
+                        textInputAction: TextInputAction.next,
                         hintText: 'Email',
                         keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
@@ -89,6 +91,7 @@ class SignupScreen extends GetView<SignupController> {
                     // PIN Input
                     Obx(() {
                       return ParentTextField(
+                        textInputAction: TextInputAction.next,
                         hintText: 'Password',
                         onChanged: (value) {
                           controller.password.value = value.trim();
@@ -96,9 +99,12 @@ class SignupScreen extends GetView<SignupController> {
                         titleText: 'Password',
                         obscureText: controller.showPassword.value,
                         suffixIconColor: AppColors.textPrimary,
-                        suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
+                        suffixSvgPath: controller.showPassword.value
+                            ? Assets.icEyeHide
+                            : Assets.icEye,
                         onSuffixTap: () {
-                          controller.showPassword.value = !controller.showPassword.value;
+                          controller.showPassword.value =
+                              !controller.showPassword.value;
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -112,6 +118,7 @@ class SignupScreen extends GetView<SignupController> {
                       return Padding(
                         padding: EdgeInsets.only(top: 16.h, bottom: 36.h),
                         child: ParentTextField(
+                            textInputAction: TextInputAction.done,
                             hintText: 'Confirm Password',
                             onChanged: (value) {
                               controller.confirmPassword.value = value.trim();
@@ -119,9 +126,12 @@ class SignupScreen extends GetView<SignupController> {
                             titleText: 'Confirm Password',
                             obscureText: controller.showPassword.value,
                             suffixIconColor: AppColors.textPrimary,
-                            suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
+                            suffixSvgPath: controller.showPassword.value
+                                ? Assets.icEyeHide
+                                : Assets.icEye,
                             onSuffixTap: () {
-                              controller.showPassword.value = !controller.showPassword.value;
+                              controller.showPassword.value =
+                                  !controller.showPassword.value;
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -166,7 +176,12 @@ class SignupScreen extends GetView<SignupController> {
                       children: [
                         Text(
                           "Already have an account? ",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: CustomThemeData().primaryTextColor,
+                                  fontSize: 12.sp),
                         ),
                         GestureDetector(
                             onTap: () {
@@ -174,14 +189,22 @@ class SignupScreen extends GetView<SignupController> {
                             },
                             child: Text(
                               "LOGIN",
-                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp, color: AppColors.buttonPrimary),
+                              style: AppTextStyle.labelLarge.copyWith(
+                                  fontSize: 14.sp,
+                                  color: AppColors.buttonPrimary),
                             )),
                       ],
                     ),
                     if (Platform.isAndroid) ...[
                       Padding(
-                        padding: EdgeInsets.only(top: 16.h,bottom: 16.h ),
-                        child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
+                        padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                        child: Text("OR",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w800)),
                       ),
                       // Google Login Button
                       ElevatedButton(
@@ -190,7 +213,8 @@ class SignupScreen extends GetView<SignupController> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          fixedSize: Size(screenWidth * 0.8, 50), // Responsive width
+                          fixedSize:
+                              Size(screenWidth * 0.8, 50), // Responsive width
                         ),
                         onPressed: () async {
                           try {
@@ -204,11 +228,13 @@ class SignupScreen extends GetView<SignupController> {
                           children: [
                             Padding(
                               padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                              child: SvgPicture.asset(Assets.icGoogle, height: 24),
+                              child:
+                                  SvgPicture.asset(Assets.icGoogle, height: 24),
                             ),
                             Text(
                               "Sign in with Google",
-                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                              style: AppTextStyle.labelLarge
+                                  .copyWith(fontSize: 14.sp),
                             ),
                             SizedBox.shrink()
                           ],
@@ -218,16 +244,19 @@ class SignupScreen extends GetView<SignupController> {
                     ],
                     SizedBox(height: 16.h),
 
-
                     // Terms and Signup Button
                     Padding(
-                      padding: EdgeInsets.only(left: 24.w, right: 24.w, top: MediaQuery.of(context).size.height* 0.1.h),
+                      padding: EdgeInsets.only(
+                          left: 24.w,
+                          right: 24.w,
+                          top: MediaQuery.of(context).size.height * 0.1.h),
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "By clicking Sign Up, you are agreeing to the ",
+                              text:
+                                  "By clicking Sign Up, you are agreeing to the ",
                               style: TextStyle(
                                 color: Colors.blue.shade900,
                                 fontWeight: FontWeight.normal,

@@ -45,15 +45,24 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
               children: [
                 Text(
                   "Birthday",
-                  style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 12.h),
                 Obx(() {
                   return ParentTextField(
                     hintText: controller.birthday.value == null
-                        ? controller.formatDate(
-                            DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0),
-                          )
+                        ? (controller.appState.currentParent.value?.dob ==
+                                    null ||
+                                controller.appState.currentParent.value?.dob ==
+                                    0
+                            ? "Not specified"
+                            : controller.formatDate(
+                                DateTime.fromMillisecondsSinceEpoch(controller
+                                    .appState.currentParent.value!.dob!),
+                              ))
                         : controller.formatDate(controller.birthday.value!),
                     titleText: 'Birthday',
                     enabled: false,
@@ -62,39 +71,62 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                     onSuffixTap: () async {
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0),
+                        initialDate: DateTime.fromMillisecondsSinceEpoch(
+                            controller.appState.currentParent.value?.dob ?? 0),
                         firstDate: DateTime(1900),
                         lastDate: DateTime.now(),
                         builder: (context, child) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            child: Theme(
-                              data: ThemeData(
-                                primaryColor: AppColors.buttonPrimary,
-                                colorScheme: ColorScheme.light(
-                                  primary: AppColors.buttonPrimary,
-                                  onPrimary: Colors.white,
-                                  onSurface: AppColors.textPrimary,
-                                ),
-                                textTheme: TextTheme(
-                                  titleMedium: AppTextStyle.bodyMedium,
-                                  labelMedium: AppTextStyle.bodyMedium,
-                                  bodyMedium: AppTextStyle.bodyMedium,
-                                  bodyLarge: AppTextStyle.bodyLarge,
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    textStyle: AppTextStyle.bodyMedium,
-                                    foregroundColor: AppColors.buttonPrimary,
-                                  ),
+                          return Theme(
+                            data: ThemeData(
+                              primaryColor: AppColors.buttonPrimary,
+                              colorScheme: ColorScheme.light(
+                                primary: AppColors.buttonPrimary,
+                                onPrimary: Colors.white,
+                                onSurface: AppColors.textPrimary,
+                                surface: Colors.white,
+                                secondary:
+                                    AppColors.buttonPrimary.withOpacity(0.1),
+                                onSecondary: AppColors.buttonPrimary,
+                              ),
+                              // dialogBackgroundColor: Colors.white,
+                              textTheme: TextTheme(
+                                titleMedium: AppTextStyle.bodyMedium,
+                                labelMedium: AppTextStyle.bodyMedium,
+                                bodyMedium: AppTextStyle.bodyMedium,
+                                bodyLarge: AppTextStyle.bodyLarge,
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  textStyle: AppTextStyle.bodyMedium,
+                                  foregroundColor: AppColors.buttonPrimary,
                                 ),
                               ),
-                              child: child!,
+                              datePickerTheme: DatePickerThemeData(
+                                backgroundColor: Colors.white,
+                                headerBackgroundColor: AppColors.buttonPrimary,
+                                headerForegroundColor: Colors.white,
+                                weekdayStyle:
+                                    TextStyle(color: AppColors.textPrimary),
+                                dayStyle:
+                                    TextStyle(color: AppColors.textPrimary),
+                                todayBorder: BorderSide(
+                                    color: AppColors.buttonPrimary, width: 1),
+                                dayBackgroundColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return AppColors.buttonPrimary;
+                                  }
+                                  if (states.contains(MaterialState.hovered)) {
+                                    return AppColors.buttonPrimary
+                                        .withOpacity(0.1);
+                                  }
+                                  return null;
+                                }),
+                                yearStyle:
+                                    TextStyle(color: AppColors.textPrimary),
+                              ),
                             ),
+                            child: child!,
                           );
                         },
                       );
@@ -107,12 +139,16 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                 SizedBox(height: 25.h),
                 Text(
                   "Full Name",
-                  style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 12.h),
                 Obx(() => ParentTextField(
                       titleText: 'Full name',
-                      hintText: controller.appState.currentParent.value?.name ?? "",
+                      hintText:
+                          controller.appState.currentParent.value?.name ?? "",
                       onChanged: (value) {
                         controller.parentName.value = value.trim();
                       },
@@ -141,7 +177,8 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                              onTap: () => controller.selectGender(UserGender.male.name),
+                              onTap: () =>
+                                  controller.selectGender(UserGender.male.name),
                               child: Container(
                                 height: 48.h,
                                 width: 154.w,
@@ -152,9 +189,13 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   bottom: 13.33,
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: controller.selectedGender.value == UserGender.male.name ? AppColors.buttonPrimary : Colors.white54,
+                                  color: controller.selectedGender.value ==
+                                          UserGender.male.name
+                                      ? AppColors.buttonPrimary
+                                      : Colors.white54,
                                   shape: RoundedRectangleBorder(
-                                    side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                                    side: const BorderSide(
+                                        width: 1, color: Color(0xFFD9D9D9)),
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ),
@@ -162,14 +203,20 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   Assets.icMale,
                                   height: 24.h,
                                   width: 24.w,
-                                  colorFilter: ColorFilter.mode(controller.selectedGender.value == UserGender.male.name ? Colors.white : AppColors.textPrimary, BlendMode.srcIn),
+                                  colorFilter: ColorFilter.mode(
+                                      controller.selectedGender.value ==
+                                              UserGender.male.name
+                                          ? Colors.white
+                                          : AppColors.textPrimary,
+                                      BlendMode.srcIn),
                                 ),
                               )),
                         ),
                         SizedBox(width: 14.w),
                         Expanded(
                           child: GestureDetector(
-                              onTap: () => controller.selectGender(UserGender.female.name),
+                              onTap: () => controller
+                                  .selectGender(UserGender.female.name),
                               child: Container(
                                 height: 48.h,
                                 width: 154.w,
@@ -180,9 +227,13 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   bottom: 13.33,
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: controller.selectedGender.value == UserGender.female.name ? AppColors.buttonPrimary : Colors.white54,
+                                  color: controller.selectedGender.value ==
+                                          UserGender.female.name
+                                      ? AppColors.buttonPrimary
+                                      : Colors.white54,
                                   shape: RoundedRectangleBorder(
-                                    side: const BorderSide(width: 1, color: Color(0xFFD9D9D9)),
+                                    side: const BorderSide(
+                                        width: 1, color: Color(0xFFD9D9D9)),
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ),
@@ -190,7 +241,12 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   Assets.icFemale,
                                   height: 24.h,
                                   width: 24.w,
-                                  colorFilter: ColorFilter.mode(controller.selectedGender.value == UserGender.female.name ? Colors.white : AppColors.textPrimary, BlendMode.srcIn),
+                                  colorFilter: ColorFilter.mode(
+                                      controller.selectedGender.value ==
+                                              UserGender.female.name
+                                          ? Colors.white
+                                          : AppColors.textPrimary,
+                                      BlendMode.srcIn),
                                 ),
                               )),
                         ),

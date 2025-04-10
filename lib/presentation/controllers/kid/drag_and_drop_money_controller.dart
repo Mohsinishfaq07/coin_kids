@@ -190,15 +190,19 @@ class DragAndDropMoneyController extends GetxController {
       return;
     }
 
-    final spendingJar = kid!.wallet.spendingJar;
+    final spendingJar = kid.wallet.spendingJar;
     final savingJar = kid.wallet.savingJar;
+    final isConnected = kid.isConnected;
 
     try {
       showLoadingDialog("Creating Jar");
       if (jarCreationController.jarType == Jars.spendingJar) {
         if (isComplete()) {
-          final finalBalance = _roundToTwoDecimals(
-              spendingJar.balance + _roundToTwoDecimals(totalValue.value));
+          final finalBalance = isConnected
+              ? spendingJar
+                  .balance // If connected, don't add the dragged amount
+              : _roundToTwoDecimals(
+                  spendingJar.balance + _roundToTwoDecimals(totalValue.value));
           Get.log('final Balance Spend $finalBalance');
           jarCreationController.kidService.updateSpendingJar(
               kid.kidId, finalBalance,

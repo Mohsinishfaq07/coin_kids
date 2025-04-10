@@ -16,7 +16,8 @@ class ParentTextField extends StatelessWidget {
   final VoidCallback? onPrefixTap; // Optional callback for prefix icon tap
   final IconData? suffixIcon; // Optional suffix icon
   final VoidCallback? onSuffixTap; // Optional callback for suffix icon tap
-  final bool obscureText; // Whether the text should be obscured (e.g., password)
+  final bool
+      obscureText; // Whether the text should be obscured (e.g., password)
   final TextInputType keyboardType; // Input type for the keyboard
   final String? Function(String?)? validator;
   final Color? suffixIconColor; // Custom color for suffix icon
@@ -26,6 +27,7 @@ class ParentTextField extends StatelessWidget {
   final int? maxLength;
   final bool enabled;
   final TextInputFormatter? inputFormatter;
+  final TextInputAction? textInputAction;
 
   const ParentTextField({
     this.isOptional = false,
@@ -47,8 +49,10 @@ class ParentTextField extends StatelessWidget {
     this.nextFocusNode,
     this.enabled = true,
     this.inputFormatter,
+    this.textInputAction,
     super.key,
-  }) : assert(controller == null || initialValue == null, 'Cannot provide both a controller and an initialValue');
+  }) : assert(controller == null || initialValue == null,
+            'Cannot provide both a controller and an initialValue');
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +70,11 @@ class ParentTextField extends StatelessWidget {
             ],
             maxLength: maxLength,
             initialValue: initialValue,
-            textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
+            // textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
+            textInputAction: textInputAction ??
+                (nextFocusNode != null
+                    ? TextInputAction.next
+                    : TextInputAction.done),
             controller: controller,
             onChanged: onChanged,
             obscureText: obscureText,
@@ -143,7 +151,8 @@ class ParentTextField extends StatelessWidget {
                 onTap: onSuffixTap,
                 child: SvgPicture.asset(
                   suffixSvgPath!,
-                  colorFilter: ColorFilter.mode(suffixIconColor ?? Colors.grey, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                      suffixIconColor ?? Colors.grey, BlendMode.srcIn),
                   width: 24.sp,
                 ),
               ),

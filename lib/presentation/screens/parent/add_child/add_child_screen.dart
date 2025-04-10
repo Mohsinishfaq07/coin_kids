@@ -46,7 +46,8 @@ class AddChildScreen extends GetView<AddChildController> {
                       maxLength: 8,
                       titleText: "Child name",
                       hintText: "Enter your child name",
-                      onChanged: (value) => controller.childName.value = value.trim(),
+                      onChanged: (value) =>
+                          controller.childName.value = value.trim(),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter child name';
@@ -61,8 +62,10 @@ class AddChildScreen extends GetView<AddChildController> {
                       maxLength: 2,
                       titleText: "Age",
                       hintText: "Enter child's age",
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) => controller.childAge.value = value.trim(),
+                      keyboardType: TextInputType.numberWithOptions(decimal: true,
+                      signed: true),
+                      onChanged: (value) =>
+                          controller.childAge.value = value.trim(),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter child age';
@@ -73,8 +76,8 @@ class AddChildScreen extends GetView<AddChildController> {
                           return 'Please enter a valid number';
                         }
 
-                        if (intValue < 3 && intValue > 25) {
-                          return 'Age must be between 1 to 25 yo';
+                        if (intValue < 3 || intValue > 14) {
+                          return 'Age must be between 3 to 14 years';
                         }
 
                         return null;
@@ -85,7 +88,10 @@ class AddChildScreen extends GetView<AddChildController> {
                     // Avatar Selection Title
                     Text(
                       "Select Avatar",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: CustomThemeData().primaryTextColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp),
                     ),
                     SizedBox(height: 12.h),
 
@@ -105,7 +111,8 @@ class AddChildScreen extends GetView<AddChildController> {
 
                           if (_formKey.currentState?.validate() ?? false) {
                             await controller.createKid(true);
-                            print(" this is whole method ${controller.createKid(true)};");
+                            print(
+                                " this is whole method ${controller.createKid(true)};");
                           }
                         },
                       ),
@@ -152,7 +159,9 @@ class AddChildScreen extends GetView<AddChildController> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: controller.kidImagePath.value.isNotEmpty ? AppColors.colorPrimary : Colors.transparent,
+                        color: controller.kidImagePath.value.isNotEmpty
+                            ? AppColors.colorPrimary
+                            : Colors.transparent,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(60.r),
@@ -207,7 +216,9 @@ class AddChildScreen extends GetView<AddChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
+                    color: controller.selectedAvatar.value == avatarIndex
+                        ? AppColors.colorPrimary
+                        : Colors.transparent,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(60.r),
