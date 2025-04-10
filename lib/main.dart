@@ -54,38 +54,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      smartManagement: SmartManagement.keepFactory,
-      theme: CustomThemeData.getThemeData(),
-      debugShowCheckedModeBanner: false,
-      useInheritedMediaQuery: true,
-      builder: (context, child) {
-        // Then apply DevicePreview
-        final devicePreviewChild = DevicePreview.appBuilder(context, child);
+    return GestureDetector(
+      onTap: ()=> FocusManager.instance.primaryFocus?.unfocus(),
+      child: GetMaterialApp(
+        smartManagement: SmartManagement.keepFactory,
+        theme: CustomThemeData.getThemeData(),
+        debugShowCheckedModeBanner: false,
+        useInheritedMediaQuery: true,
+        builder: (context, child) {
+          // Then apply DevicePreview
+          final devicePreviewChild = DevicePreview.appBuilder(context, child);
 
-        return OrientationAwareBuilder(
-          builder: (context, orientation) {
-            return devicePreviewChild;
-          },
-        );
-      },
-      initialBinding: ControllerBindings(),
-      translations: AppTranslations(),
-      fallbackLocale: const Locale('en', 'US'),
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('es', 'ES'),
-        Locale('ar', 'SA'),
-        Locale('fr', 'FR'),
-        Locale('de', 'DE'),
-      ],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      initialRoute: Routes.splash,
-      getPages: AppPages.pages,
+          return OrientationAwareBuilder(
+            builder: (context, orientation) {
+              return devicePreviewChild;
+            },
+          );
+        },
+        initialBinding: ControllerBindings(),
+        translations: AppTranslations(),
+        fallbackLocale: const Locale('en', 'US'),
+        supportedLocales: const [
+          Locale('en', 'US'),
+          Locale('es', 'ES'),
+          Locale('ar', 'SA'),
+          Locale('fr', 'FR'),
+          Locale('de', 'DE'),
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        initialRoute: Routes.splash,
+        getPages: AppPages.pages,
+      ),
     );
   }
 }
