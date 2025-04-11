@@ -56,6 +56,9 @@ class MessagesScreen extends GetView<MessagesController> {
             onRefresh: controller.onRefresh,
             onLoading: controller.onLoading,
             child: controller.notifications.isEmpty ? buildNotificationEmptyState(() {}) : _buildNotificationsList(),
+         //child: controller.notifications.isEmpty
+            //                 ? buildNotificationEmptyState(() {})
+            //                 : _buildNotificationsList(),
           );
         }),
       ),
@@ -67,6 +70,12 @@ class MessagesScreen extends GetView<MessagesController> {
       itemCount: controller.notifications.length,
       itemBuilder: (context, index) {
         final notification = controller.notifications[index];
+
+        // Check notification preferences before showing
+        // if (!controller.shouldShowNotification(notification)) {
+        //   return const SizedBox.shrink();
+        // }
+
         return NotificationCard(
           notification: notification,
           onTap: () {

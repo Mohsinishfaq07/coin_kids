@@ -242,6 +242,25 @@ class MessagesController extends GetxController {
     }
   }
 
+  // bool shouldShowNotification(NotificationModel notification) {
+  //   // Check notification type and corresponding preference
+  //   switch (notification.type) {
+  //     case NotificationType.goalMilestone:
+  //     case NotificationType.goalCompleted:
+  //       return SharedPreferencesHelper.getBool(
+  //               SharedPreferencesHelper.goalAchievementNotificationEnabled) ??
+  //           true;
+  //
+  //     case NotificationType.transactionPending:
+  //       return SharedPreferencesHelper.getBool(
+  //               SharedPreferencesHelper.moneyRequestNotificationEnabled) ??
+  //           true;
+  //
+  //     default:
+  //       return true; // Show all other types of notifications by default
+  //   }
+  // }
+
   Future<bool> _checkGoalExists(String goalId) async {
     try {
       final goal = await goalService.fetchGoalById(goalId);

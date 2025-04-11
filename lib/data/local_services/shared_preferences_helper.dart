@@ -9,6 +9,10 @@ class SharedPreferencesHelper {
   static String hasShownKidsZoneShowcase = "hasShownKidsZoneShowcase";
   static String goalAchievementNotificationEnabled = "hasShownKidsZoneShowcase";
   static String moneyRequestNotificationEnabled = "hasShownKidsZoneShowcase";
+  // static String goalAchievementNotificationEnabled =
+  //       "goalAchievementNotificationEnabled";
+  //   static String moneyRequestNotificationEnabled =
+  //       "moneyRequestNotificationEnabled";
   static String showcaseMoneyJarKey = "showcaseMoneyJarKey";
   static String showKidsNotifications = "showKidsNotifications";
   static String showTotalMoneySpotlight = "showTotalMoneySpotlight";

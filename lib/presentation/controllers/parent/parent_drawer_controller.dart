@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -15,8 +16,11 @@ class ParentDrawerController extends GetxController {
 
   var goalAchievementSwitch = true.obs;
   var moneyRequestSwitch = true.obs;
+  // final goalAchievementSwitch = false.obs;
+  // final moneyRequestSwitch = false.obs;
 
   var appVersion = ''.obs;
+  //final appVersion = ''.obs;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -25,6 +29,34 @@ class ParentDrawerController extends GetxController {
     getAppVersion();
     super.onInit();
   }
+  //@override
+  //   void onInit() async {
+  //     super.onInit();
+  //     await _loadNotificationPreferences();
+  //     await getAppVersion();
+  //   }
+  //
+  //   Future<void> _loadNotificationPreferences() async {
+  //     final goalAchievement = await SharedPreferencesHelper.getBool(
+  //         SharedPreferencesHelper.goalAchievementNotificationEnabled);
+  //     final moneyRequest = await SharedPreferencesHelper.getBool(
+  //         SharedPreferencesHelper.moneyRequestNotificationEnabled);
+  //
+  //     goalAchievementSwitch.value = goalAchievement ?? true;
+  //     moneyRequestSwitch.value = moneyRequest ?? true;
+  //   }
+  //
+  //   Future<void> toggleGoalAchievement(bool value) async {
+  //     goalAchievementSwitch.value = value;
+  //     await SharedPreferencesHelper.saveBool(
+  //         SharedPreferencesHelper.goalAchievementNotificationEnabled, value);
+  //   }
+  //
+  //   Future<void> toggleMoneyRequest(bool value) async {
+  //     moneyRequestSwitch.value = value;
+  //     await SharedPreferencesHelper.saveBool(
+  //         SharedPreferencesHelper.moneyRequestNotificationEnabled, value);
+  //   }
 
   Future<void> pickImage({required ImageSource source}) async {
     try {
@@ -51,4 +83,8 @@ class ParentDrawerController extends GetxController {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     appVersion.value = packageInfo.version;
   }
+  //  Future<void> getAppVersion() async {
+//     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+//     appVersion.value = packageInfo.version;
+//   }
 }
