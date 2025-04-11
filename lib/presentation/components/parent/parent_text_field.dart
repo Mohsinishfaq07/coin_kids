@@ -28,6 +28,7 @@ class ParentTextField extends StatelessWidget {
   final bool enabled;
   final TextInputFormatter? inputFormatter;
   final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
 
   const ParentTextField({
     this.isOptional = false,
@@ -50,6 +51,7 @@ class ParentTextField extends StatelessWidget {
     this.enabled = true,
     this.inputFormatter,
     this.textInputAction,
+    this.focusNode,
     super.key,
   }) : assert(controller == null || initialValue == null,
             'Cannot provide both a controller and an initialValue');
@@ -59,6 +61,7 @@ class ParentTextField extends StatelessWidget {
     return Stack(
       children: [
         TextFormField(
+            focusNode: focusNode,
             inputFormatters: [
               inputFormatter != null
                   ? inputFormatter!
@@ -70,7 +73,6 @@ class ParentTextField extends StatelessWidget {
             ],
             maxLength: maxLength,
             initialValue: initialValue,
-            // textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
             textInputAction: textInputAction ??
                 (nextFocusNode != null
                     ? TextInputAction.next
@@ -86,7 +88,6 @@ class ParentTextField extends StatelessWidget {
               filled: true,
               fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               hintText: hintText,
-              // hintStyle: isOptional ? AppTextStyle.bodySmall : null,
               hintStyle: isOptional
                   ? AppTextStyle.bodyMedium.copyWith(
                       color: AppColors.textSecondary,

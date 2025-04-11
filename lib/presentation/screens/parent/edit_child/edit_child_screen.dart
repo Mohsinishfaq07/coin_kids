@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
 
 class EditChildScreen extends GetView<EditChildController> {
   final _formKey = GlobalKey<FormState>();
@@ -26,6 +27,7 @@ class EditChildScreen extends GetView<EditChildController> {
         showBackButton: true,
         title: "Edit Profile",
         centerTitle: false,
+        
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -63,6 +65,17 @@ class EditChildScreen extends GetView<EditChildController> {
                     initialValue: controller.childAge.value,
                     hintText: controller.childAge.value,
                     keyboardType: TextInputType.number,
+                    inputFormatter: TextInputFormatter.withFunction(
+                      (oldValue, newValue) {
+                        if (newValue.text.isEmpty) {
+                          return newValue;
+                        }
+                        if (RegExp(r'^[0-9]+$').hasMatch(newValue.text)) {
+                          return newValue;
+                        }
+                        return oldValue;
+                      },
+                    ),
                     onChanged: (value) =>
                         controller.childAge.value = value.trim(),
                     validator: (value) {
@@ -75,8 +88,8 @@ class EditChildScreen extends GetView<EditChildController> {
                         return 'Please enter a valid number';
                       }
 
-                      if (intValue < 1 && intValue > 25) {
-                        return 'Age must be between 1 to 25 yo';
+                      if (intValue < 3 || intValue > 15) {
+                        return 'Age must be between 3 to 15 years old';
                       }
 
                       return null;
@@ -128,6 +141,7 @@ class EditChildScreen extends GetView<EditChildController> {
   }
 
   void _showImagePicker(BuildContext context) {
+    FocusScope.of(context).unfocus(); // Dismiss keyboard
     ImagePickerBottomSheet.show(
       onCameraTap: () => controller.pickImage(source: ImageSource.camera),
       onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
@@ -154,7 +168,10 @@ class EditChildScreen extends GetView<EditChildController> {
           if (index == 0) {
             // Camera/Gallery picker or custom avatar display
             return GestureDetector(
-              onTap: () => _showImagePicker(context),
+              onTap: () {
+                FocusScope.of(context).unfocus(); // Dismiss keyboard
+                _showImagePicker(context);
+              },
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -174,7 +191,10 @@ class EditChildScreen extends GetView<EditChildController> {
           final avatarIndex = index - 1;
           return Obx(
             () => GestureDetector(
-              onTap: () => controller.selectAvatar(avatarIndex),
+              onTap: () {
+                FocusScope.of(context).unfocus(); // Dismiss keyboard
+                controller.selectAvatar(avatarIndex);
+              },
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(

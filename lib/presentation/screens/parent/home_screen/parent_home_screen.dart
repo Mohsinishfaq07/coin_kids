@@ -177,198 +177,111 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                               fontWeight: FontWeight.w700,
                             ),
                           )),
-                      SizedBox(
-                        // color: Colors.red,
-                        height: MediaQuery.of(context).size.height * 0.16.h,
-                        // height:
-                        //     150.h, // Set a fixed height for the horizontal list
-                        child: Obx(() {
-                          return ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.all(14.h),
-                            itemCount: controller.kidsList.length < 2
-                                ? controller.kidsList.length + 1
-                                : 2,
-                            itemBuilder: (context, index) {
-                              if (index == controller.kidsList.length) {
-                                // Last item: Add circle
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (controller.kidsList.isNotEmpty) {
-                                        ToastUtil.showToast(
-                                            "You have already added a child");
-                                      }
-                                    },
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
+                      Align(
+                        alignment: Alignment.centerLeft,
+
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              controller.kidsList.length < 2 ? controller.kidsList.length + 1 : 2,
+                              (index) {
+                                if (index == controller.kidsList.length) {
+                                  // Last item: Add circle
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 14.h),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (controller.kidsList.isNotEmpty) {
+                                          ToastUtil.showToast(
+                                              "You have already added a child");
+                                        }
+                                      },
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: AppColors.iconDisabled,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                     EdgeInsets.all(12.h),
+                                                child: Icon(
+                                                  Icons.add, // Add icon
                                                   color: AppColors.iconDisabled,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(12.0),
-                                              child: Icon(
-                                                Icons.add, // Add icon
-                                                color: AppColors.iconDisabled,
-                                                size: 30,
+                                                  size: 30,
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                            SizedBox(height: 10.h),
+                                            Text(
+                                              'Add Member\n(Coming soon)',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.iconDisabled,
+                                                fontSize: 12.sp,
+                                                fontFamily: 'Open Sans',
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.38,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Padding(
+                                    padding:  EdgeInsets.symmetric(
+                                        horizontal: 10.h),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.toNamed(Routes.parentKidProfile);
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Obx(() {
+                                            return CircleAvatarWidget(
+                                              imagePath: controller.appState
+                                                      .currentKid.value?.avatar ??
+                                                  "",
+                                              imageType: ImageType.network,
+                                              errorAsset:
+                                                  Assets.icAvatarPlaceholder,
+                                               size: 50.w,
+                                            );
+                                          }),
                                           SizedBox(height: 10.h),
-                                          Text(
-                                            'Add Member\n(Coming soon)',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: AppColors.iconDisabled,
-                                              fontSize: 12.sp,
-                                              fontFamily: 'Open Sans',
-                                              fontWeight: FontWeight.w600,
-                                              height: 1.38,
-                                            ),
-                                          )
+                                          Obx(() {
+                                            return Text(
+                                              controller.appState.currentKid.value
+                                                      ?.name ??
+                                                  "",
+                                              style: TextStyle(
+                                                color: AppColors.textPrimary,
+                                                fontSize: 12.sp,
+                                                fontFamily: 'Open Sans',
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.38,
+                                              ),
+                                            );
+                                          }),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              } else {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.toNamed(Routes.parentKidProfile);
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Obx(() {
-                                          return CircleAvatarWidget(
-                                            imagePath: controller.appState
-                                                    .currentKid.value?.avatar ??
-                                                "",
-                                            imageType: ImageType.network,
-                                            errorAsset:
-                                                Assets.icAvatarPlaceholder,
-                                            size: 50.r,
-                                          );
-                                        }),
-                                        SizedBox(height: 10.h),
-                                        Obx(() {
-                                          return Text(
-                                            controller.appState.currentKid.value
-                                                    ?.name ??
-                                                "",
-                                            style: TextStyle(
-                                              color: AppColors.textPrimary,
-                                              fontSize: 13.sp,
-                                              fontFamily: 'Open Sans',
-                                              fontWeight: FontWeight.w600,
-                                              height: 1.38,
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        }),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ),
                       ),
-                      // Padding(
-                      //   padding: EdgeInsets.symmetric(horizontal: 2.w),
-                      //   child: Center(
-                      //     child: Container(
-                      //       // height: 200.h,
-                      //       // width: double.infinity,
-                      //       decoration: BoxDecoration(
-                      //           border: Border.all(
-                      //             color: const Color(0xFFCBE5F4),
-                      //           ),
-                      //           color: const Color(0xFFEDFAFF),
-                      //           borderRadius: BorderRadius.circular(10)),
-                      //       child: Column(
-                      //         mainAxisAlignment: MainAxisAlignment.center,
-                      //         children: [
-                      //           AppButton(
-                      //             onPressed: () {
-                      //               Get.toNamed(Routes.parentQuickTransfer);
-                      //             },
-                      //             size: Size(183.w, 50.h),
-                      //             child: Text(
-                      //               "Quick Transfer",
-                      //               style: AppTextStyle.appButton,
-                      //             ),
-                      //           ),
-                      //           const SizedBox(height: 20),
-                      //           Padding(
-                      //             padding: const EdgeInsets.symmetric(
-                      //                 horizontal: 60.0),
-                      //             child: RichText(
-                      //               textAlign: TextAlign.center,
-                      //               text: TextSpan(
-                      //                 children: [
-                      //                   TextSpan(
-                      //                     text: 'Send ',
-                      //                     style: Theme.of(context)
-                      //                         .textTheme
-                      //                         .bodyMedium!
-                      //                         .copyWith(
-                      //                             color: CustomThemeData()
-                      //                                 .primaryButtonColor,
-                      //                             fontWeight: FontWeight.w600),
-                      //                   ),
-                      //                   TextSpan(
-                      //                       text: 'or ',
-                      //                       style: Theme.of(context)
-                      //                           .textTheme
-                      //                           .bodyMedium!
-                      //                           .copyWith(
-                      //                               color: CustomThemeData()
-                      //                                   .secondaryTextColor,
-                      //                               fontWeight:
-                      //                                   FontWeight.w600)),
-                      //                   TextSpan(
-                      //                       text: 'remove ',
-                      //                       style: Theme.of(context)
-                      //                           .textTheme
-                      //                           .bodyMedium!
-                      //                           .copyWith(
-                      //                               color: CustomThemeData()
-                      //                                   .primaryButtonColor,
-                      //                               fontWeight:
-                      //                                   FontWeight.w600)),
-                      //                   TextSpan(
-                      //                       text:
-                      //                           'money from your child\'s account',
-                      //                       style: Theme.of(context)
-                      //                           .textTheme
-                      //                           .bodyMedium!
-                      //                           .copyWith(
-                      //                               color: CustomThemeData()
-                      //                                   .secondaryTextColor,
-                      //                               fontWeight:
-                      //                                   FontWeight.w600)),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           const SizedBox(height: 20),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 2.w),
                         child: Center(

@@ -60,37 +60,38 @@ class KidProfileController extends GetxController {
           await goalsService.fetchUserGoals(appState.currentKid.value!.kidId);
 
       // Sort goals based on priority:
-      // 1. In-progress goals first
-      // 2. Within in-progress, modified goals (with saved amount) first
-      // 3. Then other goals (completed, approved, rejected)
+      // 1. Completed goals first
+      // 2. In-progress goals second
+      // 3. Within in-progress, modified goals (with saved amount) first
+      // 4. Then other goals
       fetchedGoals.sort((a, b) {
-        // First priority: In-progress goals come first
-        if (a.status == GoalStatus.inProgress &&
-            b.status != GoalStatus.inProgress) {
+        // First priority: Completed goals come first
+        if (a.status == GoalStatus.completed && b.status != GoalStatus.completed) {
           return -1;
         }
-        if (a.status != GoalStatus.inProgress &&
-            b.status == GoalStatus.inProgress) {
+        if (a.status != GoalStatus.completed && b.status == GoalStatus.completed) {
           return 1;
         }
 
-        // Second priority: For in-progress goals, sort by modification
-        if (a.status == GoalStatus.inProgress &&
-            b.status == GoalStatus.inProgress) {
+        // Second priority: In-progress goals come second
+        if (a.status == GoalStatus.inProgress && b.status != GoalStatus.inProgress) {
+          return -1;
+        }
+        if (a.status != GoalStatus.inProgress && b.status == GoalStatus.inProgress) {
+          return 1;
+        }
+
+        // Third priority: For in-progress goals, sort by modification
+        if (a.status == GoalStatus.inProgress && b.status == GoalStatus.inProgress) {
           if (a.savedAmount > 0 && b.savedAmount == 0) return -1;
           if (a.savedAmount == 0 && b.savedAmount > 0) return 1;
           return b.createdAt.compareTo(a.createdAt); // Then by creation date
         }
 
-        // Third priority: For non-in-progress goals, sort by completion date
-        if (a.status != GoalStatus.inProgress &&
-            b.status != GoalStatus.inProgress) {
-          final aDate = a.completedAt ?? a.createdAt;
-          final bDate = b.completedAt ?? b.createdAt;
-          return bDate.compareTo(aDate); // Most recent first
-        }
-
-        return 0;
+        // Fourth priority: For remaining goals, sort by completion/creation date
+        final aDate = a.completedAt ?? a.createdAt;
+        final bDate = b.completedAt ?? b.createdAt;
+        return bDate.compareTo(aDate); // Most recent first
       });
 
       goals.clear();

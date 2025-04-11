@@ -10,7 +10,7 @@ class KidTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
   final int? maxlength;
-
+  final FocusNode? focusNode;
   const KidTextField({
     super.key,
     required this.hintText,
@@ -18,6 +18,7 @@ class KidTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.maxlength,
+    this.focusNode,
   });
 
   @override

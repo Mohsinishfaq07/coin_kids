@@ -369,14 +369,14 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     SizedBox(height: 24.h),
 
                     // Version
-                    Text(
+                    Obx(() => Text(
                       "Version ${controller.appVersion}",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
+                    )),
                     SizedBox(height: 24.h),
                   ],
                 ),

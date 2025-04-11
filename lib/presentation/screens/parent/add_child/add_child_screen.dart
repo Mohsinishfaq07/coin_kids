@@ -13,16 +13,66 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class AddChildScreen extends GetView<AddChildController> {
   final _formKey = GlobalKey<FormState>();
+  final _ageNode = FocusNode();
 
   AddChildScreen({super.key});
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _ageNode,
+          toolbarButtons: [
+            (node) {
+              return GestureDetector(
+                onTap: () => node.unfocus(),
+                child: Padding(
+                  padding: EdgeInsets.all(8.w),
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                      color: AppColors.colorPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      bottomNavigationBar:        Padding(
+        padding:   EdgeInsets.all(8.h),
+        child: AppButton(
+          size: Size(0.8.sw, 50),
+          child: Text(
+            "Add child",
+            style: AppTextStyle.appButton,
+          ),
+          onPressed: () async {
+            if (controller.isLoading.value) return;
+
+            if (_formKey.currentState?.validate() ?? false) {
+              await controller.createKid(true);
+              print(
+                  " this is whole method ${controller.createKid(true)};");
+            }
+          },
+        ),
+      ),
       appBar: const ParentAppBar(
         showBackButton: true,
         title: "Add your child",
@@ -33,91 +83,87 @@ class AddChildScreen extends GetView<AddChildController> {
           decoration: BoxDecoration(
             gradient: AppColors.background,
           ),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Child Name Field
-                    ParentTextField(
-                      maxLength: 8,
-                      titleText: "Child name",
-                      hintText: "Enter your child name",
-                      onChanged: (value) =>
-                          controller.childName.value = value.trim(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter child name';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    // Child Age Field
-                    ParentTextField(
-                      maxLength: 2,
-                      titleText: "Age",
-                      hintText: "Enter child's age",
-                      keyboardType: TextInputType.numberWithOptions(decimal: true,
-                      signed: true),
-                      onChanged: (value) =>
-                          controller.childAge.value = value.trim(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter child age';
-                        }
-
-                        final intValue = int.tryParse(value);
-                        if (intValue == null) {
-                          return 'Please enter a valid number';
-                        }
-
-                        if (intValue < 3 || intValue > 14) {
-                          return 'Age must be between 3 to 14 years';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 19.h),
-
-                    // Avatar Selection Title
-                    Text(
-                      "Select Avatar",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: CustomThemeData().primaryTextColor,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.sp),
-                    ),
-                    SizedBox(height: 12.h),
-
-                    // Avatar Selection
-                    SizedBox(height: 0.55.sh, child: _buildAvatarGrid(context)),
-
-                    // Add Child Button
-                    Center(
-                      child: AppButton(
-                        size: Size(0.8.sw, 50),
-                        child: Text(
-                          "Add child",
-                          style: AppTextStyle.appButton,
-                        ),
-                        onPressed: () async {
-                          if (controller.isLoading.value) return;
-
-                          if (_formKey.currentState?.validate() ?? false) {
-                            await controller.createKid(true);
-                            print(
-                                " this is whole method ${controller.createKid(true)};");
+          child: KeyboardActions(
+            config: _buildConfig(context),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: MediaQuery.of(context).size.height *0.01.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Child Name Field
+                      ParentTextField(
+                        textInputAction: TextInputAction.next,
+                        maxLength: 8,
+                        titleText: "Child name",
+                        hintText: "Enter your child name",
+                        onChanged: (value) =>
+                            controller.childName.value = value.trim(),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter child name';
                           }
+                          return null;
                         },
                       ),
-                    ),
-                  ],
+                      // SizedBox(height: MediaQuery.of(context).size.height *0.02.h),
+
+                      // Child Age Field
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height *0.02.h),                        child: ParentTextField(
+                          maxLength: 2,
+                          titleText: "Age",
+                          hintText: "Enter child's age",
+                          focusNode: _ageNode,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) =>
+                              controller.childAge.value = value.trim(),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter child age';
+                            }
+
+                            final intValue = int.tryParse(value);
+                            if (intValue == null) {
+                              return 'Please enter a valid number';
+                            }
+
+                            if (intValue < 3 || intValue > 14) {
+                              return 'Age must be between 3 to 14 years';
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                      // SizedBox(height: 19.h),
+                      // SizedBox(height: MediaQuery.of(context).size.height *0.02.h),
+
+
+                      // Avatar Selection Title
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Select Avatar",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: CustomThemeData().primaryTextColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.sp),
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
+
+                      // Avatar Selection
+                      SizedBox(
+
+                          height: MediaQuery.of(context).size.height, child: _buildAvatarGrid(context)),
+
+                      // Add Child Button
+
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -128,6 +174,7 @@ class AddChildScreen extends GetView<AddChildController> {
   }
 
   void _showImagePicker(BuildContext context) {
+    FocusScope.of(context).unfocus();
     ImagePickerBottomSheet.show(
       onCameraTap: () => controller.pickImage(source: ImageSource.camera),
       onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
@@ -174,7 +221,7 @@ class AddChildScreen extends GetView<AddChildController> {
                                 borderRadius: BorderRadius.circular(60.r),
                                 child: Image.file(
                                   File(controller.kidImagePath.value),
-                                  height: 60.h,
+                                  height: 60.w,
                                   width: 60.w,
                                   fit: BoxFit.cover,
                                 ),
@@ -212,7 +259,10 @@ class AddChildScreen extends GetView<AddChildController> {
           final avatarIndex = index - 1;
           return Obx(
             () => GestureDetector(
-              onTap: () => controller.selectAvatar(avatarIndex),
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                controller.selectAvatar(avatarIndex);
+              },
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -230,7 +280,7 @@ class AddChildScreen extends GetView<AddChildController> {
                       borderRadius: BorderRadius.circular(60.r),
                       child: CachedNetworkImage(
                         imageUrl: controller.avatars[avatarIndex],
-                        height: 60.h,
+                        height: 60.w,
                         width: 60.w,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Center(

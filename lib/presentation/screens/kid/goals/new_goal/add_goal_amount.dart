@@ -9,11 +9,14 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AddGoalAmountScreen extends GetView<KidGoalsController> {
-  const AddGoalAmountScreen({super.key});
+  final _amountNode = FocusNode();
+  
+  AddGoalAmountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +84,10 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
                     double? parsedValue = double.tryParse(value);
                     controller.setAmount(parsedValue ?? 0.0);
                   },
-                  keyboardType: TextInputType.number,
+                  keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
+                  focusNode: _amountNode,
+                  textInputAction: TextInputAction.done,
+                  // onSubmitted: (_) => _amountNode.unfocus(),
                 ),
               ],
             ),

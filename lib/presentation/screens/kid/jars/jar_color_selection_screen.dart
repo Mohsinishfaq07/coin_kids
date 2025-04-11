@@ -61,7 +61,7 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                     child: GridView.builder(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16.w,
-                        vertical: 16.h,
+                        vertical: 16.w,
                       ),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 6,
@@ -82,7 +82,7 @@ class JarColorSelectionScreen extends GetView<JarCreationController> {
                               alignment: Alignment.center,
                               children: [
                                 Container(
-                                  height: 42.h,
+                                  height: 42.w,
                                   width: 42.w,
                                   decoration: BoxDecoration(
                                     color: controller.colors[index],
