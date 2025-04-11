@@ -170,10 +170,9 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   bool canAddAmount(double amount) {
-    final newTotal = totalValue.value + amount;
-    return newTotal <= targetAmount;
-    // const epsilon = 0.001;
-    // return (newTotal - targetAmount).abs() < epsilon || newTotal < targetAmount;
+    final newTotal = _roundToTwoDecimals(totalValue.value + amount);
+    final roundedTarget = _roundToTwoDecimals(targetAmount);
+    return (newTotal - roundedTarget).abs() < 0.001 || newTotal < roundedTarget;
   }
 
   Future<void> createJar() async {
@@ -233,7 +232,8 @@ class DragAndDropMoneyController extends GetxController {
 
   // Helper method to round to 2 decimal places
   double _roundToTwoDecimals(double value) {
-    return double.parse(value.toStringAsFixed(2));
+    // First multiply by 100 to shift decimals, round to avoid floating point errors, then divide by 100
+    return (value * 100).round() / 100;
   }
 
   Future<bool> tryAddAmount(double amount) async {

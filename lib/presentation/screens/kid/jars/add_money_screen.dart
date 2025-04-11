@@ -83,6 +83,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                       child: SizedBox(
                         width: 0.5.sw,
                         child: KidTextField(
+                          maxlength: 8,
                           keyboardType: TextInputType.number,
                           hintText: "e.g 10.50",
                           onChange: (val) {

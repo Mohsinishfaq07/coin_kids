@@ -190,6 +190,14 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                   //     color: Colors.red,
                                   //     fontWeight: FontWeight.bold,
                                   //   ),
+                                  // )
+                                  // ,
+                                  // Text(
+                                  //   '${controller.targetAmount}€ target value ',
+                                  //   style: AppTextStyle.bodySmall.copyWith(
+                                  //     color: Colors.red,
+                                  //     fontWeight: FontWeight.bold,
+                                  //   ),
                                   // ),
                                   if (candidateData.isNotEmpty && !controller.canAddAmount(candidateData.first as double))
                                     Padding(
