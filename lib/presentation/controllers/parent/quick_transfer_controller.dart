@@ -87,8 +87,8 @@ class QuickTransferController extends GetxController {
                 onPressed: () async {
                   parentBaseController.showKidsZoneShowcase.value = true;
                   Get.close(3);
-               //   Get.offNamed(Routes.parentBase);
-                  // Get.until((route) => route.settings.name == Routes.parentBase);
+                  await Future.delayed(Duration(milliseconds: 100));
+                  Get.forceAppUpdate();
                 },
               ),
             ],

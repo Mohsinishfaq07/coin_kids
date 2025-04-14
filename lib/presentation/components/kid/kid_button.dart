@@ -144,7 +144,7 @@ class KidButton extends StatelessWidget {
               style: textStyle ??
                   AppTextStyle.headingMedium.copyWith(
                     color: Colors.white,
-                    fontSize: fontSize ?? 22,
+                    fontSize: fontSize ?? 22.sp,
                   ),
             ),
             maxLines: 1,
@@ -187,7 +187,7 @@ class KidButton extends StatelessWidget {
               color: baseColor,
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  width: 2.22,
+                  width: 2.22.w,
                   color: borderColor,
                 ),
                 borderRadius: BorderRadius.circular(isIconOnly ? finalWidth / 2 : 14),
@@ -198,7 +198,7 @@ class KidButton extends StatelessWidget {
                 Positioned.fill(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isIconOnly ? 4 : 16, // Increased padding
+                      horizontal: isIconOnly ? 2 : 16, // Increased padding
                     ),
                     child: Row(
                       mainAxisAlignment: _getMainAxisAlignment(),
@@ -209,11 +209,11 @@ class KidButton extends StatelessWidget {
                 ),
                 if (showShadowOverlay)
                   Positioned(
-                    left: 1,
-                    top: 1.29,
+                    left: 1.w,
+                    top: 1.29.h,
                     child: Image.asset(
                       Assets.icShine,
-                      height: height! * 0.3,
+                      height: height! * 0.3.h,
                     ),
                   ),
               ],
@@ -239,7 +239,7 @@ class KidButton extends StatelessWidget {
           style: textStyle,
           maxLines: 1,
           textAlign: TextAlign.center,
-          minFontSize: 10,
+          minFontSize: 10.sp,
           maxFontSize: fontSize?.toDouble() ?? 22,
           stepGranularity: 0.5,
           overflow: TextOverflow.ellipsis,
@@ -268,7 +268,7 @@ class KidButton extends StatelessWidget {
     final mTextStyle = textStyle ??
         AppTextStyle.headingMedium.copyWith(
           color: Colors.white,
-          fontSize: fontSize ?? 22,
+          fontSize: fontSize ?? 22.sp,
         );
 
     final double spacing = 4.w;

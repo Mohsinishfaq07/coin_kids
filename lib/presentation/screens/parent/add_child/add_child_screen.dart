@@ -54,8 +54,8 @@ class AddChildScreen extends GetView<AddChildController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar:        Padding(
-        padding:   EdgeInsets.all(8.h),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(8.h),
         child: AppButton(
           size: Size(0.8.sw, 50),
           child: Text(
@@ -67,8 +67,7 @@ class AddChildScreen extends GetView<AddChildController> {
 
             if (_formKey.currentState?.validate() ?? false) {
               await controller.createKid(true);
-              print(
-                  " this is whole method ${controller.createKid(true)};");
+              print(" this is whole method ${controller.createKid(true)};");
             }
           },
         ),
@@ -89,7 +88,7 @@ class AddChildScreen extends GetView<AddChildController> {
               key: _formKey,
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: MediaQuery.of(context).size.height *0.01.h),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: MediaQuery.of(context).size.height * 0.01),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -99,8 +98,7 @@ class AddChildScreen extends GetView<AddChildController> {
                         maxLength: 8,
                         titleText: "Child name",
                         hintText: "Enter your child name",
-                        onChanged: (value) =>
-                            controller.childName.value = value.trim(),
+                        onChanged: (value) => controller.childName.value = value.trim(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter child name';
@@ -112,14 +110,14 @@ class AddChildScreen extends GetView<AddChildController> {
 
                       // Child Age Field
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height *0.02.h),                        child: ParentTextField(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.02),
+                        child: ParentTextField(
                           maxLength: 2,
                           titleText: "Age",
                           hintText: "Enter child's age",
                           focusNode: _ageNode,
                           keyboardType: TextInputType.number,
-                          onChanged: (value) =>
-                              controller.childAge.value = value.trim(),
+                          onChanged: (value) => controller.childAge.value = value.trim(),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter child age';
@@ -141,27 +139,23 @@ class AddChildScreen extends GetView<AddChildController> {
                       // SizedBox(height: 19.h),
                       // SizedBox(height: MediaQuery.of(context).size.height *0.02.h),
 
-
                       // Avatar Selection Title
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Select Avatar",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: CustomThemeData().primaryTextColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
                         ),
                       ),
                       SizedBox(height: 12.h),
 
                       // Avatar Selection
-                      SizedBox(
-
-                          height: MediaQuery.of(context).size.height, child: _buildAvatarGrid(context)),
+                      SizedBox(height: MediaQuery.of(context).size.height, child: _buildAvatarGrid(context)),
 
                       // Add Child Button
-
                     ],
                   ),
                 ),
@@ -206,10 +200,8 @@ class AddChildScreen extends GetView<AddChildController> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: controller.kidImagePath.value.isNotEmpty
-                            ? AppColors.colorPrimary
-                            : Colors.transparent,
-                        width: 2,
+                        color: controller.kidImagePath.value.isNotEmpty ? AppColors.colorPrimary : Colors.transparent,
+                        width: 2.w,
                       ),
                       borderRadius: BorderRadius.circular(60.r),
                     ),
@@ -266,10 +258,8 @@ class AddChildScreen extends GetView<AddChildController> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: controller.selectedAvatar.value == avatarIndex
-                        ? AppColors.colorPrimary
-                        : Colors.transparent,
-                    width: 2,
+                    color: controller.selectedAvatar.value == avatarIndex ? AppColors.colorPrimary : Colors.transparent,
+                    width: 2.w
                   ),
                   borderRadius: BorderRadius.circular(60.r),
                 ),

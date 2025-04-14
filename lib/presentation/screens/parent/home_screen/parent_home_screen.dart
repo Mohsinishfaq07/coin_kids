@@ -162,7 +162,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             ),
                           )),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02.h,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
@@ -189,7 +189,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                             borderRadius: BorderRadius.circular(40.r),
                                           ),
                                           child: Padding(
-                                            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.012.h),
+                                            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.012),
                                             child: Icon(
                                               weight: 2.w,
                                               Icons.add_rounded, // Add icon
@@ -269,7 +269,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02.h,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 2.w),
@@ -285,7 +285,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 borderRadius: BorderRadius.circular(10)),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
-                                vertical: MediaQuery.of(context).size.height * 0.03.h,
+                                vertical: MediaQuery.of(context).size.height * 0.03,
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -301,12 +301,12 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: MediaQuery.of(context).size.height * 0.03.h,
+                                    height: MediaQuery.of(context).size.height * 0.03,
                                   ),
                                   // const SizedBox(height: 20),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: MediaQuery.of(context).size.height * 0.06.w,
+                                      horizontal: MediaQuery.of(context).size.height * 0.06,
                                     ),
                                     child: RichText(
                                       textAlign: TextAlign.center,
