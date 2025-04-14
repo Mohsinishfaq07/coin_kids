@@ -68,7 +68,7 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
               baseColor: AppColors.btnColorGreen,
               iconPath: Assets.icNext,
               iconPosition: IconPosition.right,
-              width: 120.w,
+              // width: 120.w,
             ),
           ),
         ],

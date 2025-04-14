@@ -133,6 +133,23 @@ class GoalService extends BaseService {
   // Update goal
   Future<void> updateGoal(GoalModel goal) async {
     try {
+      String? goalPhotoUrl;
+
+      // If there's a photo and it's a local file path (not a URL), upload it to Storage
+      if (goal.photo != null && 
+          goal.photo!.isNotEmpty && 
+          !goal.photo!.startsWith('http')) {
+        final String fileName = 'goals/${goal.id}.${goal.photo!.split('.').last}';
+        final Reference ref = _storage.ref().child(fileName);
+
+        final UploadTask uploadTask = ref.putFile(File(goal.photo!));
+        final TaskSnapshot snapshot = await uploadTask;
+        goalPhotoUrl = await snapshot.ref.getDownloadURL();
+
+        // Update the goal with the new photo URL
+        goal = goal.copyWith(photo: goalPhotoUrl);
+      }
+
       await _firestore
           .collection(collection)
           .doc(goal.id)

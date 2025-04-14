@@ -70,7 +70,7 @@ class KidAvatarScreen extends GetView<KidOnboardingController> {
               onTap: controller.completeOnboarding,
               text: 'Done',
               baseColor: AppColors.btnColorGreen,
-              width: 120.w,
+              // width: 120.w,
               iconPath: Assets.icTick,
             ),
           ),

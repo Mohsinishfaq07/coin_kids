@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 
 class AddMoneyScreen extends GetView<AddMoneyController> {
   final AmountAdditionMode mode;
+  final _addAmount = FocusNode();
+
 
   AddMoneyScreen({
     super.key,
@@ -83,8 +85,10 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                       child: SizedBox(
                         width: 0.5.sw,
                         child: KidTextField(
-                          maxlength: 8,
-                          keyboardType: TextInputType.number,
+                          focusNode: _addAmount,
+                          textInputAction: TextInputAction.done,
+                          maxlength: 7,
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           hintText: "e.g 10.50",
                           onChange: (val) {
                             controller.amount.value = double.tryParse(val.trim()) ?? 0.0;

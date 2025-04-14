@@ -38,7 +38,7 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: maxWidth * 0.4,
+                        width: maxWidth * 0.5,
                         child: KidTextField(
                           maxlength: 10,
                           hintText: "Enter your name",

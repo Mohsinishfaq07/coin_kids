@@ -89,7 +89,7 @@ class GoalCard extends StatelessWidget {
                       )
                     : Center(
                         child: Padding(
-                          padding: REdgeInsets.all(6),
+                          padding: REdgeInsets.all(6.h),
                           child: SvgPicture.asset(
                             Assets.phGoalImage,
                           ),
@@ -189,7 +189,7 @@ class GoalCard extends StatelessWidget {
                           style: AppTextStyle.bodySmall.copyWith(
                             color: _getStatusColor(goal.status),
                             fontWeight: FontWeight.w600,
-                            fontSize: 11,
+                            fontSize: 11.sp,
                           ),
                         ),
                       ),

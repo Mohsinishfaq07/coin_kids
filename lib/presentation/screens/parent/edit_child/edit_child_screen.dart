@@ -14,11 +14,43 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
 
 class EditChildScreen extends GetView<EditChildController> {
   final _formKey = GlobalKey<FormState>();
+  final _ageNode = FocusNode();
+
 
   EditChildScreen({super.key});
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _ageNode,
+          toolbarButtons: [
+                (node) {
+              return GestureDetector(
+                onTap: () => node.unfocus(),
+                child: Padding(
+                  padding: EdgeInsets.all(8.w),
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                      color: AppColors.colorPrimary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,110 +61,140 @@ class EditChildScreen extends GetView<EditChildController> {
         centerTitle: false,
         
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.background,
+      bottomNavigationBar:        Padding(
+        padding:   EdgeInsets.all(8.h),
+        child: AppButton(
+          size: Size(0.8.sw, 50),
+          child: Text(
+            "Save Changes",
+            style: AppTextStyle.appButton,
+          ),
+          onPressed: () async {
+            if (controller.isLoading.value) return;
+
+            if (_formKey.currentState?.validate() ?? false) {
+              await controller.updateKid();
+            }
+          },
+          // onPressed: () async {
+          //   if (controller.isLoading.value) return;
+          //
+          //   if (_formKey.currentState?.validate() ?? false) {
+          //     await controller.createKid(true);
+          //     print(
+          //         " this is whole method ${controller.createKid(true)};");
+          //   }
+          // },
         ),
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Child Name Field
-                Obx(() {
-                  return ParentTextField(
-                    maxLength: 8,
-                    initialValue: controller.childName.value,
-                    hintText: controller.childName.value,
-                    onChanged: (value) =>
-                        controller.childName.value = value.trim(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter child name';
-                      }
-                      return null;
-                    },
-                  );
-                }),
-                SizedBox(height: 16.h),
+      ),
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: KeyboardActions(
+            config: _buildConfig(context),
 
-                // Child Age Field
-                Obx(() {
-                  return ParentTextField(
-                    maxLength: 2,
-                    initialValue: controller.childAge.value,
-                    hintText: controller.childAge.value,
-                    keyboardType: TextInputType.number,
-                    inputFormatter: TextInputFormatter.withFunction(
-                      (oldValue, newValue) {
-                        if (newValue.text.isEmpty) {
-                          return newValue;
-                        }
-                        if (RegExp(r'^[0-9]+$').hasMatch(newValue.text)) {
-                          return newValue;
-                        }
-                        return oldValue;
-                      },
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Child Name Field
+                    Obx(() {
+                      return ParentTextField(
+                        maxLength: 8,
+                        initialValue: controller.childName.value,
+                        hintText: controller.childName.value,
+                        onChanged: (value) =>
+                            controller.childName.value = value.trim(),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter child name';
+                          }
+                          return null;
+                        },
+                      );
+                    }),
+                    SizedBox(height: 16.h),
+
+                    // Child Age Field
+                    Obx(() {
+                      return ParentTextField(
+                        maxLength: 2,
+                        initialValue: controller.childAge.value,
+                        hintText: controller.childAge.value,
+                        keyboardType: TextInputType.number,
+                        inputFormatter: TextInputFormatter.withFunction(
+                          (oldValue, newValue) {
+                            if (newValue.text.isEmpty) {
+                              return newValue;
+                            }
+                            if (RegExp(r'^[0-9]+$').hasMatch(newValue.text)) {
+                              return newValue;
+                            }
+                            return oldValue;
+                          },
+                        ),
+                        onChanged: (value) =>
+                            controller.childAge.value = value.trim(),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter child age';
+                          }
+
+                          final intValue = int.tryParse(value);
+                          if (intValue == null) {
+                            return 'Please enter a valid number';
+                          }
+
+                          if (intValue < 3 || intValue > 15) {
+                            return 'Age must be between 3 to 15 years old';
+                          }
+
+                          return null;
+                        },
+                      );
+                    }),
+                    SizedBox(height: 19.h),
+
+                    // Avatar Selection Title
+                    Text(
+                      "Select Avatar",
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: CustomThemeData().primaryTextColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp),
                     ),
-                    onChanged: (value) =>
-                        controller.childAge.value = value.trim(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter child age';
-                      }
+                    SizedBox(height: 12.h),
 
-                      final intValue = int.tryParse(value);
-                      if (intValue == null) {
-                        return 'Please enter a valid number';
-                      }
+                    // Avatar Selection
+                    _buildAvatarGrid(context),
 
-                      if (intValue < 3 || intValue > 15) {
-                        return 'Age must be between 3 to 15 years old';
-                      }
-
-                      return null;
-                    },
-                  );
-                }),
-                SizedBox(height: 19.h),
-
-                // Avatar Selection Title
-                Text(
-                  "Select Avatar",
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: CustomThemeData().primaryTextColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp),
+                    // Add Child Button
+                    // SafeArea(
+                    //   child: Center(
+                    //     child: AppButton(
+                    //       size: Size(0.8.sw, 50),
+                    //       child: Text(
+                    //         "Save Changes",
+                    //         style: AppTextStyle.appButton,
+                    //       ),
+                    //       onPressed: () async {
+                    //         if (controller.isLoading.value) return;
+                    //
+                    //         if (_formKey.currentState?.validate() ?? false) {
+                    //           await controller.updateKid();
+                    //         }
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
-                SizedBox(height: 12.h),
-
-                // Avatar Selection
-                Expanded(
-                  child: _buildAvatarGrid(context),
-                ),
-
-                // Add Child Button
-                SafeArea(
-                  child: Center(
-                    child: AppButton(
-                      size: Size(0.8.sw, 50),
-                      child: Text(
-                        "Save Changes",
-                        style: AppTextStyle.appButton,
-                      ),
-                      onPressed: () async {
-                        if (controller.isLoading.value) return;
-
-                        if (_formKey.currentState?.validate() ?? false) {
-                          await controller.updateKid();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

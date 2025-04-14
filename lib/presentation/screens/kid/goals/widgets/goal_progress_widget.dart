@@ -31,120 +31,127 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
       padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 4.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height: 50.h),
-          Center(
-            child: Text(
-              'Goal Progress',
-              style: AppTextStyle.headingMedium,
-            ),
-          ),
-          SizedBox(height: 16.h),
+          // SizedBox(height: 50.h),
+
+           SizedBox(),
           // Slider with +/- buttons
-          Row(
+          Column(
             children: [
-              KidButton.iconOnly(
-                size: 32.w,
-                iconSize: 4.w,
-                baseColor: AppColors.btnColorRed,
-                iconPath: Assets.icMinus,
-                onTap: () => controller.decrementProgress(goal),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     children: [
-                    //       _buildProgressFlag(Assets.icGoalYellow),
-                    //       _buildProgressFlag(Assets.icFlagBlue),
-                    //       _buildProgressFlag(Assets.icFlagGreen),
-                    //     ],
-                    //   ),
-                    // ),
-                    Obx(
-                      () {
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            SfSliderTheme(
-                              data: SfSliderThemeData(
-                                activeTrackHeight: 15.h,
-                                inactiveTrackHeight: 15.h,
-                                trackCornerRadius: 50.r,
-                                activeTrackColor: AppColors.btnColorOrange,
-                                inactiveTrackColor: AppColors.btnColorOrange
-                                    .withValues(alpha: 0.2),
-                                thumbColor: Colors.transparent,
-                                thumbRadius: 15.r,
-                              ),
-                              child: SfSlider(
-                                value: controller.progressValue.value,
-                                min: 0,
-                                max: goal.targetAmount,
-                                interval: goal.targetAmount / 4,
-                                stepSize: controller.progressStep,
-                                showDividers: true,
-                                shouldAlwaysShowTooltip: true,
-                                tooltipTextFormatterCallback: (_, text) {
-                                  return double.parse(text).toMoneyFormat();
-                                },
-                                labelFormatterCallback: (_, text) {
-                                  return double.parse(text).toMoneyFormat();
-                                },
-                                onChanged: (value) =>
-                                    controller.updateProgress(value),
-                                showLabels: true,
-                                showTicks: true,
-                                enableTooltip: true,
-                                thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
-                              ),
-                            ),
-                            Positioned(
-                              left: 18.w,
-                              right: 0,
-                              top: -8.h,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SvgPicture.asset(
-                                      Assets.icGoalYellow,
-                                      width: 24.w,
-                                    ),
-                                    SvgPicture.asset(
-                                      Assets.icFlagBlue,
-                                      width: 24.w,
-                                    ),
-                                    SvgPicture.asset(
-                                      Assets.icFlagGreen,
-                                      width: 24.w,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+              Center(
+                child: Text(
+                  'Goal Progress',
+                  style: AppTextStyle.headingMedium,
                 ),
               ),
-              KidButton.iconOnly(
-                size: 32.w,
-                iconSize: 14.w,
-                baseColor: AppColors.btnColorGreen,
-                iconPath: Assets.icAdd,
-                onTap: () => controller.incrementProgress(goal),
+              SizedBox(height: 30.h,),
+              Row(
+                children: [
+                  KidButton.iconOnly(
+                    size: 32.w,
+                    iconSize: 4.w,
+                    baseColor: AppColors.btnColorRed,
+                    iconPath: Assets.icMinus,
+                    onTap: () => controller.decrementProgress(goal),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //     children: [
+                        //       _buildProgressFlag(Assets.icGoalYellow),
+                        //       _buildProgressFlag(Assets.icFlagBlue),
+                        //       _buildProgressFlag(Assets.icFlagGreen),
+                        //     ],
+                        //   ),
+                        // ),
+                        Obx(
+                          () {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                SfSliderTheme(
+                                  data: SfSliderThemeData(
+                                    activeTrackHeight: 15.h,
+                                    inactiveTrackHeight: 15.h,
+                                    trackCornerRadius: 50.r,
+                                    activeTrackColor: AppColors.btnColorOrange,
+                                    inactiveTrackColor: AppColors.btnColorOrange
+                                        .withValues(alpha: 0.2),
+                                    thumbColor: Colors.transparent,
+                                    thumbRadius: 15.r,
+                                  ),
+                                  child: SfSlider(
+                                    value: controller.progressValue.value,
+                                    min: 0,
+                                    max: goal.targetAmount,
+                                    interval: goal.targetAmount / 4,
+                                    stepSize: controller.progressStep,
+                                    showDividers: true,
+                                    shouldAlwaysShowTooltip: true,
+                                    tooltipTextFormatterCallback: (_, text) {
+                                      return double.parse(text).toMoneyFormat();
+                                    },
+                                    labelFormatterCallback: (_, text) {
+                                      return double.parse(text).toMoneyFormat();
+                                    },
+                                    onChanged: (value) =>
+                                        controller.updateProgress(value),
+                                    showLabels: true,
+                                    showTicks: true,
+                                    enableTooltip: true,
+                                    thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 18.w,
+                                  right: 0,
+                                  top: -8.h,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        SvgPicture.asset(
+                                          Assets.icGoalYellow,
+                                          width: 24.w,
+                                        ),
+                                        SvgPicture.asset(
+                                          Assets.icFlagBlue,
+                                          width: 24.w,
+                                        ),
+                                        SvgPicture.asset(
+                                          Assets.icFlagGreen,
+                                          width: 24.w,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  KidButton.iconOnly(
+                    size: 32.w,
+                    iconSize: 14.w,
+                    baseColor: AppColors.btnColorGreen,
+                    iconPath: Assets.icAdd,
+                    onTap: () => controller.incrementProgress(goal),
+                  ),
+                ],
               ),
             ],
           ),
-          Spacer(),
+          // Spacer(),
           // Edit and Delete buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

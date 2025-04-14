@@ -128,7 +128,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                     ),
                     SizedBox(height: 12.h),
                     QuickTransferTextField(
-                      maxLength: 8,
+                      maxLength: 7,
                       hintText: 0.toMoneyFormat(),
                       keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
                       onChanged: (val) {
@@ -193,19 +193,19 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               }
                             },
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   "Remove",
                                   style: AppTextStyle.appButton,
                                 ),
-                                SizedBox(
-                                  width: 4.w,
-                                ),
+                                // SizedBox(
+                                //   width: 4.w,
+                                // ),
                                 Icon(
                                   Icons.remove,
-                                  size: 20,
+                                  size: 22.sp,
                                   color: Colors.white,
                                 ),
                               ],
@@ -214,23 +214,23 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                         }),
                         Obx(() {
                           return AppButton(
-                              size: Size(120.w, 45.h),
+                              size: Size(124.w, 45.h),
                             backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () {
                               controller.sendMoney();
                             },
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.add,
-                                  size: 24,
+                                  size: 22.sp,
                                   color: Colors.white,
                                 ),
-                                SizedBox(
-                                  width: 6.w,
-                                ),
+                                // SizedBox(
+                                //   width: 6.w,
+                                // ),
                                 Text(
                                   "Send",
                                   style: AppTextStyle.appButton,

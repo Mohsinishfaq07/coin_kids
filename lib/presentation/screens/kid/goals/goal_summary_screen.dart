@@ -25,27 +25,37 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: KidAppBarComponent(
-        onBackPressed: () => Get.back(),
-      ),
+   //   extendBodyBehindAppBar: true,
+      // appBar: KidAppBarComponent(
+      //   onBackPressed: () => Get.back(),
+      // ),
       body: Container(
         decoration: BoxDecoration(
           gradient: AppColors.background,
         ),
         clipBehavior: Clip.none,
         alignment: Alignment.center,
-        child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildImageSection(),
-            Expanded(
-                child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: _buildFormSection(),
-            )),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+
+            children: [
+              KidAppBarComponent(
+                onBackPressed: () => Get.back(),
+              ),
+              Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildImageSection(),
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: _buildFormSection(),
+                  )),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -54,10 +64,10 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   Widget _buildImageSection() {
     return Obx(() {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding:  EdgeInsets.all(12.h),
         child: Container(
-          height: 0.7.sh,
-          width: 0.3.sw,
+          // height: 0.7.sh,
+          // width: 0.3.sw,
 
           decoration: BoxDecoration(
             color: AppColors.iconOnPrimary,
@@ -67,7 +77,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           child: controller.newGoal.value.photo == null ||
                   controller.newGoal.value.photo!.isEmpty
               ? Padding(
-                  padding: EdgeInsets.all(20.h),
+                  padding: EdgeInsets.all(12.h),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,7 +90,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                           width: 64.r,
                         ),
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 20.h),
                       KidButton(
                         onTap: () async {
                           await controller.pickFromGallery();
@@ -99,20 +109,19 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20.r),
-                        child: controller.newGoal.value.photo!
-                                .startsWith("https://")
-                            ? CachedNetworkImageWidget(
-                                imageUrl: controller.newGoal.value.photo!,
-                                height: 0.5.sh,
-                                width: double.infinity,
-                                fit: BoxFit.contain,
-                              )
-                            : Image.file(
-                                File(controller.newGoal.value.photo!),
-                                fit: BoxFit.contain,
-                                height: 0.5.sh,
-                                width: double.infinity,
-                              ),
+                        child: SizedBox(
+                          width: 0.4.sw,
+                          height: 0.5.sh,
+                          child: controller.newGoal.value.photo!.startsWith("http") 
+                              ? CachedNetworkImageWidget(
+                                  imageUrl: controller.newGoal.value.photo!,
+                                  fit: BoxFit.contain,
+                                )
+                              : Image.file(
+                                  File(controller.newGoal.value.photo!),
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
                       ),
                     ),
                     Positioned(
@@ -138,7 +147,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   Widget _buildFormSection() {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SizedBox(height: 16.h),
@@ -154,9 +163,9 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           ),
           Text('Amount', style: AppTextStyle.headingSmall),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 6.h),
+            padding: EdgeInsets.symmetric(vertical: 10.h),
             child: KidTextField(
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               hintText: controller.newGoal.value.targetAmount.toString(),
               onChange: (value) {
                 controller.setAmount(double.tryParse(value) ?? 0.0);
