@@ -32,7 +32,7 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                   "What's your name?",
                   style: AppTextStyle.headingMedium,
                 ),
-                SizedBox(height: maxHeight * 0.05),
+                SizedBox(height: maxHeight * 0.04),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

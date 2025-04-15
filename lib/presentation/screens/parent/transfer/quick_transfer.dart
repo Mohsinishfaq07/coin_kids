@@ -71,7 +71,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                 width: 400.w,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

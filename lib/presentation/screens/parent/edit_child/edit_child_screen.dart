@@ -76,15 +76,7 @@ class EditChildScreen extends GetView<EditChildController> {
               await controller.updateKid();
             }
           },
-          // onPressed: () async {
-          //   if (controller.isLoading.value) return;
-          //
-          //   if (_formKey.currentState?.validate() ?? false) {
-          //     await controller.createKid(true);
-          //     print(
-          //         " this is whole method ${controller.createKid(true)};");
-          //   }
-          // },
+
         ),
       ),
       body: SafeArea(

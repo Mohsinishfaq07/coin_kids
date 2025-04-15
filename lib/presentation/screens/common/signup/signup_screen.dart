@@ -24,6 +24,7 @@ class SignupScreen extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
+    print("signup screen called");
     final screenWidth = MediaQuery.of(context).size.width;
 
     return PopScope(

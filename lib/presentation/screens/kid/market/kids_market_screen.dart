@@ -124,7 +124,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SvgPicture.asset(
+                                Image.asset(
                                   Assets.phProducts,
                                   height: 100.h,
                                 ),

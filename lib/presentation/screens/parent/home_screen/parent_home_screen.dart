@@ -40,7 +40,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                       imagePath: controller.appState.currentParent.value?.imageUrl ?? "",
                       imageType: ImageType.network,
                       backgroundColor: AppColors.iconPrimary,
-                      size: 40.r,
+                      size: 40,
                     );
                   },
                 ),
@@ -92,8 +92,12 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             height: 50.h,
                           ),
                         ),
+                       // SvgPicture.asset(
+                       //    Assets.appIconText,
+                       //    height: 50.h,
+                       //  ),
                         Container(
-                          width: 328.w,
+                           width: 328.w,
                           decoration: ShapeDecoration(
                             color: AppColors.cardPrimary,
                             shape: RoundedRectangleBorder(
@@ -104,31 +108,34 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                               BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0),
                             ],
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 12.h),
-                              Text("Almost There!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
-                              SizedBox(height: 12.h),
-                              Text("Starting by adding your first child.",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
-                              SizedBox(height: 26.h),
-                              AppButton(
-                                size: Size(0.5.sw, 50.h),
-                                onPressed: () {
-                                  Get.toNamed(Routes.parentAddChild);
-                                },
-                                child: Text("Add Child", style: AppTextStyle.appButton),
-                              )
-                            ],
+                          child: Padding(
+                            padding:  EdgeInsets.symmetric(vertical: 12.h),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 12.h),
+                                Text("Almost There!",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                                SizedBox(height: 12.h),
+                                Text("Starting by adding your first child.",
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                SizedBox(height: 26.h),
+                                AppButton(
+                                  size: Size(0.5.sw, 50),
+                                  onPressed: () {
+                                    Get.toNamed(Routes.parentAddChild);
+                                  },
+                                  child: Text("Add Child", style: AppTextStyle.appButton),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -189,7 +196,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                             borderRadius: BorderRadius.circular(40.r),
                                           ),
                                           child: Padding(
-                                            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.012),
+                                            padding: EdgeInsets.all(9.h),
                                             child: Icon(
                                               weight: 2.w,
                                               Icons.add_rounded, // Add icon
@@ -243,7 +250,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                             imagePath: controller.appState.currentKid.value?.avatar ?? "",
                                             imageType: ImageType.network,
                                             errorAsset: Assets.icAvatarPlaceholder,
-                                            size: 52.h,
+                                            size: 52,
                                           );
                                         }),
                                         SizedBox(height: 6.h),
@@ -294,7 +301,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     onPressed: () {
                                       Get.toNamed(Routes.parentQuickTransfer);
                                     },
-                                    size: Size(183.w, 50.h),
+                                    size: Size(183, 50),
                                     child: Text(
                                       "Quick Transfer",
                                       style: AppTextStyle.appButton,
