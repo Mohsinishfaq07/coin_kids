@@ -31,12 +31,16 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
   Widget build(BuildContext context) {
 
     Get.log("UI_TAG Parent Base");
-
+    bool shouldShowInstruction = false;
+    if (Get.arguments != null && Get.arguments is bool) {
+      shouldShowInstruction = Get.arguments as bool;
+    }
     return OrientationAwareBuilder(
       builder: (context, orientation) {
         return OrientationTransition(
           toPortrait: true,
-          showInstruction: Get.arguments ?? false == true,
+          showInstruction: shouldShowInstruction,
+          // showInstruction: Get.arguments ?? false == true,
           child: orientation == Orientation.portrait ? _buildParentUI(context) : _buildEmptyLandscapeUI(context),
         );
       },
