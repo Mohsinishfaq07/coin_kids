@@ -85,7 +85,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                 onSurface: AppColors.textPrimary,
                                 surface: Colors.white,
                                 secondary:
-                                    AppColors.buttonPrimary.withOpacity(0.1),
+                                    AppColors.buttonPrimary.withValues(alpha:0.1),
                                 onSecondary: AppColors.buttonPrimary,
                               ),
                               // dialogBackgroundColor: Colors.white,
@@ -118,7 +118,7 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                   }
                                   if (states.contains(MaterialState.hovered)) {
                                     return AppColors.buttonPrimary
-                                        .withOpacity(0.1);
+                                        .withValues(alpha:1);
                                   }
                                   return null;
                                 }),

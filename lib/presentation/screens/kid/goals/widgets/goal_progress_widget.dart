@@ -160,7 +160,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 child: Center(
                   child: Row(
                     children: <Widget>[
-                      KidButton.iconWithTitle(
+                     KidButton.iconWithTitle(
                         size: 50,
                         title: "Edit",
                         belowTextStyle: TextStyle(color: AppColors.textPrimary),

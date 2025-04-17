@@ -32,7 +32,7 @@ class AgeFilterDialog extends StatelessWidget {
           // Dialog content container
           Container(
             constraints: BoxConstraints(minWidth: isLandScape ? 0.6.sw : 0.9.sw),
-            padding: REdgeInsets.all(24),
+            padding: REdgeInsets.all(24.w),
             decoration: BoxDecoration(
               color: AppColors.colorPrimary,
               borderRadius: BorderRadius.circular(24.r),

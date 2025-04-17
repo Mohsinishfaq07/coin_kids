@@ -153,7 +153,7 @@ class AddChildScreen extends GetView<AddChildController> {
                       SizedBox(height: 12.h),
 
                       // Avatar Selection
-                      SizedBox(height: MediaQuery.of(context).size.height, child: _buildAvatarGrid(context)),
+                      _buildAvatarGrid(context),
 
                       // Add Child Button
                     ],
@@ -185,6 +185,8 @@ class AddChildScreen extends GetView<AddChildController> {
 
       return GridView.builder(
         shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           crossAxisSpacing: 16.w,

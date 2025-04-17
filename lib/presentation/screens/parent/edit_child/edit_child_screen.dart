@@ -15,7 +15,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:keyboard_actions/keyboard_actions_config.dart';
 
 class EditChildScreen extends GetView<EditChildController> {
   final _formKey = GlobalKey<FormState>();
@@ -55,7 +54,7 @@ class EditChildScreen extends GetView<EditChildController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       bottomNavigationBar:        Padding(
         padding:   EdgeInsets.all(8.h),
         child: AppButton(
@@ -169,25 +168,7 @@ class EditChildScreen extends GetView<EditChildController> {
                       // Avatar Selection
                       _buildAvatarGrid(context),
                 
-                      // Add Child Button
-                      // SafeArea(
-                      //   child: Center(
-                      //     child: AppButton(
-                      //       size: Size(0.8.sw, 50),
-                      //       child: Text(
-                      //         "Save Changes",
-                      //         style: AppTextStyle.appButton,
-                      //       ),
-                      //       onPressed: () async {
-                      //         if (controller.isLoading.value) return;
-                      //
-                      //         if (_formKey.currentState?.validate() ?? false) {
-                      //           await controller.updateKid();
-                      //         }
-                      //       },
-                      //     ),
-                      //   ),
-                      // ),
+
                     ],
                   ),
                 ),
@@ -217,6 +198,7 @@ class EditChildScreen extends GetView<EditChildController> {
 
       return GridView.builder(
         shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           crossAxisSpacing: 16.w,
@@ -330,7 +312,7 @@ class EditChildScreen extends GetView<EditChildController> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha:3),
                   ),
                   child: Icon(
                     Icons.check,
@@ -381,7 +363,7 @@ class EditChildScreen extends GetView<EditChildController> {
                 if (_isCustomImageSelected())
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha:3),
                     ),
                     child: Icon(
                       Icons.check,

@@ -44,7 +44,7 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
   return await showDialog(
     context: context,
     barrierDismissible: false,
-    barrierColor: Colors.black.withOpacity(0.2),
+    barrierColor: Colors.black.withValues(alpha:2),
     builder: (context) => Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24.r),
@@ -59,14 +59,14 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.colorPrimary.withOpacity(0.1),
+              color: AppColors.colorPrimary.withValues(alpha:1),
               blurRadius: 20,
               spreadRadius: 5,
               offset: const Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: AppColors.colorPrimary.withOpacity(0.1),
+            color: AppColors.colorPrimary.withValues(alpha:1),
             width: 1.5,
           ),
         ),
@@ -84,8 +84,8 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColors.colorPrimary.withOpacity(0.2),
-                        AppColors.colorPrimary.withOpacity(0.1),
+                        AppColors.colorPrimary.withValues(alpha:2),
+                        AppColors.colorPrimary.withValues(alpha:1),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -99,8 +99,8 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColors.colorPrimary.withOpacity(0.3),
-                        AppColors.colorPrimary.withOpacity(0.2),
+                        AppColors.colorPrimary.withValues(alpha:3),
+                        AppColors.colorPrimary.withValues(alpha:2),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -132,7 +132,7 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15.sp,
-                color: AppColors.textPrimary.withOpacity(0.7),
+                color: AppColors.textPrimary.withValues(alpha:7),
                 height: 1.4,
               ),
             ),
@@ -144,7 +144,7 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
                     onPressed: () => Navigator.of(context).pop(false),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14.h),
-                      backgroundColor: AppColors.colorPrimary.withOpacity(0.08),
+                      backgroundColor: AppColors.colorPrimary.withValues(alpha:08),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14.r),
                       ),
@@ -170,12 +170,12 @@ Future<bool> showExitConfirmationKidSide(BuildContext context) async {
                         end: Alignment.bottomRight,
                         colors: [
                           AppColors.colorPrimary,
-                          AppColors.colorPrimary.withOpacity(0.9),
+                          AppColors.colorPrimary.withValues(alpha:9),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.colorPrimary.withOpacity(0.25),
+                          color: AppColors.colorPrimary.withValues(alpha:25),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),

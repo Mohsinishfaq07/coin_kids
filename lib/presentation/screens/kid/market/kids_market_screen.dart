@@ -8,9 +8,7 @@ import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-
 import 'product_card.dart';
 
 class KidsMarketScreen extends GetView<KidMarketController> {

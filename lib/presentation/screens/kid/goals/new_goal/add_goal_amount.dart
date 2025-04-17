@@ -79,7 +79,7 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
                 ),
                 SizedBox(height: 30.h),
                 KidTextField(
-                  maxlength: 7,
+                  maxlength: 8,
                   hintText: 0.toMoneyFormat(),
                   onChange: (value) {
                     double? parsedValue = double.tryParse(value);

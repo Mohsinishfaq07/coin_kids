@@ -72,7 +72,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           decoration: BoxDecoration(
             color: AppColors.iconOnPrimary,
             borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: AppColors.colorPrimary, width: 2),
+            border: Border.all(color: AppColors.cardBorder, width: 2.w),
           ),
           child: controller.newGoal.value.photo == null ||
                   controller.newGoal.value.photo!.isEmpty
@@ -108,10 +108,10 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                   children: [
                     Center(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(12.r),
                         child: SizedBox(
-                          width: 0.4.sw,
-                          height: 0.5.sh,
+                          width: 0.3.sw,
+                          height: 0.46.sh,
                           child: controller.newGoal.value.photo!.startsWith("http") 
                               ? CachedNetworkImageWidget(
                                   imageUrl: controller.newGoal.value.photo!,
@@ -156,7 +156,12 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           child: KidTextField(
             hintText: controller.newGoal.value.title,
             onChange: (value) {
-              controller.setTitle(value.trim());
+              // Remove initial spaces but keep other spaces
+              String processedValue = value;
+              while (processedValue.startsWith(' ')) {
+                processedValue = processedValue.substring(1);
+              }
+              controller.setTitle(processedValue);
             },
           ),
         ),
@@ -164,6 +169,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 8.h),
           child: KidTextField(
+            maxlength: 8,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             hintText: controller.newGoal.value.targetAmount.toString(),
             onChange: (value) {
@@ -196,6 +202,24 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   }
 
   void _handleButtonPress() {
+    // Validate goal name is not empty
+    if (controller.newGoal.value.title.isEmpty) {
+      ToastUtil.showToast("Goal name cannot be empty");
+      return;
+    }
+
+    // Check if goal name starts with a space
+    if (controller.newGoal.value.title.startsWith(' ')) {
+      ToastUtil.showToast("Goal name cannot start with a space");
+      return;
+    }
+
+    // Validate amount
+    if (controller.newGoal.value.targetAmount < 0.01) {
+      ToastUtil.showToast("Amount must be at least 0.01");
+      return;
+    }
+
     switch (controller.screenMode.value) {
       case GoalSummaryScreenMode.create:
         controller.createNewGoal();

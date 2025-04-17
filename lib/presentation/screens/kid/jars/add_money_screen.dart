@@ -87,7 +87,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                         child: KidTextField(
                           focusNode: _addAmount,
                           textInputAction: TextInputAction.done,
-                          maxlength: 7,
+                          maxlength: 8,
                           keyboardType: TextInputType.numberWithOptions(decimal: true),
                           hintText: "e.g 10.50",
                           onChange: (val) {
