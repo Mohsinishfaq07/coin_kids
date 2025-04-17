@@ -92,10 +92,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                             height: 50.h,
                           ),
                         ),
-                       // SvgPicture.asset(
-                       //    Assets.appIconText,
-                       //    height: 50.h,
-                       //  ),
+
                         Container(
                            width: 328.w,
                           decoration: ShapeDecoration(
@@ -126,9 +123,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                         .textTheme
                                         .bodySmall!
                                         .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
-                                SizedBox(height: 26.h),
+                                SizedBox(height: 22.h),
                                 AppButton(
-                                  size: Size(0.5.sw, 50),
+                                  size: Size(0.4.sw, 50),
                                   onPressed: () {
                                     Get.toNamed(Routes.parentAddChild);
                                   },
@@ -216,7 +213,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                                   color: AppColors.iconDisabled,
                                                   fontSize: 11.sp,
                                                   fontFamily: 'Open Sans',
-                                                  fontWeight: FontWeight.w600,
+                                                  fontWeight: FontWeight.w500,
                                                   height: 1.38,
                                                 ),
                                               ),
@@ -301,7 +298,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     onPressed: () {
                                       Get.toNamed(Routes.parentQuickTransfer);
                                     },
-                                    size: Size(183, 50),
+                                    size: Size(0.5.sw, 50),
                                     child: Text(
                                       "Quick Transfer",
                                       style: AppTextStyle.appButton,

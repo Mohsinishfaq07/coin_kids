@@ -239,7 +239,7 @@ class KidButton extends StatelessWidget {
           style: textStyle,
           maxLines: 1,
           textAlign: TextAlign.center,
-          minFontSize: 10.sp,
+          minFontSize: 10,
           maxFontSize: fontSize?.toDouble() ?? 22,
           stepGranularity: 0.5,
           overflow: TextOverflow.ellipsis,

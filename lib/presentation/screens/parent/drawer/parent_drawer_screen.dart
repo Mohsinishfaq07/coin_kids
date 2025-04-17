@@ -118,7 +118,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     }),
                     Container(
                       width: 328.w,
-                      height: 156.h,
+                      // height: 156.h,
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
@@ -136,8 +136,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ],
                       ),
                       child: Center(
-                        child: SingleChildScrollView(
-                          child: Column(
+                        child: Padding(
+                          padding:  EdgeInsets.symmetric(vertical :20.h),                            child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Obx(() {
@@ -190,7 +190,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     _buildSectionHeader("Personalization"),
                     Container(
                       width: 328.w,
-                      height: 125.h,
+                      // height: 125.h,
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
@@ -208,22 +208,24 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ],
                       ),
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildProfileRowWithArrow(
-                                onTap: () => Get.to(() => ChangeLanguage()),
-                                "Languages (coming soon)",
-                                Assets.icGlobal,
-                                isComingSoon: true),
-                            SizedBox(
-                              height: 31.h,
-                            ),
-                            _buildProfileRowWithArrow(
-                                "Parent Zone Pin", Assets.icPin, onTap: () {
-                              Get.toNamed(Routes.parentChangePin);
-                            }),
-                          ],
+                        child: Padding(
+                          padding:  EdgeInsets.symmetric(vertical :18.h),                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildProfileRowWithArrow(
+                                  onTap: () => Get.to(() => ChangeLanguage()),
+                                  "Languages (coming soon)",
+                                  Assets.icGlobal,
+                                  isComingSoon: true),
+                              SizedBox(
+                                height: 30.h,
+                              ),
+                              _buildProfileRowWithArrow(
+                                  "Parent Zone Pin", Assets.icPin, onTap: () {
+                                Get.toNamed(Routes.parentChangePin);
+                              }),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -234,7 +236,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     _buildSectionHeader("Notifications"),
                     Container(
                       width: 328.w,
-                      height: 120.h,
+                      // height: 120.h,
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
@@ -252,8 +254,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ],
                       ),
                       child: Center(
-                        child: SingleChildScrollView(
-                          child: Column(
+                        child: Padding(
+                          padding:  EdgeInsets.symmetric(vertical :10.h),                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Obx(() {
@@ -295,7 +297,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
 
                     Container(
                         width: 328.w,
-                        height: 170.h,
+                        // height: 170.h,
                         decoration: ShapeDecoration(
                           color: const Color(0xFFEDFAFF),
                           shape: RoundedRectangleBorder(
@@ -313,71 +315,74 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                           ],
                         ),
                         child: Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildProfileRowWithArrow(
-                                  "Share app",
-                                  Assets.icShare,
-                                  showArrow: false,
-                                  iconSize: 24.sp,
-                                  onTap: () async {
-                                    try {
-                                      await ShareUtils.shareApp();
-                                    } catch (e) {
-                                      ToastUtil.showToast(
-                                        'Failed to share app',
-                                        color: AppColors.notificationCritical,
-                                      );
-                                    }
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 31.h,
-                                ),
-                                _buildProfileRowWithArrow(
-                                  "Feedback",
-                                  Assets.icFeedback,
-                                  showArrow: false,
-                                  iconSize: 24.sp,
-                                  onTap: () async {
-                                    Get.toNamed(Routes.parentFeedback);
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 31.h,
-                                ),
-                                _buildProfileRowWithArrow(
-                                  "Privacy Policy",
-                                  Assets.icLock,
-                                  showArrow: false,
-                                  iconSize: 24.sp,
-                                  onTap: () async {
-                                    try {
-                                      await ShareUtils.openPrivacyPolicy();
-                                    } catch (e) {
-                                      ToastUtil.showToast(
-                                        'Failed to open privacy policy',
-                                        color: AppColors.notificationCritical,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ]),
+                          child: Padding(
+                            padding:  EdgeInsets.symmetric(vertical :14.h),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildProfileRowWithArrow(
+                                    "Share app",
+                                    Assets.icShare,
+                                    showArrow: false,
+                                    iconSize: 24.sp,
+                                    onTap: () async {
+                                      try {
+                                        await ShareUtils.shareApp();
+                                      } catch (e) {
+                                        ToastUtil.showToast(
+                                          'Failed to share app',
+                                          color: AppColors.notificationCritical,
+                                        );
+                                      }
+                                    },
+                                  ),
+
+                                  Padding(
+                                    padding:  EdgeInsets.symmetric(vertical: 30.h),
+                                    child: _buildProfileRowWithArrow(
+                                      "Feedback",
+                                      Assets.icFeedback,
+                                      showArrow: false,
+                                      iconSize: 24.sp,
+                                      onTap: () async {
+                                        Get.toNamed(Routes.parentFeedback);
+                                      },
+                                    ),
+                                  ),
+
+                                  _buildProfileRowWithArrow(
+                                    "Privacy Policy",
+                                    Assets.icLock,
+                                    showArrow: false,
+                                    iconSize: 24.sp,
+                                    onTap: () async {
+                                      try {
+                                        await ShareUtils.openPrivacyPolicy();
+                                      } catch (e) {
+                                        ToastUtil.showToast(
+                                          'Failed to open privacy policy',
+                                          color: AppColors.notificationCritical,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ]),
+                          ),
                         )),
 
-                    SizedBox(height: 24.h),
 
                     // Version
-                    Obx(() => Text(
-                      "Version ${controller.appVersion}",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
+                    Obx(() => Padding(
+                      padding:  EdgeInsets.symmetric(vertical: 24.h),
+                      child: Text(
+                        "Version ${controller.appVersion}",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     )),
-                    SizedBox(height: 24.h),
                   ],
                 ),
               ),

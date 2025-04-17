@@ -55,12 +55,7 @@ class EditChildScreen extends GetView<EditChildController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ParentAppBar(
-        showBackButton: true,
-        title: "Edit Profile",
-        centerTitle: false,
-        
-      ),
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar:        Padding(
         padding:   EdgeInsets.all(8.h),
         child: AppButton(
@@ -79,6 +74,14 @@ class EditChildScreen extends GetView<EditChildController> {
 
         ),
       ),
+
+      appBar: const ParentAppBar(
+        showBackButton: true,
+        title: "Edit Profile",
+        centerTitle: false,
+        
+      ),
+     
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -89,102 +92,104 @@ class EditChildScreen extends GetView<EditChildController> {
 
             child: Form(
               key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Child Name Field
-                    Obx(() {
-                      return ParentTextField(
-                        maxLength: 8,
-                        initialValue: controller.childName.value,
-                        hintText: controller.childName.value,
-                        onChanged: (value) =>
-                            controller.childName.value = value.trim(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter child name';
-                          }
-                          return null;
-                        },
-                      );
-                    }),
-                    SizedBox(height: 16.h),
-
-                    // Child Age Field
-                    Obx(() {
-                      return ParentTextField(
-                        maxLength: 2,
-                        initialValue: controller.childAge.value,
-                        hintText: controller.childAge.value,
-                        keyboardType: TextInputType.number,
-                        inputFormatter: TextInputFormatter.withFunction(
-                          (oldValue, newValue) {
-                            if (newValue.text.isEmpty) {
-                              return newValue;
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Child Name Field
+                      Obx(() {
+                        return ParentTextField(
+                          maxLength: 8,
+                          initialValue: controller.childName.value,
+                          hintText: controller.childName.value,
+                          onChanged: (value) =>
+                              controller.childName.value = value.trim(),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter child name';
                             }
-                            if (RegExp(r'^[0-9]+$').hasMatch(newValue.text)) {
-                              return newValue;
-                            }
-                            return oldValue;
+                            return null;
                           },
-                        ),
-                        onChanged: (value) =>
-                            controller.childAge.value = value.trim(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter child age';
-                          }
-
-                          final intValue = int.tryParse(value);
-                          if (intValue == null) {
-                            return 'Please enter a valid number';
-                          }
-
-                          if (intValue < 3 || intValue > 15) {
-                            return 'Age must be between 3 to 15 years old';
-                          }
-
-                          return null;
-                        },
-                      );
-                    }),
-                    SizedBox(height: 19.h),
-
-                    // Avatar Selection Title
-                    Text(
-                      "Select Avatar",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: CustomThemeData().primaryTextColor,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.sp),
-                    ),
-                    SizedBox(height: 12.h),
-
-                    // Avatar Selection
-                    _buildAvatarGrid(context),
-
-                    // Add Child Button
-                    // SafeArea(
-                    //   child: Center(
-                    //     child: AppButton(
-                    //       size: Size(0.8.sw, 50),
-                    //       child: Text(
-                    //         "Save Changes",
-                    //         style: AppTextStyle.appButton,
-                    //       ),
-                    //       onPressed: () async {
-                    //         if (controller.isLoading.value) return;
-                    //
-                    //         if (_formKey.currentState?.validate() ?? false) {
-                    //           await controller.updateKid();
-                    //         }
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                        );
+                      }),
+                      SizedBox(height: 16.h),
+                
+                      // Child Age Field
+                      Obx(() {
+                        return ParentTextField(
+                          maxLength: 2,
+                          initialValue: controller.childAge.value,
+                          hintText: controller.childAge.value,
+                          keyboardType: TextInputType.number,
+                          inputFormatter: TextInputFormatter.withFunction(
+                            (oldValue, newValue) {
+                              if (newValue.text.isEmpty) {
+                                return newValue;
+                              }
+                              if (RegExp(r'^[0-9]+$').hasMatch(newValue.text)) {
+                                return newValue;
+                              }
+                              return oldValue;
+                            },
+                          ),
+                          onChanged: (value) =>
+                              controller.childAge.value = value.trim(),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter child age';
+                            }
+                
+                            final intValue = int.tryParse(value);
+                            if (intValue == null) {
+                              return 'Please enter a valid number';
+                            }
+                
+                            if (intValue < 3 || intValue > 15) {
+                              return 'Age must be between 3 to 15 years old';
+                            }
+                
+                            return null;
+                          },
+                        );
+                      }),
+                      SizedBox(height: 19.h),
+                
+                      // Avatar Selection Title
+                      Text(
+                        "Select Avatar",
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: CustomThemeData().primaryTextColor,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.sp),
+                      ),
+                      SizedBox(height: 12.h),
+                
+                      // Avatar Selection
+                      _buildAvatarGrid(context),
+                
+                      // Add Child Button
+                      // SafeArea(
+                      //   child: Center(
+                      //     child: AppButton(
+                      //       size: Size(0.8.sw, 50),
+                      //       child: Text(
+                      //         "Save Changes",
+                      //         style: AppTextStyle.appButton,
+                      //       ),
+                      //       onPressed: () async {
+                      //         if (controller.isLoading.value) return;
+                      //
+                      //         if (_formKey.currentState?.validate() ?? false) {
+                      //           await controller.updateKid();
+                      //         }
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -266,7 +271,7 @@ class EditChildScreen extends GetView<EditChildController> {
                       borderRadius: BorderRadius.circular(60.r),
                       child: CachedNetworkImage(
                         imageUrl: controller.avatars[avatarIndex],
-                        height: 60.h,
+                        height: 60.w,
                         width: 60.w,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Center(
@@ -306,7 +311,7 @@ class EditChildScreen extends GetView<EditChildController> {
             "Displaying local image from path: ${controller.kidImagePath.value}"); // Debug log
         return Container(
           width: 60.w,
-          height: 60.h,
+          height: 60.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(60.r),
             border: Border.all(
@@ -349,7 +354,7 @@ class EditChildScreen extends GetView<EditChildController> {
 
         return Container(
           width: 60.w,
-          height: 60.h,
+          height: 60.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(60.r),
             border: Border.all(

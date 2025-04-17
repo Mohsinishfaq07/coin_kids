@@ -100,7 +100,7 @@ class OptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 147.h,
+        // height: 147.h,
         width: 320.w,
         decoration: BoxDecoration(
           color: const Color(0xFFEDFAFF),
@@ -128,50 +128,53 @@ class OptionCard extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 15.h),
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
-                  ),
-                  SizedBox(height: 9.h),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.icCoinEuro,
-                        height: 20.w,
-                        width: 20.w,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(description, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.icSupport,
-                        height: 20.w,
-                        width: 20.w,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(description1, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.icSupport,
-                        height: 18.h,
-                        colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.clear),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)),
-                    ],
-                  ),
-                ],
+              child: Padding(
+                padding:  EdgeInsets.symmetric(vertical : 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
+                    ),
+                    SizedBox(height: 9.h),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          Assets.icCoinEuro,
+                          height: 20.w,
+                          width: 20.w,
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(description, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          Assets.icSupport,
+                          height: 20.w,
+                          width: 20.w,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(description1, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 14)),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          Assets.icSupport,
+                          height: 18.h,
+                          colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.clear),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

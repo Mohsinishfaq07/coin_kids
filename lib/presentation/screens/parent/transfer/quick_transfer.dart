@@ -108,12 +108,18 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                                   color: AppColors.textHighlighted, // Purple color for "remove"
                                 ),
                               ),
-                              TextSpan(
-                                // text: 'money\nfrom your ${docData['name']}\'s account',
-                                style: const TextStyle(
-                                  color: Colors.black, // Default color for the remaining text
-                                ),
-                              ),
+                              // TextSpan(
+                              //    text: 'money\nfrom your ${controller.appState.currentKid.value}\'s account',
+                              //   style:  TextStyle(
+                              //     color: Colors.black,
+                              //     fontSize: 12.sp,
+                              //       fontWeight:FontWeight.normal
+                              //
+                              //
+                              //
+                              //     // Default color for the remaining text
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -172,8 +178,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       isOptional: true,
                       onChanged: (val) {},
                     ),
-                    SizedBox(height: 27.h),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 30.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -183,7 +188,9 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               double.parse(controller.amount.value) <= controller.appState.currentKid.value!.wallet.spendingJar.balance;
                               
                           return AppButton(
-                              size: Size(124.w, 45.h),
+                            // size: Size(120, 43),
+
+                            // size: Size(123.w, 45.h),
                             backgroundColor: hasEnoughBalance ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
                               if (!hasEnoughBalance) {
@@ -197,15 +204,15 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Remove",
+                                  "Remove  ",
                                   style: AppTextStyle.appButton,
                                 ),
-                                // SizedBox(
-                                //   width: 4.w,
-                                // ),
+                                SizedBox(
+                                  width: 4,
+                                ),
                                 Icon(
                                   Icons.remove,
-                                  size: 22.sp,
+                                  size: 22,
                                   color: Colors.white,
                                 ),
                               ],
@@ -214,7 +221,9 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                         }),
                         Obx(() {
                           return AppButton(
-                              size: Size(124.w, 45.h),
+
+                               // size: Size(123.w, 45.h),
+                          //  size: Size(80, 43.h),
                             backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () {
                               controller.sendMoney();
@@ -223,18 +232,34 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.add,
-                                  size: 22.sp,
-                                  color: Colors.white,
-                                ),
-                                // SizedBox(
-                                //   width: 6.w,
+                                // Text(
+                                //   "Send    ",
+                                //   style: AppTextStyle.appButton,
                                 // ),
+                                // SizedBox(
+                                //   width: 4.w,
+                                // ),
+                                // Icon(
+                                //   Icons.remove,
+                                //   size: 22,
+                                //   color: Colors.white,
+                                // ),
+                                Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal:8.w),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 22,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 6,
+                                ),
                                 Text(
-                                  "Send",
+                                  "Send   ",
                                   style: AppTextStyle.appButton,
                                 ),
+
                               ],
                             ),
                           );

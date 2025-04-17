@@ -145,46 +145,44 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   }
 
   Widget _buildFormSection() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(height: 16.h),
-          Text('Goal Name', style: AppTextStyle.headingSmall),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 6.h),
-            child: KidTextField(
-              hintText: controller.newGoal.value.title,
-              onChange: (value) {
-                controller.setTitle(value.trim());
-              },
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(height: 16.h),
+        Text('Goal Name', style: AppTextStyle.headingSmall),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          child: KidTextField(
+            hintText: controller.newGoal.value.title,
+            onChange: (value) {
+              controller.setTitle(value.trim());
+            },
           ),
-          Text('Amount', style: AppTextStyle.headingSmall),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            child: KidTextField(
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              hintText: controller.newGoal.value.targetAmount.toString(),
-              onChange: (value) {
-                controller.setAmount(double.tryParse(value) ?? 0.0);
-              },
-            ),
+        ),
+        Text('Amount', style: AppTextStyle.headingSmall),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          child: KidTextField(
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            hintText: controller.newGoal.value.targetAmount.toString(),
+            onChange: (value) {
+              controller.setAmount(double.tryParse(value) ?? 0.0);
+            },
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: KidButton(
-              onTap: () => _handleButtonPress(),
-              text: _getButtonText(),
-              baseColor: AppColors.btnColorGreen,
-              iconPath: Assets.icTick,
-              iconPosition: IconPosition.left,
-            ),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: KidButton(
+            onTap: () => _handleButtonPress(),
+            text: _getButtonText(),
+            baseColor: AppColors.btnColorGreen,
+            iconPath: Assets.icTick,
+            iconPosition: IconPosition.left,
           ),
-          SizedBox(height: 8.h),
-        ],
-      ),
+        ),
+        SizedBox(height: 8.h),
+      ],
     );
   }
 

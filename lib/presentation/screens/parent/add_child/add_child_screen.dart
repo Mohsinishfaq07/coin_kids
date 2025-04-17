@@ -191,7 +191,6 @@ class AddChildScreen extends GetView<AddChildController> {
           mainAxisSpacing: 16.h,
         ),
         itemCount: controller.avatars.length + 1,
-        // +1 for camera option
         itemBuilder: (context, index) {
           if (index == 0) {
             // Camera/Gallery picker option

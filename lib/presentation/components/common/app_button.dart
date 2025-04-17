@@ -53,7 +53,10 @@ class AppButton extends StatelessWidget {
                     foregroundColor: foregroundColor,
                     elevation: 3,
                   ),
-                  child: child,
+                  child: Padding(
+                    padding:  EdgeInsets.only(top:12.h,bottom:12.h),
+                    child: child,
+                  ),
                 ),
               ),
       ),

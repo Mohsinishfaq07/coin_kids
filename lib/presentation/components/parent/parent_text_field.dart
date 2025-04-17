@@ -154,7 +154,7 @@ class ParentTextField extends StatelessWidget {
                   suffixSvgPath!,
                   colorFilter: ColorFilter.mode(
                       suffixIconColor ?? Colors.grey, BlendMode.srcIn),
-                  width: 24.sp,
+                  width: 20.sp,
                 ),
               ),
             ),

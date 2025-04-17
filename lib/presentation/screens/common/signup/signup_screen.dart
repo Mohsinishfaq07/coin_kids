@@ -271,7 +271,7 @@ class SignupScreen extends GetView<SignupController> {
                           color: Colors.blue.shade900,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
-                          fontSize: 12,
+                          fontSize: 11.sp,
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -282,7 +282,7 @@ class SignupScreen extends GetView<SignupController> {
                         text: " & ",
                         style: TextStyle(
                           color: Colors.blue.shade900,
-                          fontSize: 12,
+                          fontSize: 11.sp,
                         ),
                       ),
                       TextSpan(
@@ -291,7 +291,7 @@ class SignupScreen extends GetView<SignupController> {
                           color: Colors.blue.shade900,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
-                          fontSize: 12,
+                          fontSize: 11.sp,
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {

@@ -39,7 +39,7 @@ class AppTextStyle {
 
   static TextStyle appButton = TextStyle(
     fontFamily: 'OpenSans',
-    fontSize: 14.sp,
+    fontSize: 14.h,
     fontWeight: MyFontWeight.extraBold.fontWeight,
     color: Colors.white,
   );
