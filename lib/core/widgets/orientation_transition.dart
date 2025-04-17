@@ -20,15 +20,30 @@ class OrientationTransition extends StatefulWidget {
   State<OrientationTransition> createState() => _OrientationTransitionState();
 }
 
-class _OrientationTransitionState extends State<OrientationTransition> {
+class _OrientationTransitionState extends State<OrientationTransition> with SingleTickerProviderStateMixin {
   late bool _showInstruction;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _showInstruction = widget.showInstruction;
+    
+    // Initialize animation controller
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
+    // Create fade animation
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
     if (_showInstruction) {
       _startInstructionTimer();
+      _animationController.forward();
     }
   }
 
@@ -41,6 +56,9 @@ class _OrientationTransitionState extends State<OrientationTransition> {
       });
       if (_showInstruction) {
         _startInstructionTimer();
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
       }
     }
   }
@@ -51,15 +69,28 @@ class _OrientationTransitionState extends State<OrientationTransition> {
         setState(() {
           _showInstruction = false;
         });
+        _animationController.reverse();
       }
     });
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: _showInstruction ? RotationInstruction(toPortrait: widget.toPortrait) : widget.child,
+    return Stack(
+      children: [
+        widget.child,
+        if (_showInstruction)
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: RotationInstruction(toPortrait: widget.toPortrait),
+          ),
+      ],
     );
   }
 }

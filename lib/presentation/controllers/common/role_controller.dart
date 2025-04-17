@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class RoleController extends GetxController {
   // Add a debounce mechanism
   DateTime? _lastSwitchTime;
-  final _debounceTime = Duration(seconds: 5); // Prevent multiple calls within 2 seconds
+  final _debounceTime = Duration(milliseconds: 1000); // Reduce to 1 second for better UX
 
   bool get _canSwitch {
     if (_lastSwitchTime == null) return true;
@@ -25,7 +25,11 @@ class RoleController extends GetxController {
     Get.log("RoleController switchToParentMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.parent.name);
 
+    // Lock orientation first
     OrientationUtils.lockToPortrait();
+    
+    // Add a small delay to allow orientation change to complete
+    await Future.delayed(Duration(milliseconds: 100));
 
     if (!(Get.currentRoute == Routes.parentBase)) {
       Get.offAllNamed(Routes.parentBase, arguments: shouldShowInstruction);
@@ -41,7 +45,13 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
+    
+    // Lock orientation first
     OrientationUtils.lockToLandscape();
+    
+    // Add a small delay to allow orientation change to complete
+    await Future.delayed(Duration(milliseconds: 100));
+
     if (!(Get.currentRoute == Routes.kidBase)) {
       Get.offAllNamed(Routes.kidBase, arguments: shouldShowInstruction);
     }
@@ -56,7 +66,13 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
+    
+    // Lock orientation first
     OrientationUtils.lockToLandscape();
+    
+    // Add a small delay to allow orientation change to complete
+    await Future.delayed(Duration(milliseconds: 100));
+
     if (!(Get.currentRoute == Routes.kidOnboarding)) {
       Get.offAllNamed(Routes.kidOnboarding, arguments: shouldShowInstruction);
     }

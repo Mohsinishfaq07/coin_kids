@@ -4,6 +4,7 @@ import 'package:coin_kids/core/widgets/orientation_transition.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/kid_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
@@ -14,6 +15,7 @@ import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_sc
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
   const KidBaseScreen({super.key});
@@ -45,7 +47,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
       canPop: false, // Block default back behavior
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
-          bool shouldExit = await showExitConfirmation(context);
+          bool shouldExit = await KidExitDialog.show(context);
           if (shouldExit) Get.back();
         }
       },
@@ -122,7 +124,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
       canPop: false, // Block default back behavior
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
-          bool shouldExit = await showExitConfirmation(context);
+          bool shouldExit = await KidExitDialog.show(context);
           if (shouldExit) Get.back();
         }
       },

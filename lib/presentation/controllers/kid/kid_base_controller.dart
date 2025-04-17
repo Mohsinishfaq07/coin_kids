@@ -183,7 +183,6 @@ class KidBaseController extends GetxController {
     // Show the notifications dialog first
     showGeneralDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha:3),
       barrierDismissible: false,
       barrierLabel: "Notifications",
       transitionDuration: Duration(milliseconds: 200),
