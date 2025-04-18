@@ -69,6 +69,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             targetPadding: EdgeInsets.all(10),
                             tooltipBackgroundColor: AppColors.colorPrimary,
                             textColor: Colors.white,
+                            disableBarrierInteraction: true,
                             child: JarWidget(
                               jarState: JarState.nullJar,
                               jarName: "+ Add Money",

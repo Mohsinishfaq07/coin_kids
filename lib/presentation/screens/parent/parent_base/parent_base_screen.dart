@@ -5,6 +5,7 @@ import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/main.dart';
 import 'package:coin_kids/presentation/components/common/parent_exit_dialog.dart';
+import 'package:coin_kids/presentation/components/common/showcase_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,11 +18,25 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
   ParentBaseScreen({super.key});
 
   final GlobalKey _kidZoneButtonShowcaseKey = GlobalKey();
+  final Rx<Offset> _kidZoneButtonOffset = Offset(0, 0).obs;
+
+  void _getWidgetCenter(GlobalKey key) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null) {
+        Offset position = renderBox.localToGlobal(Offset.zero);
+        Size size = renderBox.size;
+        Offset center = position + Offset(size.width / 2, size.height / 2);
+        _kidZoneButtonOffset.value = center;
+      }
+    });
+  }
 
   void _startShowcase(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final hasShownKidsZoneShowcase = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasShownKidsZoneShowcase) ?? false;
       if (!hasShownKidsZoneShowcase && controller.showKidsZoneShowcase.value == true) {
+        _getWidgetCenter(_kidZoneButtonShowcaseKey);
         ShowCaseWidget.of(context).startShowCase([_kidZoneButtonShowcaseKey]);
         await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasShownKidsZoneShowcase, true);
       }
@@ -112,6 +127,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
         ),
         bottomNavigationBar: SafeArea(
           child: ShowCaseWidget(
+              disableBarrierInteraction: true,
               onComplete: (index, key) {},
               builder: (context) {
                 _startShowcase(context);
@@ -133,25 +149,37 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildNavItem(
-                            iconPath: Assets.icHome,
-                            label: 'Home',
-                            index: 0,
+                          SizedBox(
+                            width: Get.width / 4,
+                            child: _buildNavItem(
+                              iconPath: Assets.icHome,
+                              label: 'Home',
+                              index: 0,
+                            ),
                           ),
-                          _buildNavItem(
-                            iconPath: Assets.icMessage,
-                            label: 'Messages',
-                            index: 1,
+                          SizedBox(
+                            width: Get.width / 4,
+                            child: _buildNavItem(
+                              iconPath: Assets.icMessage,
+                              label: 'Messages',
+                              index: 1,
+                            ),
                           ),
-                          _buildNavItem(
-                            iconPath: Assets.icCart,
-                            label: 'Shop',
-                            index: 2,
+                          SizedBox(
+                            width: Get.width / 4,
+                            child: _buildNavItem(
+                              iconPath: Assets.icCart,
+                              label: 'Shop',
+                              index: 2,
+                            ),
                           ),
-                          _buildNavItem(
-                            iconPath: Assets.icCoinStar,
-                            label: 'Kids Zone',
-                            index: 3,
+                          SizedBox(
+                            width: Get.width / 4,
+                            child: _buildNavItem(
+                              iconPath: Assets.icCoinStar,
+                              label: 'Kids Zone',
+                              index: 3,
+                            ),
                           ),
                         ],
                       ),
@@ -242,8 +270,10 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
         tooltipBackgroundColor: AppColors.colorPrimary,
         descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
         targetPadding: EdgeInsets.all(6.w),
+        disableBarrierInteraction: true,
         tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
         child: navItem,
+
       );
     }
 
