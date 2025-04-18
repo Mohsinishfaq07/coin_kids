@@ -24,6 +24,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class KidGoalsController extends GetxController {
+  final appBarController = Get.find<KidAppBarController>();
+
   final appBar = Get.find<KidAppBarController>();
   final appState = Get.find<AppStateController>();
   final _goalService = Get.find<GoalService>();
@@ -414,7 +416,9 @@ class KidGoalsController extends GetxController {
 
       // If no change in progress, just return
       if (difference == 0) {
-        Get.back();
+       // Get.back();
+        Get.until((route) => route.settings.name == Routes.kidBase);
+
         return;
       }
 

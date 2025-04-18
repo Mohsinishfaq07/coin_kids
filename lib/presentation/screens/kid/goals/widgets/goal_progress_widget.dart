@@ -6,6 +6,7 @@ import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
@@ -212,7 +213,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 text: 'Done',
                 baseColor: AppColors.btnColorGreen,
                 iconPath: Assets.icTick,
-                // onTap: () => controller.saveProgress(goal.id!),
                 onTap: () {
                   // Calculate percentage achieved
                   double progressPercentage =
@@ -233,6 +233,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
 
                   // Save progress and award coins if milestone reached
                   controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                  
+                  // Reset app bar configuration before navigation
+                  controller.appBarController.resetToDefault();
                 },
               ),
             ],
