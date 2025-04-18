@@ -89,15 +89,24 @@ class AuthService extends GetxController {
   // Google Sign In
   Future<UserCredential> signInWithGoogle() async {
     try {
+      Get.log("Starting Google Sign In process");
+      
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      Get.log("Google Sign In result: ${googleUser != null ? 'Success' : 'Cancelled/Failed'}");
 
       if (googleUser == null) {
-        throw Exception('Google sign in was cancelled');
+        throw Exception('Google sign in was cancelled by user');
       }
 
       // Obtain the auth details from the request
+      Get.log("Getting Google auth details");
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      Get.log("Got auth tokens - Access Token: ${googleAuth.accessToken != null}, ID Token: ${googleAuth.idToken != null}");
+
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        throw Exception('Could not get auth details from Google');
+      }
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -105,17 +114,20 @@ class AuthService extends GetxController {
         idToken: googleAuth.idToken,
       );
 
+      Get.log("Signing in to Firebase with Google credential");
       // Sign in to Firebase with the Google credential
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
       // Update user stream immediately
       user.value = userCredential.user;
-      Get.log("User is: ${user.value}");
+      Get.log("Firebase sign in successful. User ID: ${userCredential.user?.uid}");
 
       // If uid doc is not present, create new Doc, create parent document
+      Get.log("Checking for existing parent data");
       ParentModel? parentData = await _parentService.fetchParentData();
 
       if (parentData == null) {
+        Get.log("Creating new parent document");
         final parent = ParentModel(
           id: userCredential.user!.uid,
           email: googleUser.email,
@@ -128,10 +140,16 @@ class AuthService extends GetxController {
         );
 
         await _parentService.createParent(parent);
+        Get.log("Parent document created successfully");
       }
 
       return userCredential;
     } catch (e) {
+      Get.log("Google Sign In Error: $e");
+      if (e is FirebaseAuthException) {
+        Get.log("Firebase Auth Error Code: ${e.code}");
+        Get.log("Firebase Auth Error Message: ${e.message}");
+      }
       throw _handleAuthException(e);
     }
   }

@@ -141,221 +141,223 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
               );
             }
 
-            // Display list of kids
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 60),
-                      child: SvgPicture.asset(
-                        Assets.appIconText,
-                        height: 50,
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Family Profiles ',
-                          style: TextStyle(
-                            color: const Color(0xFF015486),
-                            fontSize: 14.sp,
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          controller.kidsList.length < 2 ? controller.kidsList.length + 1 : 2,
-                          (index) {
-                            if (index == controller.kidsList.length) {
-                              // Last item: Add circle
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.h),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    ToastUtil.showToast("You have already added a child");
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: AppColors.iconDisabled, width: 2.w),
-                                          borderRadius: BorderRadius.circular(40.r),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(9.h),
-                                          child: Icon(
-                                            weight: 2.w,
-                                            Icons.add_rounded, // Add icon
-                                            color: AppColors.iconDisabled,
-                                            size: 30.sp,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 6.h),
-                                      RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: 'Add Member\n',
-                                              style: TextStyle(
-                                                color: AppColors.iconDisabled,
-                                                fontSize: 11.sp,
-                                                fontFamily: 'Open Sans',
-                                                fontWeight: FontWeight.w500,
-                                                height: 1.38,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: '(Coming soon)',
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 10.sp,
-                                                fontStyle: FontStyle.normal,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.h),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.toNamed(Routes.parentKidProfile);
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Obx(() {
-                                        return CircleAvatarWidget(
-                                          border: Border.all(color: AppColors.buttonPrimary, width: 2.w),
-                                          imagePath: controller.appState.currentKid.value?.avatar ?? "",
-                                          imageType: ImageType.network,
-                                          errorAsset: Assets.icAvatarPlaceholder,
-                                          size: 52,
-                                        );
-                                      }),
-                                      SizedBox(height: 6.h),
-                                      Obx(() {
-                                        return Text(
-                                          controller.appState.currentKid.value?.name ?? "",
-                                          style: TextStyle(
-                                            color: AppColors.textPrimary,
-                                            fontSize: 13.sp,
-                                            fontFamily: 'Open Sans',
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.38,
-                                          ),
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+              // Display list of kids
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 60),
+                        child: SvgPicture.asset(
+                          Assets.appIconText,
+                          height: 50,
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2.w),
-                      child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color(0xFFCBE5F4),
-                              ),
-                              color: const Color(0xFFEDFAFF),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: MediaQuery.of(context).size.height * 0.03,
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Family Profiles ',
+                            style: TextStyle(
+                              color: const Color(0xFF015486),
+                              fontSize: 14.sp,
+                              fontFamily: 'Open Sans',
+                              fontWeight: FontWeight.w700,
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AppButton(
-                                  onPressed: () {
-                                    Get.toNamed(Routes.parentQuickTransfer);
-                                  },
-                                  size: Size(0.5.sw, 50),
-                                  child: Text(
-                                    "Quick Transfer",
-                                    style: AppTextStyle.appButton,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height * 0.03,
-                                ),
-                                // const SizedBox(height: 20),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: MediaQuery.of(context).size.height * 0.06,
-                                  ),
-                                  child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
+                          )),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
+                            controller.kidsList.length < 2 ? controller.kidsList.length + 1 : 2,
+                            (index) {
+                              if (index == controller.kidsList.length) {
+                                // Last item: Add circle
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.h),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      ToastUtil.showToast("You have already added a child");
+                                    },
+                                    child: Column(
                                       children: [
-                                        TextSpan(
-                                          text: 'Send ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: AppColors.iconDisabled, width: 2.w),
+                                            borderRadius: BorderRadius.circular(40.r),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(9.h),
+                                            child: Icon(
+                                              weight: 2.w,
+                                              Icons.add_rounded, // Add icon
+                                              color: AppColors.iconDisabled,
+                                              size: 30.sp,
+                                            ),
+                                          ),
                                         ),
-                                        TextSpan(
-                                            text: 'or ',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                        TextSpan(
-                                            text: 'remove ',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
-                                        TextSpan(
-                                            text: 'money from your child\'s account',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                        SizedBox(height: 6.h),
+                                        RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Add Member\n',
+                                                style: TextStyle(
+                                                  color: AppColors.iconDisabled,
+                                                  fontSize: 11.sp,
+                                                  fontFamily: 'Open Sans',
+                                                  fontWeight: FontWeight.w500,
+                                                  height: 1.38,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: '(Coming soon)',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10.sp,
+                                                  fontStyle: FontStyle.normal,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.h),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed(Routes.parentKidProfile);
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Obx(() {
+                                          return CircleAvatarWidget(
+                                            border: Border.all(color: AppColors.buttonPrimary, width: 2.w),
+                                            imagePath: controller.appState.currentKid.value?.avatar ?? "",
+                                            imageType: ImageType.network,
+                                            errorAsset: Assets.icAvatarPlaceholder,
+                                            size: 52,
+                                          );
+                                        }),
+                                        SizedBox(height: 6.h),
+                                        Obx(() {
+                                          return Text(
+                                            controller.appState.currentKid.value?.name ?? "",
+                                            style: TextStyle(
+                                              color: AppColors.textPrimary,
+                                              fontSize: 13.sp,
+                                              fontFamily: 'Open Sans',
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.38,
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        child: Center(
+                          child: Container(
+                            // height: 200.h,
+                            // width: double.infinity,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: const Color(0xFFCBE5F4),
                                 ),
-                              ],
+                                color: const Color(0xFFEDFAFF),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: MediaQuery.of(context).size.height * 0.03,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AppButton(
+                                    onPressed: () {
+                                      Get.toNamed(Routes.parentQuickTransfer);
+                                    },
+                                    size: Size(0.5.sw, 50),
+                                    child: Text(
+                                      "Quick Transfer",
+                                      style: AppTextStyle.appButton,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.03,
+                                  ),
+                                  // const SizedBox(height: 20),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: MediaQuery.of(context).size.height * 0.06,
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Send ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                              text: 'or ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                          TextSpan(
+                                              text: 'remove ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
+                                          TextSpan(
+                                              text: 'money from your child\'s account',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+              );
+            },
+          ),
+        ));
   }
 }
