@@ -160,7 +160,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 child: Center(
                   child: Row(
                     children: <Widget>[
-                     KidButton.iconWithTitle(
+                     KidButton.iconWithTitle  (
                         size: 50,
                         title: "Edit",
                         belowTextStyle: TextStyle(color: AppColors.textPrimary),
@@ -169,8 +169,23 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         onTap: () {
                           if (goal.productUrl != null &&
                               goal.productUrl!.isNotEmpty) {
-                            ToastUtil.showToast(
-                                "Market goals cannot be edited");
+                            KidDialog.show(
+                              dismissible: true,
+                              emoji: Assets.emojiSad,
+                              title: "Cannot Edit",
+                              subtitle: "Market goals cannot be edited",
+                              buttons: [
+                                KidButton(
+                                  text: "OK",
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  baseColor: AppColors.btnColorGreen,
+                                  iconPath: Assets.icTick,
+                                  iconPosition: IconPosition.left,
+                                ),
+                              ],
+                            );
                             return;
                           }
                           controller.screenMode.value =

@@ -210,10 +210,10 @@ class KidButton extends StatelessWidget {
                 if (showShadowOverlay)
                   Positioned(
                     left: 1.w,
-                    top: 1.29.h,
+                    top: 1.2.h,
                     child: Image.asset(
                       Assets.icShine,
-                      height: height! * 0.3.h,
+                      height: height! * 0.22.h,
                     ),
                   ),
               ],

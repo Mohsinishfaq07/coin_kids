@@ -178,7 +178,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                       key: containerKey,
                                       jarState: controller.jarState.value,
                                       jarName: "",
-                                      height: 150.w,
+                                      height: 150.h,
                                       showTag: false,
                                       amount: controller.totalValue.value,
                                       jarColor: jarColor,

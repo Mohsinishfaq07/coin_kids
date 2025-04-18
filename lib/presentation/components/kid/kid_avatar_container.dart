@@ -46,7 +46,7 @@ class KidAvatarContainer extends StatelessWidget {
                   border: Border.all(color: const Color(0xff0095e5), width: 2.w),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(left: iconSize / 2, right: 12.w),
+                  padding: EdgeInsets.only(left: iconSize / 2, right: 10.w),
                   child: Text(
                     kidName,
                     style: AppTextStyle.headingMedium.copyWith(

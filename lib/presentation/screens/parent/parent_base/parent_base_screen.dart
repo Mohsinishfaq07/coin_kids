@@ -5,13 +5,12 @@ import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/main.dart';
 import 'package:coin_kids/presentation/components/common/parent_exit_dialog.dart';
-import 'package:coin_kids/presentation/components/common/showcase_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class ParentBaseScreen extends GetView<ParentBaseController> {
@@ -19,6 +18,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
   final GlobalKey _kidZoneButtonShowcaseKey = GlobalKey();
   final Rx<Offset> _kidZoneButtonOffset = Offset(0, 0).obs;
+ // final RxBool isShowcaseVisible = false.obs;
 
   void _getWidgetCenter(GlobalKey key) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,7 +37,10 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
       final hasShownKidsZoneShowcase = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasShownKidsZoneShowcase) ?? false;
       if (!hasShownKidsZoneShowcase && controller.showKidsZoneShowcase.value == true) {
         _getWidgetCenter(_kidZoneButtonShowcaseKey);
+    //    isShowcaseVisible.value = true; // show hand overlay
         ShowCaseWidget.of(context).startShowCase([_kidZoneButtonShowcaseKey]);
+        await Future.delayed(Duration(seconds: 3)); // Optional auto-hide
+    //    isShowcaseVisible.value = false;
         await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasShownKidsZoneShowcase, true);
       }
     });
@@ -262,18 +265,33 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
     );
 
     if (index == 3) {
-      return Showcase(
-        key: _kidZoneButtonShowcaseKey,
-        description: "Switch to Kids Zone to access children's features!",
-        descriptionAlignment: Alignment.center,
-        descriptionTextAlign: TextAlign.center,
-        tooltipBackgroundColor: AppColors.colorPrimary,
-        descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
-        targetPadding: EdgeInsets.all(6.w),
-        disableBarrierInteraction: true,
-        tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
-        child: navItem,
-
+      return Stack(
+        children: [
+          Showcase(
+            key: _kidZoneButtonShowcaseKey,
+            description: "Switch to Kids Zone to access children's features!",
+            descriptionAlignment: Alignment.center,
+            descriptionTextAlign: TextAlign.center,
+            tooltipBackgroundColor: AppColors.colorPrimary,
+            descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
+            targetPadding: EdgeInsets.all(6.w),
+            disableBarrierInteraction: true,
+            tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
+            child: navItem,
+          ),
+          // Obx(() {
+          //   if (!isShowcaseVisible.value) return SizedBox.shrink();
+          //   return Positioned(
+          //     top: -30.h,
+          //     right: 20.w,
+          //     child: Image.asset(
+          //       Assets.icHand,
+          //       width: 40.w,
+          //       height: 40.w,
+          //     ),
+          //   );
+          // }),
+        ],
       );
     }
 
