@@ -1,13 +1,16 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -133,10 +136,39 @@ class DragAndDropMoneyController extends GetxController {
   void _handleCountingComplete() {
     if (isComplete()) {
       Get.back();
-      ToastUtil.showToast("Great job counting! 🎉");
+      
+        KidDialog.show(
+          emoji: Assets.icCoinStar,
+          title: "Great job counting! 🎉",
+          subtitle: "You've counted all the money correctly!",
+          buttons: [
+            KidButton(
+              text: "Done",
+              onTap: () => Get.back(),
+              baseColor: AppColors.btnColorGreen,
+              iconPath: Assets.icTick,
+              iconPosition: IconPosition.left,
+            ),
+          ],
+        
+      );
     } else {
-      ToastUtil.showToast(
-          "Keep Counting! ${remainingAmount.toMoneyFormat()} is left");
+
+        KidDialog.show(
+          emoji: Assets.icCoinStar,
+          title: "Keep Counting!",
+          subtitle: "You still need to count ${remainingAmount.toMoneyFormat()}€",
+          buttons: [
+            KidButton(
+              text: "Continue",
+              onTap: () => Get.back(),
+              baseColor: AppColors.btnColorGreen,
+              iconPath: Assets.icNext,
+              iconPosition: IconPosition.right,
+            ),
+          ],
+        );
+
     }
   }
 
@@ -177,7 +209,20 @@ class DragAndDropMoneyController extends GetxController {
 
   Future<void> createJar() async {
     if (jarCreationController.jarType == Jars.spendingJar && !isComplete()) {
-      ToastUtil.showToast("Enter all amount");
+      KidDialog.show(
+        emoji: Assets.icCoinStar,
+        title: "Add More Money",
+        subtitle: "You need to add ${remainingAmount.toMoneyFormat()}€ more to create your jar",
+        buttons: [
+          KidButton(
+            text: "Continue",
+            onTap: () => Get.back(),
+            baseColor: AppColors.btnColorGreen,
+            iconPath: Assets.icNext,
+            iconPosition: IconPosition.right,
+          ),
+        ],
+      );
       return;
     }
 
@@ -198,30 +243,37 @@ class DragAndDropMoneyController extends GetxController {
       if (jarCreationController.jarType == Jars.spendingJar) {
         if (isComplete()) {
           final finalBalance = isConnected
-              ? spendingJar
-                  .balance // If connected, don't add the dragged amount
-              : _roundToTwoDecimals(
-                  spendingJar.balance + _roundToTwoDecimals(totalValue.value));
+              ? spendingJar.balance // If connected, don't add the dragged amount
+              : _roundToTwoDecimals(spendingJar.balance + _roundToTwoDecimals(totalValue.value));
           Get.log('final Balance Spend $finalBalance');
           jarCreationController.kidService.updateSpendingJar(
               kid.kidId, finalBalance,
-              color: jarCreationController
-                  .colors[jarCreationController.selectedColorIndex.value]
-                  .value);
+              color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].value);
         } else {
-          ToastUtil.showToast("${remainingAmount.toMoneyFormat()} remaining");
+          KidDialog.show(
+            emoji: Assets.icCoinStar,
+            title: "Add More Money",
+            subtitle: "You need to add ${remainingAmount.toMoneyFormat()}€ more",
+            buttons: [
+              KidButton(
+                text: "Continue",
+                onTap: () => Get.back(),
+                baseColor: AppColors.btnColorGreen,
+                iconPath: Assets.icNext,
+                iconPosition: IconPosition.right,
+              ),
+            ],
+          );
         }
       } else {
         final roundedTotal = _roundToTwoDecimals(totalValue.value);
         Get.log('final Balance Total $roundedTotal');
-        final finalBalance =
-            _roundToTwoDecimals(savingJar.balance + roundedTotal);
+        final finalBalance = _roundToTwoDecimals(savingJar.balance + roundedTotal);
         Get.log('final Balance Save $finalBalance');
 
         jarCreationController.kidService.updateSavingJar(
             kid.kidId, finalBalance,
-            color: jarCreationController
-                .colors[jarCreationController.selectedColorIndex.value].value);
+            color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].value);
       }
     } catch (e) {
       Get.log(e.toString(), isError: true);

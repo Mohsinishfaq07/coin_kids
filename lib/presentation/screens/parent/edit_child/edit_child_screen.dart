@@ -56,7 +56,7 @@ class EditChildScreen extends GetView<EditChildController> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       bottomNavigationBar:        Padding(
-        padding:   EdgeInsets.all(8.h),
+        padding:   EdgeInsets.only(bottom:14.h),
         child: AppButton(
           size: Size(0.8.sw, 50),
           child: Text(
