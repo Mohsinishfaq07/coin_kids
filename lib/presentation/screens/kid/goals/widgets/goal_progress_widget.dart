@@ -1,12 +1,10 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
-import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
@@ -62,6 +60,11 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
 
                         Obx(
                           () {
+                            // Ensure slider value doesn't exceed target amount
+                            if (controller.progressValue.value > goal.targetAmount) {
+                              controller.progressValue.value = goal.targetAmount;
+                            }
+                            
                             return Stack(
                               clipBehavior: Clip.none,
                               children: [
@@ -91,7 +94,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                       return double.parse(text).toMoneyFormat();
                                     },
                                     onChanged: (value) =>
-                                        controller.updateProgress(value),
+                                        controller.updateProgress(value, goal),
                                     showLabels: true,
                                     showTicks: true,
                                     enableTooltip: true,

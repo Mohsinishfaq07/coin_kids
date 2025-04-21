@@ -348,10 +348,48 @@ class KidGoalsController extends GetxController {
       }
 
       showLoadingDialog("Updating Goal...");
+// update gol validation implemented if the amount goes less than target amount
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        ToastUtil.showToast("Session Expired");
+        Get.offAllNamed(Routes.signIn);
+        return;
+      }
 
-      final goal = newGoal.value.copyWith(
-          userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
-      await _goalService.updateGoal(goal);
+      // Check if saved amount equals or exceeds new target amount
+      if (oldGoal.value.savedAmount >= newGoal.value.targetAmount) {
+        // Calculate excess amount if any
+        final excessAmount = oldGoal.value.savedAmount - newGoal.value.targetAmount;
+        
+        // Create updated goal with completed status
+        final updatedGoal = newGoal.value.copyWith(
+          userId: kid.kidId,
+          createdAt: DateTime.now(),
+          savedAmount: newGoal.value.targetAmount,
+          status: GoalStatus.completed,
+          completedAt: DateTime.now(),
+        );
+        await _goalService.updateGoal(updatedGoal);
+
+        if (excessAmount > 0) {
+          // Return excess amount to spending jar
+          final newSpendingBalance = kid.wallet.spendingJar.balance + excessAmount;
+          await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
+
+          // Show success message
+          ToastUtil.showToast('${excessAmount.toMoneyFormat()}€ returned to spending jar');
+        }
+
+        // Show completion dialog
+        showGoalCompletedDialog(newGoal.value.targetAmount);
+      } else {
+        // Normal update without completion
+        final goal = newGoal.value.copyWith(
+          userId: kid.kidId,
+          createdAt: DateTime.now(),
+        );
+        await _goalService.updateGoal(goal);
+      }
 
       resetNewGoal();
       resetOldGoal();
@@ -376,20 +414,16 @@ class KidGoalsController extends GetxController {
     updateProgress(newValue);
   }
 
-  void updateProgress(double value) {
+  void updateProgress(double value, [GoalModel? goal]) {
     final kid = appState.currentKid.value;
     if (kid == null) return;
 
-    final spendingBalance = kid.wallet.spendingJar.balance;
-    final currentSavedAmount = progressValue.value;
-    final difference = value - currentSavedAmount;
-
-    // If increasing progress, check if we have enough spending balance
-    if (difference > 0 && difference > spendingBalance) {
-      // ToastUtil.showToast("Not enough money in spending jar");
-      return;
+    // If goal is provided, ensure value doesn't exceed target amount
+    if (goal != null && value > goal.targetAmount) {
+      value = goal.targetAmount;
     }
 
+    // Only update the progress value, no transfers or messages
     progressValue.value = value;
   }
 
@@ -417,10 +451,8 @@ class KidGoalsController extends GetxController {
 
       // If no change in progress, just return
       if (difference == 0) {
-       // Get.back();
         Get.until((route) => route.settings.name == Routes.kidBase);
         appBarController.resetToDefault();
-
         return;
       }
 
@@ -432,6 +464,10 @@ class KidGoalsController extends GetxController {
           Get.back();
           return;
         }
+      } else {
+        // If decreasing progress, show how much will be returned
+        final returnAmount = -difference; // Make positive for display
+        ToastUtil.showToast('${returnAmount.toMoneyFormat()}€ will be returned to spending jar');
       }
 
       // Update the goal progress
@@ -444,13 +480,14 @@ class KidGoalsController extends GetxController {
 
       Get.back();
 
-      // Show milestone dialogs if the amount is increasing
+      // Show appropriate messages and dialogs based on progress change
       if (difference > 0) {
+        // Handle increasing progress with milestones
         final percentage = (progressValue.value / goal.targetAmount) * 100;
         final oldPercentage = (goal.savedAmount / goal.targetAmount) * 100;
 
         if (percentage >= 100 && oldPercentage < 100) {
-          _showGoalCompletedDialog(goal.targetAmount);
+          showGoalCompletedDialog(goal.targetAmount);
         } else if (percentage >= 75 && oldPercentage < 75) {
           _showMilestoneDialog(
               "So Close!",
@@ -524,9 +561,7 @@ class KidGoalsController extends GetxController {
           text: 'Continue',
           onTap: () {
             appBarController.resetToDefault();
-
             Get.until((route) => route.settings.name == Routes.kidBase);
-
           },
           baseColor: AppColors.btnColorGreen,
         ),
@@ -534,7 +569,7 @@ class KidGoalsController extends GetxController {
     );
   }
 
-  void _showGoalCompletedDialog(double amount) {
+  void showGoalCompletedDialog(double amount) {
     KidDialog.show(
       emoji: Assets.icTrophy,
       title: 'You Did It!',
@@ -569,5 +604,42 @@ class KidGoalsController extends GetxController {
         ),
       ],
     );
+  }
+
+  void handleExcessAmount(GoalModel goal, double excessAmount) async {
+    try {
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        ToastUtil.showToast("Session Expired");
+        Get.offAllNamed(Routes.signIn);
+        return;
+      }
+
+      showLoadingDialog("Updating Goal...");
+
+      // Update the goal with target amount as saved amount
+      final updatedGoal = goal.copyWith(
+        savedAmount: goal.targetAmount,
+        status: GoalStatus.completed,
+        completedAt: DateTime.now(),
+      );
+      await _goalService.updateGoal(updatedGoal);
+
+      // Return excess amount to spending jar
+      final newSpendingBalance = kid.wallet.spendingJar.balance + excessAmount;
+      await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
+
+      // Show success message
+      ToastUtil.showToast('${excessAmount.toMoneyFormat()}€ returned to spending jar');
+      
+      // Show completion dialog
+      showGoalCompletedDialog(goal.targetAmount);
+
+      Get.back(); // Close loading dialog
+    } catch (e) {
+      ToastUtil.showExceptionToast(e);
+      Get.back();
+      Get.log(e.toString(), isError: true);
+    }
   }
 }

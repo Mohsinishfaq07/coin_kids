@@ -51,6 +51,7 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
       ),
       appBar: KidAppBarComponent(
         onBackPressed: () {
+          controller.appBarController.resetToDefault();
           Get.back();
         },
       ),
