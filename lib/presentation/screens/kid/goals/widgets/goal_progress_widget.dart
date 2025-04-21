@@ -59,17 +59,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   Expanded(
                     child: Column(
                       children: [
-                        // Padding(
-                        //   padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //     children: [
-                        //       _buildProgressFlag(Assets.icGoalYellow),
-                        //       _buildProgressFlag(Assets.icFlagBlue),
-                        //       _buildProgressFlag(Assets.icFlagGreen),
-                        //     ],
-                        //   ),
-                        // ),
+
                         Obx(
                           () {
                             return Stack(
@@ -234,8 +224,10 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   // Save progress and award coins if milestone reached
                   controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
                   
-                  // Reset app bar configuration before navigation
-                  controller.appBarController.resetToDefault();
+                  // Reset app bar configuration only if progress is not exactly 100%
+                  if (progressPercentage != 100) {
+                    controller.appBarController.resetToDefault();
+                  }
                 },
               ),
             ],

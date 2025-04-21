@@ -221,6 +221,7 @@ class KidGoalsController extends GetxController {
       });
 
       ToastUtil.showToast('Goal deleted successfully');
+      appBarController.resetToDefault(); // Reset app bar after successful deletion
     } catch (e) {
       Get.log('Error deleting goal: $e');
       ToastUtil.showToast('Failed to delete goal');
@@ -418,6 +419,7 @@ class KidGoalsController extends GetxController {
       if (difference == 0) {
        // Get.back();
         Get.until((route) => route.settings.name == Routes.kidBase);
+        appBarController.resetToDefault();
 
         return;
       }
@@ -521,7 +523,10 @@ class KidGoalsController extends GetxController {
         KidButton(
           text: 'Continue',
           onTap: () {
+            appBarController.resetToDefault();
+
             Get.until((route) => route.settings.name == Routes.kidBase);
+
           },
           baseColor: AppColors.btnColorGreen,
         ),

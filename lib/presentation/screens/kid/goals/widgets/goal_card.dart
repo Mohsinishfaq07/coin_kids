@@ -66,6 +66,8 @@ class GoalCard extends StatelessWidget {
           ],
         ),
         child: Column(
+
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image Container
@@ -78,6 +80,7 @@ class GoalCard extends StatelessWidget {
                       BorderRadius.vertical(top: Radius.circular(12.r)),
                   color: AppColors.iconDisabled.withValues(alpha: 0.1),
                 ),
+                padding: EdgeInsets.all(10),
                 child: goal.photo != null && goal.photo!.isNotEmpty
                     ? ClipRRect(
                         borderRadius:
@@ -98,104 +101,91 @@ class GoalCard extends StatelessWidget {
               ),
             ),
             // Content Container
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Status Container at the top
+
+                  // Title
+                  Text(
+                    goal.title,
+                    style: AppTextStyle.headingSmall.copyWith(
+                        fontWeight: MyFontWeight.bold.fontWeight,
+                        color: AppColors.textPrimary,
+                        fontSize: 16.sp),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  goal.status != GoalStatus.approved &&
+                          goal.status != GoalStatus.rejected &&
+                          goal.status != GoalStatus.completed
+                      ? Padding(
+                        padding:  EdgeInsets.symmetric(vertical: 8.h),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.r),
+                            child: LinearProgressIndicator(
+                              value: progress,
+                              backgroundColor:
+                                  AppColors.colorPrimary.withOpacity(0.2),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _getStatusColor(goal.status),
+                              ),
+                              minHeight: 6.h,
+                            ),
+                          ),
+                      )
+                      : Padding(
+                    padding:  EdgeInsets.symmetric(vertical: 8.h),
+                        child: const SizedBox(),
+                      ),
+                  // SizedBox(height: 4.h),
+                  // Amount Text
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Status Container at the top
-                  
-                      // Title
-                      Text(
-                        goal.title,
-                        style: AppTextStyle.headingSmall.copyWith(
-                            fontWeight: MyFontWeight.bold.fontWeight,
-                            color: AppColors.textPrimary,
-                            fontSize: 16.sp),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      // if (goal.status != GoalStatus.approved &&
-                      //     goal.status != GoalStatus.rejected &&
-                      //     goal.status != GoalStatus.completed)
-                      //   // Progress Bar
-                      //   ClipRRect(
-                      //     borderRadius: BorderRadius.circular(10.r),
-                      //     child: LinearProgressIndicator(
-                      //       value: progress,
-                      //       backgroundColor:
-                      //           AppColors.colorPrimary.withValues(alpha: 0.2),
-                      //       valueColor: AlwaysStoppedAnimation<Color>(
-                      //         _getStatusColor(goal.status),
-                      //       ),
-                      //       minHeight: 6.h,
-                      //     ),
-                      //   ),
-                      goal.status != GoalStatus.approved &&
-                              goal.status != GoalStatus.rejected &&
-                              goal.status != GoalStatus.completed
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10.r),
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor:
-                                    AppColors.colorPrimary.withOpacity(0.2),
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  _getStatusColor(goal.status),
-                                ),
-                                minHeight: 6.h,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                      // SizedBox(height: 4.h),
-                      // Amount Text
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if (goal.status != GoalStatus.approved &&
-                              goal.status != GoalStatus.rejected &&
-                              goal.status != GoalStatus.completed)
-                            SizedBox(),
-                          Text(goal.targetAmount.toMoneyFormat(),
-                              style: AppTextStyle.bodySmall.copyWith(
-                                color: _getStatusColor(goal.status),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12.sp,
-                              )),
-                  
-                          // Text(
-                          //   goal.savedAmount.toMoneyFormat(),
-                          //   style: AppTextStyle.bodySmall.copyWith(
-                          //     color: AppColors.textPrimary,
-                          //     fontSize: 11,
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        decoration: BoxDecoration(
-                          color:
-                              _getStatusColor(goal.status).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Text(
-                          _getStatusText(goal.status),
+                      if (goal.status != GoalStatus.approved &&
+                          goal.status != GoalStatus.rejected &&
+                          goal.status != GoalStatus.completed)
+                        SizedBox(),
+                      Text(goal.targetAmount.toMoneyFormat(),
                           style: AppTextStyle.bodySmall.copyWith(
                             color: _getStatusColor(goal.status),
                             fontWeight: FontWeight.w600,
-                            fontSize: 11.sp,
-                          ),
-                        ),
-                      ),
+                            fontSize: 12.sp,
+                          )),
+
+                      // Text(
+                      //   goal.savedAmount.toMoneyFormat(),
+                      //   style: AppTextStyle.bodySmall.copyWith(
+                      //     color: AppColors.textPrimary,
+                      //     fontSize: 11,
+                      //   ),
+                      // ),
                     ],
                   ),
-                ),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color:
+                          _getStatusColor(goal.status).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      _getStatusText(goal.status),
+                      style: AppTextStyle.bodySmall.copyWith(
+                        color: _getStatusColor(goal.status),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
