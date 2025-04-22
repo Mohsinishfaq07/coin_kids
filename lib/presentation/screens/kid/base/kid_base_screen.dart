@@ -4,6 +4,7 @@ import 'package:coin_kids/core/widgets/orientation_transition.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/common/kid_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
@@ -11,14 +12,14 @@ import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart'
 import 'package:coin_kids/presentation/screens/kid/goals/kid_goals_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/market/kids_market_screen.dart';
-import 'package:coin_kids/presentation/screens/parent/parent_base/parent_base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:flutter/services.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
-  const KidBaseScreen({super.key});
+   KidBaseScreen({super.key});
+
+   final GlobalKey goalsNavKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
 
   Widget _buildKidUI(BuildContext context) {
     return PopScope(
-      canPop: false, // Block default back behavior
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           bool shouldExit = await KidExitDialog.show(context);
@@ -69,12 +70,10 @@ class KidBaseScreen extends GetView<KidBaseController> {
             ),
             child: Column(
               children: [
-                // Usage in UI
                 KidAppBarComponent(
                   onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
                   onAddMoneyTap: () {
                     final isConnected = controller.appState.currentKid.value!.isConnected;
-                    //Set According to Arguments
                     Get.toNamed(
                       Routes.kidMoneyAddOrRequest,
                       arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
@@ -85,8 +84,36 @@ class KidBaseScreen extends GetView<KidBaseController> {
                 Expanded(
                   child: Row(
                     children: [
-                      // Navigation Rail
-                      VerticalNavBar(),
+                      // Navigation Rail with Tutorial
+                      SizedBox(
+                      //  color: Colors.green,
+                        width: 80.w,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              key: goalsNavKey,
+                              child: VerticalNavBar(),
+                            ),
+                            Obx(() {
+                              if (controller.navigationController.showGoalsTutorial.value &&
+                                  controller.currentKid.value?.wallet.spendingJar.color != 0) {
+                                return Positioned(
+                                  left: 10,
+                                  bottom: 130.h, // Position for the Goals button
+                                  child: HandPointerOverlay(
+                                    targetKey: goalsNavKey,
+                                    onTap: () => controller.navigationController.completeGoalsTutorial(),
+                                    offsetX: 40.w,
+                                    offsetY: 0,
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                          ],
+                        ),
+                      ),
 
                       // Content Area
                       Expanded(
@@ -114,7 +141,8 @@ class KidBaseScreen extends GetView<KidBaseController> {
         case 2:
           return KidsMarketScreen();
         default:
-          return const SizedBox.shrink();
+          //return const SizedBox.shrink();
+          return const KidHomeScreen();
       }
     });
   }

@@ -8,13 +8,25 @@ import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart'
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class AddGoalImageScreen extends GetView<KidGoalsController> {
-  const AddGoalImageScreen({super.key});
+  AddGoalImageScreen({super.key}) {
+    _checkTutorialState();
+  }
+
+  final GlobalKey _nextButtonKey = GlobalKey();
+  final RxBool showPointer = true.obs;
+
+  Future<void> _checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalImageTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +40,50 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
           bottom: 24.w,
           left: 24.w,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Obx(() {
+                  return KidButton(
+                    key: _nextButtonKey,
+                    onTap: () async {
+                      showPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenGoalImageTutorial,
+                        true,
+                      );
+                      controller.screenMode.value = GoalSummaryScreenMode.create;
+                      Get.toNamed(Routes.kidGoalSummary);
+                    },
+                    baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? AppColors.btnColorGreen : AppColors.btnColorOrange,
+                    text: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? 'Next' : 'Skip',
+                    iconPath: Assets.icNext,
+                    iconPosition: IconPosition.right,
+                  );
+                }),
+              ],
+            ),
             Obx(() {
-              return KidButton(
-                onTap: () async {
-                  controller.screenMode.value = GoalSummaryScreenMode.create;
-                  Get.toNamed(Routes.kidGoalSummary);
-                },
-                baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? AppColors.btnColorGreen : AppColors.btnColorOrange,
-                text: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? 'Next' : 'Skip',
-                iconPath: Assets.icNext,
-                iconPosition: IconPosition.right,
-              );
+              if (showPointer.value) {
+                return Positioned(
+                  right: 50.w,
+                  bottom: 0.h,
+                  child: HandPointerOverlay(
+                    targetKey: _nextButtonKey,
+                    onTap: () async {
+                      showPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenGoalImageTutorial,
+                        true,
+                      );
+                    },
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
             }),
           ],
         ),

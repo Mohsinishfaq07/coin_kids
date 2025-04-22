@@ -9,6 +9,8 @@ import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart'
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,7 +22,17 @@ enum GoalSummaryScreenMode {
 }
 
 class GoalSummaryScreen extends GetView<KidGoalsController> {
-  const GoalSummaryScreen({super.key});
+  GoalSummaryScreen({super.key}) {
+    _checkTutorialState();
+  }
+
+  final GlobalKey _createGoalKey = GlobalKey();
+  final RxBool showPointer = true.obs;
+
+  Future<void> _checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenCreateGoalTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial && controller.screenMode.value == GoalSummaryScreenMode.create;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,15 +189,47 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             },
           ),
         ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: KidButton(
-            onTap: () => _handleButtonPress(),
-            text: _getButtonText(),
-            baseColor: AppColors.btnColorGreen,
-            iconPath: Assets.icTick,
-            iconPosition: IconPosition.left,
-          ),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Align(
+              alignment: Alignment.bottomRight,
+              child: KidButton(
+                key: _createGoalKey,
+                onTap: () async {
+                  showPointer.value = false;
+                  await SharedPreferencesHelper.saveBool(
+                    SharedPreferencesHelper.hasSeenCreateGoalTutorial,
+                    true,
+                  );
+                  _handleButtonPress();
+                },
+                text: _getButtonText(),
+                baseColor: AppColors.btnColorGreen,
+                iconPath: Assets.icTick,
+                iconPosition: IconPosition.left,
+              ),
+            ),
+            Obx(() {
+              if (showPointer.value) {
+                return Positioned(
+                  right: 50.w,
+                  bottom: 0,
+                  child: HandPointerOverlay(
+                    targetKey: _createGoalKey,
+                    onTap: () async {
+                      showPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenCreateGoalTutorial,
+                        true,
+                      );
+                    },
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
+          ],
         ),
         SizedBox(height: 8.h),
       ],

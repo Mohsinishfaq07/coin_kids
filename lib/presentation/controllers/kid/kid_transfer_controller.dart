@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 class KidTransferController extends GetxController {
   final appState = Get.find<AppStateController>();
   final appBarController = Get.find<KidAppBarController>();
+  final RxBool showPointer = true.obs;
+
 
   static const String _transferShowcaseKey = 'transfer_showcase_shown';
   RxBool isShowcaseVisible = false.obs;

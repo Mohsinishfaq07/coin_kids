@@ -3,6 +3,8 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,7 +15,17 @@ import 'widgets/no_goals_widget.dart';
 class KidGoalsScreen extends GetView<KidGoalsController> {
   final String currentKidId;
 
-  const KidGoalsScreen({required this.currentKidId, super.key});
+  KidGoalsScreen({required this.currentKidId, super.key}) {
+    _checkTutorialState();
+  }
+
+  final GlobalKey _firstGoalKey = GlobalKey();
+  final RxBool showPointer = true.obs;
+
+  Future<void> _checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,30 +52,50 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                   }
 
                   if (controller.goals.isEmpty) {
-                    return const NoGoalsWidget();
+                    return NoGoalsWidget();
                   }
 
-                  return GridView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.only(
-                      top: 4.h,
-                      bottom: 20.h,
-                    ),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 6.w,
-                      mainAxisSpacing: 8.h,
-                      childAspectRatio: cardWidth / cardHeight,
-                    ),
-                    itemCount: controller.goals.length,
-                    itemBuilder: (context, index) {
-                      final goal = controller.goals[index];
-                      return GoalCard(
-                        goal: goal,
-                        isConnected:
-                            controller.currentKid.value?.isConnected ?? false,
-                      );
-                    },
+                  return Stack(
+                    children: [
+                      GridView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(
+                          top: 4.h,
+                          bottom: 20.h,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 6.w,
+                          mainAxisSpacing: 8.h,
+                          childAspectRatio: cardWidth / cardHeight,
+                        ),
+                        itemCount: controller.goals.length,
+                        itemBuilder: (context, index) {
+                          final goal = controller.goals[index];
+                          return GoalCard(
+                            key: index == 0 ? _firstGoalKey : null,
+                            goal: goal,
+                            isConnected:
+                                controller.currentKid.value?.isConnected ?? false,
+                          );
+                        },
+                      ),
+                      Obx(() {
+                        if (showPointer.value && controller.goals.isNotEmpty) {
+                          return HandPointerOverlay(
+                            targetKey: _firstGoalKey,
+                            onTap: () async {
+                              showPointer.value = false;
+                              await SharedPreferencesHelper.saveBool(
+                                SharedPreferencesHelper.hasSeenGoalsListTutorial,
+                                true,
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                    ],
                   );
                 }),
               ),
@@ -95,7 +127,4 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
     int count = (screenWidth / targetCardWidth).floor();
     return count.clamp(2, 5);
   }
-// final double targetCardWidth = 180.w;
-// int count = (screenWidth / targetCardWidth).floor();
-// return count.clamp(1, 6);
 }

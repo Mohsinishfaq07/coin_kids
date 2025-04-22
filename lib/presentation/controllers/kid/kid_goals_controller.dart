@@ -4,12 +4,14 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
@@ -22,6 +24,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
   final appBarController = Get.find<KidAppBarController>();
@@ -300,6 +303,9 @@ class KidGoalsController extends GetxController {
       await _goalService.createGoal(goal, isFirstGoal);
 
       if (isFirstGoal) {
+        final GlobalKey _okButtonKey = GlobalKey();
+        final RxBool showPointer = true.obs;
+
         KidDialog.show(
           emoji: Assets.icCoinStar,
           title: 'WoW',
@@ -318,12 +324,42 @@ class KidGoalsController extends GetxController {
             ],
           ),
           buttons: [
-            KidButton(
-              text: 'Ok',
-              onTap: () {
-                Get.until((route) => route.settings.name == Routes.kidBase);
-              },
-              baseColor: AppColors.btnColorGreen,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                KidButton(
+                  key: _okButtonKey,
+                  text: 'Ok',
+                  onTap: () async {
+                    showPointer.value = false;
+                    await SharedPreferencesHelper.saveBool(
+                      SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
+                      true,
+                    );
+                    Get.until((route) => route.settings.name == Routes.kidBase);
+                  },
+                  baseColor: AppColors.btnColorGreen,
+                ),
+                Obx(() {
+                  if (showPointer.value) {
+                    return Positioned(
+                      right: 50.w,
+                      bottom: 0,
+                      child: HandPointerOverlay(
+                        targetKey: _okButtonKey,
+                        onTap: () async {
+                          showPointer.value = false;
+                          await SharedPreferencesHelper.saveBool(
+                            SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
+                            true,
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+              ],
             ),
           ],
         );

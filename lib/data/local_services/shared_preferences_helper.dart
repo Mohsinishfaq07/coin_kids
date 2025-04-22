@@ -16,6 +16,18 @@ class SharedPreferencesHelper {
   static String showcaseMoneyJarKey = "showcaseMoneyJarKey";
   static String showKidsNotifications = "showKidsNotifications";
   static String showTotalMoneySpotlight = "showTotalMoneySpotlight";
+  
+  // Market Tutorial Keys
+  static String hasSeenMarketTutorial = "hasSeenMarketTutorial";
+  static String hasSeenAddToGoalTutorial = "hasSeenAddToGoalTutorial";
+  static String hasSeenWishlistTutorial = "hasSeenWishlistTutorial";
+  static String hasSeenGoalsTutorial = "hasSeenGoalsTutorial";
+  static String hasSeenNoGoalsTutorial = "hasSeenNoGoalsTutorial";
+  static String hasSeenGoalImageTutorial = "hasSeenGoalImageTutorial";
+  static String hasSeenCreateGoalTutorial = "hasSeenCreateGoalTutorial";
+  static String hasSeenFirstGoalDialogTutorial = "hasSeenFirstGoalDialogTutorial";
+  static String hasSeenGoalProgressTutorial = "hasSeenGoalProgressTutorial";
+  static String hasSeenGoalsListTutorial = "hasSeenGoalsListTutorial";
 
   // Initialize SharedPreferences
   static Future<void> init() async {

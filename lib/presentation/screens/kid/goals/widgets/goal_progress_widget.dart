@@ -8,6 +8,8 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,9 +18,18 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class GoalProgressWidget extends GetView<KidGoalsController> {
-  const GoalProgressWidget(this.goal, {super.key});
+  GoalProgressWidget(this.goal, {super.key}) {
+    _checkTutorialState();
+  }
 
   final GoalModel goal;
+  final GlobalKey _sliderKey = GlobalKey();
+  final RxBool showPointer = true.obs;
+
+  Future<void> _checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalProgressTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,79 +68,108 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   Expanded(
                     child: Column(
                       children: [
-
-                        Obx(
-                          () {
-                            // Ensure slider value doesn't exceed target amount
-                            if (controller.progressValue.value > goal.targetAmount) {
-                              controller.progressValue.value = goal.targetAmount;
-                            }
-                            
-                            return Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                SfSliderTheme(
-                                  data: SfSliderThemeData(
-                                    activeTrackHeight: 15.h,
-                                    inactiveTrackHeight: 15.h,
-                                    trackCornerRadius: 50.r,
-                                    activeTrackColor: AppColors.btnColorOrange,
-                                    inactiveTrackColor: AppColors.btnColorOrange
-                                        .withValues(alpha: 0.2),
-                                    thumbColor: Colors.transparent,
-                                    thumbRadius: 15.r,
-                                  ),
-                                  child: SfSlider(
-                                    value: controller.progressValue.value,
-                                    min: 0,
-                                    max: goal.targetAmount,
-                                    interval: goal.targetAmount / 4,
-                                    stepSize: controller.progressStep,
-                                    showDividers: true,
-                                    shouldAlwaysShowTooltip: true,
-                                    tooltipTextFormatterCallback: (_, text) {
-                                      return double.parse(text).toMoneyFormat();
-                                    },
-                                    labelFormatterCallback: (_, text) {
-                                      return double.parse(text).toMoneyFormat();
-                                    },
-                                    onChanged: (value) =>
-                                        controller.updateProgress(value, goal),
-                                    showLabels: true,
-                                    showTicks: true,
-                                    enableTooltip: true,
-                                    thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 18.w,
-                                  right: 0,
-                                  top: -8.h,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        SvgPicture.asset(
-                                          Assets.icGoalYellow,
-                                          width: 24.w,
-                                        ),
-                                        SvgPicture.asset(
-                                          Assets.icFlagBlue,
-                                          width: 24.w,
-                                        ),
-                                        SvgPicture.asset(
-                                          Assets.icFlagGreen,
-                                          width: 24.w,
-                                        ),
-                                      ],
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Obx(
+                              () {
+                                if (controller.progressValue.value > goal.targetAmount) {
+                                  controller.progressValue.value = goal.targetAmount;
+                                }
+                                
+                                return Stack(
+                                  key: _sliderKey,
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    SfSliderTheme(
+                                      data: SfSliderThemeData(
+                                        activeTrackHeight: 15.h,
+                                        inactiveTrackHeight: 15.h,
+                                        trackCornerRadius: 50.r,
+                                        activeTrackColor: AppColors.btnColorOrange,
+                                        inactiveTrackColor: AppColors.btnColorOrange
+                                            .withValues(alpha: 0.2),
+                                        thumbColor: Colors.transparent,
+                                        thumbRadius: 15.r,
+                                      ),
+                                      child: SfSlider(
+                                        value: controller.progressValue.value,
+                                        min: 0,
+                                        max: goal.targetAmount,
+                                        interval: goal.targetAmount / 4,
+                                        stepSize: controller.progressStep,
+                                        showDividers: true,
+                                        shouldAlwaysShowTooltip: true,
+                                        tooltipTextFormatterCallback: (_, text) {
+                                          return double.parse(text).toMoneyFormat();
+                                        },
+                                        labelFormatterCallback: (_, text) {
+                                          return double.parse(text).toMoneyFormat();
+                                        },
+                                        onChanged: (value) {
+                                          showPointer.value = false;
+                                          SharedPreferencesHelper.saveBool(
+                                            SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                                            true,
+                                          );
+                                          controller.updateProgress(value, goal);
+                                        },
+                                        showLabels: true,
+                                        showTicks: true,
+                                        enableTooltip: true,
+                                        thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                                      ),
                                     ),
+                                    Positioned(
+                                      left: 18.w,
+                                      right: 0,
+                                      top: -8.h,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SvgPicture.asset(
+                                              Assets.icGoalYellow,
+                                              width: 24.w,
+                                            ),
+                                            SvgPicture.asset(
+                                              Assets.icFlagBlue,
+                                              width: 24.w,
+                                            ),
+                                            SvgPicture.asset(
+                                              Assets.icFlagGreen,
+                                              width: 24.w,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            Obx(() {
+                              if (showPointer.value) {
+                                return Positioned(
+                                  left: 0.sw,
+                                  bottom: -30.h,
+                                  child: HandPointerOverlay(
+                                    targetKey: _sliderKey,
+                                    onTap: () async {
+                                      showPointer.value = false;
+                                      await SharedPreferencesHelper.saveBool(
+                                        SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                                        true,
+                                      );
+                                    },
                                   ),
-                                ),
-                              ],
-                            );
-                          },
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                          ],
                         ),
                       ],
                     ),
@@ -228,9 +268,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
                   
                   // Reset app bar configuration only if progress is not exactly 100%
-                  if (progressPercentage != 100) {
-                    controller.appBarController.resetToDefault();
-                  }
+                  // if (progressPercentage != 100 || progressPercentage >= 0 ) {
+                  //   controller.appBarController.resetToDefault();
+                  // }
                 },
               ),
             ],

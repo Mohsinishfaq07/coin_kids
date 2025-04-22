@@ -186,40 +186,56 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                             visible: controller.showTotalCard.value,
                             child: Padding(
                               padding: EdgeInsets.only(right: 4.w),
-                              child: controller
-                                      .shouldShowRequestMoneySpotlight()
+                              child: controller.shouldShowRequestMoneySpotlight()
                                   ? Showcase(
-                                      key: KidAppBarShowcaseKeys
-                                          .totalMoneyCardKey,
-                                      description:
-                                          "Tap here to request money from your parent!",
+                                      key: KidAppBarShowcaseKeys.totalMoneyCardKey,
+                                      description: "Tap here to request money from your parent!",
                                       descriptionAlignment: Alignment.center,
                                       descriptionTextAlign: TextAlign.center,
-                                      tooltipBackgroundColor:
-                                          AppColors.colorPrimary,
-                                      descTextStyle: AppTextStyle.headingSmall
-                                          .copyWith(color: Colors.white),
+                                      tooltipBackgroundColor: AppColors.colorPrimary,
+                                      descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
                                       targetPadding: EdgeInsets.all(6.h),
-                                      tooltipPadding: EdgeInsets.symmetric(
-                                          vertical: 10.h, horizontal: 0),
+                                      tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
                                       child: MoneyWidget(
-                                        amount: kid.wallet.spendingJar.balance +
-                                            kid.wallet.savingJar.balance,
+                                        amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
                                         rightIconPath: Assets.icCoinEuro,
                                         showAddButton: true,
                                         iconSize: 32.w,
-                                        onAddTap: onAddMoneyTap,
-                                        onCardTap: onAddMoneyTap,
+                                        onAddTap: () {
+                                          if (kid.wallet.spendingJar.color == 0) {
+                                            ToastUtil.showToast("Please create a spending jar first to add money");
+                                            return;
+                                          }
+                                          onAddMoneyTap?.call();
+                                        },
+                                        onCardTap: () {
+                                          if (kid.wallet.spendingJar.color == 0) {
+                                            ToastUtil.showToast("Please create a spending jar first to add money");
+                                            return;
+                                          }
+                                          onAddMoneyTap?.call();
+                                        },
                                       ),
                                     )
                                   : MoneyWidget(
-                                      amount: kid.wallet.spendingJar.balance +
-                                          kid.wallet.savingJar.balance,
+                                      amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
                                       rightIconPath: Assets.icCoinEuro,
                                       showAddButton: true,
                                       iconSize: 32.w,
-                                      onAddTap: onAddMoneyTap,
-                                      onCardTap: onAddMoneyTap,
+                                      onAddTap: () {
+                                        if (kid.wallet.spendingJar.color == 0) {
+                                          ToastUtil.showToast("Please create a spending jar first to add money");
+                                          return;
+                                        }
+                                        onAddMoneyTap?.call();
+                                      },
+                                      onCardTap: () {
+                                        if (kid.wallet.spendingJar.color == 0) {
+                                          ToastUtil.showToast("Please create a spending jar first to add money");
+                                          return;
+                                        }
+                                        onAddMoneyTap?.call();
+                                      },
                                     ),
                             ),
                           ),
