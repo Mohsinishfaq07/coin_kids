@@ -84,6 +84,7 @@ class Assets {
   static const String assetsKidDialogBg = 'assets/kid_dialog_bg.svg';
   static const String assetsKidDialogBgPng = 'assets/kid_dialog_bg_png.png';
   static const String assetsNewCartAnimation = 'assets/newCartAnimation.json';
+  static const String assetsNewTap = 'assets/new_tap.json';
   static const String assetsParentBgCloud = 'assets/parent_bg_cloud.svg';
   static const String assetsTap = 'assets/tap.json';
   static const String assetsTransferToSavingArrow = 'assets/transfer_to_saving_arrow.png';

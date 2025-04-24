@@ -11,30 +11,27 @@ class KidTransferController extends GetxController {
   final appBarController = Get.find<KidAppBarController>();
   final RxBool showPointer = true.obs;
 
-
-  static const String _transferShowcaseKey = 'transfer_showcase_shown';
-  RxBool isShowcaseVisible = false.obs;
+  static const String hasSeenTransferTutorial = 'hasSeenTransferTutorial';
 
   @override
   void onInit() {
     super.onInit();
-    checkShowcaseStatus();
+    _checkTransferTutorialState();
   }
 
-  Future<void> checkShowcaseStatus() async {
-    final hasShown = SharedPreferencesHelper.getBool(_transferShowcaseKey) ?? false;
-    isShowcaseVisible.value = !hasShown;
+  Future<void> _checkTransferTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(hasSeenTransferTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
   }
 
-  Future<void> markShowcaseAsShown() async {
-    await SharedPreferencesHelper.saveBool(_transferShowcaseKey, true);
-    isShowcaseVisible.value = false;
+  Future<void> markTransferTutorialAsShown() async {
+    await SharedPreferencesHelper.saveBool(hasSeenTransferTutorial, true);
+    showPointer.value = false;
   }
 
   @override
   void onReady() {
     appBarController.configureForTransfer();
-
     super.onReady();
   }
 

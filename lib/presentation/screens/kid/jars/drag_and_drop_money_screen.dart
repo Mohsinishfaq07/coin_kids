@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -8,12 +9,13 @@ import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart'
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-final GlobalKey containerKey = GlobalKey();
-final GlobalKey moneyKey = GlobalKey();
+
 
 class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
   const DragAndDropMoneyScreen({super.key});
@@ -25,10 +27,10 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
       Size size = renderBox.size;
       Offset center = position + Offset(size.width / 2, size.height / 2);
 
-      if (key == containerKey) {
+      if (key == GlobalKeys.containerKey) {
         controller.jarOffset.value = center;
         debugPrint("Jar Offset: $center");
-      } else {
+      } else if (key == GlobalKeys.moneyKey) {
         debugPrint("Money Offset: $center");
         controller.moneyOffset.value = center;
       }
@@ -38,8 +40,8 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getWidgetCenter(containerKey);
-      _getWidgetCenter(moneyKey);
+      _getWidgetCenter(GlobalKeys.containerKey);
+      _getWidgetCenter(GlobalKeys.moneyKey);
     });
 
     return Scaffold(
@@ -82,15 +84,44 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                 );
                               }),
                               SizedBox(height: 20.h),
-                              Obx(() {
-                                return KidButton.iconOnly(
-                                  onTap: () => controller.isShowingBills.value = false,
-                                  baseColor: !controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
-                                  iconPath: Assets.icCoinEuro,
-                                  iconSize: 40.w,
-                                  size: 60.w,
-                                );
-                              }),
+                              Stack(
+                                children: [
+                                  Obx(() {
+                                    return KidButton.iconOnly(
+
+                                      key: GlobalKeys.coinButtonKey,
+                                      onTap: () {
+                                        controller.isShowingBills.value = false;
+                                        controller.showCoinTutorial.value = false;
+                                        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                                      },
+                                      baseColor: !controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
+                                      iconPath: Assets.icCoinEuro,
+                                      size: 60.w,
+                                      iconSize: 40.w,
+                                    );
+                                  }),
+                                  Obx(() {
+                                    if (controller.showCoinTutorial.value) {
+                                      return Positioned(
+                                        right: 0.w,
+                                        bottom: -10,
+                                        child: HandPointerOverlay(
+                                          targetKey: GlobalKeys.coinButtonKey,
+                                          onTap: () {
+                                            controller.isShowingBills.value = false;
+                                            controller.showCoinTutorial.value = false;
+                                            SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                                          },
+                                          offsetX: 30.w,
+                                          offsetY: 0,
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  }),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -175,7 +206,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                 children: [
                                   Obx(() {
                                     return JarWidget(
-                                      key: containerKey,
+                                      key: GlobalKeys.containerKey,
                                       jarState: controller.jarState.value,
                                       jarName: "",
                                       height: 150.h,
@@ -295,7 +326,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
 }
 
 Widget _buildDraggableMoney(MapEntry<String, double> moneyItem, double availableWidth, bool isShowingBills, int rowIndex) {
-  final key = moneyItem.value == 5.0 ? moneyKey : null;
+  final key = moneyItem.value == 5.0 ?GlobalKeys.moneyKey : null;
 
   return Draggable<double>(
     key: key,

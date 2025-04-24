@@ -27,6 +27,7 @@ class KidBaseController extends GetxController {
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
 
   RxBool isNotificationShowing = true.obs;
+  final RxBool showTransferPointer = true.obs;
 
   // Observables
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);

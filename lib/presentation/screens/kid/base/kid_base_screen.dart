@@ -12,14 +12,14 @@ import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart'
 import 'package:coin_kids/presentation/screens/kid/goals/kid_goals_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/market/kids_market_screen.dart';
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
-   KidBaseScreen({super.key});
+   const KidBaseScreen({super.key});
 
-   final GlobalKey goalsNavKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -92,17 +92,18 @@ class KidBaseScreen extends GetView<KidBaseController> {
                           clipBehavior: Clip.none,
                           children: [
                             Container(
-                              key: goalsNavKey,
+                              key: GlobalKeys.goalsNavKey,
                               child: VerticalNavBar(),
                             ),
                             Obx(() {
                               if (controller.navigationController.showGoalsTutorial.value &&
                                   controller.currentKid.value?.wallet.spendingJar.color != 0) {
                                 return Positioned(
-                                  left: 10,
-                                  bottom: 130.h, // Position for the Goals button
+                                  left: 1.w,
+                                  bottom: 0.h,
+                                  top: 0.h,
                                   child: HandPointerOverlay(
-                                    targetKey: goalsNavKey,
+                                    targetKey: GlobalKeys.goalsLabelKey,
                                     onTap: () => controller.navigationController.completeGoalsTutorial(),
                                     offsetX: 40.w,
                                     offsetY: 0,

@@ -55,12 +55,15 @@ class DragAndDropMoneyController extends GetxController {
   AnimationController? tutorialAnimationController;
   Animation<Offset>? dragAnimation;
 
+  final RxBool showCoinTutorial = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     _initializeMode();
     // Check if it's first time from SharedPreferences
     checkFirstTime();
+    _initTutorialStates();
   }
 
   @override
@@ -452,7 +455,22 @@ class DragAndDropMoneyController extends GetxController {
 
   void endTutorial() async {
     isTutorialPlaying.value = false;
-    await SharedPreferencesHelper.saveBool('drag_drop_tutorial_shown', false);
+    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenDragDropTutorial, false);
     isFirstTime.value = false;
+    
+    // Show coin tutorial after drag-drop tutorial completes
+    final hasSeenCoinTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenCoinTutorial) ?? false;
+    if (!hasSeenCoinTutorial) {
+      showCoinTutorial.value = true;
+    }
+  }
+
+  void _initTutorialStates() async {
+    // Initialize the drag-drop tutorial state
+    final hasSeenDragDropTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenDragDropTutorial) ?? false;
+    isTutorialPlaying.value = !hasSeenDragDropTutorial;
+
+    // Initialize the coin tutorial state but don't show it yet
+    showCoinTutorial.value = false; // Will be shown after drag-drop tutorial completes
   }
 }

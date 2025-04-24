@@ -11,6 +11,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback onTap;
   final bool isInWishlist;
   final bool isLoading;
+  final Key? favoriteKey;
 
   const ProductCard({
     super.key,
@@ -19,6 +20,8 @@ class ProductCard extends StatelessWidget {
     required this.onTap,
     required this.isInWishlist,
     required this.isLoading,
+    this.favoriteKey,
+
   });
 
   @override
@@ -121,13 +124,16 @@ class ProductCard extends StatelessWidget {
                           ),
                         )
                       else
-                        GestureDetector(
-                          onTap: onWishlistTap,
-                          child: SvgPicture.asset(
-                            Assets.icFavorite,
-                            width: 24.w,
-                            height: 24.w,
-                            colorFilter: ColorFilter.mode(isInWishlist ? AppColors.colorPrimary : Colors.grey[400]!, BlendMode.srcIn),
+                        Container(
+                          key: favoriteKey,
+                          child: GestureDetector(
+                            onTap: onWishlistTap,
+                            child: SvgPicture.asset(
+                              Assets.icFavorite,
+                              width: 24.w,
+                              height: 24.w,
+                              colorFilter: ColorFilter.mode(isInWishlist ? AppColors.colorPrimary : Colors.grey[400]!, BlendMode.srcIn),
+                            ),
                           ),
                         ),
                     ],

@@ -47,6 +47,7 @@ class KidButton extends StatelessWidget {
 
   // Factory constructor for icon-only button
   factory KidButton.iconOnly({
+    Key? key,
     required VoidCallback onTap,
     required Color baseColor,
     Color? iconColor,
@@ -56,6 +57,7 @@ class KidButton extends StatelessWidget {
     double? iconSize = 30,
   }) {
     return KidButton(
+      key: key,
       onTap: onTap,
       baseColor: baseColor,
       iconPath: iconPath,
@@ -70,6 +72,7 @@ class KidButton extends StatelessWidget {
 
   // New factory constructor for icon with title below
   factory KidButton.iconWithTitle({
+    Key? key,
     required VoidCallback onTap,
     required Color baseColor,
     Color? iconColor,
@@ -83,6 +86,7 @@ class KidButton extends StatelessWidget {
     TextStyle? belowTextStyle,
   }) {
     return KidButton(
+      key: key,
       onTap: onTap,
       baseColor: baseColor,
       iconPath: iconPath,

@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
@@ -11,10 +12,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class TransferBetweenJarsScreen extends GetView<KidTransferController> {
-   TransferBetweenJarsScreen({super.key});
-  final GlobalKey _spendToSaveKey = GlobalKey();
-  final GlobalKey _saveToSpendKey = GlobalKey();
-   final RxBool showPointer = true.obs; // You can also use controller variable
+   const TransferBetweenJarsScreen({super.key});
 
 
    @override
@@ -69,27 +67,48 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                _buildTransferArrow(
-                                  key: _spendToSaveKey,
-                                  imagePath: Assets.transferToSavingArrow,
-                                  onTap: () => controller.handleTransfer(
-                                    sourceJar: Jars.spendingJar.name,
-                                    targetJar: Jars.savingJar.name,
-                                    availableAmount: spendingJar.balance,
-                                  ),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    _buildTransferArrow(
+                                      key: GlobalKeys.spendToSaveKey,
+                                      imagePath: Assets.transferToSavingArrow,
+                                      onTap: () async {
+                                        await controller.markTransferTutorialAsShown();
+                                        controller.handleTransfer(
+                                          sourceJar: Jars.spendingJar.name,
+                                          targetJar: Jars.savingJar.name,
+                                          availableAmount: spendingJar.balance,
+                                        );
+                                      },
+                                    ),
+                                    Obx(() {
+                                      if (controller.showPointer.value) {
+                                        return Positioned(
+                                          right: -10.w,
+                                          bottom: -10.h,
+                                          child: HandPointerOverlay(
+                                            targetKey: GlobalKeys.spendToSaveKey,
+                                            onTap: () async {
+                                              await controller.markTransferTutorialAsShown();
+                                            },
+                                            width: 60.w,
+                                            height: 60.w,
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    }),
+                                  ],
                                 ),
                                 SizedBox(height: 30.h),
                                 _buildTransferArrow(
-                                  key: _saveToSpendKey,
                                   imagePath: Assets.transferToSpendArrow,
-                                  onTap: () {
-                                    controller.handleTransfer(
-                                      sourceJar: Jars.savingJar.name,
-                                      targetJar: Jars.spendingJar.name,
-                                      availableAmount: savingJar.balance,
-                                    );
-                                    showPointer.value = false;
-                                  },
+                                  onTap: () => controller.handleTransfer(
+                                    sourceJar: Jars.savingJar.name,
+                                    targetJar: Jars.spendingJar.name,
+                                    availableAmount: savingJar.balance,
+                                  ),
                                 ),
                               ],
                             ),
@@ -108,14 +127,6 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
                   ),
                 ],
               ),
-              if (showPointer.value) HandPointerOverlay(
-                height: 0.h,
-                width: 0.w,
-                targetKey: _spendToSaveKey,
-                onTap: () {
-                  showPointer.value = false;
-                },
-              ),
             ],
           );
         }),
@@ -126,7 +137,7 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
   Widget _buildTransferArrow({
     required String imagePath,
     required VoidCallback onTap,
-    required Key key,
+     Key? key,
   }) {
     return GestureDetector(
       key: key,

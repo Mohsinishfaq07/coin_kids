@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -303,7 +304,6 @@ class KidGoalsController extends GetxController {
       await _goalService.createGoal(goal, isFirstGoal);
 
       if (isFirstGoal) {
-        final GlobalKey _okButtonKey = GlobalKey();
         final RxBool showPointer = true.obs;
 
         KidDialog.show(
@@ -328,7 +328,7 @@ class KidGoalsController extends GetxController {
               clipBehavior: Clip.none,
               children: [
                 KidButton(
-                  key: _okButtonKey,
+                  key: GlobalKeys.okButtonKey,
                   text: 'Ok',
                   onTap: () async {
                     showPointer.value = false;
@@ -343,10 +343,10 @@ class KidGoalsController extends GetxController {
                 Obx(() {
                   if (showPointer.value) {
                     return Positioned(
-                      right: 50.w,
-                      bottom: 0,
+                      right: 0.w,
+                      bottom: 0.h,
                       child: HandPointerOverlay(
-                        targetKey: _okButtonKey,
+                        targetKey: GlobalKeys.okButtonKey,
                         onTap: () async {
                           showPointer.value = false;
                           await SharedPreferencesHelper.saveBool(
@@ -431,6 +431,7 @@ class KidGoalsController extends GetxController {
       resetOldGoal();
 
       Get.until((route) => route.settings.name == Routes.kidBase);
+      appBarController.resetToDefault();
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.back();
@@ -487,17 +488,28 @@ class KidGoalsController extends GetxController {
 
       // If no change in progress, just return
       if (difference == 0) {
-        Get.until((route) => route.settings.name == Routes.kidBase);
-        appBarController.resetToDefault();
+        Get.back();
+        _showMilestoneDialog(
+            "Don't Give Up!",
+            "You haven't entered any amount yet. Every step counts toward your goal!",
+            0,
+            Assets.emojiSad);
+       // Get.until((route) => route.settings.name == Routes.kidBase);
+       // appBarController.resetToDefault();
         return;
       }
 
       // Check if we have enough spending balance when increasing progress
       if (difference > 0) {
         final spendingBalance = kid.wallet.spendingJar.balance;
-        if (difference > spendingBalance) {
-          ToastUtil.showToast("Not enough money in spending jar");
-          Get.back();
+        if (difference > spendingBalance) { Get.back();
+          // ToastUtil.showToast("Not enough money in spending jar");
+          _showMilestoneDialog(
+              "Insufficient Funds",
+              "Your Spending Jar doesn't have enough balance",
+              0,
+              Assets.emojiSad);
+
           return;
         }
       } else {
@@ -596,8 +608,9 @@ class KidGoalsController extends GetxController {
         KidButton(
           text: 'Continue',
           onTap: () {
-            appBarController.resetToDefault();
-            Get.until((route) => route.settings.name == Routes.kidBase);
+            Get.back();
+            // appBarController.resetToDefault();
+            // Get.until((route) => route.settings.name == Routes.kidBase);
           },
           baseColor: AppColors.btnColorGreen,
         ),

@@ -1,10 +1,11 @@
 import 'package:coin_kids/core/constants/enums.dart';
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
@@ -41,8 +42,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
             // Check showcase conditions only when the widget is first built
             if (!controller.hasInitializedShowcase.value) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (controller.shouldShowJarSpotLight() &&
-                    !controller.isNotificationShowing.value) {
+                if (controller.shouldShowJarSpotLight() && !controller.isNotificationShowing.value) {
                   controller.startShowcase(context);
                 }
                 controller.hasInitializedShowcase.value = true;
@@ -75,19 +75,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               jarName: "+ Add Money",
                               height: 0.45.sh,
                               onTap: () {
-                                final isConnected = controller
-                                    .appState.currentKid.value!.isConnected;
-                                final kidBalance = controller
-                                    .appState
-                                    .currentKid
-                                    .value!
-                                    .wallet
-                                    .spendingJar
-                                    .balance;
+                                final isConnected = controller.appState.currentKid.value!.isConnected;
+                                final kidBalance = controller.appState.currentKid.value!.wallet.spendingJar.balance;
 
                                 if (isConnected && kidBalance <= 0) {
-                                  ToastUtil.showToast(
-                                      "Your parent is connected, please request money");
+                                  ToastUtil.showToast("Your parent is connected, please request money");
                                   return;
                                 }
 
@@ -109,9 +101,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                           children: [
                             // Spending/Money
                             JarWidget(
-                              jarState: spendingJar.balance > 0
-                                  ? JarState.filled
-                                  : JarState.empty,
+                              jarState: spendingJar.balance > 0 ? JarState.filled : JarState.empty,
                               jarName: "Money",
                               showAmount: true,
                               amount: spendingJar.balance,
@@ -135,13 +125,37 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             // Transfer Button (show only if both jars exist)
                             if (isSpendingJarCreated && isSavingJarCreated) ...[
                               SizedBox(width: 20.w),
-                              KidButton.iconWithTitle(
-                                onTap: () {
-                                  Get.toNamed(Routes.kidMoneyTransfer);
-                                },
-                                baseColor: AppColors.colorPrimary,
-                                iconPath: Assets.icTransfer,
-                                title: 'Transfer',
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  KidButton.iconWithTitle(
+                                    key: GlobalKeys.transferButtonKey,
+                                    onTap: () {
+                                      controller.showTransferPointer.value = false;
+                                      Get.toNamed(Routes.kidMoneyTransfer);
+                                    },
+                                    baseColor: AppColors.colorPrimary,
+                                    iconPath: Assets.icTransfer,
+                                    title: 'Transfer',
+                                  ),
+                                  Obx(() {
+                                    if (controller.showTransferPointer.value) {
+                                      return Positioned(
+                                        right: -10.w,
+                                        bottom: -10.h,
+                                        child: HandPointerOverlay(
+                                          targetKey: GlobalKeys.transferButtonKey,
+                                          onTap: () {
+                                            controller.showTransferPointer.value = false;
+                                          },
+                                          width: 60.w,
+                                          height: 60.w,
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  }),
+                                ],
                               ),
                               SizedBox(width: 20.w),
                             ],
@@ -165,9 +179,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 )
                               else
                                 JarWidget(
-                                  jarState: savingJar.balance > 0
-                                      ? JarState.filled
-                                      : JarState.empty,
+                                  jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
                                   jarName: "Saving",
                                   jarColor: Color(savingJar.color),
                                   amount: savingJar.balance,
@@ -251,8 +263,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
   String getSpotlightDescription() {
     if (controller.appState.currentKid.value!.isConnected) {
       //Parent exists
-      if (controller.appState.currentKid.value!.wallet.spendingJar.balance ==
-          0) {
+      if (controller.appState.currentKid.value!.wallet.spendingJar.balance == 0) {
         //Show spotlight on AddMoney
         return "You don't have money, Let's Request Money from parent";
       } else {

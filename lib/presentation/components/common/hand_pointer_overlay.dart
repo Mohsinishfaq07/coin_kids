@@ -28,12 +28,12 @@ class _HandPointerOverlayState extends State<HandPointerOverlay> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: widget.width ?? 100.w,
-      height: widget.height ?? 100.w,
+      width: widget.width ?? 60.w,
+      height: widget.height ?? 60.w,
       child: GestureDetector(
         onTap: widget.onTap,
         child: Lottie.asset(
-          'assets/tap.json',
+          'assets/new_tap.json',
           fit: BoxFit.contain,
           repeat: true,
         ),

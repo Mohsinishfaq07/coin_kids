@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
@@ -408,4 +409,20 @@ class KidMarketController extends GetxController {
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
+
+  final RxBool showPointer = true.obs;
+
+  Future<void> checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenMarketFavoriteTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+  }
+
+  Future<void> dismissTutorial() async {
+    showPointer.value = false;
+    await SharedPreferencesHelper.saveBool(
+      SharedPreferencesHelper.hasSeenMarketFavoriteTutorial,
+      true,
+    );
+  }
+
 }

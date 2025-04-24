@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -23,7 +24,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
   }
 
   final GoalModel goal;
-  final GlobalKey _sliderKey = GlobalKey();
   final RxBool showPointer = true.obs;
 
   Future<void> _checkTutorialState() async {
@@ -76,9 +76,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                 if (controller.progressValue.value > goal.targetAmount) {
                                   controller.progressValue.value = goal.targetAmount;
                                 }
-                                
+
                                 return Stack(
-                                  key: _sliderKey,
+                                  key: GlobalKeys.sliderKey,
                                   clipBehavior: Clip.none,
                                   children: [
                                     SfSliderTheme(
@@ -156,7 +156,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                   left: 0.sw,
                                   bottom: -30.h,
                                   child: HandPointerOverlay(
-                                    targetKey: _sliderKey,
+                                    targetKey: GlobalKeys.sliderKey,
                                     onTap: () async {
                                       showPointer.value = false;
                                       await SharedPreferencesHelper.saveBool(
@@ -246,11 +246,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                 text: 'Done',
                 baseColor: AppColors.btnColorGreen,
                 iconPath: Assets.icTick,
-                onTap: () {
+                onTap: () async {
                   // Calculate percentage achieved
-                  double progressPercentage =
-                      (controller.progressValue.value / goal.targetAmount) *
-                          100;
+                  double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
                   int rewardCoins = 0;
 
                   // Check milestones and assign rewards
@@ -265,12 +263,12 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   }
 
                   // Save progress and award coins if milestone reached
-                  controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
-                  
-                  // Reset app bar configuration only if progress is not exactly 100%
-                  // if (progressPercentage != 100 || progressPercentage >= 0 ) {
+                  await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                  // if (progressPercentage != 100  ) {
                   //   controller.appBarController.resetToDefault();
                   // }
+                  // Only navigate back, don't reset AppBar
+                 // Get.back();
                 },
               ),
             ],

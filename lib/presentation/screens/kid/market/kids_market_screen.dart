@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -6,13 +7,18 @@ import 'package:coin_kids/presentation/components/parent/market_filter_chips.dar
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
+import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'product_card.dart';
 
 class KidsMarketScreen extends GetView<KidMarketController> {
-  const KidsMarketScreen({super.key});
+  KidsMarketScreen({super.key}) {
+    controller.checkTutorialState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,47 +145,80 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                           );
                         }
 
-                        return NotificationListener<ScrollNotification>(
-                          onNotification: (scrollInfo) {
-                            if (scrollInfo.metrics.pixels > 10) {
-                              controller.hideFilters();
-                            } else if (scrollInfo.metrics.pixels <= 0) {
-                              controller.showFilter();
-                            }
-                            return true;
-                          },
-                          child: GridView.builder(
-                            controller: controller.scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.only(top: 4.h, bottom: 12.h, right: 30.r),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              crossAxisSpacing: 8.w,
-                              mainAxisSpacing: 8.h,
-                              childAspectRatio: cardWidth / cardHeight,
+                        return Stack(
+                          children: [
+                            NotificationListener<ScrollNotification>(
+                              onNotification: (scrollInfo) {
+                                if (scrollInfo.metrics.pixels > 10) {
+                                  controller.hideFilters();
+                                } else if (scrollInfo.metrics.pixels <= 0) {
+                                  controller.showFilter();
+                                }
+                                return true;
+                              },
+                              child: GridView.builder(
+                                controller: controller.scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                padding: EdgeInsets.only(top: 4.h, bottom: 12.h, right: 30.r),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 8.w,
+                                  mainAxisSpacing: 8.h,
+                                  childAspectRatio: cardWidth / cardHeight,
+                                ),
+                                itemCount: products.length,
+                                itemBuilder: (context, index) {
+                                  final product = products[index];
+                                  return Stack(
+                                    children: [
+                                      Obx(() => ProductCard(
+                                        product: product,
+                                        onWishlistTap: () {
+                                          controller.toggleWishlist(product);
+                                          
+                                          if (index == 0 && controller.showPointer.value) {
+                                            controller.dismissTutorial();
+                                          }
+                                        },
+                                        isInWishlist: controller.isInWishlist(product.id!),
+                                        isLoading: controller.isItemLoading(product.id!),
+                                        favoriteKey: index == 0 ?  GlobalKeys.firstFavoriteKey : null,
+                                        onTap: () => Get.dialog(
+                                          ProductDetailDialog(
+                                            product: product,
+                                            onAddToGoal: () {
+                                              controller.addToGoal(product);
+                                            },
+                                          ),
+                                          barrierDismissible: true,
+                                        ),
+                                      )),
+                                      if (index == 0)
+                                        Obx(() {
+                                          if (controller.showPointer.value) {
+                                            return Positioned(
+                                              right: -10.w,
+                                              bottom: -10.w,
+                                              child: HandPointerOverlay(
+                                                targetKey: GlobalKeys.firstFavoriteKey,
+                                                onTap: () {
+                                                  controller.toggleWishlist(product);
+
+                                                  controller.dismissTutorial();
+                                                },
+                                                width: 80.w,
+                                                height: 80.w,
+                                              ),
+                                            );
+                                          }
+                                          return const SizedBox.shrink();
+                                        }),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
-                            itemCount: products.length,
-                            itemBuilder: (context, index) {
-                              final product = products[index];
-                              return Obx(() {
-                                return ProductCard(
-                                  product: product,
-                                  onWishlistTap: () => controller.toggleWishlist(product),
-                                  isInWishlist: controller.isInWishlist(product.id!),
-                                  isLoading: controller.isItemLoading(product.id!),
-                                  onTap: () => Get.dialog(
-                                    ProductDetailDialog(
-                                      product: product,
-                                      onAddToGoal: () {
-                                        controller.addToGoal(product);
-                                      },
-                                    ),
-                                    barrierDismissible: true,
-                                  ),
-                                );
-                              });
-                            },
-                          ),
+                          ],
                         );
                       }),
                     ),
@@ -300,7 +339,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
   }
 
   int _calculateCrossAxisCount(double screenWidth) {
-    final double targetCardWidth = 180.r;
+    final double targetCardWidth = 180.w;
     int count = (screenWidth / targetCardWidth).floor();
     return count.clamp(2, 4);
   }
