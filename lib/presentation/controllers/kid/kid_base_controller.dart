@@ -12,6 +12,7 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -19,13 +20,10 @@ import 'package:showcaseview/showcaseview.dart';
 class KidBaseController extends GetxController {
   // Dependencies
   final RoleController _roleController = Get.find<RoleController>();
-  final VerticalNavBarController navigationController =
-      Get.find<VerticalNavBarController>();
+  final VerticalNavBarController navigationController = Get.find<VerticalNavBarController>();
   final NotificationService _notificationService = NotificationService();
-
   final AppStateController appState = Get.find<AppStateController>();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
-
   RxBool isNotificationShowing = true.obs;
   final RxBool showTransferPointer = true.obs;
 
@@ -41,12 +39,23 @@ class KidBaseController extends GetxController {
 //observable variable
   var showJarShowcase = true.obs;
   var hasInitializedShowcase = false.obs;
+  final RxBool showGoalsTutorial = true.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   OrientationUtils.lockToLandscape();
+  //   _initializeKid();
+  // }
+
+  KidBaseController() {
+    _initialize();
+  }
+
+  void _initialize() {
     OrientationUtils.lockToLandscape();
     _initializeKid();
+    _initializeGoalsTutorial();
   }
 
   Future<void> _initializeKid() async {
@@ -62,6 +71,11 @@ class KidBaseController extends GetxController {
         await fetchAllNotifications();
       }
     });
+  }
+
+  Future<void> _initializeGoalsTutorial() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsTutorial) ?? false;
+    showGoalsTutorial.value = !hasSeenTutorial;
   }
 
   Future<void> fetchAllNotifications() async {
@@ -283,6 +297,13 @@ class KidBaseController extends GetxController {
     final JarCreationController jarCreationController =
         Get.find<JarCreationController>();
     jarCreationController.jarType = jarType;
+  }
+
+  Future<void> completeGoalsTutorial() async {
+    Get.log("Completing goals tutorial");
+    showGoalsTutorial.value = false;
+    navigationController.completeGoalsTutorial();
+    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenGoalsTutorial, true);
   }
 
   @override

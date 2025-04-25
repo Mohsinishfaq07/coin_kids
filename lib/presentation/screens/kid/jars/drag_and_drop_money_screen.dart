@@ -4,6 +4,7 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/drag_drop_tutorial_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/coin_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -65,30 +66,31 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 50.w),
+                    padding: EdgeInsets.only(top: 50.w,left: 20.w),
                     child: Row(
+
                       children: [
-                        // Money Type Selector (20% width)
-                        SizedBox(
-                          width: Get.width * 0.15,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Obx(() {
-                                return KidButton.iconOnly(
-                                  onTap: () => controller.isShowingBills.value = true,
-                                  baseColor: controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
-                                  iconPath: Assets.icNotes,
-                                  size: 60.w,
-                                  iconSize: 40.w,
-                                );
-                              }),
-                              SizedBox(height: 20.h),
-                              Stack(
+                        // Money Type Selector (left side)
+                        Expanded(
+                          flex: 1,
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Obx(() {
                                     return KidButton.iconOnly(
-
+                                      onTap: () => controller.isShowingBills.value = true,
+                                      baseColor: controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
+                                      iconPath: Assets.icNotes,
+                                      size: constraints.maxWidth * 0.8,
+                                      iconSize: constraints.maxWidth * 0.5,
+                                    );
+                                  }),
+                                  SizedBox(height: 20.h),
+                                  Obx(() {
+                                    return KidButton.iconOnly(
                                       key: GlobalKeys.coinButtonKey,
                                       onTap: () {
                                         controller.isShowingBills.value = false;
@@ -97,77 +99,53 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                       },
                                       baseColor: !controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
                                       iconPath: Assets.icCoinEuro,
-                                      size: 60.w,
-                                      iconSize: 40.w,
+                                      size: constraints.maxWidth * 0.8,
+                                      iconSize: constraints.maxWidth * 0.5,
                                     );
                                   }),
-                                  Obx(() {
-                                    if (controller.showCoinTutorial.value) {
-                                      return Positioned(
-                                        right: 0.w,
-                                        bottom: -10,
-                                        child: HandPointerOverlay(
-                                          targetKey: GlobalKeys.coinButtonKey,
-                                          onTap: () {
-                                            controller.isShowingBills.value = false;
-                                            controller.showCoinTutorial.value = false;
-                                            SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
-                                          },
-                                          offsetX: 30.w,
-                                          offsetY: 0,
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }),
                                 ],
-                              ),
-                            ],
+                              );
+                            },
                           ),
                         ),
 
-                        // Draggable Money Items (40% width)
+                        // Draggable Money Items (middle)
                         Expanded(
-                          flex: 2,
+                          flex: 4,
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              final availableWidth = constraints.maxWidth;
-
                               return Obx(() {
                                 final isShowingBills = controller.isShowingBills.value;
                                 final rows = isShowingBills ? controller.billRows : controller.coinRows;
 
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      for (int rowIndex = 0; rowIndex < rows.length; rowIndex++)
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            for (final moneyItem in rows[rowIndex])
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.w),
-                                                child: SizedBox(
-                                                  width: isShowingBills
-                                                      ? availableWidth * 0.30.w // Bills are wider
-                                                      : rowIndex == 0
-                                                          ? availableWidth * 0.25 // Larger coins (€1, €2)
-                                                          : availableWidth * 0.2, // Smaller coins
-                                                  child: AspectRatio(
-                                                    aspectRatio: isShowingBills
-                                                        ? 1.8 // Bills are rectangular
-                                                        : 1.0, // Coins are circular
-                                                    child: _buildDraggableMoney(moneyItem, availableWidth, isShowingBills, rowIndex),
+                                return Center(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        for (int rowIndex = 0; rowIndex < rows.length; rowIndex++)
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              for (final moneyItem in rows[rowIndex])
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.w),
+                                                  child: SizedBox(
+                                                    width: isShowingBills
+                                                        ? constraints.maxWidth * 0.25
+                                                        : rowIndex == 0
+                                                            ? constraints.maxWidth * 0.2
+                                                            : constraints.maxWidth * 0.15,
+                                                    child: AspectRatio(
+                                                      aspectRatio: isShowingBills ? 1.8 : 1.0,
+                                                      child: _buildDraggableMoney(moneyItem, constraints.maxWidth, isShowingBills, rowIndex),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                          ],
-                                        ),
-                                    ],
+                                            ],
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               });
@@ -175,18 +153,11 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                           ),
                         ),
 
-                        // Jar Target Area (40% width)
+                        // Jar Target Area (right side)
                         Expanded(
-                          flex: 2,
+                          flex: 4,
                           child: DragTarget<double>(
-                            // onWillAccept: (amount) {
-                            //   // This will be called for validation AND allow builder to show colors
-                            //   if (amount == null) return false;
-                            //   return true; // Always allow to show color feedback
-                            // },
-                            onWillAcceptWithDetails: (details){
-                              return true;
-                            },
+                            onWillAcceptWithDetails: (details) => true,
                             onAcceptWithDetails: (details) async {
                               double amount = details.data;
                               if (controller.canAddAmount(amount)) {
@@ -201,47 +172,35 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                 jarColor = canAdd ? Colors.green.withValues(alpha: 0.3) : Colors.red.withValues(alpha: 0.3);
                               }
 
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Obx(() {
-                                    return JarWidget(
-                                      key: GlobalKeys.containerKey,
-                                      jarState: controller.jarState.value,
-                                      jarName: "",
-                                      height: 150.h,
-                                      showTag: false,
-                                      amount: controller.totalValue.value,
-                                      jarColor: jarColor,
-                                    );
-                                  }),
-                                  // Text(
-                                  //   '${controller.totalValue}€ total value ',
-                                  //   style: AppTextStyle.bodySmall.copyWith(
-                                  //     color: Colors.red,
-                                  //     fontWeight: FontWeight.bold,
-                                  //   ),
-                                  // )
-                                  // ,
-                                  // Text(
-                                  //   '${controller.targetAmount}€ target value ',
-                                  //   style: AppTextStyle.bodySmall.copyWith(
-                                  //     color: Colors.red,
-                                  //     fontWeight: FontWeight.bold,
-                                  //   ),
-                                  // ),
-                                  if (candidateData.isNotEmpty && !controller.canAddAmount(candidateData.first as double))
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 8.h),
-                                      child: Text(
-                                        'Can only add ${controller.remainingAmount}€',
-                                        style: AppTextStyle.bodySmall.copyWith(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Obx(() {
+                                      return JarWidget(
+                                        key: GlobalKeys.containerKey,
+                                        jarState: controller.jarState.value,
+                                        jarName: "",
+                                        height: 150.h,
+                                        showTag: false,
+                                        amount: controller.totalValue.value,
+                                        jarColor: jarColor,
+                                      );
+                                    }),
+                                    if (candidateData.isNotEmpty && !controller.canAddAmount(candidateData.first as double))
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8.h),
+                                        child: Text(
+                                          'Can only add ${controller.remainingAmount}€',
+                                          style: AppTextStyle.bodySmall.copyWith(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                ],
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -278,13 +237,28 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
             ),
           ),
 
-          // Tutorial overlay
+          // Tutorial overlays
           Obx(() {
             if (controller.isTutorialPlaying.value && controller.jarOffset.value.dx != 0 && controller.moneyOffset.value.dx != 0) {
               return DragDropTutorialOverlay(
                 startPosition: controller.moneyOffset.value,
                 endPosition: controller.jarOffset.value,
                 onComplete: () => controller.endTutorial(),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+
+          // Coin tutorial overlay
+          Obx(() {
+            if (controller.showCoinTutorial.value) {
+              return CoinTutorialOverlay(
+                targetKey: GlobalKeys.coinButtonKey,
+                onComplete: () {
+                  controller.isShowingBills.value = false;
+                  controller.showCoinTutorial.value = false;
+                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                },
               );
             }
             return const SizedBox.shrink();

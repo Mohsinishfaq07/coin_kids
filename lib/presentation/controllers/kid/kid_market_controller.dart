@@ -62,6 +62,10 @@ class KidMarketController extends GetxController {
 
   final RxInt wishlistItemCount = 0.obs;
 
+  final RxBool showPointer = true.obs;
+  final RxBool showWishlistTutorial = false.obs;
+  static const String hasSeenWishlistTutorial = 'hasSeenWishlistTutorial';
+
   @override
   void onInit() {
     super.onInit();
@@ -74,6 +78,7 @@ class KidMarketController extends GetxController {
     _initializeWishlist();
     _setupWishlistListener();
     _setupListeners();
+    checkTutorialState();
   }
 
   void _initializeWishlist() {
@@ -410,19 +415,29 @@ class KidMarketController extends GetxController {
     }
   }
 
-  final RxBool showPointer = true.obs;
-
   Future<void> checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenMarketFavoriteTutorial) ?? false;
-    showPointer.value = !hasSeenTutorial;
+    // Check favorite tutorial state
+    final hasSeenFavoriteTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenMarketTutorial) ?? false;
+    showPointer.value = !hasSeenFavoriteTutorial;
+
+    // Initially hide wishlist tutorial, it will be shown after favorite tutorial
+    showWishlistTutorial.value = false;
   }
 
-  Future<void> dismissTutorial() async {
+  Future<void> dismissFavoriteTutorial() async {
     showPointer.value = false;
-    await SharedPreferencesHelper.saveBool(
-      SharedPreferencesHelper.hasSeenMarketFavoriteTutorial,
-      true,
-    );
+    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenMarketTutorial, true);
+    
+    // After favorite tutorial is dismissed, check if wishlist tutorial should be shown
+    final hasSeenWishlist = SharedPreferencesHelper.getBool(hasSeenWishlistTutorial) ?? false;
+    if (!hasSeenWishlist) {
+      showWishlistTutorial.value = true;
+    }
+  }
+
+  Future<void> dismissWishlistTutorial() async {
+    showWishlistTutorial.value = false;
+    await SharedPreferencesHelper.saveBool(hasSeenWishlistTutorial, true);
   }
 
 }

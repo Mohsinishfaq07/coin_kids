@@ -1,17 +1,18 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/widgets/orientation_transition.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/goals_nav_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/components/common/kid_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/kid_goals_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
-import 'package:coin_kids/presentation/screens/kid/market/kids_market_screen.dart';
+import 'package:coin_kids/presentation/screens/kid/market/kid_market_screen.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,79 +55,89 @@ class KidBaseScreen extends GetView<KidBaseController> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Obx(() {
-          final kid = controller.currentKid.value;
-          if (kid == null) {
-            return const Center(child: Text("No kid data found"));
-          }
+        body: Stack(
+          children: [
+            Obx(() {
+              final kid = controller.currentKid.value;
+              if (kid == null) {
+                return const Center(child: Text("No kid data found"));
+              }
 
-          return Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.background,
-              image: const DecorationImage(
-                image: AssetImage(Assets.kidBg),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Column(
-              children: [
-                KidAppBarComponent(
-                  onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
-                  onAddMoneyTap: () {
-                    final isConnected = controller.appState.currentKid.value!.isConnected;
-                    Get.toNamed(
-                      Routes.kidMoneyAddOrRequest,
-                      arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
-                    );
-                  },
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.background,
+                  image: const DecorationImage(
+                    image: AssetImage(Assets.kidBg),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                SizedBox(height: 10),
-                Expanded(
-                  child: Row(
-                    children: [
-                      // Navigation Rail with Tutorial
-                      SizedBox(
-                      //  color: Colors.green,
-                        width: 80.w,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
+                child: Column(
+                  children: [
+                    KidAppBarComponent(
+                      onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
+                      onAddMoneyTap: () {
+                        final isConnected = controller.appState.currentKid.value!.isConnected;
+                        Get.toNamed(
+                          Routes.kidMoneyAddOrRequest,
+                          arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // Navigation Rail
+                          SizedBox(
+                            width: 80.w,
+                            child: Container(
                               key: GlobalKeys.goalsNavKey,
                               child: VerticalNavBar(),
                             ),
-                            Obx(() {
-                              if (controller.navigationController.showGoalsTutorial.value &&
-                                  controller.currentKid.value?.wallet.spendingJar.color != 0) {
-                                return Positioned(
-                                  left: 1.w,
-                                  bottom: 0.h,
-                                  top: 0.h,
-                                  child: HandPointerOverlay(
-                                    targetKey: GlobalKeys.goalsLabelKey,
-                                    onTap: () => controller.navigationController.completeGoalsTutorial(),
-                                    offsetX: 40.w,
-                                    offsetY: 0,
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            }),
-                          ],
-                        ),
-                      ),
+                          ),
 
-                      // Content Area
-                      Expanded(
-                        child: _buildMainContent(kid),
+                          // Content Area
+                          Expanded(
+                            child: _buildMainContent(kid),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }),
+              );
+            }),
+
+            // Goals Tutorial Overlay
+            Obx(() {
+              final kid = controller.currentKid.value;
+              if (kid == null) return const SizedBox.shrink();
+
+              if (!controller.showGoalsTutorial.value) {
+                return const SizedBox.shrink();
+              }
+
+              // Check if spending jar exists and has a color
+              final spendingJarColor = kid.wallet.spendingJar.color;
+              if (spendingJarColor == 0) {
+                Get.log("Spending jar not created yet, keeping tutorial hidden");
+                return const SizedBox.shrink();
+              }
+
+              // Check if kid already has goals (coinKidsBalance > 0)
+              if (kid.coinKidsBalance > 0) {
+                Get.log("Kid already has goals, keeping tutorial hidden");
+                return const SizedBox.shrink();
+              }
+
+              Get.log("Showing goals tutorial overlay");
+              return GoalsNavTutorialOverlay(
+                targetKey: GlobalKeys.goalsNavKey,
+                onComplete: () => controller.completeGoalsTutorial(),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -140,7 +151,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
           // return KidHomeScreen();
           return KidGoalsScreen(currentKidId: kid.kidId);
         case 2:
-          return KidsMarketScreen();
+          return KidMarketScreen();
         default:
           //return const SizedBox.shrink();
           return const KidHomeScreen();

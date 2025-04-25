@@ -29,6 +29,13 @@ class GlobalKeys {
   //kid home screen on transfer button
   static final GlobalKey transferButtonKey = GlobalKey();
 
+  static final GlobalKey firstGoalKey = GlobalKey();
+
+  static final GlobalKey noGoalKey = GlobalKey();
+
+
+
+
 
 
 

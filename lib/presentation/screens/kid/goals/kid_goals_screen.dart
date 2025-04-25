@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -19,7 +20,6 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
     _checkTutorialState();
   }
 
-  final GlobalKey _firstGoalKey = GlobalKey();
   final RxBool showPointer = true.obs;
 
   Future<void> _checkTutorialState() async {
@@ -51,7 +51,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (controller.goals.isEmpty) {
+                  if (controller.goals.isEmpty  ) {
                     return NoGoalsWidget();
                   }
 
@@ -73,7 +73,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                         itemBuilder: (context, index) {
                           final goal = controller.goals[index];
                           return GoalCard(
-                            key: index == 0 ? _firstGoalKey : null,
+                            key: index == 0 ? GlobalKeys.firstGoalKey : null,
                             goal: goal,
                             isConnected:
                                 controller.currentKid.value?.isConnected ?? false,
@@ -81,11 +81,11 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                         },
                       ),
                       Obx(() {
-                        if (showPointer.value && controller.goals.isNotEmpty) {
+                        if (controller.showPointer.value && controller.goals.isNotEmpty) {
                           return HandPointerOverlay(
-                            targetKey: _firstGoalKey,
+                            targetKey: GlobalKeys.firstGoalKey,
                             onTap: () async {
-                              showPointer.value = false;
+                              controller.showPointer.value = false;
                               await SharedPreferencesHelper.saveBool(
                                 SharedPreferencesHelper.hasSeenGoalsListTutorial,
                                 true,

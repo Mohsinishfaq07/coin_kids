@@ -183,7 +183,7 @@ class ProductDetailDialog extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(1.w),
                                           decoration: BoxDecoration(
-                                            color: AppColors.colorPrimary,
+                                            color: AppColors.textPrimary,
                                             borderRadius: BorderRadius.circular(8.r),
                                           ),
                                           child: Icon(
@@ -210,15 +210,20 @@ class ProductDetailDialog extends StatelessWidget {
           // Tap Animation Overlay
           Obx(() {
             if (showPointer.value) {
-              return HandPointerOverlay(
-                targetKey: _addToGoalKey,
-                onTap: () async {
-                  showPointer.value = false;
-                  await SharedPreferencesHelper.saveBool(
-                    SharedPreferencesHelper.hasSeenAddToGoalTutorial, 
-                    true
-                  );
-                },
+              return Positioned(
+                bottom: 10.h,
+                left: 20.w,
+                child: HandPointerOverlay(
+
+                  targetKey: _addToGoalKey,
+                  onTap: () async {
+                    showPointer.value = false;
+                    await SharedPreferencesHelper.saveBool(
+                      SharedPreferencesHelper.hasSeenAddToGoalTutorial,
+                      true
+                    );
+                  },
+                ),
               );
             }
             return const SizedBox.shrink();

@@ -8,17 +8,20 @@ import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dar
 import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
 import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/market_wishlist_tutorial_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'product_card.dart';
+import 'dart:math' as math;
 
-class KidsMarketScreen extends GetView<KidMarketController> {
-  KidsMarketScreen({super.key}) {
+class KidMarketScreen extends GetView<KidMarketController> {
+  KidMarketScreen({super.key}) {
     controller.checkTutorialState();
   }
 
+  final GlobalKey wishlistButtonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +180,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                           controller.toggleWishlist(product);
                                           
                                           if (index == 0 && controller.showPointer.value) {
-                                            controller.dismissTutorial();
+                                            controller.dismissFavoriteTutorial();
                                           }
                                         },
                                         isInWishlist: controller.isInWishlist(product.id!),
@@ -203,8 +206,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                                 targetKey: GlobalKeys.firstFavoriteKey,
                                                 onTap: () {
                                                   controller.toggleWishlist(product);
-
-                                                  controller.dismissTutorial();
+                                                  controller.dismissFavoriteTutorial();
                                                 },
                                                 width: 80.w,
                                                 height: 80.w,
@@ -230,15 +232,19 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                 top: 0.10.sh,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => Get.toNamed(Routes.kidWishlist),
+                  key: wishlistButtonKey,
+                  onTap: () {
+                    controller.dismissWishlistTutorial();
+                    Get.toNamed(Routes.kidWishlist);
+                  },
                   child: Container(
                     clipBehavior: Clip.hardEdge,
                     width: 36.r,
                     decoration: BoxDecoration(
                       color: AppColors.textPrimary,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.r),
-                        bottomLeft: Radius.circular(20.r),
+                        topLeft: Radius.circular(14.r),
+                        bottomLeft: Radius.circular(14.r),
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -249,7 +255,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                       ],
                     ),
                     child: RotatedBox(
-                      quarterTurns: 1, // Rotate text from bottom to top
+                      quarterTurns: 3, // Rotate text from bottom to top
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 32.w),
                         child: Row(
@@ -280,7 +286,7 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Text(
-                                      count.toString(),
+                                      "(items ${count.toString()})",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 14.sp,
@@ -293,6 +299,23 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                                 return SizedBox.shrink();
                               },
                             ),
+                            SizedBox(width: 15.w,),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.r)
+                                    ,color: Colors.white
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Transform.rotate(
+                                  angle: 0.5 * math.pi,
+
+                                  child: Icon(Icons.arrow_back_ios_new,color: AppColors.textPrimary,
+                                  size: 12.h
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -300,6 +323,17 @@ class KidsMarketScreen extends GetView<KidMarketController> {
                   ),
                 ),
               ),
+
+              // Wishlist Tutorial Overlay
+              Obx(() {
+                if (controller.showWishlistTutorial.value) {
+                  return MarketWishlistTutorialOverlay(
+                    targetKey: wishlistButtonKey,
+                    onComplete: () => controller.dismissWishlistTutorial(),
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
             ],
           ),
         );

@@ -143,7 +143,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                       return Positioned(
                                         right: -10.w,
                                         bottom: -10.h,
-                                        child: HandPointerOverlay(
+                                          child: HandPointerOverlay(
                                           targetKey: GlobalKeys.transferButtonKey,
                                           onTap: () {
                                             controller.showTransferPointer.value = false;

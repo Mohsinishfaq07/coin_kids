@@ -57,6 +57,17 @@ class KidGoalsController extends GetxController {
   // Stream subscription
   StreamSubscription<List<GoalModel>>? _goalsSubscription;
   StreamSubscription<KidModel?>? _kidSubscription;
+
+  final RxBool showPointer = true.obs;
+
+  Future<void> checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+  }
+
+
+
+
   void switchToParentMode() {
     final isKidConnected = currentKid.value?.isConnected ?? false;
     if (!isKidConnected) {
