@@ -2,6 +2,7 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -12,6 +13,8 @@ class RoleSelectionController extends GetxController {
   final _kidService = Get.find<KidService>();
   final _authService = Get.find<AuthService>();
   final roleController = Get.find<RoleController>();
+  final analytics = Get.find<AnalyticsService>();
+
 
   @override
   void onInit() {

@@ -60,7 +60,8 @@ class IntroScreen extends GetView<IntroController> {
                   Obx(() {
                     return controller.pageIndex.value == controller.pages.length - 1
                         ? AppButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              await controller.completeIntro();
                               Get.offNamed(Routes.signUp);
                             },
                             size: Size(0.8.sw, 50),
@@ -75,13 +76,7 @@ class IntroScreen extends GetView<IntroController> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 TextButton(
-                                  onPressed: () {
-                                    controller.carouselController.animateToPage(
-                                      controller.pages.length - 1,
-                                      duration: const Duration(milliseconds: 500),
-                                      curve: Curves.ease,
-                                    );
-                                  },
+                                  onPressed: () => controller.skipToLast(),
                                   child: Text(
                                     "Skip",
                                     style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
@@ -105,13 +100,7 @@ class IntroScreen extends GetView<IntroController> {
                                   );
                                 }),
                                 AppIconButton(
-                                  onPressed: () {
-                                    controller.carouselController.animateToPage(
-                                      controller.pageIndex.value + 1,
-                                      duration: const Duration(milliseconds: 500),
-                                      curve: Curves.ease,
-                                    );
-                                  },
+                                  onPressed: () => controller.nextPage(),
                                   icon: const Icon(Icons.arrow_forward_rounded),
                                 ),
                               ],

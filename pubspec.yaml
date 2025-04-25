@@ -82,6 +82,7 @@ dependencies:
   responsive_framework: ^1.5.1
   auto_size_text: ^3.0.0
   keyboard_actions: ^4.2.0
+  firebase_analytics: ^11.4.5
 
 dev_dependencies:
   flutter_test:

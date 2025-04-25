@@ -11,13 +11,16 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
+
 class KidHomeScreen extends GetView<KidBaseController> {
   const KidHomeScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +77,32 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               jarState: JarState.nullJar,
                               jarName: "+ Add Money",
                               height: 0.45.sh,
-                              onTap: () {
+                              onTap: () async {
                                 final isConnected = controller.appState.currentKid.value!.isConnected;
                                 final kidBalance = controller.appState.currentKid.value!.wallet.spendingJar.balance;
 
                                 if (isConnected && kidBalance <= 0) {
+                                  // KidDialog.show(
+                                  //   emoji: Assets.icEmojiMessage,
+                                  //   title: "Woohoo! Parent Connected 🎈",
+                                  //   subtitle: "Your parent is connected, please request money",
+                                  //   buttons: [
+                                  //     KidButton(
+                                  //       text: "Ok",
+                                  //       onTap: () => Get.back(),
+                                  //       baseColor: AppColors.btnColorGreen,
+                                  //       iconPath: Assets.icTick,
+                                  //       iconPosition: IconPosition.left,
+                                  //     ),
+                                  //   ],
+                                  //
+                                  // );
                                   ToastUtil.showToast("Your parent is connected, please request money");
                                   return;
                                 }
+
+                                // Track jar creation started
+                                await controller.analytics.logJarCreationStarted(Jars.spendingJar.name);
 
                                 controller.startJarCreation(Jars.spendingJar);
                                 Get.toNamed(Routes.kidJarColorSelection);

@@ -3,6 +3,8 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,7 +42,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                   Text(
                     "Are you a parent or a child?",
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 24.sp, // Adjust the font size as needed
+                          fontSize: 24.sp,
                         ),
                   ),
                   SizedBox(height: 57.h),
@@ -49,6 +51,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                     title: "I'm a Parent",
                     description: "Give allowances",
                     onTap: () async {
+                      await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleParent);
                       controller.finalizeRole(UserRole.parent);
                     },
                     description1: "Support your child's",
@@ -60,6 +63,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                     title: "I'm a Child",
                     description: "Receive Allowance",
                     onTap: () async {
+                      await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleChild);
                       controller.finalizeRole(UserRole.child);
                     },
                     description1: 'Set up saving goals',

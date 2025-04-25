@@ -6,14 +6,10 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:get/get.dart';
 
 class JarCreationController extends GetxController {
-  final appState = Get.find<AppStateController>();
-  final kidService = Get.find<KidService>();
+
   var selectedColorIndex = 0.obs;
-
   var jarType = Jars.spendingJar;
-
   final amount = 0.0.obs;
-
   final List<Color> colors = [
     const Color(0xFFFF6060),
     const Color(0xFF8F60FF),
@@ -28,4 +24,6 @@ class JarCreationController extends GetxController {
     const Color(0xFFFF60C4),
     const Color(0xFF3F51FC),
   ];
+  final appState = Get.find<AppStateController>();
+  final kidService = Get.find<KidService>();
 }

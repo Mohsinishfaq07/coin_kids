@@ -202,17 +202,11 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                                         showAddButton: true,
                                         iconSize: 32.w,
                                         onAddTap: () {
-                                          if (kid.wallet.spendingJar.color == 0) {
-                                            ToastUtil.showToast("Please create a spending jar first to add money");
-                                            return;
-                                          }
+
                                           onAddMoneyTap?.call();
                                         },
                                         onCardTap: () {
-                                          if (kid.wallet.spendingJar.color == 0) {
-                                            ToastUtil.showToast("Please create a spending jar first to add money");
-                                            return;
-                                          }
+
                                           onAddMoneyTap?.call();
                                         },
                                       ),
@@ -223,17 +217,11 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                                       showAddButton: true,
                                       iconSize: 32.w,
                                       onAddTap: () {
-                                        if (kid.wallet.spendingJar.color == 0) {
-                                          ToastUtil.showToast("Please create a spending jar first to add money");
-                                          return;
-                                        }
+
                                         onAddMoneyTap?.call();
                                       },
                                       onCardTap: () {
-                                        if (kid.wallet.spendingJar.color == 0) {
-                                          ToastUtil.showToast("Please create a spending jar first to add money");
-                                          return;
-                                        }
+
                                         onAddMoneyTap?.call();
                                       },
                                     ),

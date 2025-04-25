@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 
 class SignupController extends GetxController {
   final _authService = Get.find<AuthService>();
+  final analytics = Get.find<AnalyticsService>();
 
   final name = ''.obs;
   final password = ''.obs;

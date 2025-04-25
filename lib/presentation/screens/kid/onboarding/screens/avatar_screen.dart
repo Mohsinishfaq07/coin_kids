@@ -67,7 +67,16 @@ class KidAvatarScreen extends GetView<KidOnboardingController> {
           Padding(
             padding: EdgeInsets.all(16.w),
             child: KidButton(
-              onTap: controller.completeOnboarding,
+              onTap: () async {
+                // Track avatar step completion
+                await controller.analytics.logOnboardingStepComplete('avatar', parameters: {
+                  'avatar_type': controller.customImagePath.isNotEmpty ? 'custom' : 'predefined',
+                  'selected_avatar_index': controller.selectedAvatarIndex.toString(),
+                });
+                // Track overall onboarding completion
+                await controller.analytics.logOnboardingComplete();
+                controller.completeOnboarding();
+              },
               text: 'Done',
               baseColor: AppColors.btnColorGreen,
               // width: 120.w,

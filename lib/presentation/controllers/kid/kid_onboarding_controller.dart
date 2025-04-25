@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -17,6 +18,8 @@ class KidOnboardingController extends GetxController {
   final kidsService = Get.find<KidService>();
   final authService = Get.find<AuthService>();
   final ImagePicker _picker = ImagePicker();
+  final analytics = Get.find<AnalyticsService>();
+
 
   // Step Management
   final currentStep = OnboardingStep.name.obs;

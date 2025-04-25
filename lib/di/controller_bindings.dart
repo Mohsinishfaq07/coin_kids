@@ -42,6 +42,7 @@ import '../presentation/controllers/common/role_controller.dart';
 import '../presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import '../presentation/controllers/parent/add_child_controller.dart';
 import '../presentation/controllers/parent/parent_drawer_controller.dart';
+import '../data/remote_services/analytics_service.dart';
 
 class ControllerBindings extends Bindings {
   @override
@@ -55,6 +56,7 @@ class ControllerBindings extends Bindings {
     Get.put<MarketService>(MarketService(), permanent: true);
     Get.put<TransactionService>(TransactionService(), permanent: true);
     Get.put<NotificationService>(NotificationService(), permanent: true);
+    Get.put<AnalyticsService>(AnalyticsService(), permanent: true);
 
     //Common
     Get.put(AppStateController(), permanent: true);

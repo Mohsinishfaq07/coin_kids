@@ -13,7 +13,6 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
   final AmountAdditionMode mode;
   final _addAmount = FocusNode();
 
-
   AddMoneyScreen({
     super.key,
   }) : mode = Get.arguments as AmountAdditionMode;
@@ -60,7 +59,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: KidButton.iconOnly(
-                  onTap: () => Get.back(),
+                  onTap: () => controller.handleBackButton(),
                   baseColor: AppColors.btnColorOrange,
                   iconPath: Assets.icBack,
                   size: 40.r,

@@ -3,6 +3,7 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -14,10 +15,12 @@ import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.d
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:get/get.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 
 class AddMoneyController extends GetxController {
   final appState = Get.find<AppStateController>();
   final jarCreationController = Get.find<JarCreationController>();
+  final analytics = Get.find<AnalyticsService>();
 
   final amount = 0.0.obs;
 
@@ -28,10 +31,23 @@ class AddMoneyController extends GetxController {
     if (Get.arguments == AmountAdditionMode.jarCreation) {
       amount.value = jarCreationController.amount.value;
     }
+    
+    // Track screen view when controller is initialized
+    _logScreenView();
+  }
+
+  Future<void> _logScreenView() async {
+    await analytics.logScreenView(
+      screenName: AnalyticsScreenNames.kidAddMoney,
+      screenClass: 'AddMoneyScreen',
+    );
   }
 
   Future<void> handleNextButton(AmountAdditionMode mode) async {
     if (!_validateAmount()) return;
+
+    // Track next button click with amount and mode
+    await analytics.logMoneyAddNextClicked(mode.name, amount.value);
 
     Get.log("mode: $mode");
     switch (mode) {
@@ -56,7 +72,7 @@ class AddMoneyController extends GetxController {
     }
   }
 
-  void _handleAddMoney() {
+  void _handleAddMoney() async {
     try {
       final kidService = Get.find<KidService>();
       showLoadingDialog("Adding Money");
@@ -68,10 +84,18 @@ class AddMoneyController extends GetxController {
       }
 
       final newBalance = kid.wallet.spendingJar.balance + amount.value;
-      kidService.updateSpendingJar(kid.kidId, newBalance);
+      await kidService.updateSpendingJar(kid.kidId, newBalance);
+      
+      // Track successful money addition using standard method
+      await analytics.logMoneyAdded('spending', amount.value);
+      
       ToastUtil.showToast("Money added");
     } catch (e) {
       Get.log("Failed to add money $e");
+      
+      // Track failed money addition
+      await analytics.logMoneyRequestFailure(e.toString());
+      
       ToastUtil.showToast("Failed to Add money");
     } finally {
       Get.until((route) => route.settings.name == Routes.kidBase);
@@ -81,6 +105,10 @@ class AddMoneyController extends GetxController {
   bool _validateAmount() {
     if (amount.value == 0.0) {
       ToastUtil.showToast("Please add Valid amount");
+      
+      // Track validation failure using standard method
+      analytics.logMoneyAddValidationFailure('zero_amount');
+      
       return false;
     }
 
@@ -105,9 +133,18 @@ class AddMoneyController extends GetxController {
           type: NotificationType.transactionPending,
           timestamp: DateTime.now(),
           isRead: false,
-          metadata: TransactionPendingMetadata(amount: amount.value, name: currentKid.name, photo: currentKid.avatar, status: TransactionPendingStatus.pending),
+          metadata: TransactionPendingMetadata(
+            amount: amount.value,
+            name: currentKid.name,
+            photo: currentKid.avatar,
+            status: TransactionPendingStatus.pending
+          ),
         ),
       );
+      
+      // Track successful money request
+      await analytics.logMoneyRequestSent(amount.value);
+      
       Get.back();
       KidDialog.show(
         emoji: Assets.icCoinEuro,
@@ -125,7 +162,17 @@ class AddMoneyController extends GetxController {
       );
     } catch (e) {
       Get.log("error is $e");
+      
+      // Track failed money request
+      await analytics.logMoneyRequestFailure(e.toString());
+      
       ToastUtil.showToast("Failed to request. Check Internet");
     }
+  }
+
+  Future<void> handleBackButton() async {
+    // Track back button click
+    await analytics.logMoneyAddBackClicked(Get.arguments.toString());
+    Get.back();
   }
 }

@@ -154,7 +154,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
           return KidMarketScreen();
         default:
           //return const SizedBox.shrink();
-          return const KidHomeScreen();
+          return  KidHomeScreen();
       }
     });
   }

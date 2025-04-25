@@ -381,6 +381,7 @@ class KidGoalsController extends GetxController {
 
       resetNewGoal();
       Get.until((route) => route.settings.name == Routes.kidBase);
+      appBarController.resetToDefault();
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.until((route) => route.settings.name == Routes.kidBase);

@@ -5,6 +5,7 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
@@ -158,15 +159,30 @@ class SignupScreen extends GetView<SignupController> {
                                 "Sign up",
                                 style: AppTextStyle.appButton,
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   try {
-                                    controller.signUpWithEmail();
+                                    // final analytics = Get.find<AnalyticsService>();
+                                    // Log signup attempt
+                                    await controller.analytics.logSignUpAttempt(controller.email.value);
+                                    
+                                    await controller.signUpWithEmail();
+                                    
+                                    // Log successful signup
+                                    await controller.analytics.logSignUpSuccess(controller.email.value);
                                   } catch (e) {
                                     Get.log("Error: $e");
+                                    // Log signup failure
+
+                                    await controller.analytics.logSignUpFailure(
+                                      controller.email.value,
+                                      e.toString(),
+                                    );
                                   }
                                 } else {
-                                  // If the form is not valid, show error messages
+                                  // Log validation failure
+                                  // final analytics = Get.find<AnalyticsService>();
+                                  await controller.analytics.logSignUpValidationFailure(controller.email.value);
                                   Get.log("Form validation failed");
                                 }
                               },

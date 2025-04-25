@@ -4,6 +4,7 @@ import 'package:coin_kids/core/utils/orientation_utils.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/presentation/components/kid/kid_notification_dialog.dart';
@@ -24,6 +25,7 @@ class KidBaseController extends GetxController {
   final NotificationService _notificationService = NotificationService();
   final AppStateController appState = Get.find<AppStateController>();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
+  final analytics = Get.find<AnalyticsService>();
   RxBool isNotificationShowing = true.obs;
   final RxBool showTransferPointer = true.obs;
 

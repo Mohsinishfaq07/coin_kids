@@ -63,7 +63,13 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
           Padding(
             padding: EdgeInsets.all(16.w),
             child: KidButton(
-              onTap: controller.proceedToAvatar,
+              onTap: () async {
+                // Track age step completion
+                await controller.analytics.logOnboardingStepComplete('age', parameters: {
+                  'selected_age': controller.selectedAge.toString(),
+                });
+                controller.proceedToAvatar();
+              },
               text: 'Next',
               baseColor: AppColors.btnColorGreen,
               iconPath: Assets.icNext,
