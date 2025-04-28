@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
+import 'dart:math' as math;
+
 
 class HandPointerOverlay extends StatefulWidget {
   final GlobalKey targetKey;
@@ -27,11 +29,16 @@ class HandPointerOverlay extends StatefulWidget {
 class _HandPointerOverlayState extends State<HandPointerOverlay> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width ?? 60.w,
-      height: widget.height ?? 60.w,
-      child: GestureDetector(
-        onTap: widget.onTap,
+    return  InkWell(
+      onTap: () {
+        widget.onTap(); // <--- this is the main important one
+        // if (widget.onComplete != null) {
+        //   widget.onComplete!(); // optional if someone passed it
+        // }
+        },
+      child: SizedBox(
+        width: 60.w,
+        height: 60.w,
         child: Lottie.asset(
           'assets/new_tap.json',
           fit: BoxFit.contain,

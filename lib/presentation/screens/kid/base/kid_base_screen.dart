@@ -1,7 +1,6 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/widgets/orientation_transition.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -73,7 +72,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
                 ),
                 child: Column(
                   children: [
-                    KidAppBarComponent(
+                   KidAppBarComponent(
                       onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
                       onAddMoneyTap: () {
                         final isConnected = controller.appState.currentKid.value!.isConnected;
@@ -83,6 +82,19 @@ class KidBaseScreen extends GetView<KidBaseController> {
                         );
                       },
                     ),
+                    // Obx(
+                    //       () => KidAppBarComponent(
+                    //     onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
+                    //     onAddMoneyTap: () {
+                    //       final isConnected = controller.appState.currentKid.value!.isConnected;
+                    //       Get.toNamed(
+                    //         Routes.kidMoneyAddOrRequest,
+                    //         arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
+
                     SizedBox(height: 10),
                     Expanded(
                       child: Row(

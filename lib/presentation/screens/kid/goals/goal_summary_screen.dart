@@ -9,7 +9,7 @@ import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart'
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -213,8 +213,8 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             Obx(() {
               if (showPointer.value) {
                 return Positioned(
-                  right: 50.w,
-                  bottom: 0,
+                  right: 30.w,
+                  top: 20,
                   child: HandPointerOverlay(
                     targetKey: _createGoalKey,
                     onTap: () async {

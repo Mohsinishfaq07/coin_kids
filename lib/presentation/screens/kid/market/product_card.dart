@@ -114,8 +114,8 @@ class ProductCard extends StatelessWidget {
                       ),
                       if (isLoading)
                         SizedBox(
-                          width: 24.w,
-                          height: 24.w,
+                          width: 20.w,
+                          height: 20.w,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(

@@ -27,13 +27,13 @@ class _CoinTutorialOverlayState extends State<CoinTutorialOverlay> {
         child: Container(
           width: Get.width,
           height: Get.height,
-          color: Colors.black.withOpacity(0.75),
+      //    color: Colors.black.withOpacity(0.75),
           child: Stack(
             children: [
               // Hand pointer animation positioned at the left side
               Positioned(
-                left: 30.w,
-                top: Get.height * 0.44,
+                left: 54.w,
+                top: Get.height * 0.50,
                 child: SizedBox(
                   width: 80.w,
                   height: 80.w,

@@ -34,7 +34,7 @@ class _GoalsAddTutorialOverlayState extends State<GoalsAddTutorialOverlay> {
               height: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.black.withOpacity(0.15), // Darker background
+               // color: Colors.black.withOpacity(0.15), // Darker background
 
               ),
               child: Text(
@@ -49,9 +49,10 @@ class _GoalsAddTutorialOverlayState extends State<GoalsAddTutorialOverlay> {
 
             // Hand pointer animation
             Positioned(
-              bottom: 60.h,
-              left: 60.w,
-              right: 60.w,
+              bottom: 70.h,
+
+              left: 40.w,
+              right: 10.w,
               child: SizedBox(
                 width: 60.w,
                 height: 60.w,

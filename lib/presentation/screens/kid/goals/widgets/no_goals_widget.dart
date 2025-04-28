@@ -92,7 +92,7 @@ class NoGoalsWidget extends StatelessWidget {
                 KidButton(
                   key: GlobalKeys.noGoalKey,
                   baseColor: AppColors.btnColorOrange,
-                  text: 'Add new Goal',
+                  text: 'Add New Goal',
                   iconPath: Assets.icAdd,
                   iconPosition: IconPosition.left,
                   onTap: _handleAddGoal,

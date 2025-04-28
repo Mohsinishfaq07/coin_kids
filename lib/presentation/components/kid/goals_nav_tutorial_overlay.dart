@@ -30,12 +30,12 @@ class _GoalsNavTutorialOverlayState extends State<GoalsNavTutorialOverlay> {
         child: Container(
           width: Get.width,
           height: Get.height,
-          color: Colors.black.withOpacity(0.75),
+          //color: Colors.black.withOpacity(0.75),
           child: Stack(
             children: [
               Positioned(
-                left: 30.w,
-                bottom: Get.height * 0.35,
+                left: 26.w,
+                bottom: Get.height * 0.32,
                 child: Row(
                   children: [
                     SizedBox(
@@ -47,7 +47,16 @@ class _GoalsNavTutorialOverlayState extends State<GoalsNavTutorialOverlay> {
                         repeat: true,
                       ),
                     ),
-                    Text(" <<< Tap to add the  Goals  ",style: AppTextStyle.headingLarge.copyWith(color: AppColors.cardBorder),)
+                    Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.buttonPrimary,
+
+                            borderRadius: BorderRadius.circular(16)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(" Lets add your first goal! ",style: AppTextStyle.headingMedium.copyWith(color: Colors.white),),
+                        ))
                   ],
                 ),
               ),

@@ -2,14 +2,14 @@ import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_market_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/product_detail_dialog.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/age_filter_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/range_slider_dialog.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/market_wishlist_tutorial_overlay.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -200,16 +200,16 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                         Obx(() {
                                           if (controller.showPointer.value) {
                                             return Positioned(
-                                              right: -10.w,
+                                              right: 12.w,
                                               bottom: -10.w,
-                                              child: HandPointerOverlay(
+                                              child: KidMarketOverlay(
                                                 targetKey: GlobalKeys.firstFavoriteKey,
                                                 onTap: () {
                                                   controller.toggleWishlist(product);
                                                   controller.dismissFavoriteTutorial();
                                                 },
-                                                width: 80.w,
-                                                height: 80.w,
+                                                // width: 80.w,
+                                                // height: 80.w,
                                               ),
                                             );
                                           }
@@ -327,9 +327,14 @@ class KidMarketScreen extends GetView<KidMarketController> {
               // Wishlist Tutorial Overlay
               Obx(() {
                 if (controller.showWishlistTutorial.value) {
-                  return MarketWishlistTutorialOverlay(
-                    targetKey: wishlistButtonKey,
-                    onComplete: () => controller.dismissWishlistTutorial(),
+
+                  return Positioned(
+                    top: 0.10.sh,
+                    right: 0,
+                    child: MarketWishlistTutorialOverlay(
+                      targetKey: wishlistButtonKey,
+                      onComplete: () => controller.dismissWishlistTutorial(),
+                    ),
                   );
                 }
                 return const SizedBox.shrink();

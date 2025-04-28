@@ -12,7 +12,7 @@ import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
@@ -314,6 +314,7 @@ class KidGoalsController extends GetxController {
       // Pass isFirstGoal flag to createGoal
       await _goalService.createGoal(goal, isFirstGoal);
 
+
       if (isFirstGoal) {
         final RxBool showPointer = true.obs;
 
@@ -347,6 +348,8 @@ class KidGoalsController extends GetxController {
                       SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
                       true,
                     );
+                    appBarController.resetToDefault();
+
                     Get.until((route) => route.settings.name == Routes.kidBase);
                   },
                   baseColor: AppColors.btnColorGreen,
@@ -380,8 +383,9 @@ class KidGoalsController extends GetxController {
       }
 
       resetNewGoal();
-      Get.until((route) => route.settings.name == Routes.kidBase);
       appBarController.resetToDefault();
+
+      Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.until((route) => route.settings.name == Routes.kidBase);
@@ -525,8 +529,11 @@ class KidGoalsController extends GetxController {
           return;
         }
       } else {
+        //Get.back();
         // If decreasing progress, show how much will be returned
         final returnAmount = -difference; // Make positive for display
+        // _showMilestoneDialog("Great Job!",
+        //     '${returnAmount.toMoneyFormat()}€ returned to spending jar', 2, Assets.icClap);
         ToastUtil.showToast('${returnAmount.toMoneyFormat()}€ will be returned to spending jar');
       }
 
@@ -561,10 +568,14 @@ class KidGoalsController extends GetxController {
           _showMilestoneDialog("Great Job!",
               "You just reached your first milestone", 2, Assets.icClap);
         } else {
-          Get.until((route) => route.settings.name == Routes.kidBase);
+          _showMilestoneDialog("Great Job!",
+              "You are about to reached your first milestone", 2, Assets.icClap);
+         // Get.until((route) => route.settings.name == Routes.kidBase);
         }
       } else {
-        Get.until((route) => route.settings.name == Routes.kidBase);
+        // _showMilestoneDialog("Great Job!",
+        //     "You are about to reached your first milestone", 2, Assets.icClap);
+       // Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       Get.log('Error saving progress: $e');
@@ -691,6 +702,7 @@ class KidGoalsController extends GetxController {
       await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
 
       // Show success message
+
       ToastUtil.showToast('${excessAmount.toMoneyFormat()}€ returned to spending jar');
       
       // Show completion dialog

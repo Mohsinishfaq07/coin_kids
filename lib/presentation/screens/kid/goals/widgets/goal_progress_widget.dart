@@ -9,7 +9,7 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,10 +25,13 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
 
   final GoalModel goal;
   final RxBool showPointer = true.obs;
+  final RxBool showDoneButtonPointer = false.obs;
 
   Future<void> _checkTutorialState() async {
     final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalProgressTutorial) ?? false;
+    final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial) ?? false;
     showPointer.value = !hasSeenTutorial;
+    showDoneButtonPointer.value = false;
   }
 
   @override
@@ -112,6 +115,13 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                             SharedPreferencesHelper.hasSeenGoalProgressTutorial,
                                             true,
                                           );
+                                          // Only show done button pointer if tutorial hasn't been seen
+                                          final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
+                                            SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                                          ) ?? false;
+                                          if (!hasSeenDoneButtonTutorial) {
+                                            showDoneButtonPointer.value = true;
+                                          }
                                           controller.updateProgress(value, goal);
                                         },
                                         showLabels: true,
@@ -153,8 +163,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                             Obx(() {
                               if (showPointer.value) {
                                 return Positioned(
-                                  left: 0.sw,
-                                  bottom: -30.h,
+                                  left: 10.w,
+                                  bottom: -10.h,
                                   child: HandPointerOverlay(
                                     targetKey: GlobalKeys.sliderKey,
                                     onTap: () async {
@@ -242,35 +252,61 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                   ),
                 ),
               ),
-              KidButton(
-                text: 'Done',
-                baseColor: AppColors.btnColorGreen,
-                iconPath: Assets.icTick,
-                onTap: () async {
-                  // Calculate percentage achieved
-                  double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
-                  int rewardCoins = 0;
+              Stack(
+                children: [
+                  KidButton(
+                    key: GlobalKeys.doneButtonKey,
+                    text: 'Done',
+                    baseColor: AppColors.btnColorGreen,
+                    iconPath: Assets.icTick,
+                    onTap: () async {
+                      showDoneButtonPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                        true,
+                      );
 
-                  // Check milestones and assign rewards
-                  if (progressPercentage >= 100) {
-                    rewardCoins = 10; // 100% milestone
-                  } else if (progressPercentage >= 75) {
-                    rewardCoins = 3; // 75% milestone
-                  } else if (progressPercentage >= 50) {
-                    rewardCoins = 2; // 50% milestone
-                  } else if (progressPercentage >= 25) {
-                    rewardCoins = 2; // 25% milestone
-                  }
+                      // Calculate percentage achieved
+                      double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
+                      int rewardCoins = 0;
 
-                  // Save progress and award coins if milestone reached
-                  await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
-                  // if (progressPercentage != 100  ) {
-                  //   controller.appBarController.resetToDefault();
-                  // }
-                  // Only navigate back, don't reset AppBar
-                 // Get.back();
-                },
+                      // Check milestones and assign rewards
+                      if (progressPercentage >= 100) {
+                        rewardCoins = 10; // 100% milestone
+                      } else if (progressPercentage >= 75) {
+                        rewardCoins = 3; // 75% milestone
+                      } else if (progressPercentage >= 50) {
+                        rewardCoins = 2; // 50% milestone
+                      } else if (progressPercentage >= 25) {
+                        rewardCoins = 2; // 25% milestone
+                      }
+
+                      // Save progress and award coins if milestone reached
+                      await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                    },
+                  ),
+                  Obx(() {
+                    if (showDoneButtonPointer.value) {
+                      return Positioned(
+                        right: 10.w,
+                        bottom: -10.h,
+                        child: HandPointerOverlay(
+                          targetKey: GlobalKeys.doneButtonKey,
+                          onTap: () async {
+                            showDoneButtonPointer.value = false;
+                            await SharedPreferencesHelper.saveBool(
+                              SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                              true,
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+                ],
               ),
+              
             ],
           ),
         ],

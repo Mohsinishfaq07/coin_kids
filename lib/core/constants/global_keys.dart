@@ -24,6 +24,7 @@ class GlobalKeys {
   /// Key for the Goals label in the navigation bar
   static final goalsLabelKey = GlobalKey();
   static final GlobalKey sliderKey = GlobalKey();
+  static final GlobalKey doneButtonKey = GlobalKey();
 // create goal
   static final GlobalKey okButtonKey = GlobalKey();
   //kid home screen on transfer button
@@ -32,6 +33,9 @@ class GlobalKeys {
   static final GlobalKey firstGoalKey = GlobalKey();
 
   static final GlobalKey noGoalKey = GlobalKey();
+
+  static final GlobalKey closeButtonKey = GlobalKey();
+
 
 
 

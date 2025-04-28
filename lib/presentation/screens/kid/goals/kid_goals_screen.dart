@@ -4,7 +4,7 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/components/common/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -82,15 +82,20 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                       ),
                       Obx(() {
                         if (controller.showPointer.value && controller.goals.isNotEmpty) {
-                          return HandPointerOverlay(
-                            targetKey: GlobalKeys.firstGoalKey,
-                            onTap: () async {
-                              controller.showPointer.value = false;
-                              await SharedPreferencesHelper.saveBool(
-                                SharedPreferencesHelper.hasSeenGoalsListTutorial,
-                                true,
-                              );
-                            },
+                          return Positioned(
+                            left: 80.w,
+                             top: 20,
+                             bottom: 10.h,
+                            child: HandPointerOverlay(
+                              targetKey: GlobalKeys.firstGoalKey,
+                              onTap: () async {
+                                controller.showPointer.value = false;
+                                await SharedPreferencesHelper.saveBool(
+                                  SharedPreferencesHelper.hasSeenGoalsListTutorial,
+                                  true,
+                                );
+                              },
+                            ),
                           );
                         }
                         return const SizedBox.shrink();

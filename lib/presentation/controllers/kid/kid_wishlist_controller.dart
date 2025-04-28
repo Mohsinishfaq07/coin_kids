@@ -1,3 +1,4 @@
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -14,12 +15,15 @@ class KidWishlistController extends GetxController {
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
+  final RxBool showPointer = true.obs;
+
 
   @override
   void onInit() {
     super.onInit();
 
     fetchWishlist();
+    checkTutorialState();
   }
 
   @override
@@ -60,4 +64,17 @@ class KidWishlistController extends GetxController {
       marketController.addToGoal(item.product!);
     }
   }
+  Future<void> completeTutorial() async {
+    Get.log("Completing wishlist close tutorial");
+    showPointer.value = false;
+    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenWishlistCloseTutorial, true);
+  }
+
+
+  Future<void> checkTutorialState() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenWishlistCloseTutorial) ?? false;
+    showPointer.value = !hasSeenTutorial;
+
+  }
+
 }

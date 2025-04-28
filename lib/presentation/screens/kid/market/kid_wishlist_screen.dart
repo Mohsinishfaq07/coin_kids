@@ -1,17 +1,22 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/close_button_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/product_detail_dialog.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_wishlist_controller.dart';
+import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidWishlistScreen extends GetView<KidWishlistController> {
-  const KidWishlistScreen({super.key});
+  const KidWishlistScreen({super.key}) ;
+
 
   @override
   Widget build(BuildContext context) {
@@ -125,18 +130,18 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
           // Main Content
           GestureDetector(
             onTap: () {
-              if (item.product != null) {
-                Get.dialog(
-                  ProductDetailDialog(
-                    product: item.product!,
-                    onAddToGoal: () {
-                      Get.back();
-                      controller.addToGoal(item);
-                    },
-                  ),
-                  barrierDismissible: true,
-                );
-              }
+              // if (item.product != null) {
+              //   Get.dialog(
+              //     ProductDetailDialog(
+              //       product: item.product!,
+              //       onAddToGoal: () {
+              //       //  Get.back();
+              //         controller.addToGoal(item);
+              //       },
+              //     ),
+              //     barrierDismissible: true,
+              //   );
+              // }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,26 +165,29 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                   flex: 2,
                   child: Padding(
                     padding: EdgeInsets.all(8.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.product?.name ?? '',
-                          style: AppTextStyle.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w800,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.product?.name ?? '',
+                            style: AppTextStyle.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Spacer(),
-                        Text(
-                          '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
-                          style: AppTextStyle.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
+                          const Spacer(),
+                          Text(
+                            '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
+                            style: AppTextStyle.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -195,23 +203,53 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
               elevation: 10,
               color: AppColors.btnColorRed,
               shape: CircleBorder(),
-              child: InkWell(
-                onTap: () {
-                  Get.log("Delete button tapped");
-                  ToastUtil.showToast("Removing item from wishlist");
-                  controller.removeFromWishlist(item.productId);
-                },
-                customBorder: CircleBorder(),
-                child: Container(
-                  width: 28.r,
-                  height: 28.r,
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.close,
-                    size: 14.r,
-                    color: Colors.white,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  InkWell(
+                    // key: GlobalKeys.closeButtonKey,
+                    onTap: () {
+                      Get.log("Delete button tapped");
+                      ToastUtil.showToast("Removing item from wishlist");
+                      controller.removeFromWishlist(item.productId);
+                    },
+                    customBorder: CircleBorder(),
+                    child: Container(
+                      width: 28.r,
+                      height: 28.r,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.close,
+                        size: 14.r,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                  Obx(() {
+                    if (controller.showPointer.value) {
+                      return Positioned(
+                        right: 10.w,
+                        bottom: -28.h,
+                        child: CloseButtonOverlay(
+                          onComplete: () => controller.completeTutorial(),
+                          targetKey: GlobalKeys.closeButtonKey,
+                          onTap: () async {
+                            controller.completeTutorial();
+                            controller.showPointer.value = false;
+                            // controller.showPointer.value = false;
+                            // await SharedPreferencesHelper.saveBool(
+                            //   SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
+                            //   true,
+                            // );
+                          },
+                          width: 60.w,
+                          height: 60.w,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+                ],
               ),
             ),
           ),
