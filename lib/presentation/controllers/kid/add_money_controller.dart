@@ -87,7 +87,7 @@ class AddMoneyController extends GetxController {
       await kidService.updateSpendingJar(kid.kidId, newBalance);
       
       // Track successful money addition using standard method
-      await analytics.logMoneyAdded('spending', amount.value);
+      await analytics.logMoneyAdded('spending', amount.value,AnalyticsScreenNames.kidAddMoney);
       
       ToastUtil.showToast("Money added");
     } catch (e) {

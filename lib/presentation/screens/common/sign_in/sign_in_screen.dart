@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -7,6 +8,7 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/sign_in_controller.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,14 @@ class SignInScreen extends GetView<SignInController> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return PopScope(
-      canPop: false,
+      // canPop: false,
+      canPop: false, // Block default back behavior
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          bool shouldExit = await ParentExitDialog.show(context);
+          if (shouldExit) Get.back();
+        }
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: const ParentAppBar(
@@ -100,7 +109,10 @@ class SignInScreen extends GetView<SignInController> {
                         },
                         child: Text(
                           "Forgot Password?",
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12, fontWeight: FontWeight.w600),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -117,9 +129,17 @@ class SignInScreen extends GetView<SignInController> {
                       onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
                           try {
+                            await controller.analytics.logSignInAttempt(AnalyticsScreenNames.signIn);
+                            ToastUtil.showToast("log sign in attempt called ${controller.email.value}");
+                            print("Firebase sign-up analytics event logged");
+
                             await controller.signInWithEmail();
+                            await controller.analytics.logSignInSuccess(controller.email.value, AnalyticsScreenNames.signIn);
                           } catch (e) {
                             ToastUtil.showToast("Login failed: $e");
+                            await controller.analytics.logSignInFailure(
+                              e.toString(),AnalyticsScreenNames.signIn
+                            );
                           }
                         } else {
                           ToastUtil.showToast("Please fill all required fields correctly");
@@ -149,14 +169,14 @@ class SignInScreen extends GetView<SignInController> {
                       ],
                     ),
                     if (Platform.isAndroid)
-                    Padding(
-                      padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
-                      child: Text("OR",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                color: CustomThemeData().disabledIconColor,
-                                fontWeight: FontWeight.w800,
-                              )),
-                    ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
+                        child: Text("OR",
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                  color: CustomThemeData().disabledIconColor,
+                                  fontWeight: FontWeight.w800,
+                                )),
+                      ),
 
                     // Google Login Button - Show only on Android
                     if (Platform.isAndroid)

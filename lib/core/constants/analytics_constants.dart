@@ -1,34 +1,4 @@
 class AnalyticsEventNames {
-  // Role Selection Events
-  static const String roleSelected = 'role_selected';
-  
-  // Auth Events
-  static const String signUpAttempt = 'sign_up_attempt';
-  static const String signUpSuccess = 'sign_up_success';
-  static const String signUpFailure = 'sign_up_failure';
-  static const String signUpValidationFailure = 'sign_up_validation_failure';
-  
-  // Sign In Events
-  static const String signInAttempt = 'sign_in_attempt';
-  static const String signInSuccess = 'sign_in_success';
-  static const String signInFailure = 'sign_in_failure';
-  static const String signInValidationFailure = 'sign_in_validation_failure';
-  static const String signInWithGoogle = 'sign_in_with_google';
-  
-  // Goal Events
-  static const String goalCreated = 'goal_created';
-  static const String goalCompleted = 'goal_completed';
-  
-  // Jar Events
-  static const String jarCreated = 'jar_created';
-  static const String moneyAdded = 'money_added';
-  static const String jarCreationAttempt = 'jar_creation_attempt';
-  static const String jarCreationValidationFailure = 'jar_creation_validation_failure';
-  static const String jarCreationStarted = 'jar_creation_started';
-  static const String jarColorSelected = 'jar_color_selected';
-  static const String jarColorSelectionBackClicked = 'jar_color_selection_back_clicked';
-  static const String jarColorSelectionNextClicked = 'jar_color_selection_next_clicked';
-
   // App Launch Events
   static const String appLaunch = 'app_launch';
   static const String splashScreenView = 'splash_screen_view';
@@ -41,12 +11,51 @@ class AnalyticsEventNames {
   static const String introComplete = 'intro_complete';
   static const String screenView = 'screen_view';
 
+  // Auth Events
+  static const String signUpAttempt = 'sign_up_attempt';
+  static const String signUpSuccess = 'sign_up_success';
+  static const String signUpFailure = 'sign_up_failure';
+  static const String signUpValidationFailure = 'sign_up_validation_failure';
+
+  // Sign In Events
+  static const String signInAttempt = 'sign_in_attempt';
+  static const String signInSuccess = 'sign_in_success';
+  static const String signInFailure = 'sign_in_failure';
+  static const String signInValidationFailure = 'sign_in_validation_failure';
+  static const String signInWithGoogle = 'sign_in_with_google';
+
+  // Role Selection Events
+  static const String roleSelected = 'role_selected';
+
+  // Kid Onboarding Events
+  static const String kidOnBoardingSteps = 'kid_onboarding_steps';
+  static const String kidOnBoardingComplete = 'kid_onboarding_complete';
+
+  // Goal Events
+  static const String goalCreated = 'goal_created';
+  static const String goalCompleted = 'goal_completed';
+
+  // Jar Events
+  static const String jarCreated = 'jar_created';
+  static const String moneyAdded = 'money_added';
+  static const String jarCreationAttempt = 'jar_creation_attempt';
+  static const String jarCreationValidationFailure = 'jar_creation_validation_failure';
+  static const String jarCreationStarted = 'jar_creation_started';
+  static const String jarColorSelected = 'jar_color_selected';
+  static const String jarColorSelectionBackClicked = 'jar_color_selection_back_clicked';
+  static const String jarColorSelectionNextClicked = 'jar_color_selection_next_clicked';
+
   // Money Events
   static const String moneyNextClicked = 'money_add_next_clicked';
   static const String moneyAddValidationFailure = 'money_add_validation_failure';
   static const String moneyRequestSent = 'money_request_sent';
   static const String moneyRequestFailure = 'money_request_failure';
   static const String moneyAddBackClicked = 'money_add_back_clicked';
+
+  //drawer
+  static const String drawerButtonClicked = 'drawer_button_clicked';
+  // add child
+  static const String addChildClicked = 'add_child_clicked';
 }
 
 class AnalyticsParameterNames {
@@ -54,17 +63,17 @@ class AnalyticsParameterNames {
   static const String role = 'role';
   static const String roleParent = 'pt';
   static const String roleChild = 'kd';
-  
+
   // Auth
   static const String email = 'email';
   static const String error = 'error';
   static const String signInMethod = 'sign_in_method';
-  
+
   // Goals
   static const String goalId = 'goal_id';
   static const String targetAmount = 'target_amount';
   static const String savedAmount = 'saved_amount';
-  
+
   // Jars
   static const String jarType = 'jar_type';
   static const String amount = 'amount';
@@ -73,7 +82,7 @@ class AnalyticsParameterNames {
   static const String validationReason = 'validation_reason';
   static const String selectedColor = 'selected_color';
   static const String colorIndex = 'color_index';
-  
+
   // Products
   static const String productId = 'product_id';
   static const String productName = 'product_name';
@@ -121,4 +130,4 @@ class AnalyticsScreenNames {
   static const String parentMarket = 'parent_market_screen';
   static const String parentWishlist = 'parent_wishlist_screen';
   static const String parentProfile = 'parent_profile_screen';
-} 
+}

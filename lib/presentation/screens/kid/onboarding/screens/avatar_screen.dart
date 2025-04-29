@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
@@ -74,7 +75,7 @@ class KidAvatarScreen extends GetView<KidOnboardingController> {
                   'selected_avatar_index': controller.selectedAvatarIndex.toString(),
                 });
                 // Track overall onboarding completion
-                await controller.analytics.logOnboardingComplete();
+                await controller.analytics.logOnboardingComplete(AnalyticsScreenNames.kidOnboardingAvatar);
                 controller.completeOnboarding();
               },
               text: 'Done',

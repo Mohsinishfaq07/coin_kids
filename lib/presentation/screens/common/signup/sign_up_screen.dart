@@ -5,11 +5,13 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/components/parent/parent_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/common/signup_controller.dart';
 import 'package:flutter/gestures.dart';
@@ -30,6 +32,12 @@ class SignupScreen extends GetView<SignupController> {
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          bool shouldExit = await ParentExitDialog.show(context);
+          if (shouldExit) Get.back();
+        }
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: ParentAppBar(
@@ -164,25 +172,28 @@ class SignupScreen extends GetView<SignupController> {
                                   try {
                                     // final analytics = Get.find<AnalyticsService>();
                                     // Log signup attempt
-                                    await controller.analytics.logSignUpAttempt(controller.email.value);
+                                    await controller.analytics.logSignUpAttempt("sign_up_Screen");
+                                    ToastUtil.showToast("log sign up attempt called ${controller.email.value}");
+                                    print("Firebase sign-up analytics event logged");
                                     
                                     await controller.signUpWithEmail();
                                     
                                     // Log successful signup
-                                    await controller.analytics.logSignUpSuccess(controller.email.value);
+                                    await controller.analytics.logSignUpSuccess(controller.email.value,"sign_up_Screen");
                                   } catch (e) {
                                     Get.log("Error: $e");
                                     // Log signup failure
 
                                     await controller.analytics.logSignUpFailure(
-                                      controller.email.value,
                                       e.toString(),
+                                      "sign_up_screen"
+
                                     );
                                   }
                                 } else {
                                   // Log validation failure
                                   // final analytics = Get.find<AnalyticsService>();
-                                  await controller.analytics.logSignUpValidationFailure(controller.email.value);
+                                  await controller.analytics.logSignUpValidationFailure("sign_up_Screen");
                                   Get.log("Form validation failed");
                                 }
                               },

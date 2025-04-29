@@ -1,6 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/presentation/components/common/kid_exit_dialog.dart';
+import 'package:coin_kids/presentation/components/kid/kid_exit_dialog.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/screens/age_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/onboarding/screens/avatar_screen.dart';

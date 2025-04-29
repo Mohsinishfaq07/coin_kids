@@ -31,10 +31,7 @@ class _HandPointerOverlayState extends State<HandPointerOverlay> {
   Widget build(BuildContext context) {
     return  InkWell(
       onTap: () {
-        widget.onTap(); // <--- this is the main important one
-        // if (widget.onComplete != null) {
-        //   widget.onComplete!(); // optional if someone passed it
-        // }
+        widget.onTap();
         },
       child: SizedBox(
         width: 60.w,

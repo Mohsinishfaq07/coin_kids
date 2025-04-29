@@ -140,8 +140,8 @@ class GoalCard extends StatelessWidget {
                           ),
                       )
                       : Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 8.h),
-                        child: const SizedBox(),
+                    padding:  EdgeInsets.symmetric(vertical: 11.h),
+                        child: const SizedBox.shrink(),
                       ),
                   // SizedBox(height: 4.h),
                   // Amount Text

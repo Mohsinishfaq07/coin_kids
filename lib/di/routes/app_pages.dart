@@ -2,7 +2,7 @@ import 'package:coin_kids/presentation/screens/common/forgot_password.dart';
 import 'package:coin_kids/presentation/screens/common/intro/intro_screen.dart';
 import 'package:coin_kids/presentation/screens/common/role_selection/role_selection_screen.dart';
 import 'package:coin_kids/presentation/screens/common/sign_in/sign_in_screen.dart';
-import 'package:coin_kids/presentation/screens/common/signup/signup_screen.dart';
+import 'package:coin_kids/presentation/screens/common/signup/sign_up_screen.dart';
 import 'package:coin_kids/presentation/screens/common/splash/splash_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/base/kid_base_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_details_screen.dart';

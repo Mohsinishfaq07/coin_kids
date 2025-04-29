@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -5,7 +6,7 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
-import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
@@ -102,7 +103,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 }
 
                                 // Track jar creation started
-                                await controller.analytics.logJarCreationStarted(Jars.spendingJar.name);
+                                await controller.analytics.logJarCreationStarted(Jars.spendingJar.name,AnalyticsScreenNames.kidHome);
 
                                 controller.startJarCreation(Jars.spendingJar);
                                 Get.toNamed(Routes.kidJarColorSelection);

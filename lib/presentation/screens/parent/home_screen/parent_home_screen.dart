@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -31,8 +32,11 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
         title: Row(
           children: [
             GestureDetector(
-              onTap: () {
+              onTap: () async{
+                await controller.analytics.logDrawerClick(AnalyticsScreenNames.parentHome);
+                print("parent drawer called ");
                 Get.toNamed(Routes.parentDrawer);
+
               },
               child: Obx(
                 () {
@@ -126,8 +130,11 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                               SizedBox(height: 22.h),
                               AppButton(
                                 size: Size(0.4.sw, 50),
-                                onPressed: () {
+                                onPressed: () async{
                                   Get.toNamed(Routes.parentAddChild);
+                                  await controller.analytics.logAddChildClick(AnalyticsScreenNames.parentHome);
+                                 // await controller.analytics.logSignInSuccess(AnalyticsScreenNames.parentHome,"");
+
                                 },
                                 child: Text("Add Child", style: AppTextStyle.appButton),
                               )

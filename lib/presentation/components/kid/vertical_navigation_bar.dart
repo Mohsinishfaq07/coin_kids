@@ -2,7 +2,7 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
-import 'package:coin_kids/presentation/components/kid/hand_pointer_overlay.dart';
+import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
@@ -92,7 +92,7 @@ class VerticalNavBar extends GetView<VerticalNavBarController> {
             backgroundColor: Colors.transparent,
             labelType: NavigationRailLabelType.all,
             useIndicator: false,
-            groupAlignment: 0,
+            groupAlignment: -0.3,
             destinations: [
               _buildDestination(
                 Assets.icKidHome,

@@ -1,4 +1,5 @@
 import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -9,6 +10,8 @@ class ParentHomeController extends GetxController {
   final _kidService = Get.find<KidService>();
   final _authService = Get.find<AuthService>();
   final appState = Get.find<AppStateController>();
+  final analytics = Get.find<AnalyticsService>();
+
 
   final isLoading = false.obs;
   final kidsList = <KidModel>[].obs;

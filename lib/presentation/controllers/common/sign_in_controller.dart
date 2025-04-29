@@ -23,7 +23,7 @@ class SignInController extends GetxController {
       showLoadingDialog("Signing in...");
 
       // Log sign-in attempt
-      await analytics.logSignInAttempt(email.value);
+      await analytics.logSignInAttempt("sign_in_screen");
 
       // Use AuthService for signup
       final credential = await _authService.signInWithEmailPassword(
@@ -33,13 +33,13 @@ class SignInController extends GetxController {
 
       if (credential.user != null) {
         // Log successful sign-in
-        await analytics.logSignInSuccess(email.value);
+        await analytics.logSignInSuccess(email.value,"sign_in_screen");
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }
     } catch (e) {
       // Log sign-in failure
-      await analytics.logSignInFailure(email.value, e.toString());
+      await analytics.logSignInFailure( e.toString(),"sign_in_screen");
       ToastUtil.showExceptionToast(e);
       Get.log(e.toString());
     } finally {
@@ -54,20 +54,20 @@ class SignInController extends GetxController {
       showLoadingDialog("Signing in...");
 
       // Log Google sign-in attempt
-      await analytics.logGoogleSignInAttempt();
+      await analytics.logGoogleSignInAttempt("sign_in_screen");
 
       // Use AuthService for signup
       final credential = await _authService.signInWithGoogle();
 
       if (credential.user != null) {
         // Log successful Google sign-in
-        await analytics.logGoogleSignInSuccess();
+        await analytics.logGoogleSignInSuccess("sign_in_screen");
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }
     } catch (e) {
       // Log Google sign-in failure
-      await analytics.logGoogleSignInFailure(e.toString());
+      await analytics.logGoogleSignInFailure(e.toString(),"sign_in_screen");
       ToastUtil.showExceptionToast(e);
       Get.log(e.toString());
     } finally {

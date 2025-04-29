@@ -35,18 +35,18 @@ class IntroController extends GetxController {
   @override
   void onInit() {
     OrientationUtils.lockToPortrait();
-    _initAnalytics();
+    // _initAnalytics();
     super.onInit();
   }
 
-  Future<void> _initAnalytics() async {
-    // Track initial page view
-    await _analytics.logScreenView(
-      screenName: AnalyticsScreenNames.intro,
-      screenClass: 'IntroScreen',
-    );
-    await _analytics.logIntroPageView(0, pageTitles[0]);
-  }
+  // Future<void> _initAnalytics() async {
+  //   // Track initial page view
+  //   await _analytics.logScreenView(
+  //     screenName: AnalyticsScreenNames.intro,
+  //     screenClass: 'IntroScreen',
+  //   );
+  //   await _analytics.logIntroPageView(0, pageTitles[0]);
+  // }
 
   void updatePageIndex(int index) {
     pageIndex.value = index;

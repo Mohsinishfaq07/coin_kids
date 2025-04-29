@@ -7,102 +7,116 @@ class AnalyticsService extends GetxService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   // Role Selection Events
-  Future<void> logRoleSelected(String role) async {
+  Future<void> logRoleSelected(String role, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.roleSelected,
       parameters: {
         AnalyticsParameterNames.role: role,
+        AnalyticsParameterNames.screenName : screen
       },
     );
   }
 
   // Auth Events
-  Future<void> logSignUpAttempt(String email) async {
+  Future<void> logSignUpAttempt(String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpAttempt,
       parameters: {
-        AnalyticsParameterNames.email: email,
+
+        AnalyticsParameterNames.screenName : screen
       },
     );
   }
 
-  Future<void> logSignUpSuccess(String email) async {
+  Future<void> logSignUpSuccess(String email,String screen) async {
     await _analytics.logSignUp(signUpMethod: 'email');
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpSuccess,
       parameters: {
         AnalyticsParameterNames.email: email,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
-  Future<void> logSignUpFailure(String email, String error) async {
+  Future<void> logSignUpFailure( String error, String screen ) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpFailure,
       parameters: {
-        AnalyticsParameterNames.email: email,
+         AnalyticsParameterNames.screenName: screen,
         AnalyticsParameterNames.error: error,
       },
     );
   }
 
-  Future<void> logSignUpValidationFailure(String email) async {
+  Future<void> logSignUpValidationFailure(String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpValidationFailure,
       parameters: {
-        AnalyticsParameterNames.email: email,
+        AnalyticsParameterNames.screenName: screen,
       },
     );
   }
 
   // Goal Events
-  Future<void> logGoalCreated(String goalId, double targetAmount) async {
+  Future<void> logGoalCreated(String goalId, double targetAmount, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.goalCreated,
       parameters: {
         AnalyticsParameterNames.goalId: goalId,
         AnalyticsParameterNames.targetAmount: targetAmount,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
-  Future<void> logGoalCompleted(String goalId, double savedAmount) async {
+  Future<void> logGoalCompleted(String goalId, double savedAmount , String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.goalCompleted,
       parameters: {
         AnalyticsParameterNames.goalId: goalId,
         AnalyticsParameterNames.savedAmount: savedAmount,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
   // Jar Events
-  Future<void> logJarCreated(String jarType) async {
+  Future<void> logJarCreated(String jarType , String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.jarCreated,
+
+
       parameters: {
         AnalyticsParameterNames.jarType: jarType,
-        AnalyticsParameterNames.screenName: AnalyticsScreenNames.kidHome,
+        AnalyticsParameterNames.screenName : screen
+        ,
       },
     );
   }
 
-  Future<void> logJarCreationStarted(String jarType) async {
+  Future<void> logJarCreationStarted(String jarType , String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.jarCreationStarted,
       parameters: {
         AnalyticsParameterNames.jarType: jarType,
-        AnalyticsParameterNames.screenName: AnalyticsScreenNames.kidHome,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
-  Future<void> logMoneyAdded(String jarType, double amount) async {
+  Future<void> logMoneyAdded(String jarType, double amount ,String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.moneyAdded,
       parameters: {
         AnalyticsParameterNames.jarType: jarType,
         AnalyticsParameterNames.amount: amount,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
@@ -167,59 +181,64 @@ class AnalyticsService extends GetxService {
   }
 
   // Sign-in analytics
-  Future<void> logSignInAttempt(String email) async {
+
+
+
+  Future<void> logSignInSuccess(String email ,String screen) async {
+    await _analytics.logLogin(loginMethod: 'email');
     await _analytics.logEvent(
-      name: 'sign_in_attempt',
+      name: AnalyticsEventNames.signInSuccess,
       parameters: {
         'method': 'email',
-        'email': email,
+        AnalyticsParameterNames.screenName : screen,
+        AnalyticsParameterNames.email : screen
       },
     );
   }
 
-  Future<void> logSignInSuccess(String email) async {
+  Future<void> logSignInFailure( String error, String screen) async {
     await _analytics.logEvent(
-      name: 'sign_in_success',
-      parameters: {
-        'method': 'email',
-        'email': email,
-      },
-    );
-  }
+      name: AnalyticsEventNames.signInValidationFailure,
 
-  Future<void> logSignInFailure(String email, String error) async {
-    await _analytics.logEvent(
-      name: 'sign_in_failure',
       parameters: {
-        'method': 'email',
-        'email': email,
         'error': error,
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
-  Future<void> logGoogleSignInAttempt() async {
+  Future<void> logGoogleSignInAttempt(String screen) async {
+    await _analytics.logLogin(loginMethod: 'google');
     await _analytics.logEvent(
-      name: 'sign_in_attempt',
+      name: AnalyticsEventNames.signInAttempt,
       parameters: {
         'method': 'google',
+        AnalyticsParameterNames.screenName : screen
+
       },
     );
   }
 
-  Future<void> logGoogleSignInSuccess() async {
+  Future<void> logGoogleSignInSuccess(String screen) async {
+    await _analytics.logLogin(loginMethod: 'google');
     await _analytics.logEvent(
-      name: 'sign_in_success',
+      name: AnalyticsEventNames.signInSuccess,
+
       parameters: {
         'method': 'google',
+        AnalyticsParameterNames.screenName : screen,
+
       },
     );
   }
 
-  Future<void> logGoogleSignInFailure(String error) async {
+  Future<void> logGoogleSignInFailure(String error,String screen) async {
+
     await _analytics.logEvent(
-      name: 'sign_in_failure',
+      name: AnalyticsEventNames.signInFailure,
       parameters: {
+        AnalyticsParameterNames.screenName : screen,
         'method': 'google',
         'error': error,
       },
@@ -229,7 +248,7 @@ class AnalyticsService extends GetxService {
   // Kid Onboarding Analytics
   Future<void> logOnboardingStepComplete(String stepName, {Map<String, dynamic>? parameters}) async {
     await _analytics.logEvent(
-      name: 'onboarding_step_complete',
+      name: AnalyticsEventNames.kidOnBoardingSteps,
       parameters: {
         'step_name': stepName,
         ...?parameters,
@@ -237,9 +256,14 @@ class AnalyticsService extends GetxService {
     );
   }
 
-  Future<void> logOnboardingComplete() async {
+  Future<void> logOnboardingComplete(String screen) async {
     await _analytics.logEvent(
-      name: 'onboarding_complete',
+      name: AnalyticsEventNames.kidOnBoardingComplete,
+      parameters: {
+        AnalyticsParameterNames.screenName : screen,
+
+      }
+      // name: 'kid_onboarding_complete',
     );
   }
 
@@ -248,7 +272,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.appLaunch,
       parameters: {
-        AnalyticsParameterNames.screenName: 'splash_screen',
+        AnalyticsParameterNames.screenName:AnalyticsScreenNames.splash,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
     );
@@ -258,7 +282,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.splashScreenView,
       parameters: {
-        AnalyticsParameterNames.screenName: 'splash_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.splash,
         AnalyticsParameterNames.isFirstLaunch: isFirstLaunch,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
@@ -270,7 +294,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.introPageView,
       parameters: {
-        AnalyticsParameterNames.screenName: 'intro_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.intro,
         AnalyticsParameterNames.pageIndex: pageIndex,
         AnalyticsParameterNames.pageTitle: pageTitle,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
@@ -282,7 +306,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.introAction,
       parameters: {
-        AnalyticsParameterNames.screenName: 'intro_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.intro,
         AnalyticsParameterNames.action: action,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
@@ -293,7 +317,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.introComplete,
       parameters: {
-        AnalyticsParameterNames.screenName: 'intro_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.intro,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
     );
@@ -304,7 +328,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.splashNavigation,
       parameters: {
-        AnalyticsParameterNames.screenName: 'splash_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.splash,
         AnalyticsParameterNames.destination: destination,
         'user_exists': userExists,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
@@ -316,7 +340,7 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.splashError,
       parameters: {
-        AnalyticsParameterNames.screenName: 'splash_screen',
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.splash,
         AnalyticsParameterNames.error: error,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
@@ -414,6 +438,34 @@ class AnalyticsService extends GetxService {
         AnalyticsParameterNames.isConnected: isConnected,
         AnalyticsParameterNames.amount: balance,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+      },
+    );
+  }
+  Future<void> logSignInAttempt(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.signInAttempt,
+      parameters: {
+        AnalyticsParameterNames.screenName : screen
+      },
+    );
+  }
+  Future<void> logDrawerClick(String screen) async {
+    await _analytics.getSessionId();
+    print("sessionId${_analytics.getSessionId()}");
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.drawerButtonClicked,
+      parameters: {
+        AnalyticsParameterNames.screenName : screen
+      },
+    );
+  }
+  Future<void> logAddChildClick(String screen) async {
+    await _analytics.getSessionId();
+    print("sessionId${_analytics.getSessionId()}");
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.addChildClicked,
+      parameters: {
+        AnalyticsParameterNames.screenName : screen
       },
     );
   }

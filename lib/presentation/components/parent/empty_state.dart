@@ -67,13 +67,13 @@ Widget buildJarEmptyState() {
       Image.asset(Assets.phJar, height: 100.h),
       SizedBox(height: 16.h),
       Text(
-        'No Jars created',
+        'No jar created',
         style: TextStyle(
           fontSize: 16.sp,
           color: Colors.grey,
         ),
       ),
-      SizedBox(height: 48),
+      SizedBox(height: 20),
     ],
   );
 }

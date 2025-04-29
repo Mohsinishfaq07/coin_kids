@@ -4,7 +4,7 @@ import 'package:coin_kids/core/widgets/orientation_transition.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/main.dart';
-import 'package:coin_kids/presentation/components/common/parent_exit_dialog.dart';
+import 'package:coin_kids/presentation/components/parent/parent_exit_dialog.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
