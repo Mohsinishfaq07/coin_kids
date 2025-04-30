@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -64,6 +65,8 @@ class EditChildScreen extends GetView<EditChildController> {
             style: AppTextStyle.appButton,
           ),
           onPressed: () async {
+            await controller.analytics.buttonClicked(AnalyticsEventNames.saveKidProfileClicked, AnalyticsScreenNames.kidProfileScreen,);
+
             if (controller.isLoading.value) return;
 
             if (_formKey.currentState?.validate() ?? false) {
@@ -74,10 +77,15 @@ class EditChildScreen extends GetView<EditChildController> {
         ),
       ),
 
-      appBar: const ParentAppBar(
+      appBar:  ParentAppBar(
         showBackButton: true,
         title: "Edit Profile",
         centerTitle: false,
+        onBackPressed: ()async{
+          Get.back();
+          await controller.analytics.backPressClicked( AnalyticsScreenNames.kidProfileScreen);
+
+        },
         
       ),
      

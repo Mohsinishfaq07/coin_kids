@@ -4,6 +4,7 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
@@ -27,6 +28,8 @@ class MessagesController extends GetxController {
   DocumentSnapshot? _lastDocument;
   final refreshController = RefreshController(initialRefresh: false);
   StreamSubscription? _notificationCountSubscription;
+  final analytics = Get.find<AnalyticsService>();
+
 
   @override
   void onInit() {

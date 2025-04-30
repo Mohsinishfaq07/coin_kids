@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
@@ -18,8 +19,8 @@ import '../../../../core/theme/color_theme.dart';
 
 class QuickTransferPage extends GetView<QuickTransferController> {
   final _amountNode = FocusNode();
-  
-   QuickTransferPage({super.key});
+
+  QuickTransferPage({super.key});
 
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -53,10 +54,14 @@ class QuickTransferPage extends GetView<QuickTransferController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ParentAppBar(
+      appBar: ParentAppBar(
         title: "Quick Transfer",
         showBackButton: true,
         centerTitle: false,
+        onBackPressed: () async {
+          Get.back();
+          await controller.analytics.backPressClicked(AnalyticsScreenNames.parentQuickTransferScreen);
+        },
       ),
       body: KeyboardActions(
         config: _buildConfig(context),
@@ -136,7 +141,7 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                     QuickTransferTextField(
                       maxLength: 8,
                       hintText: 0.toMoneyFormat(),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),
+                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
                       onChanged: (val) {
                         controller.amount.value = val;
                       },
@@ -183,16 +188,18 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Obx(() {
-                          bool hasEnoughBalance = controller.amount.value.isNotEmpty && 
+                          bool hasEnoughBalance = controller.amount.value.isNotEmpty &&
                               double.tryParse(controller.amount.value) != null &&
                               double.parse(controller.amount.value) <= controller.appState.currentKid.value!.wallet.spendingJar.balance;
-                              
+
                           return AppButton(
                             // size: Size(120, 43),
 
                             // size: Size(123.w, 45.h),
                             backgroundColor: hasEnoughBalance ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
+                              await controller.analytics.buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+
                               if (!hasEnoughBalance) {
                                 controller.amountValidation.value = 'Insufficient balance';
                               } else {
@@ -221,31 +228,21 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                         }),
                         Obx(() {
                           return AppButton(
-
-                               // size: Size(123.w, 45.h),
-                          //  size: Size(80, 43.h),
+                            // size: Size(123.w, 45.h),
+                            //  size: Size(80, 43.h),
                             backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                            onPressed: () {
-                              controller.sendMoney();
+                            onPressed: ()async {
+                              await controller.analytics.buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+
+                            controller.sendMoney();
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // Text(
-                                //   "Send    ",
-                                //   style: AppTextStyle.appButton,
-                                // ),
-                                // SizedBox(
-                                //   width: 4.w,
-                                // ),
-                                // Icon(
-                                //   Icons.remove,
-                                //   size: 22,
-                                //   color: Colors.white,
-                                // ),
+
                                 Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal:8.w),
+                                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                                   child: Icon(
                                     Icons.add,
                                     size: 22,
@@ -259,7 +256,6 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                                   "Send   ",
                                   style: AppTextStyle.appButton,
                                 ),
-
                               ],
                             ),
                           );

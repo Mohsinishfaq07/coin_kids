@@ -6,6 +6,7 @@ import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
@@ -24,6 +25,8 @@ class KidProfileController extends GetxController {
   final appState = Get.find<AppStateController>();
   final goalsService = Get.find<GoalService>();
   final marketService = Get.find<MarketService>();
+  final analytics = Get.find<AnalyticsService>();
+
   final Rx<KidProfileTabs> currentType = KidProfileTabs.jars.obs;
 
   final NotificationService _notificationService =

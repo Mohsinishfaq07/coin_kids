@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/widgets/orientation_transition.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class ParentBaseScreen extends GetView<ParentBaseController> {
@@ -215,6 +215,21 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
     Widget navItem = InkWell(
       onTap: () {
+        switch (index) {
+          case 0:
+            controller.analytics.logParentHomeTabClicked(AnalyticsScreenNames.parentBase);
+            break;
+          case 1:
+            controller.analytics.logParentNotificationTabClicked(AnalyticsScreenNames.parentBase);
+            break;
+          case 2:
+            controller.analytics.logParentMarketClicked(AnalyticsScreenNames.parentBase);
+            break;
+          case 3:
+            controller.analytics.logSwitchToKidZoneClicked(AnalyticsScreenNames.parentBase);
+            break;
+        }
+
         if (index == 3) {
           SharedPreferencesHelper.saveBool(SharedPreferencesHelper.showKidsNotifications, true);
           controller.roleController.switchToKidMode(true);

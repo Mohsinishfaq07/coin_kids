@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -121,7 +122,12 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
               right: 0,
               child: Center(
                 child: GestureDetector(
-                  onTap: () => Get.toNamed(Routes.parentWishlist),
+                  onTap: () async{
+      await controller.analytics
+          .buttonClicked(AnalyticsEventNames.parentWishlistClicked, AnalyticsScreenNames.parentMarket);
+      Get.toNamed(Routes.parentWishlist);
+
+      } ,
                   child: Container(
                     width: 0.8.sw,
                     height: 40.h,
@@ -287,102 +293,7 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
       onTap: () {
         Get.toNamed(Routes.parentProductDetails, arguments: product);
       },
-      child:
-      // Container(
-      //   // width:100.w,
-      //   clipBehavior: Clip.antiAlias,
-      //   decoration: ShapeDecoration(
-      //     color: Colors.white,
-      //     shape: RoundedRectangleBorder(
-      //       side: const BorderSide(width: 1, color: Color(0xFFCBE4F3)),
-      //       borderRadius: BorderRadius.circular(16.r),
-      //     ),
-      //     shadows: [
-      //       BoxShadow(
-      //         color: Color(0x0F000000),
-      //         blurRadius: 6.r,
-      //         offset: Offset(0, 0),
-      //       )
-      //     ],
-      //   ),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       Padding(
-      //         padding: EdgeInsets.all(10.w),
-      //         child: Container(
-      //           width: double.infinity,
-      //           height: 142.h,
-      //           decoration: ShapeDecoration(
-      //             image: DecorationImage(
-      //               image: NetworkImage(product.imageUrl),
-      //               fit: BoxFit.cover,
-      //             ),
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(6.r),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: EdgeInsets.symmetric(horizontal: 13.w),
-      //         child: Text(
-      //           product.name,
-      //           style: TextStyle(
-      //             color: Color(0xFF666666),
-      //             fontSize: 14.sp,
-      //             fontFamily: 'Open Sans',
-      //             fontWeight: FontWeight.w600,
-      //           ),
-      //           maxLines: 1,
-      //           overflow: TextOverflow.ellipsis,
-      //         ),
-      //       ),
-      //       SizedBox(height: 8.h),
-      //       Padding(
-      //         padding: EdgeInsets.symmetric(horizontal: 13.w),
-      //         child: Row(
-      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //           children: [
-      //             Text(
-      //               "€ ${product.price.toStringAsFixed(2)}",
-      //               style: TextStyle(
-      //                 color: Color(0xFF666666),
-      //                 fontSize: 18.sp,
-      //                 fontFamily: 'Open Sans',
-      //                 fontWeight: FontWeight.w800,
-      //               ),
-      //             ),
-      //             Obx(() {
-      //               if (controller.isItemLoading(product.id!)) {
-      //                 return SizedBox(
-      //                   width: 24.w,
-      //                   height: 24.w,
-      //                   child: CircularProgressIndicator(
-      //                     strokeWidth: 2,
-      //                     valueColor: AlwaysStoppedAnimation<Color>(
-      //                       AppColors.colorPrimary,
-      //                     ),
-      //                   ),
-      //                 );
-      //               }
-      //               return GestureDetector(
-      //                 onTap: () => controller.toggleWishlist(product),
-      //                 child: SvgPicture.asset(
-      //                   Assets.icFavorite,
-      //                   width: 24.w,
-      //                   height: 24.w,
-      //                   colorFilter: ColorFilter.mode(controller.isInWishlist(product.id!) ? AppColors.colorPrimary : Colors.grey[400]!, BlendMode.srcIn),
-      //                 ),
-      //               );
-      //             }),
-      //           ],
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-       LayoutBuilder(
+      child: LayoutBuilder(
 
 
         builder: (context, constraints) {
@@ -463,7 +374,11 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
                           );
                         }
                         return GestureDetector(
-                          onTap: () => controller.toggleWishlist(product),
+                          onTap: () async{
+                            await controller.analytics
+                                .buttonClicked(AnalyticsEventNames.parentWishlistIconClicked, AnalyticsScreenNames.parentMarket);
+                            controller.toggleWishlist(product);
+                          } ,
                           child: SvgPicture.asset(
                             Assets.icFavorite,
                             width: 24.w,

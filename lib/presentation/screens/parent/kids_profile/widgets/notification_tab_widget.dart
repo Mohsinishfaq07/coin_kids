@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/notification/notification_tile.dart';
@@ -17,7 +18,11 @@ class NotificationTabWidget extends GetView<KidProfileController> {
         }
 
         if (controller.notifications.isEmpty) {
-          return buildNotificationEmptyState(() {});
+          return buildNotificationEmptyState(()async {
+
+            await controller.analytics.buttonClicked(AnalyticsEventNames.goalsRefreshClicked, AnalyticsScreenNames.kidProfileScreen);
+
+          });
         }
 
         return ListView.builder(

@@ -10,6 +10,8 @@ import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../data/remote_services/analytics_service.dart';
+
 enum FilterType { all, age, budget, rating }
 
 enum AgeRange { all, zeroToTwo, threeToFive, sixToNine, tenToTwelve, thirteenToSixteen, sixteenPlus }
@@ -18,6 +20,7 @@ class ParentMarketController extends GetxController {
   final MarketService _marketService = Get.find<MarketService>();
   final WishlistService _wishlistService = Get.find<WishlistService>();
   final AuthService _authService = Get.find();
+  final analytics = Get.find<AnalyticsService>();
 
   // All products fetched from server (source of truth)
   final RxList<MarketProductModel> _allProducts = <MarketProductModel>[].obs;

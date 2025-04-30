@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -15,6 +16,8 @@ class EditChildController extends GetxController {
   final authService = Get.find<AuthService>();
   final appState = Get.find<AppStateController>();
   final ImagePicker _picker = ImagePicker();
+  final analytics = Get.find<AnalyticsService>();
+
 
   final childName = 'Enter new name'.obs;
   final childAge = 'Enter age'.obs;

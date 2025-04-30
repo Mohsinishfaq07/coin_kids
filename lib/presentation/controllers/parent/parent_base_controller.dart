@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -19,6 +20,8 @@ class ParentBaseController extends GetxController {
   final appState = Get.find<AppStateController>();
   final authService = Get.find<AuthService>();
   final kidService = Get.find<KidService>();
+  final analytics = Get.find<AnalyticsService>();
+
 
   RxString selectedChildIdForQuickTransfer = ''.obs;
   RxString selectedChildNameForQuickTransfer = ''.obs;

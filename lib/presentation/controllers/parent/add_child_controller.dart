@@ -1,4 +1,6 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -10,6 +12,8 @@ class AddChildController extends GetxController {
   final kidsService = Get.find<KidService>();
   final authService = Get.find<AuthService>();
   final ImagePicker _picker = ImagePicker();
+  final analytics = Get.find<AnalyticsService>();
+
 
   final childName = ''.obs;
   final childAge = ''.obs;
@@ -112,7 +116,11 @@ class AddChildController extends GetxController {
       );
 
       ToastUtil.showToast("Child added successfully");
+      await analytics.logAddChildClickSuccessFull(AnalyticsScreenNames.parentAddKidScreen);
+
     } catch (e) {
+      await analytics.logAddChildFailures(AnalyticsScreenNames.parentAddKidScreen);
+
       Get.log("Failed to add child: $e");
       ToastUtil.showToast("Failed to add child: $e");
     } finally {

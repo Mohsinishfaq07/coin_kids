@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/notification/notification_card.dart';
@@ -55,8 +56,13 @@ class MessagesScreen extends GetView<MessagesController> {
             ),
             onRefresh: controller.onRefresh,
             onLoading: controller.onLoading,
-            child: controller.notifications.isEmpty ? buildNotificationEmptyState(() {}) : _buildNotificationsList(),
-         //child: controller.notifications.isEmpty
+            child: controller.notifications.isEmpty
+                ? buildNotificationEmptyState(() async {
+                    await controller.analytics
+                        .buttonClicked(AnalyticsEventNames.parentMessageRefreshClicked, AnalyticsScreenNames.parentMessageScreen);
+                  })
+                : _buildNotificationsList(),
+            //child: controller.notifications.isEmpty
             //                 ? buildNotificationEmptyState(() {})
             //                 : _buildNotificationsList(),
           );
@@ -78,7 +84,10 @@ class MessagesScreen extends GetView<MessagesController> {
 
         return NotificationCard(
           notification: notification,
-          onTap: () {
+          onTap: () async{
+            await controller.analytics
+                .buttonClicked(AnalyticsEventNames.messageSeeDetailsClicked, AnalyticsScreenNames.parentMessageScreen);
+
             controller.markAsRead(notification.id!);
           },
           onActionPressed: (actionId) {

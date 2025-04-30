@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -67,12 +68,18 @@ class AddChildScreen extends GetView<AddChildController> {
 
             if (_formKey.currentState?.validate() ?? false) {
               await controller.createKid(true);
+
               print(" this is whole method ${controller.createKid(true)};");
+
             }
           },
         ),
       ),
-      appBar: const ParentAppBar(
+      appBar:  ParentAppBar(
+        onBackPressed: ()async{
+          await controller.analytics.logAddChildDiscard(AnalyticsScreenNames.parentAddKidScreen);
+
+        },
         showBackButton: true,
         title: "Add your child",
         centerTitle: false,

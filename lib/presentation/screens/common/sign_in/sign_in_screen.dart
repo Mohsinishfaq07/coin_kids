@@ -130,7 +130,7 @@ class SignInScreen extends GetView<SignInController> {
                         if (_formKey.currentState?.validate() ?? false) {
                           try {
                             await controller.analytics.logSignInAttempt(AnalyticsScreenNames.signIn);
-                            ToastUtil.showToast("log sign in attempt called ${controller.email.value}");
+                           // ToastUtil.showToast("log sign in attempt called ${controller.email.value}");
                             print("Firebase sign-up analytics event logged");
 
                             await controller.signInWithEmail();

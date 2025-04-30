@@ -33,8 +33,10 @@ class _GoalsNavTutorialOverlayState extends State<GoalsNavTutorialOverlay> {
           //color: Colors.black.withOpacity(0.75),
           child: Stack(
             children: [
+              
               Positioned(
-                left: 26.w,
+                // left: Get.width * 0.08,
+                left: MediaQuery.of(context).padding.left + 30.w,
                 bottom: Get.height * 0.32,
                 child: Row(
                   children: [

@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -25,6 +26,10 @@ class KidProfileScreen extends GetView<KidProfileController> {
         title: "${controller.appState.currentKid.value?.name ?? "User"}'s Profile",
         centerTitle: true,
         showBackButton: true,
+        onBackPressed: () async {
+          await controller.analytics.buttonClicked(AnalyticsEventNames.backButtonClicked, AnalyticsScreenNames.kidProfileScreen);
+          Get.back();
+        },
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -36,13 +41,17 @@ class KidProfileScreen extends GetView<KidProfileController> {
           children: [
             BasicInfoWidget(),
             Padding(
-              padding: EdgeInsets.only(top: 45.h, bottom: 30.h),              child: Row(
+              padding: EdgeInsets.only(top: 45.h, bottom: 30.h),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   KidButton.iconWithTitle(
                     title: 'Quick\nTransfer',
                     iconPath: Assets.icTransfer,
-                    onTap: () => Get.toNamed(Routes.parentQuickTransfer),
+                    onTap: () async {
+                      await controller.analytics.buttonClicked(AnalyticsEventNames.quickTransferButtonClicked, AnalyticsScreenNames.kidProfileScreen);
+                      Get.toNamed(Routes.parentQuickTransfer);
+                    },
                     baseColor: AppColors.colorPrimary,
                     iconSize: 28.w,
                     size: 50.w,
@@ -51,7 +60,9 @@ class KidProfileScreen extends GetView<KidProfileController> {
                   KidButton.iconWithTitle(
                     title: 'Schedule\nAllowance',
                     iconPath: Assets.icCalender,
-                    onTap: () {
+                    onTap: () async {
+                      await controller.analytics
+                          .buttonClicked(AnalyticsEventNames.scheduleAllowanceButtonClicked, AnalyticsScreenNames.kidProfileScreen);
                       ToastUtil.showToast("Coming soon...");
                     },
                     baseColor: AppColors.iconDisabled,
@@ -63,7 +74,10 @@ class KidProfileScreen extends GetView<KidProfileController> {
                   KidButton.iconWithTitle(
                     title: 'Edit\nProfile',
                     iconPath: Assets.icEdit,
-                    onTap: () => Get.toNamed(Routes.parentUpdateChild),
+                    onTap: () async {
+                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidEditProfileClicked, AnalyticsScreenNames.kidProfileScreen);
+                      Get.toNamed(Routes.parentUpdateChild);
+                    },
                     baseColor: AppColors.colorPrimary,
                     belowTextStyle: AppTextStyle.bodyMedium,
                     iconSize: 20.w,
@@ -73,7 +87,8 @@ class KidProfileScreen extends GetView<KidProfileController> {
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(bottom: 8.h),              child: SizedBox(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: SizedBox(
                 width: 0.8.sw,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -88,8 +103,10 @@ class KidProfileScreen extends GetView<KidProfileController> {
             Obx(() {
               switch (controller.currentType.value) {
                 case KidProfileTabs.jars:
+                  controller.analytics.buttonClicked(AnalyticsEventNames.kidEditProfileClicked, AnalyticsScreenNames.kidProfileScreen);
                   return JarsTabWidget();
                 case KidProfileTabs.goals:
+                  controller.analytics.buttonClicked(AnalyticsEventNames.kidEditProfileClicked, AnalyticsScreenNames.kidProfileScreen);
                   return GoalsTabWidget();
                 default:
                   return JarsTabWidget();

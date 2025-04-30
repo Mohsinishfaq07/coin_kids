@@ -82,31 +82,19 @@ class KidBaseScreen extends GetView<KidBaseController> {
                         );
                       },
                     ),
-                    // Obx(
-                    //       () => KidAppBarComponent(
-                    //     onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
-                    //     onAddMoneyTap: () {
-                    //       final isConnected = controller.appState.currentKid.value!.isConnected;
-                    //       Get.toNamed(
-                    //         Routes.kidMoneyAddOrRequest,
-                    //         arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-
                     SizedBox(height: 10),
                     Expanded(
                       child: Row(
                         children: [
                           // Navigation Rail
                           SizedBox(
-                            width: 80.w,
+                           // width: 80.w,
                             child: Container(
                               key: GlobalKeys.goalsNavKey,
                               child: VerticalNavBar(),
                             ),
                           ),
+                        //  VerticalNavBar(),
 
                           // Content Area
                           Expanded(

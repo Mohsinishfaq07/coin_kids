@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -21,6 +22,8 @@ class QuickTransferController extends GetxController {
   final kidService = Get.find<KidService>();
   final notificationService = Get.find<NotificationService>();
   final parentBaseController = Get.find<ParentBaseController>();
+  final analytics = Get.find<AnalyticsService>();
+
 
   RxString amount = ''.obs;
   RxString message = ''.obs;

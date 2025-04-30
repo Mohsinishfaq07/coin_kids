@@ -1,9 +1,8 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
-import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/components/parent/empty_state.dart';
 import 'package:coin_kids/presentation/components/parent/goal_list_item.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
-import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -31,12 +30,25 @@ class GoalsTabWidget extends GetView<KidProfileController> {
               var goalData = controller.goals[index];
               return GoalListItem(
                 goal: goalData,
-                onTap: () => controller.navigateToProductDetails(goalData),
+                onTap: () async {
+                  await controller.analytics
+                      .buttonClicked(AnalyticsEventNames.productDetailClicked, AnalyticsScreenNames.kidProfileScreen);
+                  controller.navigateToProductDetails(goalData);
+
+                } ,
                 onReject: goalData.status == GoalStatus.completed
-                    ? () => controller.handleRejectGoal(goalData)
+                    ? () async {
+                        await controller.analytics
+                            .buttonClicked(AnalyticsEventNames.goalRejectClicked, AnalyticsScreenNames.kidProfileScreen);
+                        controller.handleRejectGoal(goalData);
+                      }
                     : null,
                 onBuy: goalData.status == GoalStatus.completed
-                    ? () => controller.handleApproveGoal(goalData)
+                    ? () async {
+                        await controller.analytics
+                            .buttonClicked(AnalyticsEventNames.goalApproveClicked, AnalyticsScreenNames.kidProfileScreen);
+                        controller.handleApproveGoal(goalData);
+                      }
                     : null,
               );
             },

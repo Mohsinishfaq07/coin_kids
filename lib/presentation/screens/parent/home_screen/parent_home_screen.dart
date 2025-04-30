@@ -131,9 +131,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                               AppButton(
                                 size: Size(0.4.sw, 50),
                                 onPressed: () async{
+                                  await controller.analytics.logAddChildAttempt(AnalyticsScreenNames.parentHome);
+
                                   Get.toNamed(Routes.parentAddChild);
-                                  await controller.analytics.logAddChildClick(AnalyticsScreenNames.parentHome);
-                                 // await controller.analytics.logSignInSuccess(AnalyticsScreenNames.parentHome,"");
 
                                 },
                                 child: Text("Add Child", style: AppTextStyle.appButton),
@@ -189,7 +189,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 return Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 10.h),
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: ()async  {
+                                      await controller.analytics.logAlreadyAddedChildAttempt(AnalyticsScreenNames.parentHome);
+
                                       ToastUtil.showToast("You have already added a child");
                                     },
                                     child: Column(
@@ -243,7 +245,10 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 return Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 10.h),
                                   child: GestureDetector(
-                                    onTap: () {
+
+                                    onTap: () async{
+                                      await controller.analytics.logKidProfileClicked(AnalyticsScreenNames.parentHome);
+
                                       Get.toNamed(Routes.parentKidProfile);
                                     },
                                     child: Column(

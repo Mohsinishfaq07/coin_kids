@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -13,6 +14,8 @@ class ParentDrawerController extends GetxController {
   final authService = Get.find<AuthService>();
   final appState = Get.find<AppStateController>();
   final _parentService = Get.find<ParentService>();
+  final  analytics = Get.find<AnalyticsService>();
+
 
   var goalAchievementSwitch = true.obs;
   var moneyRequestSwitch = true.obs;

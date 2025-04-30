@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
@@ -26,21 +27,24 @@ class ParentDrawer extends GetView<ParentDrawerController> {
       appBar: ParentAppBar(
         title: '',
         showBackButton: true,
-        onBackPressed: () {
+        onBackPressed: () async {
+          await controller.analytics.buttonClicked(AnalyticsEventNames.parentDrawerBackButtonClicked, AnalyticsScreenNames.parentDrawerScreen);
+
           Get.back();
         },
         actions: [
           TextButton(
             onPressed: () async {
               await controller.authService.signOut();
+              await controller.analytics.buttonClicked(AnalyticsEventNames.parentLogoutClicked, AnalyticsScreenNames.parentDrawerScreen);
+
               Get.offAllNamed(Routes.signIn);
             },
             style: ButtonStyle(
               textStyle: WidgetStateProperty.all(
                 AppTextStyle.headingSmall,
               ),
-              foregroundColor:
-                  WidgetStateProperty.all(AppColors.notificationCritical),
+              foregroundColor: WidgetStateProperty.all(AppColors.notificationCritical),
             ),
             child: Text("Logout"),
           )
@@ -81,11 +85,11 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               _buildProfileImage(),
                               GestureDetector(
                                 onTap: () async {
+                                  await controller.analytics.buttonClicked(AnalyticsEventNames.parentImagePickerClicked, AnalyticsScreenNames.parentDrawerScreen);
+
                                   ImagePickerBottomSheet.show(
-                                    onCameraTap: () => controller.pickImage(
-                                        source: ImageSource.camera),
-                                    onGalleryTap: () => controller.pickImage(
-                                        source: ImageSource.gallery),
+                                    onCameraTap: () => controller.pickImage(source: ImageSource.camera),
+                                    onGalleryTap: () => controller.pickImage(source: ImageSource.gallery),
                                   );
                                 },
                                 child: CircleAvatar(
@@ -99,12 +103,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                           SizedBox(height: 12.h),
                           Obx(() {
                             return Text(
-                              controller.appState.currentParent.value?.name ??
-                                  "UnKnown",
-                              style: AppTextStyle.headingLarge.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.textPrimary,
-                                  fontSize: 18.sp),
+                              controller.appState.currentParent.value?.name ?? "UnKnown",
+                              style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary, fontSize: 18.sp),
                             );
                           }),
                         ],
@@ -113,7 +113,9 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     SizedBox(height: 10.h),
 
                     // My Profile Section
-                    _buildSectionHeader("My Profile", onEdit: () {
+                    _buildSectionHeader("My Profile", onEdit: () async{
+                      await controller.analytics.buttonClicked(AnalyticsEventNames.parentEditClicked, AnalyticsScreenNames.parentDrawerScreen);
+
                       Get.toNamed(Routes.parentEditProfile);
                     }),
                     Container(
@@ -122,8 +124,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 1.w, color: const Color(0xFFCBE4F3)),
+                          side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         shadows: [
@@ -137,15 +138,14 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       ),
                       child: Center(
                         child: Padding(
-                          padding:  EdgeInsets.symmetric(vertical :20.h),                            child: Column(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Obx(() {
                                 return _buildProfileRow(
                                   "Full name",
-                                  controller
-                                          .appState.currentParent.value?.name ??
-                                      "UnKnown",
+                                  controller.appState.currentParent.value?.name ?? "UnKnown",
                                   Assets.icPerson,
                                 );
                               }),
@@ -153,18 +153,10 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               Obx(() {
                                 return _buildProfileRow(
                                   "Date of birth",
-                                  controller.appState.currentParent.value
-                                                  ?.dob ==
-                                              null ||
-                                          controller.appState.currentParent
-                                                  .value?.dob ==
-                                              0
+                                  controller.appState.currentParent.value?.dob == null || controller.appState.currentParent.value?.dob == 0
                                       ? "Not Specified"
-                                      : DateFormat('d MMM, y').format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              controller.appState.currentParent
-                                                      .value?.dob ??
-                                                  0)),
+                                      : DateFormat('d MMM, y')
+                                          .format(DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value?.dob ?? 0)),
                                   Assets.icCalender,
                                 );
                               }),
@@ -172,9 +164,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               Obx(() {
                                 return _buildProfileRow(
                                   "Gender",
-                                  controller.appState.currentParent.value
-                                          ?.gender ??
-                                      "Not Specified",
+                                  controller.appState.currentParent.value?.gender ?? "Not Specified",
                                   Assets.icGender,
                                 );
                               }),
@@ -194,8 +184,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 1.w, color: const Color(0xFFCBE4F3)),
+                          side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         shadows: const [
@@ -209,19 +198,16 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       ),
                       child: Center(
                         child: Padding(
-                          padding:  EdgeInsets.symmetric(vertical :18.h),                          child: Column(
+                          padding: EdgeInsets.symmetric(vertical: 18.h),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               _buildProfileRowWithArrow(
-                                  onTap: () => Get.to(() => ChangeLanguage()),
-                                  "Languages (coming soon)",
-                                  Assets.icGlobal,
-                                  isComingSoon: true),
+                                  onTap: () => Get.to(() => ChangeLanguage()), "Languages (coming soon)", Assets.icGlobal, isComingSoon: true),
                               SizedBox(
                                 height: 30.h,
                               ),
-                              _buildProfileRowWithArrow(
-                                  "Parent Zone Pin", Assets.icPin, onTap: () {
+                              _buildProfileRowWithArrow("Parent Zone Pin", Assets.icPin, onTap: () {
                                 Get.toNamed(Routes.parentChangePin);
                               }),
                             ],
@@ -240,8 +226,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       decoration: ShapeDecoration(
                         color: const Color(0xFFEDFAFF),
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              width: 1.w, color: const Color(0xFFCBE4F3)),
+                          side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         shadows: const [
@@ -255,7 +240,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                       ),
                       child: Center(
                         child: Padding(
-                          padding:  EdgeInsets.symmetric(vertical :10.h),                          child: Column(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Obx(() {
@@ -265,7 +251,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                                   controller.goalAchievementSwitch,
                                   () async {
                                     SharedPreferencesHelper.saveBool(SharedPreferencesHelper.goalAchievementNotificationEnabled, true);
-                                 // await controller.toggleGoalAchievement(
+                                    // await controller.toggleGoalAchievement(
                                     //                                         !controller
                                     //                                             .goalAchievementSwitch.value);
                                   },
@@ -278,7 +264,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                                   controller.moneyRequestSwitch,
                                   () {
                                     SharedPreferencesHelper.saveBool(SharedPreferencesHelper.moneyRequestNotificationEnabled, true);
-                               //() async {
+                                    //() async {
                                     //                                     await controller.toggleMoneyRequest(
                                     //                                         !controller.moneyRequestSwitch.value);
                                   },
@@ -301,8 +287,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         decoration: ShapeDecoration(
                           color: const Color(0xFFEDFAFF),
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                width: 1.w, color: const Color(0xFFCBE4F3)),
+                            side: BorderSide(width: 1.w, color: const Color(0xFFCBE4F3)),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           shadows: const [
@@ -316,73 +301,75 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ),
                         child: Center(
                           child: Padding(
-                            padding:  EdgeInsets.symmetric(vertical :14.h),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildProfileRowWithArrow(
-                                    "Share app",
-                                    Assets.icShare,
-                                    showArrow: false,
-                                    iconSize: 24.sp,
-                                    onTap: () async {
-                                      try {
-                                        await ShareUtils.shareApp();
-                                      } catch (e) {
-                                        ToastUtil.showToast(
-                                          'Failed to share app',
-                                          color: AppColors.notificationCritical,
-                                        );
-                                      }
-                                    },
-                                  ),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                              _buildProfileRowWithArrow(
+                                "Share app",
+                                Assets.icShare,
+                                showArrow: false,
+                                iconSize: 24.sp,
+                                onTap: () async {
+                                  try {
 
-                                  Padding(
-                                    padding:  EdgeInsets.symmetric(vertical: 30.h),
-                                    child: _buildProfileRowWithArrow(
-                                      "Feedback",
-                                      Assets.icFeedback,
-                                      showArrow: false,
-                                      iconSize: 24.sp,
-                                      onTap: () async {
-                                        Get.toNamed(Routes.parentFeedback);
-                                      },
-                                    ),
-                                  ),
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.shareAppClicked, AnalyticsScreenNames.parentDrawerScreen);
 
-                                  _buildProfileRowWithArrow(
-                                    "Privacy Policy",
-                                    Assets.icLock,
-                                    showArrow: false,
-                                    iconSize: 24.sp,
-                                    onTap: () async {
-                                      try {
-                                        await ShareUtils.openPrivacyPolicy();
-                                      } catch (e) {
-                                        ToastUtil.showToast(
-                                          'Failed to open privacy policy',
-                                          color: AppColors.notificationCritical,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ]),
+                                      await ShareUtils.shareApp();
+                                  } catch (e) {
+                                    ToastUtil.showToast(
+                                      'Failed to share app',
+                                      color: AppColors.notificationCritical,
+                                    );
+                                  }
+                                },
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 30.h),
+                                child: _buildProfileRowWithArrow(
+                                  "Feedback",
+                                  Assets.icFeedback,
+                                  showArrow: false,
+                                  iconSize: 24.sp,
+                                  onTap: () async {
+                                    await controller.analytics.buttonClicked(AnalyticsEventNames.feedbackClicked, AnalyticsScreenNames.parentDrawerScreen);
+
+                                    Get.toNamed(Routes.parentFeedback);
+                                  },
+                                ),
+                              ),
+                              _buildProfileRowWithArrow(
+                                "Privacy Policy",
+                                Assets.icLock,
+                                showArrow: false,
+                                iconSize: 24.sp,
+                                onTap: () async {
+                                  try {
+                                    await ShareUtils.openPrivacyPolicy();
+                                    await controller.analytics.buttonClicked(AnalyticsEventNames.privacyPolicyClicked, AnalyticsScreenNames.parentDrawerScreen);
+
+                                  } catch (e) {
+                                    ToastUtil.showToast(
+                                      'Failed to open privacy policy',
+                                      color: AppColors.notificationCritical,
+                                    );
+                                  }
+                                },
+                              ),
+                            ]),
                           ),
                         )),
 
-
                     // Version
                     Obx(() => Padding(
-                      padding:  EdgeInsets.symmetric(vertical: 24.h),
-                      child: Text(
-                        "Version ${controller.appVersion}",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )),
+                          padding: EdgeInsets.symmetric(vertical: 24.h),
+                          child: Text(
+                            "Version ${controller.appVersion}",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )),
                   ],
                 ),
               ),
@@ -402,10 +389,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
         children: [
           Text(
             title,
-            style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700),
+            style: TextStyle(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: FontWeight.w700),
           ),
           if (onEdit != null)
             GestureDetector(
@@ -414,8 +398,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                 children: [
                   SvgPicture.asset(
                     Assets.icEdit,
-                    colorFilter: ColorFilter.mode(
-                        AppColors.iconPrimaryVariant, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(AppColors.iconPrimaryVariant, BlendMode.srcIn),
                   ),
                   SizedBox(
                     width: 4.w,
@@ -449,8 +432,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
             children: [
               SvgPicture.asset(
                 iconPath, // Path to your SVG asset
-                colorFilter:
-                    ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
                 height: 20.h, // Adjust the size as needed
                 width: 20.w, // Adjust the size as needed
               ),
@@ -466,10 +448,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
             padding: EdgeInsets.only(right: 10.w),
             child: Text(
               value,
-              style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14.sp, color: Colors.black, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -508,9 +487,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.bodyLarge.copyWith(
-                  color: isComingSoon
-                      ? AppColors.iconDisabled
-                      : AppColors.textPrimary,
+                  color: isComingSoon ? AppColors.iconDisabled : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -518,9 +495,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: iconSize.sp, // Use the passed size or default size
-                color: isComingSoon
-                    ? AppColors.iconDisabled
-                    : AppColors.iconPrimaryVariant,
+                color: isComingSoon ? AppColors.iconDisabled : AppColors.iconPrimaryVariant,
               ),
           ],
         ),
@@ -529,8 +504,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
   }
 
   // Build toggle row
-  Widget _buildToggleRow(
-      String title, String iconPath, RxBool toggleValue, VoidCallback onTap) {
+  Widget _buildToggleRow(String title, String iconPath, RxBool toggleValue, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -539,8 +513,7 @@ class ParentDrawer extends GetView<ParentDrawerController> {
           children: [
             SvgPicture.asset(
               iconPath, // Path to your SVG asset
-              colorFilter:
-                  ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(AppColors.colorPrimary, BlendMode.srcIn),
               height: 24.h, // Adjust the size as needed
               width: 24.w, // Adjust the size as needed
             ),

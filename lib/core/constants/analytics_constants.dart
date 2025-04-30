@@ -55,7 +55,41 @@ class AnalyticsEventNames {
   //drawer
   static const String drawerButtonClicked = 'drawer_button_clicked';
   // add child
-  static const String addChildClicked = 'add_child_clicked';
+  static const String addChildAttemptClicked = 'add_child_attempt_clicked';
+  static const String addChildSuccessfulClicked = 'add_child_successful_clicked';
+  static const String addChildFailed = 'add_child_failed';
+  static const String addChildDiscard = 'add_child_discard';
+  static const String alreadyAddChildClicked = 'already_added_child';
+  static const String kidProfileClicked = 'kid_profile_clicked';
+  static const String parentHomeTabClicked = 'parent_home_tab_clicked';
+  static const String parentNotificationTabClicked = 'parent_notification_tab_clicked';
+  static const String parentMarketTabClicked = 'parent_market_tab_clicked';
+  static const String parentKidZoneTabClicked = 'parent_kid_zone_tab_clicked';
+  static const String backButtonClicked = "back_button_clicked";
+  static const String sendMoneyButtonClicked = "send_button_clicked";
+  static const String removeMoneyButtonClicked= "remove_button_clicked";
+  static const String quickTransferButtonClicked= "quick_transfer_button_clicked";
+  static const String scheduleAllowanceButtonClicked= "schedule_allowance_button_clicked";
+  static const String kidEditProfileClicked= "kid_edit_profile_button_clicked";
+  static const String jarsTabClicked= "jar_tab_clicked";
+  static const String goalsTabClicked= "goal_tab_clicked";
+  static const String goalsRefreshClicked= "goal_refresh_clicked";
+  static const String saveKidProfileClicked= "save_kid_profile_clicked";
+
+  static const String parentMessageRefreshClicked = 'parent_message_refresh_clicked';
+  static const String messageSeeDetailsClicked = 'message_see_details_clicked';
+  static const String goalApproveClicked = 'goal_approve_clicked';
+  static const String goalRejectClicked = 'goal_reject_clicked';
+  static const String productDetailClicked = 'product_detail_clicked';
+  static const String parentWishlistIconClicked = 'pt_wishlist_icon_clicked';
+  static const String parentWishlistClicked = 'pt_wishlist_clicked';
+  static const String parentDrawerBackButtonClicked = 'pt_drawer_back_clicked';
+  static const String parentLogoutClicked = 'pt_logout_clicked';
+  static const String privacyPolicyClicked = 'privacy_policy_clicked';
+  static const String feedbackClicked = 'feed_back_clicked';
+  static const String shareAppClicked = 'share_app_clicked';
+  static const String parentEditClicked = 'parent_edit_clicked';
+  static const String parentImagePickerClicked = 'parent_image_picker_clicked';
 }
 
 class AnalyticsParameterNames {
@@ -129,5 +163,10 @@ class AnalyticsScreenNames {
   static const String parentHome = 'parent_home_screen';
   static const String parentMarket = 'parent_market_screen';
   static const String parentWishlist = 'parent_wishlist_screen';
+  static const String parentMessageScreen = 'parent_message_screen';
   static const String parentProfile = 'parent_profile_screen';
+  static const String parentAddKidScreen = 'parent_add_kid_screen';
+  static const String parentQuickTransferScreen = 'parent_Quick_transfer_screen';
+  static const String kidProfileScreen = 'kid_profile_screen';
+  static const String parentDrawerScreen = 'parent_drawer_screen';
 }
