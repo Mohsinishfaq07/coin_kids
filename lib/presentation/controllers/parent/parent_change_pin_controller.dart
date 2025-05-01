@@ -23,7 +23,7 @@ class ParentChangePinController extends GetxController {
   void onInit() {
     super.onInit();
     // Check if it's first time PIN setup
-    isFirstTime.value = appState.currentParent.value?.pin == null;
+    isFirstTime.value = appState.currentParent.value?.pin == "";
   }
 
   void toggleCurrentPinVisibility() => currentPinVisible.value = !currentPinVisible.value;

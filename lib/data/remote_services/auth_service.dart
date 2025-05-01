@@ -37,7 +37,7 @@ class AuthService extends GetxController {
     required String name,
     int dob = 0,
     required String gender,
-    String pin = "0000",
+    String pin = "",
   }) async {
     try {
       // Create user with email and password

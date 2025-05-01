@@ -13,8 +13,10 @@ import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -231,42 +233,42 @@ class KidHomeScreen extends GetView<KidBaseController> {
                         right: 20.w,
                         child: GestureDetector(
                           onTap: () {
-                            controller.switchToParentMode();
-                            // final currentPin = controller.appState.currentParent.value?.pin;
-                            // final isFirstTime = currentPin == null;
-                            //
-                            //
-                            // ParentPinDialog.show(
-                            //   isFirstTime: isFirstTime,
-                            //   onPinSubmit: (pin) {
-                            //     if (isFirstTime) {
-                            //       // For first time, validate birth year
-                            //       final birthYear = int.tryParse(pin);
-                            //       if (birthYear != null && DateTime.now().year - birthYear >= 25) {
-                            //         //TODO: Upload pin to parent
-                            //         // controller.appState.currentParent.value?.pin = pin;
-                            //         controller.switchToParentMode();
-                            //       } else {
-                            //         Fluttertoast.showToast(
-                            //           msg: "Invalid birth year",
-                            //           backgroundColor: Colors.red,
-                            //           textColor: Colors.white,
-                            //         );
-                            //       }
-                            //     } else {
-                            //       // For subsequent times, check against saved PIN
-                            //       if (pin == currentPin) {
-                            //         controller.switchToParentMode();
-                            //       } else {
-                            //         Fluttertoast.showToast(
-                            //           msg: "Incorrect PIN",
-                            //           backgroundColor: Colors.red,
-                            //           textColor: Colors.white,
-                            //         );
-                            //       }
-                            //     }
-                            //   },
-                            // );
+                           controller.switchToParentMode();
+                           //  final currentPin = controller.appState.currentParent.value?.pin;
+                           //  final isFirstTime = currentPin == "";
+                           //
+                           //
+                           //  ParentPinDialog.show(
+                           //    isFirstTime: isFirstTime,
+                           //    onPinSubmit: (pin) {
+                           //      if (isFirstTime) {
+                           //        // For first time, validate birth year
+                           //        final birthYear = int.tryParse(pin);
+                           //        if (birthYear != null && DateTime.now().year - birthYear >= 21) {
+                           //          //TODO: Upload pin to parent
+                           //          // controller.appState.currentParent.value?.pin = pin;
+                           //          controller.switchToParentMode();
+                           //        } else {
+                           //          Fluttertoast.showToast(
+                           //            msg: "Invalid birth year",
+                           //            backgroundColor: Colors.red,
+                           //            textColor: Colors.white,
+                           //          );
+                           //        }
+                           //      } else {
+                           //        // For subsequent times, check against saved PIN
+                           //        if (pin == currentPin) {
+                           //          controller.switchToParentMode();
+                           //        } else {
+                           //          Fluttertoast.showToast(
+                           //            msg: "Incorrect PIN",
+                           //            backgroundColor: Colors.red,
+                           //            textColor: Colors.white,
+                           //          );
+                           //        }
+                           //      }
+                           //    },
+                           //  );
                           },
                           child: ParentZoneWidget(),
                         ),

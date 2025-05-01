@@ -29,6 +29,7 @@ class Assets {
   static const String assetsIcArrowForward = 'assets/ic_arrow_forward.svg';
   static const String assetsIcArrowNext = 'assets/ic_arrow_next.svg';
   static const String assetsIcBack = 'assets/ic_back.svg';
+  static const String assetsIcBackSpace = 'assets/ic_back_space.svg';
   static const String assetsIcBadge = 'assets/ic_badge.svg';
   static const String assetsIcBin = 'assets/ic_bin.svg';
   static const String assetsIcBtnLock = 'assets/ic_btn_lock.png';
@@ -62,6 +63,7 @@ class Assets {
   static const String assetsIcNotes = 'assets/ic_notes.svg';
   static const String assetsIcNotifications = 'assets/ic_notifications.svg';
   static const String assetsIcParentZone = 'assets/ic_parent_zone.svg';
+  static const String assetsIcParentZoneImage = 'assets/ic_parent_zone_image.svg';
   static const String assetsIcRotateLandscape = 'assets/ic_rotate_landscape.png';
   static const String assetsIcRotatePortrait = 'assets/ic_rotate_portrait.png';
   static const String assetsIcRoundAllowance = 'assets/ic_round_allowance.svg';

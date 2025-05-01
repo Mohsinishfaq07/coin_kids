@@ -82,6 +82,10 @@ class Assets {
   static const String icNotes = 'assets/ic_notes.svg';
   static const String icNotifications = 'assets/ic_notifications.svg';
   static const String icParentZone = 'assets/ic_parent_zone.svg';
+  static const String icParentZoneImage = 'assets/ic_parent_zone_image.svg';
+
+
+
   static const String icPerson = 'assets/drawer/ic_person.svg';
   static const String icPin = 'assets/drawer/ic_pin.svg';
   static const String icRotateLandscape = 'assets/ic_rotate_landscape.png';
@@ -131,5 +135,6 @@ class Assets {
   static const String phWishlist = 'assets/placeholders/ph_wishlist.png';
   static const String transferToSavingArrow = 'assets/transfer_to_saving_arrow.png';
   static const String transferToSpendArrow = 'assets/transfer_to_spend_arrow.png';
+  static const String icBackSpace = 'assets/ic_back_space.svg';
 
 }

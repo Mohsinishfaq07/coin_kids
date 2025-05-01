@@ -28,8 +28,10 @@ class AnalyticsEventNames {
   static const String roleSelected = 'role_selected';
 
   // Kid Onboarding Events
-  static const String kidOnBoardingSteps = 'kid_onboarding_steps';
-  static const String kidOnBoardingComplete = 'kid_onboarding_complete';
+  // static const String kidOnBoardingSteps = 'kid_onboarding_steps';
+  static const String kidOnBoardingNameStepsClicked = 'kid_onboarding_name_steps';
+  static const String kidOnBoardingAgeStepsClicked = 'kid_onboarding_age_steps';
+  static const String kidOnBoardingAvatarClicked = 'kid_onboarding_image_steps';
 
   // Goal Events
   static const String goalCreated = 'goal_created';
@@ -90,6 +92,7 @@ class AnalyticsEventNames {
   static const String shareAppClicked = 'share_app_clicked';
   static const String parentEditClicked = 'parent_edit_clicked';
   static const String parentImagePickerClicked = 'parent_image_picker_clicked';
+  static const String updateParentProfileClicked = 'update_parent_profile_clicked';
 }
 
 class AnalyticsParameterNames {
@@ -145,9 +148,9 @@ class AnalyticsScreenNames {
   static const String roleSelection = 'role_selection_screen';
 
   // Kid Onboarding Screens
-  static const String kidOnboardingName = 'kid_onboarding_name_screen';
-  static const String kidOnboardingAge = 'kid_onboarding_age_screen';
-  static const String kidOnboardingAvatar = 'kid_onboarding_avatar_screen';
+  static const String kidOnboardingNameScreen = 'kid_onboarding_name_screen';
+  static const String kidOnboardingAgeScreen = 'kid_onboarding_age_screen';
+  static const String kidOnboardingAvatarScreen = 'kid_onboarding_avatar_screen';
 
   // Kid Main Screens
   static const String kidBase = 'kid_base_screen';

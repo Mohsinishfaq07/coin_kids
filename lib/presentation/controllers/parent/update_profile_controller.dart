@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,8 @@ class UpdateProfileController extends GetxController {
   final RxString parentName = ''.obs;
   final Rxn<DateTime> birthday = Rxn<DateTime>();
   final RxString selectedGender = ''.obs;
+  final  analytics = Get.find<AnalyticsService>();
+
 
   final isLoading = false.obs;
 

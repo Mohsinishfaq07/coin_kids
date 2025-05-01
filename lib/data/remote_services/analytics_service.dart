@@ -246,26 +246,26 @@ class AnalyticsService extends GetxService {
   }
 
   // Kid Onboarding Analytics
-  Future<void> logOnboardingStepComplete(String stepName, {Map<String, dynamic>? parameters}) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.kidOnBoardingSteps,
-      parameters: {
-        'step_name': stepName,
-        ...?parameters,
-      },
-    );
-  }
+  // Future<void> logOnboardingStepComplete(String stepName, {Map<String, dynamic>? parameters}) async {
+  //   await _analytics.logEvent(
+  //     name: AnalyticsEventNames.kidOnBoardingSteps,
+  //     parameters: {
+  //       'step_name': stepName,
+  //       ...?parameters,
+  //     },
+  //   );
+  // }
 
-  Future<void> logOnboardingComplete(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.kidOnBoardingComplete,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen,
-
-      }
-      // name: 'kid_onboarding_complete',
-    );
-  }
+  // Future<void> logOnboardingComplete(String screen) async {
+  //   await _analytics.logEvent(
+  //     name: AnalyticsEventNames.kidOnBoardingComplete,
+  //     parameters: {
+  //       AnalyticsParameterNames.screenName : screen,
+  //
+  //     }
+  //     // name: 'kid_onboarding_complete',
+  //   );
+  // }
 
   // App Launch Analytics
   Future<void> logAppLaunch() async {

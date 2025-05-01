@@ -92,8 +92,8 @@ class ParentChangePinScreen extends GetView<ParentChangePinController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ParentAppBar(
-        title: "Change PIN",
+      appBar:    ParentAppBar(
+        title: controller.isFirstTime.value ? "Create PIN" : "Change PIN",
         centerTitle: false,
         showBackButton: true,
       ),

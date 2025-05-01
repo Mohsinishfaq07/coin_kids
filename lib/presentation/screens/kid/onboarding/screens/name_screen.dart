@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -7,7 +8,6 @@ import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller
 import 'package:coin_kids/presentation/screens/kid/onboarding/base/kid_onboarding_base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:coin_kids/data/remote_services/analytics_service.dart';
 
 class KidNameScreen extends GetView<KidOnboardingController> {
   const KidNameScreen({super.key});
@@ -39,7 +39,7 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: maxWidth * 0.5,
+                        // width: maxWidth * 0.6,
                         child: KidTextField(
                           maxlength: 10,
                           hintText: "Enter your name",
@@ -60,9 +60,8 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                     child: KidButton(
                       onTap: () async {
                         // Track name step completion
-                        await controller.analytics.logOnboardingStepComplete('name', parameters: {
-                          'name_length': controller.name.length,
-                        });
+
+                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidOnBoardingNameStepsClicked,AnalyticsScreenNames.kidOnboardingNameScreen,);
                         controller.proceedToAge();
                       },
                       text: 'Next',

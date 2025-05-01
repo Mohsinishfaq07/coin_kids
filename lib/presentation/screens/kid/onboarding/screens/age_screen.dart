@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -65,9 +66,11 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
             child: KidButton(
               onTap: () async {
                 // Track age step completion
-                await controller.analytics.logOnboardingStepComplete('age', parameters: {
-                  'selected_age': controller.selectedAge.toString(),
-                });
+                await controller.analytics.buttonClicked(AnalyticsEventNames.kidOnBoardingAgeStepsClicked,AnalyticsScreenNames.kidOnboardingAgeScreen,);
+
+                // await controller.analytics.logOnboardingStepComplete('age', parameters: {
+                //   'selected_age': controller.selectedAge.toString(),
+                // });
                 controller.proceedToAvatar();
               },
               text: 'Next',
