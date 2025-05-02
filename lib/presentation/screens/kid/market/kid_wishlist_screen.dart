@@ -88,22 +88,43 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                 );
               }
 
-              return Padding(
-                padding: EdgeInsets.only(top: 48.w),
-                child: GridView.builder(
-                  padding: EdgeInsets.all(16.w),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 16.w,
-                    mainAxisSpacing: 16.w,
-                    childAspectRatio: cardWidth / cardHeight,
+              return Stack(
+                children: [
+
+                  Padding(
+                    padding: EdgeInsets.only(top: 48.w),
+                    child: GridView.builder(
+                      padding: EdgeInsets.all(16.w),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 16.w,
+                        mainAxisSpacing: 16.w,
+                        childAspectRatio: cardWidth / cardHeight,
+                      ),
+                      itemCount: controller.wishlistItems.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.wishlistItems[index];
+                        return _buildWishlistItem(item);
+                      },
+                    ),
                   ),
-                  itemCount: controller.wishlistItems.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.wishlistItems[index];
-                    return _buildWishlistItem(item);
-                  },
-                ),
+                  if (controller.showPointer.value)
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTapDown: (_) async {
+                          controller.showPointer.value = false;
+                          await SharedPreferencesHelper.saveBool(
+                            SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
+                            true,
+                          );
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                ],
               );
             }),
           ),
@@ -127,21 +148,22 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
       ),
       child: Stack(
         children: [
+
           // Main Content
           GestureDetector(
             onTap: () {
-              // if (item.product != null) {
-              //   Get.dialog(
-              //     ProductDetailDialog(
-              //       product: item.product!,
-              //       onAddToGoal: () {
-              //       //  Get.back();
-              //         controller.addToGoal(item);
-              //       },
-              //     ),
-              //     barrierDismissible: true,
-              //   );
-              // }
+              if (item.product != null) {
+                Get.dialog(
+                  ProductDetailDialog(
+                    product: item.product!,
+                    onAddToGoal: () {
+                    //  Get.back();
+                      controller.addToGoal(item);
+                    },
+                  ),
+                  barrierDismissible: true,
+                );
+              }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,10 +253,10 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                         right: 10.w,
                         bottom: -28.h,
                         child: CloseButtonOverlay(
-                          onComplete: () => controller.completeTutorial(),
+                          onComplete: () async{ controller.completeWishListTutorial();},
                           targetKey: GlobalKeys.closeButtonKey,
                           onTap: () async {
-                            controller.completeTutorial();
+                            controller.completeWishListTutorial();
                             controller.showPointer.value = false;
                             // controller.showPointer.value = false;
                             // await SharedPreferencesHelper.saveBool(

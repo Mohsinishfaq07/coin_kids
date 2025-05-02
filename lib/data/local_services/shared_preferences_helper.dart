@@ -21,6 +21,7 @@ class SharedPreferencesHelper {
   static String hasSeenMarketTutorial = "hasSeenMarketTutorial";
   static String hasSeenAddToGoalTutorial = "hasSeenAddToGoalTutorial";
   static String hasSeenWishlistTutorial = "hasSeenWishlistTutorial";
+  static String hasSeenWishlistCloseTutorial = "hasSeenWishlistCloseTutorial";
   static String hasSeenMarketFavoriteTutorial = "hasSeenMarketFavoriteTutorial";
   static String hasSeenGoalsTutorial = "hasSeenGoalsTutorial";
   static String hasSeenNoGoalsTutorial = "hasSeenNoGoalsTutorial";
@@ -28,13 +29,13 @@ class SharedPreferencesHelper {
   static String hasSeenCreateGoalTutorial = "hasSeenCreateGoalTutorial";
   static String hasSeenFirstGoalDialogTutorial = "hasSeenFirstGoalDialogTutorial";
   static String hasSeenGoalProgressTutorial = "hasSeenGoalProgressTutorial";
-  static String hasSeenGoalsListTutorial = "hasSeenGoalsListTutorial";
+  static String hasSeenGoalsListInGoalScreenTutorial = "hasSeenGoalsListTutorial";
   static String hasSeenTransferTutorial = "hasSeenTransferTutorial";
   static String hasSeenGoalDoneButtonTutorial = "hasSeenGoalDoneButtonTutorial";
 
   static const String hasSeenDragDropTutorial = 'hasSeenDragDropTutorial';
   static const String hasSeenCoinTutorial = 'hasSeenCoinTutorial';
-  static const String hasSeenWishlistCloseTutorial = 'hasSeenWishlistCloseTutorial';
+  static const String hasSeenSpendingToSavingTutorial = 'hasSeenSpendingToSavingTutorial';
 
   // Initialize SharedPreferences
   static Future<void> init() async {

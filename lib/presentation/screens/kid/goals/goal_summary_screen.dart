@@ -41,33 +41,46 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
       // appBar: KidAppBarComponent(
       //   onBackPressed: () => Get.back(),
       // ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.background,
-        ),
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Column(
+      body: GestureDetector(
+        onTap: () async {
+          showPointer.value = false;
+          await SharedPreferencesHelper.saveBool(
+            SharedPreferencesHelper.hasSeenCreateGoalTutorial,
+            true,
+          );
+        },
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.background,
+              ),
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                child: Column(
 
-            children: [
-              KidAppBarComponent(
-                onBackPressed: () => Get.back(),
+                  children: [
+                    KidAppBarComponent(
+                      onBackPressed: () => Get.back(),
+                    ),
+                    Row(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildImageSection(),
+                        Expanded(
+                            child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: _buildFormSection(),
+                        )),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildImageSection(),
-                  Expanded(
-                      child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: _buildFormSection(),
-                  )),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

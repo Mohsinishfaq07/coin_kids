@@ -12,21 +12,35 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
-import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
-import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 
 class KidHomeScreen extends GetView<KidBaseController> {
   const KidHomeScreen({super.key});
+  void _calculatePointerPosition() {
+    final RenderBox? renderBox = GlobalKeys.transferButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final position = renderBox.localToGlobal(Offset.zero);
+      final size = renderBox.size;
+
+      // Calculate the position for the pointer (center-right of the arrow)
+      final pointerX = position.dx + size.width - 30.w;
+      final pointerY = position.dy + (size.height / 2) - 30.h;
+
+      controller.pointerPosition.value = Offset(pointerX, pointerY);
+    }
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _calculatePointerPosition();
+    });
     return ShowCaseWidget(
       onComplete: (index, key) {
         controller.showJarShowcase.value = false;
@@ -60,220 +74,235 @@ class KidHomeScreen extends GetView<KidBaseController> {
                 return SizedBox(
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (!isSpendingJarCreated)
-                        // Show single null jar when no jars are created
-                        Center(
-                          child: Showcase(
-                            key: controller.moneyJarShowcaseKey,
-                            description: getSpotlightDescription(),
-                            targetShapeBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            targetPadding: EdgeInsets.all(10),
-                            tooltipBackgroundColor: AppColors.colorPrimary,
-                            textColor: Colors.white,
-                            disableBarrierInteraction: true,
-                            child: JarWidget(
-                              jarState: JarState.nullJar,
-                              jarName: "+ Add Money",
-                              height: 0.45.sh,
-                              onTap: () async {
-                                final isConnected = controller.appState.currentKid.value!.isConnected;
-                                final kidBalance = controller.appState.currentKid.value!.wallet.spendingJar.balance;
+                  child: GestureDetector(
+                    onTap: ()async {
+                      if (controller.showTransferPointer.value) {
+                        await controller.markTransferTutorialAsShown();
+                        controller.showTransferPointer.value = false;
 
-                                if (isConnected && kidBalance <= 0) {
-                                  // KidDialog.show(
-                                  //   emoji: Assets.icEmojiMessage,
-                                  //   title: "Woohoo! Parent Connected 🎈",
-                                  //   subtitle: "Your parent is connected, please request money",
-                                  //   buttons: [
-                                  //     KidButton(
-                                  //       text: "Ok",
-                                  //       onTap: () => Get.back(),
-                                  //       baseColor: AppColors.btnColorGreen,
-                                  //       iconPath: Assets.icTick,
-                                  //       iconPosition: IconPosition.left,
-                                  //     ),
-                                  //   ],
-                                  //
-                                  // );
-                                  ToastUtil.showToast("Your parent is connected, please request money");
-                                  return;
-                                }
 
-                                // Track jar creation started
-                                await controller.analytics.logJarCreationStarted(Jars.spendingJar.name,AnalyticsScreenNames.kidHome);
-
-                                controller.startJarCreation(Jars.spendingJar);
-                                Get.toNamed(Routes.kidJarColorSelection);
-                              },
-                              textStyle: AppTextStyle.bodySmall.copyWith(
-                                color: AppColors.iconDisabled,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w800,
+                      }
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if (!isSpendingJarCreated)
+                          // Show single null jar when no jars are created
+                          Center(
+                            child: Showcase(
+                              key: controller.moneyJarShowcaseKey,
+                              description: getSpotlightDescription(),
+                              targetShapeBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
                               ),
-                            ),
-                          ),
-                        )
-                      else
-                        // Show created jars and null jar for saving if needed
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Spending/Money
-                            JarWidget(
-                              jarState: spendingJar.balance > 0 ? JarState.filled : JarState.empty,
-                              jarName: "Money",
-                              showAmount: true,
-                              amount: spendingJar.balance,
-                              jarColor: Color(spendingJar.color),
-                              height: 0.45.sh,
-                              onTap: () {
-                                if (spendingJar.balance <= 0) {
-                                  return;
-                                }
-                                Get.toNamed(
-                                  Routes.kidDragAndDrop,
-                                  arguments: {
-                                    'mode': DragAndDropMode.countMoney,
-                                    'jarId': Jars.spendingJar.name,
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(width: 0.05.sw),
+                              targetPadding: EdgeInsets.all(10),
+                              tooltipBackgroundColor: AppColors.colorPrimary,
+                              textColor: Colors.white,
+                              disableBarrierInteraction: false,
+                              child: JarWidget(
+                                jarState: JarState.nullJar,
+                                jarName: "+ Add Money",
+                                height: 0.45.sh,
+                                onTap: () async {
+                                  final isConnected = controller.appState.currentKid.value!.isConnected;
+                                  final kidBalance = controller.appState.currentKid.value!.wallet.spendingJar.balance;
 
-                            // Transfer Button (show only if both jars exist)
-                            if (isSpendingJarCreated && isSavingJarCreated) ...[
-                              SizedBox(width: 20.w),
-                              Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  KidButton.iconWithTitle(
-                                    key: GlobalKeys.transferButtonKey,
-                                    onTap: () {
-                                      controller.showTransferPointer.value = false;
-                                      Get.toNamed(Routes.kidMoneyTransfer);
-                                    },
-                                    baseColor: AppColors.colorPrimary,
-                                    iconPath: Assets.icTransfer,
-                                    title: 'Transfer',
-                                  ),
-                                  Obx(() {
-                                    if (controller.showTransferPointer.value) {
-                                      return Positioned(
-                                        right: -10.w,
-                                        bottom: -10.h,
-                                          child: HandPointerOverlay(
-                                          targetKey: GlobalKeys.transferButtonKey,
-                                          onTap: () {
-                                            controller.showTransferPointer.value = false;
-                                          },
-                                          width: 60.w,
-                                          height: 60.w,
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }),
-                                ],
-                              ),
-                              SizedBox(width: 20.w),
-                            ],
-                            SizedBox(width: 0.05.sw),
-                            // Saving Jar or Null Jar
-                            if (isSpendingJarCreated) ...[
-                              if (!isSavingJarCreated)
-                                JarWidget(
-                                  jarState: JarState.nullJar,
-                                  jarName: "+ Add Savings",
-                                  height: 0.45.sh,
-                                  onTap: () {
-                                    controller.startJarCreation(Jars.savingJar);
-                                    Get.toNamed(Routes.kidJarColorSelection);
-                                  },
-                                  textStyle: AppTextStyle.bodySmall.copyWith(
-                                    color: AppColors.iconDisabled,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                )
-                              else
-                                JarWidget(
-                                  jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
-                                  jarName: "Saving",
-                                  jarColor: Color(savingJar.color),
-                                  amount: savingJar.balance,
-                                  height: 0.45.sh,
-                                  onTap: () {
-                                    if (savingJar.balance <= 0) {
-                                      return;
-                                    }
-                                    Get.toNamed(
-                                      Routes.kidDragAndDrop,
-                                      arguments: {
-                                        'mode': DragAndDropMode.countMoney,
-                                        'jarId': Jars.savingJar.name,
-                                      },
-                                    );
-                                  },
+                                  if (isConnected && kidBalance <= 0) {
+                                    // KidDialog.show(
+                                    //   emoji: Assets.icEmojiMessage,
+                                    //   title: "Woohoo! Parent Connected 🎈",
+                                    //   subtitle: "Your parent is connected, please request money",
+                                    //   buttons: [
+                                    //     KidButton(
+                                    //       text: "Ok",
+                                    //       onTap: () => Get.back(),
+                                    //       baseColor: AppColors.btnColorGreen,
+                                    //       iconPath: Assets.icTick,
+                                    //       iconPosition: IconPosition.left,
+                                    //     ),
+                                    //   ],
+                                    //
+                                    // );
+                                    ToastUtil.showToast("Your parent is connected, please request money");
+                                    return;
+                                  }
+
+                                  // Track jar creation started
+                                  await controller.analytics.logJarCreationStarted(Jars.spendingJar.name,AnalyticsScreenNames.kidHome);
+
+                                  controller.startJarCreation(Jars.spendingJar);
+                                  Get.toNamed(Routes.kidJarColorSelection);
+                                },
+                                textStyle: AppTextStyle.bodySmall.copyWith(
+                                  color: AppColors.iconDisabled,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w800,
                                 ),
+                              ),
+                            ),
+                          )
+                        else
+                          // Show created jars and null jar for saving if needed
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Spending/Money
+                              JarWidget(
+                                jarState: spendingJar.balance > 0 ? JarState.filled : JarState.empty,
+                                jarName: "Money",
+                                showAmount: true,
+                                amount: spendingJar.balance,
+                                jarColor: Color(spendingJar.color),
+                                height: 0.45.sh,
+                                onTap: () {
+                                  if (spendingJar.balance <= 0) {
+                                    return;
+                                  }
+                                  // Get.toNamed(
+                                  //   Routes.kidDragAndDrop,
+                                  //   arguments: {
+                                  //     'mode': DragAndDropMode.countMoney,
+                                  //     'jarId': Jars.spendingJar.name,
+                                  //   },
+                                  // );
+                                },
+                              ),
+                              SizedBox(width: 0.05.sw),
+
+                              // Transfer Button (show only if both jars exist)
+                              if (isSpendingJarCreated && isSavingJarCreated) ...[
+                                SizedBox(width: 20.w),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    KidButton.iconWithTitle(
+                                      key: GlobalKeys.transferButtonKey,
+                                      onTap: () {
+                                        controller.showTransferPointer.value = false;
+                                        Get.toNamed(Routes.kidMoneyTransfer);
+                                      },
+                                      baseColor: AppColors.colorPrimary,
+                                      iconPath: Assets.icTransfer,
+                                      title: 'Transfer',
+                                    ),
+                                    Obx(() {
+                                      if (controller.showTransferPointer.value) {
+                                        return Positioned(
+
+                                          child: HandPointerOverlay(
+                                            targetKey: GlobalKeys.transferButtonKey,
+                                            onTap: () async{
+                                              // await controller.markTransferTutorialAsShown();
+                                              // controller.showTransferPointer.value = false;
+                                            },
+                                            width: 60.w,
+                                            height: 60.w,
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    }),
+
+
+                                  ],
+                                ),
+                                SizedBox(width: 20.w),
+                              ],
+                              SizedBox(width: 0.05.sw),
+                              // Saving Jar or Null Jar
+                              if (isSpendingJarCreated) ...[
+                                if (!isSavingJarCreated)
+                                  JarWidget(
+                                    jarState: JarState.nullJar,
+                                    jarName: "+ Add Savings",
+                                    height: 0.45.sh,
+                                    onTap: () {
+                                      controller.startJarCreation(Jars.savingJar);
+                                      Get.toNamed(Routes.kidJarColorSelection);
+                                    },
+                                    textStyle: AppTextStyle.bodySmall.copyWith(
+                                      color: AppColors.iconDisabled,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  )
+                                else
+                                  JarWidget(
+                                    jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
+                                    jarName: "Saving",
+                                    jarColor: Color(savingJar.color),
+                                    amount: savingJar.balance,
+                                    height: 0.45.sh,
+                                    onTap: () {
+                                      if (savingJar.balance <= 0) {
+                                        return;
+                                      }
+                                      // Get.toNamed(
+                                      //   Routes.kidDragAndDrop,
+                                      //   arguments: {
+                                      //     'mode': DragAndDropMode.countMoney,
+                                      //     'jarId': Jars.savingJar.name,
+                                      //   },
+                                      // );
+                                    },
+                                  ),
+                              ],
+                              //Negate Navigation Rail Effect to push content to center
+                              SizedBox(width: 40.w),
                             ],
-                            //Negate Navigation Rail Effect to push content to center
-                            SizedBox(width: 40.w),
-                          ],
+                          ),
+
+                        // Parent Zone Button
+                        Positioned(
+                          bottom: 0.h,
+                          right: 20.w,
+                          child: GestureDetector(
+                            onTap: () {
+                             controller.switchToParentMode();
+                             //  final currentPin = controller.appState.currentParent.value?.pin;
+                             //  final isFirstTime = currentPin == "";
+                             //
+                             //
+                             //  ParentPinDialog.show(
+                             //    isFirstTime: isFirstTime,
+                             //    onPinSubmit: (pin) {
+                             //      if (isFirstTime) {
+                             //        // For first time, validate birth year
+                             //        final birthYear = int.tryParse(pin);
+                             //        if (birthYear != null && DateTime.now().year - birthYear >= 21) {
+                             //          //TODO: Upload pin to parent
+                             //          // controller.appState.currentParent.value?.pin = pin;
+                             //          controller.switchToParentMode();
+                             //        } else {
+                             //          Fluttertoast.showToast(
+                             //            msg: "Invalid birth year",
+                             //            backgroundColor: Colors.red,
+                             //            textColor: Colors.white,
+                             //          );
+                             //        }
+                             //      } else {
+                             //        // For subsequent times, check against saved PIN
+                             //        if (pin == currentPin) {
+                             //          controller.switchToParentMode();
+                             //        } else {
+                             //          Fluttertoast.showToast(
+                             //            msg: "Incorrect PIN",
+                             //            backgroundColor: Colors.red,
+                             //            textColor: Colors.white,
+                             //          );
+                             //        }
+                             //      }
+                             //    },
+                             //  );
+                            },
+                            child: ParentZoneWidget(),
+                          ),
                         ),
 
-                      // Parent Zone Button
-                      Positioned(
-                        bottom: 0.h,
-                        right: 20.w,
-                        child: GestureDetector(
-                          onTap: () {
-                           controller.switchToParentMode();
-                           //  final currentPin = controller.appState.currentParent.value?.pin;
-                           //  final isFirstTime = currentPin == "";
-                           //
-                           //
-                           //  ParentPinDialog.show(
-                           //    isFirstTime: isFirstTime,
-                           //    onPinSubmit: (pin) {
-                           //      if (isFirstTime) {
-                           //        // For first time, validate birth year
-                           //        final birthYear = int.tryParse(pin);
-                           //        if (birthYear != null && DateTime.now().year - birthYear >= 21) {
-                           //          //TODO: Upload pin to parent
-                           //          // controller.appState.currentParent.value?.pin = pin;
-                           //          controller.switchToParentMode();
-                           //        } else {
-                           //          Fluttertoast.showToast(
-                           //            msg: "Invalid birth year",
-                           //            backgroundColor: Colors.red,
-                           //            textColor: Colors.white,
-                           //          );
-                           //        }
-                           //      } else {
-                           //        // For subsequent times, check against saved PIN
-                           //        if (pin == currentPin) {
-                           //          controller.switchToParentMode();
-                           //        } else {
-                           //          Fluttertoast.showToast(
-                           //            msg: "Incorrect PIN",
-                           //            backgroundColor: Colors.red,
-                           //            textColor: Colors.white,
-                           //          );
-                           //        }
-                           //      }
-                           //    },
-                           //  );
-                          },
-                          child: ParentZoneWidget(),
-                        ),
-                      ),
-                    ],
+
+                      ],
+                    ),
                   ),
                 );
               },

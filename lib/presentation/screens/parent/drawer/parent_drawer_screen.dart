@@ -301,30 +301,33 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                         ),
                         child: Center(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+//                            padding: EdgeInsets.symmetric(vertical: 14.h),
                             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                              // _buildProfileRowWithArrow(
+                              //   "Share app",
+                              //   Assets.icShare,
+                              //   showArrow: false,
+                              //   iconSize: 24.sp,
+                              //   onTap: () async {
+                              //     try {
+                              //
+                              //         await controller.analytics.buttonClicked(AnalyticsEventNames.shareAppClicked, AnalyticsScreenNames.parentDrawerScreen);
+                              //
+                              //         await ShareUtils.shareApp();
+                              //     } catch (e) {
+                              //       ToastUtil.showToast(
+                              //         'Failed to share app',
+                              //         color: AppColors.notificationCritical,
+                              //       );
+                              //     }
+                              //   },
+                              // ),
+                             // Padding(
+                               // padding: EdgeInsets.symmetric(vertical: 30.h),
+                              //  padding: EdgeInsets.symmetric(vertical: 10.h),
+                               // child:
                               _buildProfileRowWithArrow(
-                                "Share app",
-                                Assets.icShare,
-                                showArrow: false,
-                                iconSize: 24.sp,
-                                onTap: () async {
-                                  try {
-
-                                      await controller.analytics.buttonClicked(AnalyticsEventNames.shareAppClicked, AnalyticsScreenNames.parentDrawerScreen);
-
-                                      await ShareUtils.shareApp();
-                                  } catch (e) {
-                                    ToastUtil.showToast(
-                                      'Failed to share app',
-                                      color: AppColors.notificationCritical,
-                                    );
-                                  }
-                                },
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 30.h),
-                                child: _buildProfileRowWithArrow(
                                   "Feedback",
                                   Assets.icFeedback,
                                   showArrow: false,
@@ -335,7 +338,17 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                                     Get.toNamed(Routes.parentFeedback);
                                   },
                                 ),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                child: Container(
+
+                                  height: 0.5.h,
+                                width: 100.w
+                                  ,
+                                color: Colors.transparent,
+                                ),
                               ),
+                             // ),
                               _buildProfileRowWithArrow(
                                 "Privacy Policy",
                                 Assets.icLock,

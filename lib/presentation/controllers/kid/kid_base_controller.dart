@@ -13,7 +13,6 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
-import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -28,6 +27,8 @@ class KidBaseController extends GetxController {
   final analytics = Get.find<AnalyticsService>();
   RxBool isNotificationShowing = true.obs;
   final RxBool showTransferPointer = true.obs;
+  final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
+
 
   // Observables
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
@@ -306,6 +307,13 @@ class KidBaseController extends GetxController {
     showGoalsTutorial.value = false;
     navigationController.completeGoalsTutorial();
     await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenGoalsTutorial, true);
+  }
+
+  Future<void> markTransferTutorialAsShown() async {
+    await SharedPreferencesHelper.saveBool(
+      SharedPreferencesHelper.hasSeenTransferTutorial,
+      true,
+    );
   }
 
   @override

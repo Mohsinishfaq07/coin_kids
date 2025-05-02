@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
@@ -10,7 +11,10 @@ import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -395,25 +399,6 @@ class KidMarketController extends GetxController {
     super.onClose();
   }
 
-  void addToGoal(MarketProductModel product) async {
-    showLoadingDialog("Adding to Goal");
-
-    try {
-      final goalId = await goalSerive.addToGoalsWithProduct(product);
-
-      if (goalId == null) {
-        ToastUtil.showToast("Fail to add Goal");
-        return;
-      }
-
-      ToastUtil.showToast("Goal Added");
-    } catch (e) {
-      Get.log(e.toString(), isError: true);
-      ToastUtil.showToast("Fail to add Goal");
-    } finally {
-      Get.until((route) => route.settings.name == Routes.kidBase);
-    }
-  }
 
   Future<void> checkTutorialState() async {
     // Check favorite tutorial state
@@ -439,5 +424,59 @@ class KidMarketController extends GetxController {
     showWishlistTutorial.value = false;
     await SharedPreferencesHelper.saveBool(hasSeenWishlistTutorial, true);
   }
+bool handleAddToGoalValidation(){
+  final kid = _appState.currentKid.value;
+  if (kid == null) {
+    ToastUtil.showToast('Session expired');
+    return false ;
+  }
+
+  final spendingJarColor = kid.wallet.spendingJar.color;
+  if (spendingJarColor == 0) {
+    _showCreateJarDialog();
+    return false;
+  }
+  return true;
+}
+  void _showCreateJarDialog() {
+    KidDialog.show(
+      dismissible: true,
+      emoji: Assets.emojiSad,
+      title: "Create Jar First",
+      subtitle: "You need to create a spending jar before adding goals",
+      buttons: [
+        KidButton(
+          text: "OK",
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icCross,
+          iconPosition: IconPosition.left,
+        ),
+
+      ],
+    );
+  }
+  void addToGoal(MarketProductModel product) async {
+    showLoadingDialog("Adding to Goal");
+
+    try {
+      final goalId = await goalSerive.addToGoalsWithProduct(product);
+
+      if (goalId == null) {
+        ToastUtil.showToast("Fail to add Goal");
+        return;
+      }
+
+      ToastUtil.showToast("Goal Added");
+    } catch (e) {
+      Get.log(e.toString(), isError: true);
+      ToastUtil.showToast("Fail to add Goal");
+    } finally {
+      Get.until((route) => route.settings.name == Routes.kidBase);
+    }
+  }
+
 
 }

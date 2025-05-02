@@ -41,273 +41,314 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
     });
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 4.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 10.h),
+      child: Stack(
         children: [
-          // SizedBox(height: 50.h),
-
-           SizedBox(),
-          // Slider with +/- buttons
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Center(
-                child: Text(
-                  'Goal Progress',
-                  style: AppTextStyle.headingMedium,
-                ),
-              ),
-              SizedBox(height: 30.h,),
-              Row(
-                children: [
-                  KidButton.iconOnly(
-                    size: 32.w,
-                    iconSize: 4.w,
-                    baseColor: AppColors.btnColorRed,
-                    iconPath: Assets.icMinus,
-                    onTap: () => controller.decrementProgress(goal),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Obx(
-                              () {
-                                if (controller.progressValue.value > goal.targetAmount) {
-                                  controller.progressValue.value = goal.targetAmount;
-                                }
+              // SizedBox(height: 50.h),
 
-                                return Stack(
-                                  key: GlobalKeys.sliderKey,
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    SfSliderTheme(
-                                      data: SfSliderThemeData(
-                                        activeTrackHeight: 15.h,
-                                        inactiveTrackHeight: 15.h,
-                                        trackCornerRadius: 50.r,
-                                        activeTrackColor: AppColors.btnColorOrange,
-                                        inactiveTrackColor: AppColors.btnColorOrange
-                                            .withValues(alpha: 0.2),
-                                        thumbColor: Colors.transparent,
-                                        thumbRadius: 15.r,
-                                      ),
-                                      child: SfSlider(
-                                        value: controller.progressValue.value,
-                                        min: 0,
-                                        max: goal.targetAmount,
-                                        interval: goal.targetAmount / 4,
-                                        stepSize: controller.progressStep,
-                                        showDividers: true,
-                                        shouldAlwaysShowTooltip: true,
-                                        tooltipTextFormatterCallback: (_, text) {
-                                          return double.parse(text).toMoneyFormat();
-                                        },
-                                        labelFormatterCallback: (_, text) {
-                                          return double.parse(text).toMoneyFormat();
-                                        },
-                                        onChanged: (value) {
+              SizedBox(),
+              // Slider with +/- buttons
+              Column(
+                children: [
+                  Center(
+                    child: Text(
+                      'Goal Progress',
+                      style: AppTextStyle.headingMedium,
+                    ),
+                  ),
+                  SizedBox(height: 30.h,),
+                  Row(
+                    children: [
+                      KidButton.iconOnly(
+                        size: 32.w,
+                        iconSize: 4.w,
+                        baseColor: AppColors.btnColorRed,
+                        iconPath: Assets.icMinus,
+                        onTap: () => controller.decrementProgress(goal),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Obx(
+                                      () {
+                                    if (controller.progressValue.value > goal.targetAmount) {
+                                      controller.progressValue.value = goal.targetAmount;
+                                    }
+
+                                    return Stack(
+                                      key: GlobalKeys.sliderKey,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        SfSliderTheme(
+                                          data: SfSliderThemeData(
+                                            activeTrackHeight: 15.h,
+                                            inactiveTrackHeight: 15.h,
+                                            trackCornerRadius: 50.r,
+                                            activeTrackColor: AppColors.btnColorOrange,
+                                            inactiveTrackColor: AppColors.btnColorOrange
+                                                .withValues(alpha: 0.2),
+                                            thumbColor: Colors.transparent,
+                                            thumbRadius: 15.r,
+                                          ),
+                                          child: SfSlider(
+                                            value: controller.progressValue.value,
+                                            min: 0,
+                                            max: goal.targetAmount,
+                                            interval: goal.targetAmount / 4,
+                                            stepSize: controller.progressStep,
+                                            showDividers: true,
+                                            shouldAlwaysShowTooltip: true,
+                                            tooltipTextFormatterCallback: (_, text) {
+                                              return double.parse(text).toMoneyFormat();
+                                            },
+                                            labelFormatterCallback: (_, text) {
+                                              return double.parse(text).toMoneyFormat();
+                                            },
+                                            onChanged: (value) {
+                                              showPointer.value = false;
+                                              SharedPreferencesHelper.saveBool(
+                                                SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                                                true,
+                                              );
+                                              // Only show done button pointer if tutorial hasn't been seen
+                                              final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
+                                                SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                                              ) ?? false;
+                                              if (!hasSeenDoneButtonTutorial) {
+                                                showDoneButtonPointer.value = true;
+                                              }
+                                              controller.updateProgress(value, goal);
+                                            },
+                                            showLabels: true,
+                                            showTicks: true,
+                                            enableTooltip: true,
+                                            thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          left: 18.w,
+                                          right: 0,
+                                          top: -8.h,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  Assets.icGoalYellow,
+                                                  width: 24.w,
+                                                ),
+                                                SvgPicture.asset(
+                                                  Assets.icFlagBlue,
+                                                  width: 24.w,
+                                                ),
+                                                SvgPicture.asset(
+                                                  Assets.icFlagGreen,
+                                                  width: 24.w,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                Obx(() {
+                                  if (showPointer.value) {
+                                    return Positioned(
+                                      left: 10.w,
+                                      bottom: -10.h,
+                                      child: HandPointerOverlay(
+                                        targetKey: GlobalKeys.sliderKey,
+                                        onTap: () async {
                                           showPointer.value = false;
-                                          SharedPreferencesHelper.saveBool(
+                                          await SharedPreferencesHelper.saveBool(
                                             SharedPreferencesHelper.hasSeenGoalProgressTutorial,
                                             true,
                                           );
-                                          // Only show done button pointer if tutorial hasn't been seen
-                                          final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
-                                            SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                                          ) ?? false;
-                                          if (!hasSeenDoneButtonTutorial) {
-                                            showDoneButtonPointer.value = true;
-                                          }
-                                          controller.updateProgress(value, goal);
                                         },
-                                        showLabels: true,
-                                        showTicks: true,
-                                        enableTooltip: true,
-                                        thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
                                       ),
-                                    ),
-                                    Positioned(
-                                      left: 18.w,
-                                      right: 0,
-                                      top: -8.h,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            SvgPicture.asset(
-                                              Assets.icGoalYellow,
-                                              width: 24.w,
-                                            ),
-                                            SvgPicture.asset(
-                                              Assets.icFlagBlue,
-                                              width: 24.w,
-                                            ),
-                                            SvgPicture.asset(
-                                              Assets.icFlagGreen,
-                                              width: 24.w,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      KidButton.iconOnly(
+                        size: 32.w,
+                        iconSize: 14.w,
+                        baseColor: AppColors.btnColorGreen,
+                        iconPath: Assets.icAdd,
+                        onTap: () => controller.incrementProgress(goal),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              // Spacer(),
+              // Edit and Delete buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Row(
+                        children: <Widget>[
+                          KidButton.iconWithTitle  (
+                            size: 50,
+                            title: "Edit",
+                            belowTextStyle: TextStyle(color: AppColors.textPrimary),
+                            baseColor: AppColors.btnColorGreen,
+                            iconPath: Assets.icEdit,
+                            onTap: () {
+                              if (goal.productUrl != null &&
+                                  goal.productUrl!.isNotEmpty) {
+                                KidDialog.show(
+                                  dismissible: true,
+                                  emoji: Assets.emojiSad,
+                                  title: "Cannot Edit",
+                                  subtitle: "Market goals cannot be edited",
+                                  buttons: [
+                                    KidButton(
+                                      text: "OK",
+                                      onTap: () {
+                                        Get.back();
+                                      },
+                                      baseColor: AppColors.btnColorGreen,
+                                      iconPath: Assets.icTick,
+                                      iconPosition: IconPosition.left,
                                     ),
                                   ],
                                 );
-                              },
-                            ),
-                            Obx(() {
-                              if (showPointer.value) {
-                                return Positioned(
-                                  left: 10.w,
-                                  bottom: -10.h,
-                                  child: HandPointerOverlay(
-                                    targetKey: GlobalKeys.sliderKey,
-                                    onTap: () async {
-                                      showPointer.value = false;
-                                      await SharedPreferencesHelper.saveBool(
-                                        SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                                        true,
-                                      );
-                                    },
-                                  ),
-                                );
+                                return;
                               }
-                              return const SizedBox.shrink();
-                            }),
-                          ],
-                        ),
-                      ],
+                              controller.screenMode.value =
+                                  GoalSummaryScreenMode.edit;
+                              controller.newGoal.value = goal;
+                              controller.oldGoal.value = goal;
+                              Get.toNamed(Routes.kidGoalSummary);
+                            },
+                          ),
+                          SizedBox(width: 40.w),
+                          KidButton.iconWithTitle(
+                            size: 50,
+                            title: "Delete",
+                            belowTextStyle: TextStyle(color: AppColors.textPrimary),
+                            baseColor: AppColors.critical,
+                            iconPath: Assets.icBin,
+                            onTap: () => _showDeleteDialog(context),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  KidButton.iconOnly(
-                    size: 32.w,
-                    iconSize: 14.w,
-                    baseColor: AppColors.btnColorGreen,
-                    iconPath: Assets.icAdd,
-                    onTap: () => controller.incrementProgress(goal),
+                  Stack(
+                    children: [
+                      KidButton(
+                        key: GlobalKeys.doneButtonKey,
+                        text: 'Done',
+                        baseColor: AppColors.btnColorGreen,
+                        iconPath: Assets.icTick,
+                        onTap: () async {
+                          showDoneButtonPointer.value = false;
+                          await SharedPreferencesHelper.saveBool(
+                            SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                            true,
+                          );
+
+                          // Calculate percentage achieved
+                          double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
+                          int rewardCoins = 0;
+
+                          // Check milestones and assign rewards
+                          if (progressPercentage >= 100) {
+                            rewardCoins = 10; // 100% milestone
+                          } else if (progressPercentage >= 75) {
+                            rewardCoins = 3; // 75% milestone
+                          } else if (progressPercentage >= 50) {
+                            rewardCoins = 2; // 50% milestone
+                          } else if (progressPercentage >= 25) {
+                            rewardCoins = 2; // 25% milestone
+                          }
+
+                          // Save progress and award coins if milestone reached
+                          await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                        },
+                      ),
+                      Obx(() {
+                        if (showDoneButtonPointer.value) {
+                          return Positioned(
+                            right: 10.w,
+                            bottom: -10.h,
+                            child: HandPointerOverlay(
+                              targetKey: GlobalKeys.doneButtonKey,
+                              onTap: () async {
+                                showDoneButtonPointer.value = false;
+                                await SharedPreferencesHelper.saveBool(
+                                  SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                                  true,
+                                );
+                              },
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                    ],
                   ),
+
                 ],
               ),
             ],
           ),
-          // Spacer(),
-          // Edit and Delete buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Center(
-                  child: Row(
-                    children: <Widget>[
-                     KidButton.iconWithTitle  (
-                        size: 50,
-                        title: "Edit",
-                        belowTextStyle: TextStyle(color: AppColors.textPrimary),
-                        baseColor: AppColors.btnColorGreen,
-                        iconPath: Assets.icEdit,
-                        onTap: () {
-                          if (goal.productUrl != null &&
-                              goal.productUrl!.isNotEmpty) {
-                            KidDialog.show(
-                              dismissible: true,
-                              emoji: Assets.emojiSad,
-                              title: "Cannot Edit",
-                              subtitle: "Market goals cannot be edited",
-                              buttons: [
-                                KidButton(
-                                  text: "OK",
-                                  onTap: () {
-                                    Get.back();
-                                  },
-                                  baseColor: AppColors.btnColorGreen,
-                                  iconPath: Assets.icTick,
-                                  iconPosition: IconPosition.left,
-                                ),
-                              ],
-                            );
-                            return;
-                          }
-                          controller.screenMode.value =
-                              GoalSummaryScreenMode.edit;
-                          controller.newGoal.value = goal;
-                          controller.oldGoal.value = goal;
-                          Get.toNamed(Routes.kidGoalSummary);
-                        },
-                      ),
-                      SizedBox(width: 40.w),
-                      KidButton.iconWithTitle(
-                        size: 50,
-                        title: "Delete",
-                        belowTextStyle: TextStyle(color: AppColors.textPrimary),
-                        baseColor: AppColors.critical,
-                        iconPath: Assets.icBin,
-                        onTap: () => _showDeleteDialog(context),
-                      ),
-                    ],
-                  ),
-                ),
+          // Move the GestureDetector outside of the conditional and wrap it with Obx
+          Obx(() => showPointer.value
+              ? Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                showPointer.value = false;
+                await SharedPreferencesHelper.saveBool(
+                  SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                  true,
+                );
+              },
+              child: Container(
+                color: Colors.transparent,
               ),
-              Stack(
-                children: [
-                  KidButton(
-                    key: GlobalKeys.doneButtonKey,
-                    text: 'Done',
-                    baseColor: AppColors.btnColorGreen,
-                    iconPath: Assets.icTick,
-                    onTap: () async {
-                      showDoneButtonPointer.value = false;
-                      await SharedPreferencesHelper.saveBool(
-                        SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                        true,
-                      );
-
-                      // Calculate percentage achieved
-                      double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;
-                      int rewardCoins = 0;
-
-                      // Check milestones and assign rewards
-                      if (progressPercentage >= 100) {
-                        rewardCoins = 10; // 100% milestone
-                      } else if (progressPercentage >= 75) {
-                        rewardCoins = 3; // 75% milestone
-                      } else if (progressPercentage >= 50) {
-                        rewardCoins = 2; // 50% milestone
-                      } else if (progressPercentage >= 25) {
-                        rewardCoins = 2; // 25% milestone
-                      }
-
-                      // Save progress and award coins if milestone reached
-                      await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
-                    },
-                  ),
-                  Obx(() {
-                    if (showDoneButtonPointer.value) {
-                      return Positioned(
-                        right: 10.w,
-                        bottom: -10.h,
-                        child: HandPointerOverlay(
-                          targetKey: GlobalKeys.doneButtonKey,
-                          onTap: () async {
-                            showDoneButtonPointer.value = false;
-                            await SharedPreferencesHelper.saveBool(
-                              SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                              true,
-                            );
-                          },
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                ],
+            ),
+          )
+              : const SizedBox.shrink()
+          ),
+          Obx(() => showDoneButtonPointer.value
+              ? Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () async {
+                showDoneButtonPointer.value = false;
+                await SharedPreferencesHelper.saveBool(
+                  SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                  true,
+                );
+              },
+              child: Container(
+                color: Colors.transparent,
               ),
-              
-            ],
+            ),
+          )
+              : const SizedBox.shrink()
           ),
         ],
       ),

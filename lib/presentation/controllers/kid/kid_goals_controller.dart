@@ -35,6 +35,7 @@ class KidGoalsController extends GetxController {
   final _goalService = Get.find<GoalService>();
   final _kidService = Get.find<KidService>();
   final RoleController _roleController = Get.find<RoleController>();
+  final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
 
 
   final TextEditingController textController = TextEditingController();
@@ -60,10 +61,10 @@ class KidGoalsController extends GetxController {
 
   final RxBool showPointer = true.obs;
 
-  Future<void> checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListTutorial) ?? false;
-    showPointer.value = !hasSeenTutorial;
-  }
+  // Future<void> checkTutorialState() async {
+  //   final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
+  //   showPointer.value = !hasSeenTutorial;
+  // }
 
 
 

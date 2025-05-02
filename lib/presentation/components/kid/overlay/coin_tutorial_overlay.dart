@@ -22,9 +22,10 @@ class _CoinTutorialOverlayState extends State<CoinTutorialOverlay> {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: GestureDetector(
-        onTapDown: (_) => widget.onComplete(),
-        child: Container(
+      child: InkWell(
+        onTap: widget.onComplete,
+      //  onTapDown: (_) => widget.onComplete(),
+        child: SizedBox(
           width: Get.width,
           height: Get.height,
       //    color: Colors.black.withOpacity(0.75),

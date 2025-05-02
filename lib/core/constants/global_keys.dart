@@ -35,6 +35,8 @@ class GlobalKeys {
   static final GlobalKey noGoalKey = GlobalKey();
 
   static final GlobalKey closeButtonKey = GlobalKey();
+  static final GlobalKey nextButtonKey = GlobalKey();
+
 
 
 

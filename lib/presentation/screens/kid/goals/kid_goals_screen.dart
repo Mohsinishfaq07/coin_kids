@@ -6,11 +6,11 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../goals/widgets/goal_card.dart';
 import 'widgets/no_goals_widget.dart';
 
 class KidGoalsScreen extends GetView<KidGoalsController> {
@@ -23,7 +23,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
   final RxBool showPointer = true.obs;
 
   Future<void> _checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListTutorial) ?? false;
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
     showPointer.value = !hasSeenTutorial;
   }
 
@@ -44,6 +44,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
           height: constraints.maxHeight,
           child: Stack(
             children: [
+
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Obx(() {
@@ -51,7 +52,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (controller.goals.isEmpty  ) {
+                  if (controller.goals.isEmpty) {
                     return NoGoalsWidget();
                   }
 
@@ -84,14 +85,14 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                         if (controller.showPointer.value && controller.goals.isNotEmpty) {
                           return Positioned(
                             left: 80.w,
-                             top: 20,
-                             bottom: 10.h,
+                            top: 20,
+                            bottom: 10.h,
                             child: HandPointerOverlay(
                               targetKey: GlobalKeys.firstGoalKey,
                               onTap: () async {
                                 controller.showPointer.value = false;
                                 await SharedPreferencesHelper.saveBool(
-                                  SharedPreferencesHelper.hasSeenGoalsListTutorial,
+                                  SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial,
                                   true,
                                 );
                               },
@@ -103,6 +104,24 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     ],
                   );
                 }),
+              ),
+              Obx(() => controller.showPointer.value 
+                ? Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTapDown: (_) async {
+                        controller.showPointer.value = false;
+                        await SharedPreferencesHelper.saveBool(
+                          SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial,
+                          true,
+                        );
+                      },
+                      child: Container(
+                        color: Colors.transparent, // Changed from green to transparent
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink()
               ),
               // Add Goal Button
               Obx(() {

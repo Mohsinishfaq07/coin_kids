@@ -64,7 +64,7 @@ class KidWishlistController extends GetxController {
       marketController.addToGoal(item.product!);
     }
   }
-  Future<void> completeTutorial() async {
+  Future<void> completeWishListTutorial() async {
     Get.log("Completing wishlist close tutorial");
     showPointer.value = false;
     await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenWishlistCloseTutorial, true);

@@ -9,14 +9,29 @@ import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overl
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 class TransferBetweenJarsScreen extends GetView<KidTransferController> {
    const TransferBetweenJarsScreen({super.key});
+   void _calculatePointerPosition() {
+     final RenderBox? renderBox = GlobalKeys.spendToSaveKey.currentContext?.findRenderObject() as RenderBox?;
+     if (renderBox != null) {
+       final position = renderBox.localToGlobal(Offset.zero);
+       final size = renderBox.size;
+
+       // Calculate the position for the pointer (center-right of the arrow)
+       final pointerX = position.dx + size.width - 30.w;
+       final pointerY = position.dy + (size.height / 2) - 30.h;
+
+       controller.pointerPosition.value = Offset(pointerX, pointerY);
+     }
+   }
 
 
    @override
   Widget build(BuildContext context) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       _calculatePointerPosition();
+     });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: KidAppBarComponent(
@@ -42,9 +57,21 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
           final spendingJar = currentKid.wallet.spendingJar;
           final savingJar = currentKid.wallet.savingJar;
 
-          return Stack(
-            fit: StackFit.expand,
+          return  Stack(
             children: [
+              if (controller.showPointer.value)
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTapDown: (_) async {
+                      controller.showPointer.value = false;
+                      await controller.markTransferTutorialAsShown();
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -99,6 +126,7 @@ class TransferBetweenJarsScreen extends GetView<KidTransferController> {
                                       }
                                       return const SizedBox.shrink();
                                     }),
+
                                   ],
                                 ),
                                 SizedBox(height: 30.h),
