@@ -10,6 +10,7 @@ class AnalyticsEventNames {
   static const String introAction = 'intro_action';
   static const String introComplete = 'intro_complete';
   static const String screenView = 'screen_view';
+  static const String screenTimeSpent = 'screen_time';
 
   // Auth Events
   static const String signUpAttempt = 'sign_up_attempt';
@@ -36,6 +37,8 @@ class AnalyticsEventNames {
   // Goal Events
   static const String goalCreated = 'goal_created';
   static const String goalCompleted = 'goal_completed';
+
+  static const String goalDetailClicked = 'goal_detail_clicked';
 
   // Jar Events
   static const String jarCreated = 'jar_created';
@@ -93,6 +96,59 @@ class AnalyticsEventNames {
   static const String parentEditClicked = 'parent_edit_clicked';
   static const String parentImagePickerClicked = 'parent_image_picker_clicked';
   static const String updateParentProfileClicked = 'update_parent_profile_clicked';
+  //kid side
+  static const String kidHomeNavigationClicked = 'kid_home_clicked';
+  static const String kidGoalsNavigationClicked = 'kid_goals_clicked';
+  static const String kidMarketNavigationClicked = 'kid_market_clicked';
+
+
+  static const String kidMoneyJarCreatedClicked = 'spending_jar_creation_clicked';
+  static const String kidSavingJarCreatedClicked = 'saving_jar_creation_clicked';
+
+
+  static const String kidMoneyJarClicked = 'spending_jar_clicked';
+  static const String kidSavingJarClicked = 'saving_jar_clicked';
+
+  static const String kidTransferButtonClicked = 'kid_transfer_button_clicked';
+  static const String switchToParentClicked = 'switch_to_parent_clicked';
+
+  static const String noGoalClicked = 'switch_to_parent_clicked';
+
+  static const String goalNameNextButtonClicked = 'goal_name_next_button_clicked';
+  static const String goalAmountNextButtonClicked ='goal_amount_next_button_clicked';
+  static const String goalImageNextButtonClicked ='goal_image_next_button_clicked';
+  static const String goalMinusButtonClicked ='goal_minus_button_clicked';
+  static const String goalPlusButtonClicked ='goal_plus_button_clicked';
+  static const String goalProgressSliderClicked ='goal_progress_slider_button_clicked';
+  static const String goalProgressEditButtonClicked ='goal_progress_edit_button_clicked';
+  static const String goalProgressDeleteButtonClicked ='goal_progress_delete_button_clicked';
+  static const String goalProgressDoneButtonClicked ='goal_progress_done_button_clicked';
+  static const String marketAllFilterClicked ='goal_market_all_filter_clicked';
+  static const String marketAgeFilterClicked ='goal_market_age_filter_clicked';
+  static const String marketBudgetFilterClicked ='goal_market_budget_filter_clicked';
+  static const String marketRatingsFilterClicked ='goal_market_ratings_filter_clicked';
+  static const String marketProductCardClicked ='goal_market_product_card_clicked';
+  static const String marketProductAddToWishlistClicked ='goal_progress_add_to_wishlist_clicked';
+  static const String marketProductWishlistScreenClicked ='goal_progress_wishlist_navigation_clicked';
+  // market detail
+  static const String marketProductDetailCrossClicked ='goal_product_detail_cross_clicked';
+  static const String marketProductDetailAddToGoalClicked ='goal_product_detail_add_to_goal_clicked';
+  static const String marketProductDetailAmazonCardClicked ='goal_product_detail_amazon_clicked';
+  ///wishlist screen events
+
+  static const String wishlistProductDetailClicked ='wishlist_product_detail_clicked';
+
+  //
+  static const String addOrRequestMoneyNextButtonClickedClicked ='wishlist_product_detail_clicked';
+
+
+
+
+
+
+
+
+
 }
 
 class AnalyticsParameterNames {
@@ -105,6 +161,9 @@ class AnalyticsParameterNames {
   static const String email = 'email';
   static const String error = 'error';
   static const String signInMethod = 'sign_in_method';
+  static const String google = "google";
+  //user type
+  static const String userType = 'user_type';
 
   // Goals
   static const String goalId = 'goal_id';
@@ -127,6 +186,7 @@ class AnalyticsParameterNames {
 
   // Screen Parameters
   static const String screenName = 'screen_name';
+  static const String screenTime = 'screen_time';
   static const String screenClass = 'screen_class';
   static const String timestamp = 'timestamp';
   static const String pageIndex = 'page_index';
@@ -134,6 +194,10 @@ class AnalyticsParameterNames {
   static const String action = 'action';
   static const String destination = 'destination';
   static const String isFirstLaunch = 'is_first_launch';
+
+
+
+
 
   // Money Parameters
   static const String mode = 'mode';
@@ -153,13 +217,30 @@ class AnalyticsScreenNames {
   static const String kidOnboardingAvatarScreen = 'kid_onboarding_avatar_screen';
 
   // Kid Main Screens
-  static const String kidBase = 'kid_base_screen';
-  static const String kidHome = 'kid_home_screen';
-  static const String kidGoals = 'kid_goals_screen';
-  static const String kidMarket = 'kid_market_screen';
-  static const String kidWishlist = 'kid_wishlist_screen';
+  static const String kidBaseScreen = 'kid_base_screen';
+  static const String kidHomeScreen = 'kid_home_screen';
+  static const String kidGoalsScreen = 'kid_goals_screen';
+  static const String kidMarketScreen = 'kid_market_screen';
+
+
+  //kid goal screen
+  static const String kidGoalsNameScreen = 'kid_goals_name_screen';
+  static const String kidGoalsAmountScreen = 'kid_goals_amount_screen';
+  static const String kidGoalsImageScreen = 'kid_goals_image_screen';
+  static const String kidGoalsSummaryScreen = 'kid_goals_summary_screen';
+  static const String kidGoalsProgressScreen = 'kid_goals_progress_screen';
+  static const String kidNoGoalScreen = 'kid_no_goal_screen';
+  static const String kidWishlistScreen = 'kid_wishlist_screen';
   static const String kidAddMoney = 'kid_add_money_screen';
   static const String kidJarColorSelection = 'kid_jar_color_selection_screen';
+  //kid market
+  static const String kidMarketProductDetailScreenDialog = 'kid_market_product_detail_screen_dialog';
+  //wishlist
+  static const String wishlistProductDetailScreenDialog = 'wishlist_product_detail_screen_dialog';
+
+//add or request money
+  static const String addOrRequestMoney = 'add_or_requestMoney_screen';
+
 
   // Parent Main Screens
   static const String parentBase = 'parent_base_screen';

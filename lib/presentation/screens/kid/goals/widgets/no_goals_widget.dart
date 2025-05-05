@@ -1,6 +1,8 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -54,8 +56,9 @@ class NoGoalsWidget extends StatelessWidget {
       ],
     );
   }
+  final analytics = Get.find<AnalyticsService>();
 
-  void _handleAddGoal() {
+  Future<void> _handleAddGoal() async {
     final kid = _appState.currentKid.value;
     if (kid == null) {
       ToastUtil.showToast('Session expired');
@@ -69,6 +72,8 @@ class NoGoalsWidget extends StatelessWidget {
     }
 
     _dismissTutorial();
+    await analytics.buttonClicked(AnalyticsEventNames.noGoalClicked,AnalyticsScreenNames.kidNoGoalScreen);
+
     Get.toNamed(Routes.kidAddGoalName);
   }
 

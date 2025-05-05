@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
@@ -37,6 +38,8 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
               iconPosition: IconPosition.right,
               iconPath: Assets.icNext,
               onTap: () async {
+                await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameNextButtonClicked,AnalyticsScreenNames.kidGoalsNameScreen);
+
                 if (controller.newGoal.value.title.isEmpty) {
                   ToastUtil.showToast('Goal Name Could Not be empty');
                 } else {

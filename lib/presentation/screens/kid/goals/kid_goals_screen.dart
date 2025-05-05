@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -26,6 +27,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
     final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
     showPointer.value = !hasSeenTutorial;
   }
+
 
   @override
   Widget build(BuildContext context) {

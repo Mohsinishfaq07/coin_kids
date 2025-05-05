@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -60,16 +61,22 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                       style: AppTextStyle.headingMedium,
                     ),
                   ),
-                  SizedBox(height: 30.h,),
+                  SizedBox(
+                    height: 30.h,
+                  ),
                   Row(
                     children: [
                       KidButton.iconOnly(
-                        size: 32.w,
-                        iconSize: 4.w,
-                        baseColor: AppColors.btnColorRed,
-                        iconPath: Assets.icMinus,
-                        onTap: () => controller.decrementProgress(goal),
-                      ),
+                          size: 32.w,
+                          iconSize: 4.w,
+                          baseColor: AppColors.btnColorRed,
+                          iconPath: Assets.icMinus,
+                          onTap: () async {
+                            await controller.analytics
+                                .buttonClicked(AnalyticsEventNames.goalMinusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+
+                            controller.decrementProgress(goal);
+                          }),
                       Expanded(
                         child: Column(
                           children: [
@@ -77,7 +84,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                               clipBehavior: Clip.none,
                               children: [
                                 Obx(
-                                      () {
+                                  () {
                                     if (controller.progressValue.value > goal.targetAmount) {
                                       controller.progressValue.value = goal.targetAmount;
                                     }
@@ -92,8 +99,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                             inactiveTrackHeight: 15.h,
                                             trackCornerRadius: 50.r,
                                             activeTrackColor: AppColors.btnColorOrange,
-                                            inactiveTrackColor: AppColors.btnColorOrange
-                                                .withValues(alpha: 0.2),
+                                            inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
                                             thumbColor: Colors.transparent,
                                             thumbRadius: 15.r,
                                           ),
@@ -111,7 +117,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                             labelFormatterCallback: (_, text) {
                                               return double.parse(text).toMoneyFormat();
                                             },
-                                            onChanged: (value) {
+                                            onChanged: (value) async {
                                               showPointer.value = false;
                                               SharedPreferencesHelper.saveBool(
                                                 SharedPreferencesHelper.hasSeenGoalProgressTutorial,
@@ -119,11 +125,15 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                               );
                                               // Only show done button pointer if tutorial hasn't been seen
                                               final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
-                                                SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                                              ) ?? false;
+                                                    SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                                                  ) ??
+                                                  false;
                                               if (!hasSeenDoneButtonTutorial) {
                                                 showDoneButtonPointer.value = true;
                                               }
+                                              await controller.analytics.buttonClicked(
+                                                  AnalyticsEventNames.goalProgressSliderClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+
                                               controller.updateProgress(value, goal);
                                             },
                                             showLabels: true,
@@ -139,8 +149,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 24.w),
                                             child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 SvgPicture.asset(
                                                   Assets.icGoalYellow,
@@ -191,7 +200,12 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         iconSize: 14.w,
                         baseColor: AppColors.btnColorGreen,
                         iconPath: Assets.icAdd,
-                        onTap: () => controller.incrementProgress(goal),
+                        onTap: () async {
+                          await controller.analytics
+                              .buttonClicked(AnalyticsEventNames.goalPlusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+
+                          controller.incrementProgress(goal);
+                        },
                       ),
                     ],
                   ),
@@ -206,15 +220,17 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                     child: Center(
                       child: Row(
                         children: <Widget>[
-                          KidButton.iconWithTitle  (
+                          KidButton.iconWithTitle(
                             size: 50,
                             title: "Edit",
                             belowTextStyle: TextStyle(color: AppColors.textPrimary),
                             baseColor: AppColors.btnColorGreen,
                             iconPath: Assets.icEdit,
-                            onTap: () {
-                              if (goal.productUrl != null &&
-                                  goal.productUrl!.isNotEmpty) {
+                            onTap: () async {
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.goalProgressEditButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+
+                              if (goal.productUrl != null && goal.productUrl!.isNotEmpty) {
                                 KidDialog.show(
                                   dismissible: true,
                                   emoji: Assets.emojiSad,
@@ -234,8 +250,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                 );
                                 return;
                               }
-                              controller.screenMode.value =
-                                  GoalSummaryScreenMode.edit;
+                              controller.screenMode.value = GoalSummaryScreenMode.edit;
                               controller.newGoal.value = goal;
                               controller.oldGoal.value = goal;
                               Get.toNamed(Routes.kidGoalSummary);
@@ -243,13 +258,16 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           ),
                           SizedBox(width: 40.w),
                           KidButton.iconWithTitle(
-                            size: 50,
-                            title: "Delete",
-                            belowTextStyle: TextStyle(color: AppColors.textPrimary),
-                            baseColor: AppColors.critical,
-                            iconPath: Assets.icBin,
-                            onTap: () => _showDeleteDialog(context),
-                          ),
+                              size: 50,
+                              title: "Delete",
+                              belowTextStyle: TextStyle(color: AppColors.textPrimary),
+                              baseColor: AppColors.critical,
+                              iconPath: Assets.icBin,
+                              onTap: () async {
+                                await controller.analytics
+                                    .buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+                                _showDeleteDialog(context);
+                              }),
                         ],
                       ),
                     ),
@@ -262,6 +280,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         baseColor: AppColors.btnColorGreen,
                         iconPath: Assets.icTick,
                         onTap: () async {
+                          await controller.analytics
+                              .buttonClicked(AnalyticsEventNames.goalProgressDoneButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+
                           showDoneButtonPointer.value = false;
                           await SharedPreferencesHelper.saveBool(
                             SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
@@ -308,7 +329,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                       }),
                     ],
                   ),
-
                 ],
               ),
             ],
@@ -316,40 +336,38 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
           // Move the GestureDetector outside of the conditional and wrap it with Obx
           Obx(() => showPointer.value
               ? Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () async {
-                showPointer.value = false;
-                await SharedPreferencesHelper.saveBool(
-                  SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                  true,
-                );
-              },
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          )
-              : const SizedBox.shrink()
-          ),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      showPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                        true,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()),
           Obx(() => showDoneButtonPointer.value
               ? Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () async {
-                showDoneButtonPointer.value = false;
-                await SharedPreferencesHelper.saveBool(
-                  SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                  true,
-                );
-              },
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          )
-              : const SizedBox.shrink()
-          ),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () async {
+                      showDoneButtonPointer.value = false;
+                      await SharedPreferencesHelper.saveBool(
+                        SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                        true,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()),
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
@@ -5,11 +6,13 @@ import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
 class SignupController extends GetxController {
   final _authService = Get.find<AuthService>();
   final analytics = Get.find<AnalyticsService>();
+
 
   final name = ''.obs;
   final password = ''.obs;
@@ -19,6 +22,43 @@ class SignupController extends GetxController {
   final showPassword = true.obs;
 
   final isLoading = false.obs;
+  DateTime? _screenStartTime;
+  @override
+  void onInit() {
+    super.onInit();
+    _screenStartTime = DateTime.now();
+    FirebaseAnalytics.instance.setCurrentScreen(
+      screenName: AnalyticsScreenNames.signUp,
+      screenClassOverride: 'SignupScreen',
+    );
+
+    // Set user language property
+    _setUserLanguage();
+  }
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.signUp,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.signUp,
+    );
+  }
+  Future<void> _setUserLanguage() async {
+    final String deviceLocale = Get.deviceLocale?.languageCode ?? 'en';
+    await FirebaseAnalytics.instance.setUserProperty(
+      name: 'user_language',
+      value: deviceLocale,
+    );
+  }
 
   Future<void> signUpWithEmail() async {
     try {
@@ -34,6 +74,7 @@ class SignupController extends GetxController {
       );
 
       if (credential.user != null) {
+        await logScreenTime(); // Log screen time before navigation
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }
@@ -51,10 +92,10 @@ class SignupController extends GetxController {
       isLoading.value = true;
       showLoadingDialog("Signing in...");
 
-      // Use AuthService for signup
       final credential = await _authService.signInWithGoogle();
 
       if (credential.user != null) {
+        await logScreenTime(); // Log screen time before navigation
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }

@@ -82,7 +82,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
                         );
                       },
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Expanded(
                       child: Row(
                         children: [

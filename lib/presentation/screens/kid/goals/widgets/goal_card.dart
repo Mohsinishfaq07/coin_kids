@@ -1,7 +1,9 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
@@ -14,7 +16,7 @@ class GoalCard extends StatelessWidget {
   final GoalModel goal;
   final bool isConnected;
 
-  const GoalCard({required this.goal, required this.isConnected, super.key});
+    GoalCard({required this.goal, required this.isConnected, super.key});
 
   Color _getStatusColor(GoalStatus status) {
     switch (status) {
@@ -43,6 +45,7 @@ class GoalCard extends StatelessWidget {
         return 'Approved';
     }
   }
+  final analytics = Get.find<AnalyticsService>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +53,10 @@ class GoalCard extends StatelessWidget {
         (goal.savedAmount / goal.targetAmount).clamp(0.0, 1.0);
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async{
+        await analytics
+            .buttonClicked(AnalyticsEventNames.goalDetailClicked, AnalyticsScreenNames.kidGoalsScreen);
+
         Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goal.id!);
       },
       child: Container(

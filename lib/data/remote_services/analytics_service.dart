@@ -22,19 +22,18 @@ class AnalyticsService extends GetxService {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpAttempt,
       parameters: {
-
         AnalyticsParameterNames.screenName : screen
       },
     );
   }
 
-  Future<void> logSignUpSuccess(String email,String screen) async {
+  Future<void> logSignUpSuccess(String email, String screen,) async {
     await _analytics.logSignUp(signUpMethod: 'email');
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpSuccess,
       parameters: {
         AnalyticsParameterNames.email: email,
-        AnalyticsParameterNames.screenName : screen
+        AnalyticsParameterNames.screenName: screen,
 
       },
     );
@@ -220,17 +219,30 @@ class AnalyticsService extends GetxService {
     );
   }
 
-  Future<void> logGoogleSignInSuccess(String screen) async {
-    await _analytics.logLogin(loginMethod: 'google');
+  Future<void> logGoogleSignInSuccess(String screen,String userType) async {
+    await _analytics.logSignUp(signUpMethod: AnalyticsParameterNames.google);
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInSuccess,
 
       parameters: {
-        'method': 'google',
+        AnalyticsParameterNames.signInMethod: AnalyticsParameterNames.google,
         AnalyticsParameterNames.screenName : screen,
+        AnalyticsParameterNames.userType :userType
 
       },
     );
+  }
+
+  Future<void> screenTime(String screen,String durationInSeconds ) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.screenTimeSpent,
+
+      parameters: {
+        AnalyticsParameterNames.screenName : screen,
+        AnalyticsParameterNames.screenTime : durationInSeconds,
+      },
+    );
+
   }
 
   Future<void> logGoogleSignInFailure(String error,String screen) async {

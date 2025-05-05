@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -7,8 +8,7 @@ import 'package:coin_kids/presentation/components/common/cached_network_image_wi
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_widget.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart'
-    show GoalTimelineWidget;
+import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart' show GoalTimelineWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,7 +30,8 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: KidAppBarComponent(
-        onBackPressed: () {
+        onBackPressed: () async {
+          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsProgressScreen);
           controller.appBar.resetToDefault();
           Get.back();
         },
@@ -65,9 +66,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
                 //
 
                 Expanded(
-                  child: goal.savedAmount != goal.targetAmount
-                      ? GoalProgressWidget(goal)
-                      : GoalTimelineWidget(goal: goal),
+                  child: goal.savedAmount != goal.targetAmount ? GoalProgressWidget(goal) : GoalTimelineWidget(goal: goal),
                   // child: GoalTimelineScreen(goal: goal),
                 ),
               ],

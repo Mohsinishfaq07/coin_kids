@@ -1,5 +1,7 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
@@ -16,6 +18,7 @@ class VerticalNavBarController extends GetxController {
   final KidAppBarController appBarController;
   final KidGoalsController goalsController = Get.find<KidGoalsController>();
   final AppStateController appStateController = Get.find<AppStateController>();
+  final  analytics = Get.find<AnalyticsService>();
 
   VerticalNavBarController(this.appBarController);
 
@@ -49,16 +52,21 @@ class VerticalNavBarController extends GetxController {
     await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenGoalsTutorial, true);
   }
 
-  void onTabSelected(int index) {
+  Future<void> onTabSelected(int index) async {
     selectedIndex.value = index;
     if (index == 1) {
       _initializeGoalsIfNeeded();
       completeGoalsTutorial();
+      await analytics.buttonClicked(AnalyticsEventNames.kidGoalsNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
       appBarController.resetToDefault();
     } else if (index == 2) {
       appBarController.configureForMarket();
+      await analytics.buttonClicked(AnalyticsEventNames.kidMarketNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
+
     } else {
       appBarController.resetToDefault();
+      await analytics.buttonClicked(AnalyticsEventNames.kidHomeNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
+
     }
   }
 }
@@ -97,6 +105,7 @@ class VerticalNavBar extends GetView<VerticalNavBarController> {
               _buildDestination(
                 Assets.icKidHome,
                 'HOME',
+
                 controller.selectedIndex.value == 0,
               ),
               _buildDestination(

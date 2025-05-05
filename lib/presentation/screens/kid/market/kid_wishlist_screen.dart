@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -8,15 +9,13 @@ import 'package:coin_kids/presentation/components/kid/overlay/close_button_overl
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/product_detail_dialog.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_wishlist_controller.dart';
-import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidWishlistScreen extends GetView<KidWishlistController> {
-  const KidWishlistScreen({super.key}) ;
-
+  const KidWishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +23,15 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
       builder: (context, constraints) {
         final double screenWidth = constraints.maxWidth;
         final int crossAxisCount = _calculateCrossAxisCount(screenWidth);
-        final double cardWidth =
-            (screenWidth - (crossAxisCount + 1) * 16.w) / crossAxisCount;
-        final double cardHeight =
-            cardWidth * 1.2; // Slightly shorter than market cards
+        final double cardWidth = (screenWidth - (crossAxisCount + 1) * 16.w) / crossAxisCount;
+        final double cardHeight = cardWidth * 1.2; // Slightly shorter than market cards
 
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: KidAppBarComponent(
               title: 'My Wishlist',
-              onBackPressed: () {
+              onBackPressed: () async {
+                await controller.analytics.backPressClicked(AnalyticsScreenNames.kidMarketScreen);
                 controller.appBarController.configureForMarket();
                 Get.back();
               }),
@@ -90,7 +88,6 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
 
               return Stack(
                 children: [
-
                   Padding(
                     padding: EdgeInsets.only(top: 48.w),
                     child: GridView.builder(
@@ -148,16 +145,18 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
       ),
       child: Stack(
         children: [
-
           // Main Content
           GestureDetector(
-            onTap: () {
+            onTap: () async {
+              await controller.analytics
+                  .buttonClicked(AnalyticsEventNames.wishlistProductDetailClicked, AnalyticsScreenNames.wishlistProductDetailScreenDialog);
+
               if (item.product != null) {
                 Get.dialog(
                   ProductDetailDialog(
                     product: item.product!,
                     onAddToGoal: () {
-                    //  Get.back();
+                      //  Get.back();
                       controller.addToGoal(item);
                     },
                   ),
@@ -253,7 +252,9 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                         right: 10.w,
                         bottom: -28.h,
                         child: CloseButtonOverlay(
-                          onComplete: () async{ controller.completeWishListTutorial();},
+                          onComplete: () async {
+                            controller.completeWishListTutorial();
+                          },
                           targetKey: GlobalKeys.closeButtonKey,
                           onTap: () async {
                             controller.completeWishListTutorial();

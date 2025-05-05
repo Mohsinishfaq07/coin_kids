@@ -1,6 +1,8 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/parent_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,6 +14,7 @@ class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final ParentService _parentService = ParentService();
+  final analytics = Get.find<AnalyticsService>();
 
   // Make user stream final and initialize with current user
   final Rx<User?> user = Rx<User?>(FirebaseAuth.instance.currentUser);
@@ -121,6 +124,11 @@ class AuthService extends GetxController {
       // Update user stream immediately
       user.value = userCredential.user;
       Get.log("Firebase sign in successful. User ID: ${userCredential.user?.uid}");
+      final bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+      final String userType = isNewUser ? 'new' : 'returning';
+      await analytics.logGoogleSignInSuccess(AnalyticsScreenNames.signUp, userType);
+
+
 
       // If uid doc is not present, create new Doc, create parent document
       Get.log("Checking for existing parent data");

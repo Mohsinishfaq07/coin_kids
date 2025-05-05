@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/share_utils.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
-import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
@@ -27,7 +24,6 @@ class SignupScreen extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
-    print("signup screen called");
     final screenWidth = MediaQuery.of(context).size.width;
 
     return PopScope(
@@ -35,7 +31,10 @@ class SignupScreen extends GetView<SignupController> {
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           bool shouldExit = await ParentExitDialog.show(context);
-          if (shouldExit) Get.back();
+          if (shouldExit) {
+            await controller.logScreenTime(); // Log screen time before exit
+            Get.back();
+          }
         }
       },
       child: Scaffold(
@@ -170,29 +169,21 @@ class SignupScreen extends GetView<SignupController> {
                               onPressed: () async {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   try {
-                                    // Log signup attempt
-                                    await controller.analytics.logSignUpAttempt("sign_up_Screen");
-                                  //  ToastUtil.showToast("log sign up attempt called ${controller.email.value}");
-                                    print("Firebase sign-up analytics event logged");
-                                    
+                                    await controller.analytics.logSignUpAttempt("sign_up_screen");
                                     await controller.signUpWithEmail();
-                                    
-                                    // Log successful signup
-                                    await controller.analytics.logSignUpSuccess(controller.email.value,"sign_up_Screen");
+                                    await controller.analytics.logSignUpSuccess(
+                                      controller.email.value,
+                                      "sign_up_screen"
+                                    );
                                   } catch (e) {
                                     Get.log("Error: $e");
-                                    // Log signup failure
-
                                     await controller.analytics.logSignUpFailure(
                                       e.toString(),
                                       "sign_up_screen"
-
                                     );
                                   }
                                 } else {
-                                  // Log validation failure
-                                  // final analytics = Get.find<AnalyticsService>();
-                                  await controller.analytics.logSignUpValidationFailure("sign_up_Screen");
+                                  await controller.analytics.logSignUpValidationFailure("sign_up_screen");
                                   Get.log("Form validation failed");
                                 }
                               },
@@ -247,8 +238,16 @@ class SignupScreen extends GetView<SignupController> {
                               onPressed: () async {
                                 try {
                                   await controller.signInWithGoogle();
+                                  await controller.analytics.logSignUpSuccess(
+                                    "google_sign_in",
+                                    "sign_up_screen"
+                                  );
                                 } catch (e) {
                                   Get.log("Error: $e");
+                                  await controller.analytics.logSignUpFailure(
+                                    e.toString(),
+                                    "sign_up_screen"
+                                  );
                                 }
                               },
                               child: Row(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -33,7 +34,6 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
       controller.pointerPosition.value = Offset(pointerX, pointerY);
     }
   }
-
 
   final RxBool showPointer = true.obs;
 
@@ -73,8 +73,11 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
                 children: [
                   Obx(() {
                     return KidButton(
-                      key:  GlobalKeys.nextButtonKey,
+                      key: GlobalKeys.nextButtonKey,
                       onTap: () async {
+                        await controller.analytics
+                            .buttonClicked(AnalyticsEventNames.goalImageNextButtonClicked, AnalyticsScreenNames.kidGoalsImageScreen);
+
                         showPointer.value = false;
                         await SharedPreferencesHelper.saveBool(
                           SharedPreferencesHelper.hasSeenGoalImageTutorial,
@@ -83,7 +86,9 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
                         controller.screenMode.value = GoalSummaryScreenMode.create;
                         Get.toNamed(Routes.kidGoalSummary);
                       },
-                      baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? AppColors.btnColorGreen : AppColors.btnColorOrange,
+                      baseColor: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty
+                          ? AppColors.btnColorGreen
+                          : AppColors.btnColorOrange,
                       text: controller.newGoal.value.photo != null || controller.newGoal.value.photo!.isNotEmpty ? 'Next' : 'Skip',
                       iconPath: Assets.icNext,
                       iconPosition: IconPosition.right,
@@ -128,7 +133,6 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
           );
         },
         child: Stack(
-
           children: [
             Container(
               height: double.infinity,

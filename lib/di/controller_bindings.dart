@@ -47,6 +47,8 @@ import '../data/remote_services/analytics_service.dart';
 class ControllerBindings extends Bindings {
   @override
   void dependencies() {
+    Get.put<AnalyticsService>(AnalyticsService(), permanent: true);
+
     //Firebase Services
     Get.put<AuthService>(AuthService(), permanent: true);
     Get.put<ParentService>(ParentService(), permanent: true);
@@ -56,7 +58,6 @@ class ControllerBindings extends Bindings {
     Get.put<MarketService>(MarketService(), permanent: true);
     Get.put<TransactionService>(TransactionService(), permanent: true);
     Get.put<NotificationService>(NotificationService(), permanent: true);
-    Get.put<AnalyticsService>(AnalyticsService(), permanent: true);
 
     //Common
     Get.put(AppStateController(), permanent: true);

@@ -127,10 +127,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     ToastUtil.showToast("Your parent is connected, please request money");
                                     return;
                                   }
-
-                                  // Track jar creation started
-                                  await controller.analytics.logJarCreationStarted(Jars.spendingJar.name,AnalyticsScreenNames.kidHome);
-
+                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen);
                                   controller.startJarCreation(Jars.spendingJar);
                                   Get.toNamed(Routes.kidJarColorSelection);
                                 },
@@ -155,10 +152,15 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 amount: spendingJar.balance,
                                 jarColor: Color(spendingJar.color),
                                 height: 0.45.sh,
-                                onTap: () {
+                                onTap: () async {
+                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarClicked,AnalyticsScreenNames.kidHomeScreen);
+
                                   if (spendingJar.balance <= 0) {
+
                                     return;
                                   }
+
+
                                   // Get.toNamed(
                                   //   Routes.kidDragAndDrop,
                                   //   arguments: {
@@ -178,7 +180,9 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                   children: [
                                     KidButton.iconWithTitle(
                                       key: GlobalKeys.transferButtonKey,
-                                      onTap: () {
+                                      onTap: () async{
+                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,AnalyticsScreenNames.kidHomeScreen);
+
                                         controller.showTransferPointer.value = false;
                                         Get.toNamed(Routes.kidMoneyTransfer);
                                       },
@@ -217,7 +221,9 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     jarState: JarState.nullJar,
                                     jarName: "+ Add Savings",
                                     height: 0.45.sh,
-                                    onTap: () {
+                                    onTap: ()async {
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen);
+
                                       controller.startJarCreation(Jars.savingJar);
                                       Get.toNamed(Routes.kidJarColorSelection);
                                     },
@@ -234,7 +240,9 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     jarColor: Color(savingJar.color),
                                     amount: savingJar.balance,
                                     height: 0.45.sh,
-                                    onTap: () {
+                                    onTap: ()async {
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarClicked,AnalyticsScreenNames.kidHomeScreen);
+
                                       if (savingJar.balance <= 0) {
                                         return;
                                       }
@@ -258,8 +266,10 @@ class KidHomeScreen extends GetView<KidBaseController> {
                           bottom: 0.h,
                           right: 20.w,
                           child: GestureDetector(
-                            onTap: () {
-                             controller.switchToParentMode();
+                            onTap: () async{
+                              await controller.analytics.buttonClicked(AnalyticsEventNames.switchToParentClicked,AnalyticsScreenNames.kidHomeScreen);
+
+                              controller.switchToParentMode();
                              //  final currentPin = controller.appState.currentParent.value?.pin;
                              //  final isFirstTime = currentPin == "";
                              //

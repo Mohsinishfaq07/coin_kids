@@ -7,6 +7,7 @@ import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
@@ -69,6 +70,8 @@ class KidMarketController extends GetxController {
   final RxBool showPointer = true.obs;
   final RxBool showWishlistTutorial = false.obs;
   static const String hasSeenWishlistTutorial = 'hasSeenWishlistTutorial';
+  final analytics = Get.find<AnalyticsService>();
+
 
   @override
   void onInit() {

@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -15,7 +16,7 @@ import 'package:get/get.dart';
 
 class AddGoalAmountScreen extends GetView<KidGoalsController> {
   final _amountNode = FocusNode();
-  
+
   AddGoalAmountScreen({super.key});
 
   @override
@@ -34,7 +35,9 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             KidButton(
-              onTap: () {
+              onTap: () async {
+                await controller.analytics.buttonClicked(AnalyticsEventNames.goalAmountNextButtonClicked, AnalyticsScreenNames.kidGoalsAmountScreen);
+
                 if (controller.newGoal.value.targetAmount == 0.0) {
                   ToastUtil.showToast('Goal Amount Could Not be empty');
                 } else {

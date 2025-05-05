@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
@@ -210,6 +211,10 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
               child: KidButton(
                 key: _createGoalKey,
                 onTap: () async {
+                  await controller.analytics
+                      .buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
+
+
                   showPointer.value = false;
                   await SharedPreferencesHelper.saveBool(
                     SharedPreferencesHelper.hasSeenCreateGoalTutorial,

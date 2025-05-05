@@ -8,6 +8,7 @@ import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -34,8 +35,10 @@ class KidGoalsController extends GetxController {
   final appState = Get.find<AppStateController>();
   final _goalService = Get.find<GoalService>();
   final _kidService = Get.find<KidService>();
-  final RoleController _roleController = Get.find<RoleController>();
+  final  _roleController = Get.find<RoleController>();
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
+  final analytics = Get.find<AnalyticsService>();
+
 
 
   final TextEditingController textController = TextEditingController();

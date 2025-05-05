@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
@@ -54,39 +55,55 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                   child: Row(
                                     children: [
                                       MarketFilterChip(
-                                        label: 'All',
-                                        isSelected: !controller.isAgeFilterActive.value && !controller.isBudgetFilterActive.value && !controller.isRatingFilterActive.value,
-                                        iconPath: Assets.icAll,
-                                        onTap: () => controller.resetAllFilters(),
-                                      ),
+                                          label: 'All',
+                                          isSelected: !controller.isAgeFilterActive.value &&
+                                              !controller.isBudgetFilterActive.value &&
+                                              !controller.isRatingFilterActive.value,
+                                          iconPath: Assets.icAll,
+                                          onTap: () async {
+                                            await controller.analytics
+                                                .buttonClicked(AnalyticsEventNames.marketAllFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                                            controller.resetAllFilters();
+                                          }),
                                       SizedBox(width: 8.w),
                                       MarketFilterChip(
-                                        label: 'Age',
-                                        selectedValue: controller.isAgeFilterActive.value ? controller.getAgeRangeText(controller.selectedAgeRange.value) : null,
-                                        isSelected: controller.isAgeFilterActive.value,
-                                        iconPath: Assets.icCalender,
-                                        onTap: _showAgeRangeDialog,
-                                      ),
+                                          label: 'Age',
+                                          selectedValue: controller.isAgeFilterActive.value
+                                              ? controller.getAgeRangeText(controller.selectedAgeRange.value)
+                                              : null,
+                                          isSelected: controller.isAgeFilterActive.value,
+                                          iconPath: Assets.icCalender,
+                                          onTap: () async {
+                                            await controller.analytics
+                                                .buttonClicked(AnalyticsEventNames.marketAgeFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                                            _showAgeRangeDialog;
+                                          }),
                                       SizedBox(width: 8.w),
                                       MarketFilterChip(
-                                        label: 'Budget',
-                                        selectedValue: controller.isBudgetFilterActive.value
-                                            ? '€${controller.selectedMinBudget.value.toStringAsFixed(0)}-${controller.selectedMaxBudget.value.toStringAsFixed(0)}'
-                                            : null,
-                                        isSelected: controller.isBudgetFilterActive.value,
-                                        iconPath: Assets.icBudget,
-                                        onTap: () => _showBudgetDialog(),
-                                      ),
+                                          label: 'Budget',
+                                          selectedValue: controller.isBudgetFilterActive.value
+                                              ? '€${controller.selectedMinBudget.value.toStringAsFixed(0)}-${controller.selectedMaxBudget.value.toStringAsFixed(0)}'
+                                              : null,
+                                          isSelected: controller.isBudgetFilterActive.value,
+                                          iconPath: Assets.icBudget,
+                                          onTap: () async {
+                                            await controller.analytics
+                                                .buttonClicked(AnalyticsEventNames.marketBudgetFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                                            _showBudgetDialog();
+                                          }),
                                       SizedBox(width: 8.w),
                                       MarketFilterChip(
-                                        label: 'Rating',
-                                        selectedValue: controller.isRatingFilterActive.value
-                                            ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}'
-                                            : null,
-                                        isSelected: controller.isRatingFilterActive.value,
-                                        iconPath: Assets.icStar,
-                                        onTap: () => _showRatingDialog(),
-                                      ),
+                                          label: 'Rating',
+                                          selectedValue: controller.isRatingFilterActive.value
+                                              ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}'
+                                              : null,
+                                          isSelected: controller.isRatingFilterActive.value,
+                                          iconPath: Assets.icStar,
+                                          onTap: () async {
+                                            await controller.analytics
+                                                .buttonClicked(AnalyticsEventNames.marketRatingsFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                                            _showRatingDialog();
+                                          }),
                                     ],
                                   ),
                                 ),
@@ -181,30 +198,37 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                     return Stack(
                                       children: [
                                         Obx(() => ProductCard(
-                                          product: product,
-                                          onWishlistTap: () {
-                                            controller.toggleWishlist(product);
-
-                                            if (index == 0 && controller.showPointer.value) {
-                                              controller.dismissFavoriteTutorial();
-                                            }
-                                          },
-                                          isInWishlist: controller.isInWishlist(product.id!),
-                                          isLoading: controller.isItemLoading(product.id!),
-                                          favoriteKey: index == 0 ?  GlobalKeys.firstFavoriteKey : null,
-                                          onTap: () => Get.dialog(
-                                            ProductDetailDialog(
                                               product: product,
-                                              onAddToGoal: () {
-                                                final canProceed = controller.handleAddToGoalValidation();
-                                                if (!canProceed) return;
+                                              onWishlistTap: () async{
 
-                                                controller.addToGoal(product);
+                                                  await controller.analytics
+                                                      .buttonClicked(AnalyticsEventNames.marketProductAddToWishlistClicked, AnalyticsScreenNames.kidMarketScreen);
+
+                                                  controller.toggleWishlist(product);
+
+                                                if (index == 0 && controller.showPointer.value) {
+                                                  controller.dismissFavoriteTutorial();
+                                                }
                                               },
-                                            ),
-                                            barrierDismissible: true,
-                                          ),
-                                        )),
+                                              isInWishlist: controller.isInWishlist(product.id!),
+                                              isLoading: controller.isItemLoading(product.id!),
+                                              favoriteKey: index == 0 ? GlobalKeys.firstFavoriteKey : null,
+                                              onTap: () => Get.dialog(
+                                                ProductDetailDialog(
+                                                  product: product,
+                                                  onAddToGoal: () async{
+                                                    await controller.analytics
+                                                        .buttonClicked(AnalyticsEventNames.marketProductCardClicked, AnalyticsScreenNames.kidMarketScreen);
+
+                                                    final canProceed = controller.handleAddToGoalValidation();
+                                                    if (!canProceed) return;
+
+                                                    controller.addToGoal(product);
+                                                  },
+                                                ),
+                                                barrierDismissible: true,
+                                              ),
+                                            )),
                                         if (index == 0)
                                           Obx(() {
                                             if (controller.showPointer.value) {
@@ -243,7 +267,10 @@ class KidMarketScreen extends GetView<KidMarketController> {
                 right: 0,
                 child: GestureDetector(
                   key: wishlistButtonKey,
-                  onTap: () {
+                  onTap: () async{
+                    await controller.analytics
+                        .buttonClicked(AnalyticsEventNames.marketProductWishlistScreenClicked, AnalyticsScreenNames.kidMarketScreen);
+
                     controller.dismissWishlistTutorial();
                     Get.toNamed(Routes.kidWishlist);
                   },
@@ -309,20 +336,16 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                 return SizedBox.shrink();
                               },
                             ),
-                            SizedBox(width: 15.w,),
+                            SizedBox(
+                              width: 15.w,
+                            ),
                             Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.r)
-                                    ,color: Colors.white
-                              ),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.r), color: Colors.white),
                               child: Padding(
                                 padding: const EdgeInsets.all(2.0),
                                 child: Transform.rotate(
                                   angle: 0.5 * math.pi,
-
-                                  child: Icon(Icons.arrow_back_ios_new,color: AppColors.textPrimary,
-                                  size: 12.h
-                                  ),
+                                  child: Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 12.h),
                                 ),
                               ),
                             )
@@ -337,7 +360,6 @@ class KidMarketScreen extends GetView<KidMarketController> {
               // Wishlist Tutorial Overlay
               Obx(() {
                 if (controller.showWishlistTutorial.value) {
-
                   return Positioned(
                     top: 0.10.sh,
                     right: 0,

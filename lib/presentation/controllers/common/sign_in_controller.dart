@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
@@ -16,7 +17,26 @@ class SignInController extends GetxController {
   final showPassword = true.obs;
 
   final isLoading = false.obs;
+  DateTime? _screenStartTime;
+  @override
+  void onInit() {
+    super.onInit();
+    _screenStartTime = DateTime.now();
+  }
 
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.signIn,durationInSeconds.toString());
+    }
+  }
   Future<void> signInWithEmail() async {
     try {
       isLoading.value = true;
@@ -61,7 +81,7 @@ class SignInController extends GetxController {
 
       if (credential.user != null) {
         // Log successful Google sign-in
-        await analytics.logGoogleSignInSuccess("sign_in_screen");
+        //
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }

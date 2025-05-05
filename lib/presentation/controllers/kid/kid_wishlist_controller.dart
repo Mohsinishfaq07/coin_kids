@@ -1,5 +1,6 @@
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
@@ -11,6 +12,7 @@ class KidWishlistController extends GetxController {
   final AppStateController _appState = Get.find();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
   final marketController = Get.find<KidMarketController>();
+  final analytics = Get.find<AnalyticsService>();
 
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
   final RxBool isLoading = false.obs;

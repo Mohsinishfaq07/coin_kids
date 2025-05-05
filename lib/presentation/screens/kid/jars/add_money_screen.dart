@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
@@ -32,7 +33,14 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             KidButton(
-              onTap: () => controller.handleNextButton(mode),
+              onTap: ()async {
+                await controller.analytics
+                    .buttonClicked(AnalyticsEventNames.addOrRequestMoneyNextButtonClickedClicked, AnalyticsScreenNames.addOrRequestMoney);
+
+      controller.handleNextButton(mode);},
+
+
+
               baseColor: AppColors.btnColorGreen,
               text: "Next",
               iconPath: Assets.icTick,

@@ -87,8 +87,11 @@ class KidAppBarComponent extends GetView<KidAppBarController>
         }
 
         return AppBar(
+
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0.0,
+
+
           elevation: 0.0,
           automaticallyImplyLeading: false,
           title: Padding(

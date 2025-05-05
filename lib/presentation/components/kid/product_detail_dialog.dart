@@ -1,7 +1,9 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -14,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailDialog extends StatelessWidget {
@@ -29,6 +30,7 @@ class ProductDetailDialog extends StatelessWidget {
     _checkTutorialState();
   }
   final RoleController _roleController = Get.find<RoleController>();
+  final analytics = Get.find<AnalyticsService>();
 
   final GlobalKey _addToGoalKey = GlobalKey();
   final RxBool showPointer = true.obs;
@@ -37,7 +39,8 @@ class ProductDetailDialog extends StatelessWidget {
     final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenAddToGoalTutorial) ?? false;
     showPointer.value = !hasSeenTutorial;
   }
-  final  appState = Get.find<AppStateController>();
+
+  final appState = Get.find<AppStateController>();
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
 
   void switchToParentMode() {
@@ -53,7 +56,6 @@ class ProductDetailDialog extends StatelessWidget {
     _roleController.switchToParentMode(true);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -63,14 +65,12 @@ class ProductDetailDialog extends StatelessWidget {
       ),
       child: Stack(
         children: [
-
           Container(
             decoration: BoxDecoration(
               gradient: AppColors.backgroundInverse,
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Stack(
-
               children: [
                 if (showPointer.value)
                   Positioned.fill(
@@ -97,7 +97,6 @@ class ProductDetailDialog extends StatelessWidget {
                         width: 0.25.sw - 20.w, // 25% of dialog width minus padding
                         child: Column(
                           children: [
-
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -112,7 +111,10 @@ class ProductDetailDialog extends StatelessWidget {
                             SizedBox(height: 16.h),
                             KidButton(
                               key: _addToGoalKey,
-                              onTap: () {
+                              onTap: () async {
+                                await analytics.buttonClicked(
+                                    AnalyticsEventNames.marketProductDetailAddToGoalClicked, AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
+
                                 showPointer.value = false;
                                 onAddToGoal();
                               },
@@ -148,7 +150,11 @@ class ProductDetailDialog extends StatelessWidget {
                                 ),
                                 SizedBox(width: 20.w),
                                 KidButton.iconOnly(
-                                  onTap: () => Get.back(),
+                                  onTap: () async {
+                                    Get.back();
+                                    await analytics.buttonClicked(
+                                        AnalyticsEventNames.marketProductDetailCrossClicked, AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
+                                  },
                                   baseColor: AppColors.btnColorOrange,
                                   iconPath: Assets.icCross,
                                   size: 30.w,
@@ -193,10 +199,12 @@ class ProductDetailDialog extends StatelessWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12.r),
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAmazonCardClicked,
+                                        AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
+
                                     final currentPin = appState.currentParent.value?.pin;
                                     final isFirstTime = currentPin == "";
-
 
                                     ParentPinDialog.show(
                                       isFirstTime: isFirstTime,
@@ -206,7 +214,7 @@ class ProductDetailDialog extends StatelessWidget {
                                           final birthYear = int.tryParse(pin);
                                           final currentYear = DateTime.now().year;
                                           final age = currentYear - birthYear!;
-                                          if (age >= 21 && age <= 80){
+                                          if (age >= 21 && age <= 80) {
                                             //TODO: Upload pin to parent
                                             // controller.appState.currentParent.value?.pin = pin;
                                             _launchProductUrl(product.url);
@@ -234,7 +242,7 @@ class ProductDetailDialog extends StatelessWidget {
                                       },
                                     );
                                   },
-                                    //_launchProductUrl(product.url),
+                                  //_launchProductUrl(product.url),
                                   borderRadius: BorderRadius.circular(12.r),
                                   child: Padding(
                                     padding: EdgeInsets.all(16.w),
@@ -302,22 +310,16 @@ class ProductDetailDialog extends StatelessWidget {
                 bottom: 10.h,
                 left: 20.w,
                 child: HandPointerOverlay(
-
                   targetKey: _addToGoalKey,
                   onTap: () async {
                     showPointer.value = false;
-                    await SharedPreferencesHelper.saveBool(
-                      SharedPreferencesHelper.hasSeenAddToGoalTutorial,
-                      true
-                    );
+                    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenAddToGoalTutorial, true);
                   },
                 ),
               );
             }
             return const SizedBox.shrink();
           }),
-
-
         ],
       ),
     );
