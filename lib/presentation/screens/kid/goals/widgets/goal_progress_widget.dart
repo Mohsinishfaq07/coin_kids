@@ -73,7 +73,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           iconPath: Assets.icMinus,
                           onTap: () async {
                             await controller.analytics
-                                .buttonClicked(AnalyticsEventNames.goalMinusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+                                .buttonClicked(AnalyticsEventNames.goalMinusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
 
                             controller.decrementProgress(goal);
                           }),
@@ -228,7 +228,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                             iconPath: Assets.icEdit,
                             onTap: () async {
                               await controller.analytics
-                                  .buttonClicked(AnalyticsEventNames.goalProgressEditButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+                                  .buttonClicked(AnalyticsEventNames.goalProgressEditButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                               if (goal.productUrl != null && goal.productUrl!.isNotEmpty) {
                                 KidDialog.show(
@@ -265,7 +265,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                               iconPath: Assets.icBin,
                               onTap: () async {
                                 await controller.analytics
-                                    .buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+                                    .buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
                                 _showDeleteDialog(context);
                               }),
                         ],

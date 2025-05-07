@@ -21,8 +21,6 @@ class KidMarketScreen extends GetView<KidMarketController> {
     controller.checkTutorialState();
   }
 
-  final GlobalKey wishlistButtonKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -199,12 +197,11 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                       children: [
                                         Obx(() => ProductCard(
                                               product: product,
-                                              onWishlistTap: () async{
+                                              onWishlistTap: () async {
+                                                await controller.analytics.buttonClicked(AnalyticsEventNames.marketProductAddToWishlistClicked,
+                                                    AnalyticsScreenNames.kidMarketScreen, AnalyticsScreenNames.kidWishlistScreen);
 
-                                                  await controller.analytics
-                                                      .buttonClicked(AnalyticsEventNames.marketProductAddToWishlistClicked, AnalyticsScreenNames.kidMarketScreen);
-
-                                                  controller.toggleWishlist(product);
+                                                controller.toggleWishlist(product);
 
                                                 if (index == 0 && controller.showPointer.value) {
                                                   controller.dismissFavoriteTutorial();
@@ -216,9 +213,11 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                               onTap: () => Get.dialog(
                                                 ProductDetailDialog(
                                                   product: product,
-                                                  onAddToGoal: () async{
-                                                    await controller.analytics
-                                                        .buttonClicked(AnalyticsEventNames.marketProductCardClicked, AnalyticsScreenNames.kidMarketScreen);
+                                                  onAddToGoal: () async {
+                                                    await controller.analytics.buttonClicked(
+                                                        AnalyticsEventNames.marketProductCardClicked,
+                                                        AnalyticsScreenNames.kidMarketScreen,
+                                                        AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
 
                                                     final canProceed = controller.handleAddToGoalValidation();
                                                     if (!canProceed) return;
@@ -266,10 +265,10 @@ class KidMarketScreen extends GetView<KidMarketController> {
                 top: 0.10.sh,
                 right: 0,
                 child: GestureDetector(
-                  key: wishlistButtonKey,
-                  onTap: () async{
-                    await controller.analytics
-                        .buttonClicked(AnalyticsEventNames.marketProductWishlistScreenClicked, AnalyticsScreenNames.kidMarketScreen);
+                  key: GlobalKeys.wishlistButtonKey,
+                  onTap: () async {
+                    await controller.analytics.buttonClicked(AnalyticsEventNames.marketProductWishlistScreenClicked,
+                        AnalyticsScreenNames.kidMarketScreen, AnalyticsScreenNames.kidWishlistScreen);
 
                     controller.dismissWishlistTutorial();
                     Get.toNamed(Routes.kidWishlist);
@@ -364,7 +363,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
                     top: 0.10.sh,
                     right: 0,
                     child: MarketWishlistTutorialOverlay(
-                      targetKey: wishlistButtonKey,
+                      targetKey: GlobalKeys.wishlistButtonKey,
                       onComplete: () => controller.dismissWishlistTutorial(),
                     ),
                   );

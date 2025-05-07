@@ -1,13 +1,17 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
 class ParentChangePinController extends GetxController {
   final AppStateController appState = Get.find();
   final ParentService parentService = Get.find();
+  final analytics = Get.find<AnalyticsService>();
 
   final RxString currentPin = ''.obs;
   final RxString newPin = ''.obs;
@@ -18,12 +22,15 @@ class ParentChangePinController extends GetxController {
   final RxBool currentPinVisible = false.obs;
   final RxBool newPinVisible = false.obs;
   final RxBool confirmPinVisible = false.obs;
+  DateTime? _screenStartTime;
 
   @override
   void onInit() {
     super.onInit();
     // Check if it's first time PIN setup
     isFirstTime.value = appState.currentParent.value?.pin == "";
+    _screenStartTime = DateTime.now();
+    logScreenTime();
   }
 
   void toggleCurrentPinVisibility() => currentPinVisible.value = !currentPinVisible.value;
@@ -135,5 +142,22 @@ class ParentChangePinController extends GetxController {
       );
       return false;
     }
+  }
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentChangePinScreen, durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentChangePinScreen,
+    );
   }
 }

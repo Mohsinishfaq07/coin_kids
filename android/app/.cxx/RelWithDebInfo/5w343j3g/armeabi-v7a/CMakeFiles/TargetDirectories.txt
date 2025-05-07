@@ -1,0 +1,2 @@
+/Users/tms/StudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/5w343j3g/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/tms/StudioProjects/coin-kids/android/app/.cxx/RelWithDebInfo/5w343j3g/armeabi-v7a/CMakeFiles/rebuild_cache.dir

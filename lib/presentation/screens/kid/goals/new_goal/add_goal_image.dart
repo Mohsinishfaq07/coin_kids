@@ -76,7 +76,7 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
                       key: GlobalKeys.nextButtonKey,
                       onTap: () async {
                         await controller.analytics
-                            .buttonClicked(AnalyticsEventNames.goalImageNextButtonClicked, AnalyticsScreenNames.kidGoalsImageScreen);
+                            .buttonClicked(AnalyticsEventNames.goalImageNextButtonClicked, AnalyticsScreenNames.kidGoalsImageScreen, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                         showPointer.value = false;
                         await SharedPreferencesHelper.saveBool(
@@ -120,7 +120,9 @@ class AddGoalImageScreen extends GetView<KidGoalsController> {
         ),
       ),
       appBar: KidAppBarComponent(
-        onBackPressed: () {
+        onBackPressed: () async{
+          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsNameScreen,AnalyticsScreenNames.kidGoalsAmountScreen);
+
           Get.back();
         },
       ),

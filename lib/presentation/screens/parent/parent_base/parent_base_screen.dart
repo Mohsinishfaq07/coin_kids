@@ -18,7 +18,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
   final GlobalKey _kidZoneButtonShowcaseKey = GlobalKey();
   final Rx<Offset> _kidZoneButtonOffset = Offset(0, 0).obs;
- // final RxBool isShowcaseVisible = false.obs;
+  // final RxBool isShowcaseVisible = false.obs;
 
   void _getWidgetCenter(GlobalKey key) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,10 +37,10 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
       final hasShownKidsZoneShowcase = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasShownKidsZoneShowcase) ?? false;
       if (!hasShownKidsZoneShowcase && controller.showKidsZoneShowcase.value == true) {
         _getWidgetCenter(_kidZoneButtonShowcaseKey);
-    //    isShowcaseVisible.value = true; // show hand overlay
+        //    isShowcaseVisible.value = true; // show hand overlay
         ShowCaseWidget.of(context).startShowCase([_kidZoneButtonShowcaseKey]);
         await Future.delayed(Duration(seconds: 3)); // Optional auto-hide
-    //    isShowcaseVisible.value = false;
+        //    isShowcaseVisible.value = false;
         await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasShownKidsZoneShowcase, true);
       }
     });
@@ -48,7 +48,6 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
   @override
   Widget build(BuildContext context) {
-
     Get.log("UI_TAG Parent Base");
     bool shouldShowInstruction = false;
     if (Get.arguments != null && Get.arguments is bool) {
@@ -256,7 +255,9 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Text(
-                            controller.messagesController.unreadNotificationsCount.value > 9 ? "9+" : controller.messagesController.unreadNotificationsCount.value.toString(),
+                            controller.messagesController.unreadNotificationsCount.value > 9
+                                ? "9+"
+                                : controller.messagesController.unreadNotificationsCount.value.toString(),
                             style: TextStyle(fontSize: 8.sp, color: Colors.white),
                           ),
                         ),
@@ -290,7 +291,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
             tooltipBackgroundColor: AppColors.colorPrimary,
             descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
             targetPadding: EdgeInsets.all(6.w),
-            disableBarrierInteraction: true,
+            disableBarrierInteraction: false,
             tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
             child: navItem,
           ),

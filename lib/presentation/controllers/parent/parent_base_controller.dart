@@ -69,4 +69,5 @@ class ParentBaseController extends GetxController {
       return kids.any((kid) => kid.wallet.spendingJar.color != 0);
     });
   }
+
 }

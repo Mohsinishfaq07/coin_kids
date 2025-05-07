@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
@@ -5,6 +6,7 @@ import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
 class KidWishlistController extends GetxController {
@@ -23,6 +25,8 @@ class KidWishlistController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _screenStartTime = DateTime.now();
+    logScreenTime();
 
     fetchWishlist();
     checkTutorialState();
@@ -77,6 +81,25 @@ class KidWishlistController extends GetxController {
     final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenWishlistCloseTutorial) ?? false;
     showPointer.value = !hasSeenTutorial;
 
+  }
+  DateTime? _screenStartTime;
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.kidWishlistScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.kidWishlistScreen,
+    );
   }
 
 }

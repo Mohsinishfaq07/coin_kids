@@ -51,7 +51,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                     title: "I'm a Parent",
                     description: "Give allowances",
                     onTap: () async {
-                      await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleParent, AnalyticsScreenNames.roleSelection);
+                      //await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleParent, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.parentHome );
                       controller.finalizeRole(UserRole.parent);
                     },
                     description1: "Support your child's",
@@ -63,7 +63,7 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                     title: "I'm a Child",
                     description: "Receive Allowance",
                     onTap: () async {
-                      await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection);
+                      // await controller.analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection, AnalyticsScreenNames.kidBaseScreen);
                       controller.finalizeRole(UserRole.child);
                     },
                     description1: 'Set up saving goals',

@@ -134,7 +134,7 @@ class SignInScreen extends GetView<SignInController> {
                             print("Firebase sign-up analytics event logged");
 
                             await controller.signInWithEmail();
-                            await controller.analytics.logSignInSuccess(controller.email.value, AnalyticsScreenNames.signIn);
+                            await controller.analytics.logSignInSuccess(controller.email.value, AnalyticsScreenNames.signIn,AnalyticsScreenNames.signUp,AnalyticsScreenNames.roleSelection,);
                           } catch (e) {
                             ToastUtil.showToast("Login failed: $e");
                             await controller.analytics.logSignInFailure(

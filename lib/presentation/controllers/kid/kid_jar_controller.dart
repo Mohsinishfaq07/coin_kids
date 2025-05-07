@@ -33,4 +33,5 @@ class KidJarController extends GetxController {
     const Color(0xFFFF60C4),
     const Color(0xFF3F51FC),
   ];
+
 }

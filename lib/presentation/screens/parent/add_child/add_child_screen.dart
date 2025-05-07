@@ -78,6 +78,7 @@ class AddChildScreen extends GetView<AddChildController> {
       appBar:  ParentAppBar(
         onBackPressed: ()async{
           await controller.analytics.logAddChildDiscard(AnalyticsScreenNames.parentAddKidScreen);
+          Get.back();
 
         },
         showBackButton: true,

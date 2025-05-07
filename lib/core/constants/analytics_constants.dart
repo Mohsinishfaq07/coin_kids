@@ -113,6 +113,7 @@ class AnalyticsEventNames {
   static const String switchToParentClicked = 'switch_to_parent_clicked';
 
   static const String noGoalClicked = 'switch_to_parent_clicked';
+  static const String goalNameScreenClicked = 'goal_name_screen_clicked';
 
   static const String goalNameNextButtonClicked = 'goal_name_next_button_clicked';
   static const String goalAmountNextButtonClicked ='goal_amount_next_button_clicked';
@@ -140,6 +141,7 @@ class AnalyticsEventNames {
 
   //
   static const String addOrRequestMoneyNextButtonClickedClicked ='wishlist_product_detail_clicked';
+  static const String userLanguage ='user_language';
 
 
 
@@ -186,6 +188,8 @@ class AnalyticsParameterNames {
 
   // Screen Parameters
   static const String screenName = 'screen_name';
+  static const String previousScreen = 'from_screen';
+  static const String nextScreenName = 'to_screen';
   static const String screenTime = 'screen_time';
   static const String screenClass = 'screen_class';
   static const String timestamp = 'timestamp';
@@ -194,6 +198,7 @@ class AnalyticsParameterNames {
   static const String action = 'action';
   static const String destination = 'destination';
   static const String isFirstLaunch = 'is_first_launch';
+  static const String userLanguage = 'user_language';
 
 
 
@@ -232,7 +237,9 @@ class AnalyticsScreenNames {
   static const String kidNoGoalScreen = 'kid_no_goal_screen';
   static const String kidWishlistScreen = 'kid_wishlist_screen';
   static const String kidAddMoney = 'kid_add_money_screen';
-  static const String kidJarColorSelection = 'kid_jar_color_selection_screen';
+  static const String kidJarColorSelection = 'kid_jar_color_screen';
+  static const String kidJarAmountScreen = 'kid_jar_amount_screen';
+  static const String kidTransferAmountScreen = 'kid_transfer_amount_screen';
   //kid market
   static const String kidMarketProductDetailScreenDialog = 'kid_market_product_detail_screen_dialog';
   //wishlist
@@ -252,5 +259,10 @@ class AnalyticsScreenNames {
   static const String parentAddKidScreen = 'parent_add_kid_screen';
   static const String parentQuickTransferScreen = 'parent_Quick_transfer_screen';
   static const String kidProfileScreen = 'kid_profile_screen';
+  static const String productDetailScreen = 'product_detail_screen';
+  static const String kidEditProfileScreen = 'kid_edit_profile_screen';
   static const String parentDrawerScreen = 'parent_drawer_screen';
+  static const String parentChangePinScreen = 'parent_change_pin_screen';
+  static const String parentChangeLanguageScreen = 'parent_change_language_screen';
+  static const String parentForgotPasswordScreen = 'parent_forgot_password_screen';
 }

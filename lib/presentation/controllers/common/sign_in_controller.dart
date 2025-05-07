@@ -5,6 +5,7 @@ import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
 class SignInController extends GetxController {
@@ -22,6 +23,7 @@ class SignInController extends GetxController {
   void onInit() {
     super.onInit();
     _screenStartTime = DateTime.now();
+    logScreenTime();
   }
 
   @override
@@ -36,14 +38,17 @@ class SignInController extends GetxController {
       final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
       analytics.screenTime(AnalyticsScreenNames.signIn,durationInSeconds.toString());
     }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.signIn,
+    );
   }
+
   Future<void> signInWithEmail() async {
     try {
       isLoading.value = true;
       showLoadingDialog("Signing in...");
 
       // Log sign-in attempt
-      await analytics.logSignInAttempt("sign_in_screen");
 
       // Use AuthService for signup
       final credential = await _authService.signInWithEmailPassword(
@@ -53,7 +58,6 @@ class SignInController extends GetxController {
 
       if (credential.user != null) {
         // Log successful sign-in
-        await analytics.logSignInSuccess(email.value,"sign_in_screen");
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
         Get.offAllNamed(Routes.roleSelection);
       }
@@ -95,4 +99,5 @@ class SignInController extends GetxController {
       Get.back();
     }
   }
+
 }

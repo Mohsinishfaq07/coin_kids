@@ -24,6 +24,7 @@ class KidBaseController extends GetxController {
   final NotificationService _notificationService = NotificationService();
   final AppStateController appState = Get.find<AppStateController>();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
+  final kidService = Get.find<KidService>();
   final analytics = Get.find<AnalyticsService>();
   RxBool isNotificationShowing = true.obs;
   final RxBool showTransferPointer = true.obs;
@@ -286,7 +287,6 @@ class KidBaseController extends GetxController {
   void switchToParentMode() {
     final isKidConnected = currentKid.value?.isConnected ?? false;
     if (!isKidConnected) {
-      final kidService = Get.find<KidService>();
       kidService.updateKid(
         currentKid.value!.kidId,
         currentKid.value!.copyWith(isConnected: true),

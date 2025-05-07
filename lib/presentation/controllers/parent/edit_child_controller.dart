@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
@@ -7,6 +8,7 @@ import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -34,9 +36,13 @@ class EditChildController extends GetxController {
 
   final isLoading = false.obs;
   final isLoadingAvatars = true.obs;
+  DateTime? _screenStartTime;
+
 
   @override
   void onInit() {
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     super.onInit();
 
     final kid = appState.currentKid.value;
@@ -202,4 +208,23 @@ class EditChildController extends GetxController {
     kidImagePath.value = ''; // Clear custom avatar selection
     selectedAvatarPath.value = avatars[index];
   }
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentChangeLanguageScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentChangeLanguageScreen,
+    );
+  }
+
 }

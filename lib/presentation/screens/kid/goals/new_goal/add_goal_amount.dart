@@ -10,7 +10,6 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +35,8 @@ class AddGoalAmountScreen extends GetView<KidGoalsController> {
           children: [
             KidButton(
               onTap: () async {
-                await controller.analytics.buttonClicked(AnalyticsEventNames.goalAmountNextButtonClicked, AnalyticsScreenNames.kidGoalsAmountScreen);
+                await controller.analytics.buttonClicked(AnalyticsEventNames.goalAmountNextButtonClicked, AnalyticsScreenNames.kidGoalsAmountScreen,
+                    AnalyticsScreenNames.kidGoalsImageScreen);
 
                 if (controller.newGoal.value.targetAmount == 0.0) {
                   ToastUtil.showToast('Goal Amount Could Not be empty');

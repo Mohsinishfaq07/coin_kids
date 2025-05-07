@@ -31,22 +31,22 @@ class GoalsTabWidget extends GetView<KidProfileController> {
               return GoalListItem(
                 goal: goalData,
                 onTap: () async {
-                  await controller.analytics
-                      .buttonClicked(AnalyticsEventNames.productDetailClicked, AnalyticsScreenNames.kidProfileScreen);
+                  await controller.analytics.buttonClicked(
+                    AnalyticsEventNames.productDetailClicked,
+                    AnalyticsScreenNames.kidProfileScreen,
+                    AnalyticsScreenNames.productDetailScreen,
+                  );
                   controller.navigateToProductDetails(goalData);
-
-                } ,
+                },
                 onReject: goalData.status == GoalStatus.completed
                     ? () async {
-                        await controller.analytics
-                            .buttonClicked(AnalyticsEventNames.goalRejectClicked, AnalyticsScreenNames.kidProfileScreen);
+                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalRejectClicked, AnalyticsScreenNames.kidProfileScreen);
                         controller.handleRejectGoal(goalData);
                       }
                     : null,
                 onBuy: goalData.status == GoalStatus.completed
                     ? () async {
-                        await controller.analytics
-                            .buttonClicked(AnalyticsEventNames.goalApproveClicked, AnalyticsScreenNames.kidProfileScreen);
+                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalApproveClicked, AnalyticsScreenNames.kidProfileScreen);
                         controller.handleApproveGoal(goalData);
                       }
                     : null,

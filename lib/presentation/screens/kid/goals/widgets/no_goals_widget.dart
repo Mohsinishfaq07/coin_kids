@@ -72,7 +72,7 @@ class NoGoalsWidget extends StatelessWidget {
     }
 
     _dismissTutorial();
-    await analytics.buttonClicked(AnalyticsEventNames.noGoalClicked,AnalyticsScreenNames.kidNoGoalScreen);
+    await analytics.buttonClicked(AnalyticsEventNames.noGoalClicked,AnalyticsScreenNames.kidNoGoalScreen,AnalyticsScreenNames.kidGoalsNameScreen);
 
     Get.toNamed(Routes.kidAddGoalName);
   }

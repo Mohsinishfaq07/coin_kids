@@ -38,7 +38,8 @@ android {
             release {
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
-                storeFile file(keystoreProperties['storeFile'])
+//                storeFile file(keystoreProperties['storeFile'])
+                storeFile file("../coinkids.jks")
                 storePassword keystoreProperties['storePassword']
             }
         }

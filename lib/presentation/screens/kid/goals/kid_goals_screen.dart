@@ -1,6 +1,6 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
@@ -135,7 +135,10 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     child: KidButton(
                       baseColor: AppColors.btnColorOrange,
                       text: 'Add Goal',
-                      onTap: () => Get.toNamed(Routes.kidAddGoalName),
+                      onTap: ()async {
+                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameScreenClicked,AnalyticsScreenNames.kidGoalsScreen,AnalyticsScreenNames.kidGoalsNameScreen);
+                        Get.toNamed(Routes.kidAddGoalName);
+                      },
                       iconPath: Assets.icAdd,
                     ),
                   ),

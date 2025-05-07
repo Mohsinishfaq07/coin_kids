@@ -20,133 +20,135 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 60.h,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-        elevation: 0,
-        backgroundColor: const Color(0xFFCAF0FF),
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: () async{
-                await controller.analytics.logDrawerClick(AnalyticsScreenNames.parentHome);
-                print("parent drawer called ");
-                Get.toNamed(Routes.parentDrawer);
-
-              },
-              child: Obx(
-                () {
-                  return CircleAvatarWidget(
-                    imagePath: controller.appState.currentParent.value?.imageUrl ?? "",
-                    imageType: ImageType.network,
-                    backgroundColor: AppColors.iconPrimary,
-                    size: 40,
+        appBar: AppBar(
+          toolbarHeight: 60.h,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+          elevation: 0,
+          backgroundColor: const Color(0xFFCAF0FF),
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  await controller.analytics.logDrawerClick(
+                    AnalyticsScreenNames.parentHome,
+                    AnalyticsScreenNames.parentHome,
+                    AnalyticsScreenNames.parentDrawerScreen,
                   );
+                  print("parent drawer called ");
+                  Get.toNamed(Routes.parentDrawer);
                 },
+                child: Obx(
+                  () {
+                    return CircleAvatarWidget(
+                      imagePath: controller.appState.currentParent.value?.imageUrl ?? "",
+                      imageType: ImageType.network,
+                      backgroundColor: AppColors.iconPrimary,
+                      size: 40,
+                    );
+                  },
+                ),
               ),
-            ),
-            SizedBox(width: 7.5.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Obx(() {
-                  return Text(
-                    controller.appState.currentParent.value?.name ?? "Null",
-                    style: AppTextStyle.headingMedium.copyWith(fontWeight: FontWeight.w800),
-                  );
-                }),
-                Text("Welcome 👋", style: AppTextStyle.bodySmall)
-              ],
-            ),
-          ],
+              SizedBox(width: 7.5.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() {
+                    return Text(
+                      controller.appState.currentParent.value?.name ?? "Null",
+                      style: AppTextStyle.headingMedium.copyWith(fontWeight: FontWeight.w800),
+                    );
+                  }),
+                  Text("Welcome 👋", style: AppTextStyle.bodySmall)
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-      body: Container(
-        height: Get.height,
-        decoration: BoxDecoration(
-          gradient: AppColors.background,
-        ),
-        child: Obx(
-          () {
-            if (controller.isLoading.value) {
-              // Show loading indicator
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        body: Container(
+          height: Get.height,
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Obx(
+            () {
+              if (controller.isLoading.value) {
+                // Show loading indicator
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            if (!controller.appState.hasKid.value) {
-              // No kids available
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 51.h,
-                          bottom: 81.h,
-                        ),
-                        child: SvgPicture.asset(
-                          Assets.appIconText,
-                          height: 50.h,
-                        ),
-                      ),
-
-                      Container(
-                         width: 328.w,
-                        decoration: ShapeDecoration(
-                          color: AppColors.cardPrimary,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1.w, color: AppColors.cardBorder),
-                            borderRadius: BorderRadius.circular(12.r),
+              if (!controller.appState.hasKid.value) {
+                // No kids available
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 51.h,
+                            bottom: 81.h,
                           ),
-                          shadows: [
-                            BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0),
-                          ],
+                          child: SvgPicture.asset(
+                            Assets.appIconText,
+                            height: 50.h,
+                          ),
                         ),
-                        child: Padding(
-                          padding:  EdgeInsets.symmetric(vertical: 12.h),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 12.h),
-                              Text("Almost There!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
-                              SizedBox(height: 12.h),
-                              Text("Starting by adding your first child.",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
-                              SizedBox(height: 22.h),
-                              AppButton(
-                                size: Size(0.4.sw, 50),
-                                onPressed: () async{
-                                  await controller.analytics.logAddChildAttempt(AnalyticsScreenNames.parentHome);
-
-                                  Get.toNamed(Routes.parentAddChild);
-
-                                },
-                                child: Text("Add Child", style: AppTextStyle.appButton),
-                              )
+                        Container(
+                          width: 328.w,
+                          decoration: ShapeDecoration(
+                            color: AppColors.cardPrimary,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1.w, color: AppColors.cardBorder),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            shadows: [
+                              BoxShadow(color: const Color(0x0F000000), blurRadius: 6.r, offset: const Offset(0, 0), spreadRadius: 0),
                             ],
                           ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 12.h),
+                                Text("Almost There!",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                                SizedBox(height: 12.h),
+                                Text("Starting by adding your first child.",
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                SizedBox(height: 22.h),
+                                AppButton(
+                                  size: Size(0.4.sw, 50),
+                                  onPressed: () async {
+                                    await controller.analytics.logAddChildAttempt(
+                                        AnalyticsScreenNames.parentHome, AnalyticsScreenNames.roleSelection, AnalyticsScreenNames.parentAddKidScreen);
+
+                                    Get.toNamed(Routes.parentAddChild);
+                                  },
+                                  child: Text("Add Child", style: AppTextStyle.appButton),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }
+                );
+              }
 
               // Display list of kids
               return Padding(
@@ -189,7 +191,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 return Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 10.h),
                                   child: GestureDetector(
-                                    onTap: ()async  {
+                                    onTap: () async {
                                       await controller.analytics.logAlreadyAddedChildAttempt(AnalyticsScreenNames.parentHome);
 
                                       ToastUtil.showToast("You have already added a child");
@@ -245,9 +247,11 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 return Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 10.h),
                                   child: GestureDetector(
-
-                                    onTap: () async{
-                                      await controller.analytics.logKidProfileClicked(AnalyticsScreenNames.parentHome);
+                                    onTap: () async {
+                                      await controller.analytics.logKidProfileClicked(
+                                        AnalyticsScreenNames.parentHome,
+                                        AnalyticsScreenNames.kidProfileScreen,
+                                      );
 
                                       Get.toNamed(Routes.parentKidProfile);
                                     },
@@ -307,7 +311,11 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AppButton(
-                                    onPressed: () {
+                                    onPressed: ()async {
+                                      await controller.analytics.logQuickTransferButtonClick(
+                                        AnalyticsScreenNames.parentHome,
+                                        AnalyticsScreenNames.kidProfileScreen,
+                                      );
                                       Get.toNamed(Routes.parentQuickTransfer);
                                     },
                                     size: Size(0.5.sw, 50),
@@ -357,7 +365,6 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),

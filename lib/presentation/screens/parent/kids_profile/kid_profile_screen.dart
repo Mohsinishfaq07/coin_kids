@@ -49,7 +49,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
                     title: 'Quick\nTransfer',
                     iconPath: Assets.icTransfer,
                     onTap: () async {
-                      await controller.analytics.buttonClicked(AnalyticsEventNames.quickTransferButtonClicked, AnalyticsScreenNames.kidProfileScreen);
+                      await controller.analytics.buttonClicked(AnalyticsEventNames.quickTransferButtonClicked, AnalyticsScreenNames.kidProfileScreen,AnalyticsScreenNames.parentQuickTransferScreen);
                       Get.toNamed(Routes.parentQuickTransfer);
                     },
                     baseColor: AppColors.colorPrimary,
@@ -75,7 +75,7 @@ class KidProfileScreen extends GetView<KidProfileController> {
                     title: 'Edit\nProfile',
                     iconPath: Assets.icEdit,
                     onTap: () async {
-                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidEditProfileClicked, AnalyticsScreenNames.kidProfileScreen);
+                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidEditProfileClicked, AnalyticsScreenNames.kidProfileScreen,AnalyticsScreenNames.kidEditProfileScreen);
                       Get.toNamed(Routes.parentUpdateChild);
                     },
                     baseColor: AppColors.colorPrimary,

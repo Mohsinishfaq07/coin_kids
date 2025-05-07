@@ -28,7 +28,7 @@ class _MarketWishlistTutorialOverlayState extends State<MarketWishlistTutorialOv
       child: GestureDetector(
         onTap: widget.onComplete,
         behavior: HitTestBehavior.opaque,
-        child: Container(
+        child: SizedBox(
           width: Get.width,
           height: Get.height,
           //color: Colors.black.withOpacity(0.75),

@@ -105,7 +105,6 @@ class VerticalNavBar extends GetView<VerticalNavBarController> {
               _buildDestination(
                 Assets.icKidHome,
                 'HOME',
-
                 controller.selectedIndex.value == 0,
               ),
               _buildDestination(

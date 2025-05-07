@@ -27,7 +27,7 @@ class RoleController extends GetxController {
 
     // Lock orientation first
     OrientationUtils.lockToPortrait();
-    
+
     // Add a small delay to allow orientation change to complete
     await Future.delayed(Duration(milliseconds: 100));
 
@@ -45,10 +45,10 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
-    
+
     // Lock orientation first
     OrientationUtils.lockToLandscape();
-    
+
     // Add a small delay to allow orientation change to complete
     await Future.delayed(Duration(milliseconds: 100));
 
@@ -66,16 +66,16 @@ class RoleController extends GetxController {
     _lastSwitchTime = DateTime.now();
     Get.log("RoleController is switchToKidMode");
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, UserRole.child.name);
-    
-    // Lock orientation first 
+
+    // Lock orientation first
     OrientationUtils.lockToLandscape();
-    
+
     // Add a delay to allow orientation change to complete
     await Future.delayed(Duration(milliseconds: 300));
-    
+
     // Force rebuild of the entire widget tree
     Get.forceAppUpdate();
-    
+
     // Navigate after rebuild
     if (!(Get.currentRoute == Routes.kidOnboarding)) {
       Get.offAllNamed(Routes.kidOnboarding, arguments: shouldShowInstruction);

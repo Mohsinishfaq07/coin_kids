@@ -9,11 +9,11 @@ import 'package:get/get.dart';
 
 class ParentPinDialog extends StatelessWidget {
   final Function(String) onPinSubmit;
-  final bool isFirstTime;
+  // final bool isFirstTime;
 
   const ParentPinDialog({
     required this.onPinSubmit,
-    required this.isFirstTime,
+  //  required this.isFirstTime,
     super.key,
   });
 
@@ -267,12 +267,12 @@ class ParentPinDialog extends StatelessWidget {
   }
 
   static Future<void> show({
-    required bool isFirstTime,
+    // required bool isFirstTime,
     required Function(String) onPinSubmit,
   }) {
     return Get.dialog(
       ParentPinDialog(
-        isFirstTime: isFirstTime,
+      //  isFirstTime: isFirstTime,
         onPinSubmit: onPinSubmit,
       ),
       barrierDismissible: true,

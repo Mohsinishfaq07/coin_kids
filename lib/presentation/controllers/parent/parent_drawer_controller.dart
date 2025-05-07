@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/parent_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -26,10 +28,14 @@ class ParentDrawerController extends GetxController {
   //final appVersion = ''.obs;
 
   final ImagePicker _picker = ImagePicker();
+  DateTime? _screenStartTime;
+
 
   @override
   void onInit() {
     getAppVersion();
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     super.onInit();
   }
   //@override
@@ -90,4 +96,25 @@ class ParentDrawerController extends GetxController {
 //     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 //     appVersion.value = packageInfo.version;
 //   }
+
+
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentDrawerScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentDrawerScreen,
+    );
+  }
+
 }

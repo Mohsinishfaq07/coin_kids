@@ -1,0 +1,1 @@
+/Users/tms/StudioProjects/coin-kids/build/app/intermediates/cxx/Debug/3d4174p4/obj/arm64-v8a

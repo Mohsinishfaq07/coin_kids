@@ -1,3 +1,6 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChangeLanguageController extends GetxController {
   // Loading state
   final RxBool isLoading = false.obs;
+  DateTime? _screenStartTime;
+  final analytics = Get.find<AnalyticsService>();
+
 
   // Available languages
   final List<Map<String, dynamic>> languages = [
@@ -26,6 +32,8 @@ class ChangeLanguageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     loadSavedLanguage();
   }
 
@@ -96,4 +104,23 @@ class ChangeLanguageController extends GetxController {
   bool isSelected(Locale locale) {
     return selectedLocale.value.languageCode == locale.languageCode;
   }
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentChangeLanguageScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentChangeLanguageScreen,
+    );
+  }
+
 }

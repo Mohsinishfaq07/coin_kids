@@ -7,9 +7,11 @@ import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/data/remote_services/market_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/analytics_constants.dart';
 import '../../../data/remote_services/analytics_service.dart';
 
 enum FilterType { all, age, budget, rating }
@@ -69,6 +71,8 @@ class ParentMarketController extends GetxController {
     ever(selectedMaxBudget, (_) => applyFilters());
     ever(selectedMinRating, (_) => applyFilters());
     ever(selectedMaxRating, (_) => applyFilters());
+    _screenStartTime = DateTime.now();
+    logScreenTime();
   }
 
   void _initializeWishlist() {
@@ -340,4 +344,25 @@ class ParentMarketController extends GetxController {
   bool isInWishlist(String productId) {
     return _wishlistService.isInWishlist(productId);
   }
+
+  DateTime? _screenStartTime;
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentMarket,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentMarket,
+    );
+  }
+
+
 }

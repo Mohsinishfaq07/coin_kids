@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
@@ -11,6 +12,7 @@ import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/quick_transfer_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -29,6 +31,7 @@ class MessagesController extends GetxController {
   final refreshController = RefreshController(initialRefresh: false);
   StreamSubscription? _notificationCountSubscription;
   final analytics = Get.find<AnalyticsService>();
+  DateTime? _screenStartTime;
 
 
   @override
@@ -36,11 +39,15 @@ class MessagesController extends GetxController {
     super.onInit();
     fetchNotifications(refresh: true);
     getUnReadNotificationCount();
+    _screenStartTime = DateTime.now();
+    logScreenTime();
   }
 
   @override
   void onClose() {
     _notificationCountSubscription?.cancel();
+    logScreenTime();
+
     super.onClose();
   }
 
@@ -315,4 +322,18 @@ class MessagesController extends GetxController {
       // await markAsRead(notification.id!);
     }
   }
+
+
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.parentMessageScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.parentMessageScreen,
+    );
+  }
+
 }

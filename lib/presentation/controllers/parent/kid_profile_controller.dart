@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
@@ -17,6 +18,7 @@ import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
 import 'package:coin_kids/presentation/screens/parent/market/parent_product_detail_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart' show Colors, showDialog;
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,9 +38,12 @@ class KidProfileController extends GetxController {
   final isGoalsLoading = true.obs;
 
   final RxList<GoalModel> goals = RxList();
+  DateTime? _screenStartTime;
 
   @override
   void onInit() {
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     fetchNotifications();
     fetchGoals();
 
@@ -332,4 +337,23 @@ class KidProfileController extends GetxController {
     fetchGoals();
     fetchNotifications();
   }
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.kidProfileScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.signIn,
+    );
+  }
+
 }

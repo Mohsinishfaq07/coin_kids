@@ -38,7 +38,7 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
               iconPosition: IconPosition.right,
               iconPath: Assets.icNext,
               onTap: () async {
-                await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameNextButtonClicked,AnalyticsScreenNames.kidGoalsNameScreen);
+                await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameNextButtonClicked,AnalyticsScreenNames.kidGoalsNameScreen,AnalyticsScreenNames.kidGoalsAmountScreen);
 
                 if (controller.newGoal.value.title.isEmpty) {
                   ToastUtil.showToast('Goal Name Could Not be empty');
@@ -53,7 +53,9 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
         ),
       ),
       appBar: KidAppBarComponent(
-        onBackPressed: () {
+        onBackPressed: () async{
+          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsNameScreen,AnalyticsScreenNames.kidGoalsScreen);
+
           controller.appBarController.resetToDefault();
           Get.back();
         },

@@ -127,7 +127,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     ToastUtil.showToast("Your parent is connected, please request money");
                                     return;
                                   }
-                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen);
+                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidJarColorSelection,);
                                   controller.startJarCreation(Jars.spendingJar);
                                   Get.toNamed(Routes.kidJarColorSelection);
                                 },
@@ -181,7 +181,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     KidButton.iconWithTitle(
                                       key: GlobalKeys.transferButtonKey,
                                       onTap: () async{
-                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,AnalyticsScreenNames.kidHomeScreen);
+                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidTransferAmountScreen);
 
                                         controller.showTransferPointer.value = false;
                                         Get.toNamed(Routes.kidMoneyTransfer);
@@ -197,8 +197,8 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                           child: HandPointerOverlay(
                                             targetKey: GlobalKeys.transferButtonKey,
                                             onTap: () async{
-                                              // await controller.markTransferTutorialAsShown();
-                                              // controller.showTransferPointer.value = false;
+                                               await controller.markTransferTutorialAsShown();
+                                              controller.showTransferPointer.value = false;
                                             },
                                             width: 60.w,
                                             height: 60.w,
@@ -222,7 +222,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     jarName: "+ Add Savings",
                                     height: 0.45.sh,
                                     onTap: ()async {
-                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen);
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidJarColorSelection);
 
                                       controller.startJarCreation(Jars.savingJar);
                                       Get.toNamed(Routes.kidJarColorSelection);
@@ -267,7 +267,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                           right: 20.w,
                           child: GestureDetector(
                             onTap: () async{
-                              await controller.analytics.buttonClicked(AnalyticsEventNames.switchToParentClicked,AnalyticsScreenNames.kidHomeScreen);
+                              await controller.analytics.buttonClicked(AnalyticsEventNames.switchToParentClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.parentBase,);
 
                               controller.switchToParentMode();
                              //  final currentPin = controller.appState.currentParent.value?.pin;

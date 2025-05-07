@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
@@ -8,6 +9,7 @@ import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,6 +34,8 @@ class KidOnboardingController extends GetxController {
   final _selectedAvatarUrl = ''.obs;
   final _avatars = <String>[].obs;
   final _isLoading = false.obs;
+  DateTime? _screenStartTime;
+
 
   // Getters
   String get name => _name.value;
@@ -53,6 +57,7 @@ class KidOnboardingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _screenStartTime = DateTime.now();
     loadAvatars();
   }
 
@@ -212,4 +217,7 @@ class KidOnboardingController extends GetxController {
       _isLoading.value = false;
     }
   }
+
+
+
 }

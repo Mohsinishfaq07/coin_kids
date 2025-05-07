@@ -1,0 +1,1 @@
+/Users/tms/StudioProjects/coin-kids/build/app/intermediates/cxx/RelWithDebInfo/5w343j3g/obj/x86_64

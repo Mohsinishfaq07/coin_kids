@@ -27,13 +27,7 @@ class SignupController extends GetxController {
   void onInit() {
     super.onInit();
     _screenStartTime = DateTime.now();
-    FirebaseAnalytics.instance.setCurrentScreen(
-      screenName: AnalyticsScreenNames.signUp,
-      screenClassOverride: 'SignupScreen',
-    );
-
-    // Set user language property
-    _setUserLanguage();
+    logScreenTime();
   }
 
   @override
@@ -50,13 +44,6 @@ class SignupController extends GetxController {
     }
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.signUp,
-    );
-  }
-  Future<void> _setUserLanguage() async {
-    final String deviceLocale = Get.deviceLocale?.languageCode ?? 'en';
-    await FirebaseAnalytics.instance.setUserProperty(
-      name: 'user_language',
-      value: deviceLocale,
     );
   }
 

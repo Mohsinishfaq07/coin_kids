@@ -1,8 +1,10 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -11,6 +13,7 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -28,6 +31,8 @@ class DragAndDropMoneyController extends GetxController {
   final jarCreationController = Get.find<JarCreationController>();
   final appBarController = Get.find<KidAppBarController>();
   final kidService = Get.find<KidService>();
+  final analytics = Get.find<AnalyticsService>();
+
 
   // Toggle between bills and coins
   final isShowingBills = true.obs;
@@ -56,10 +61,14 @@ class DragAndDropMoneyController extends GetxController {
   Animation<Offset>? dragAnimation;
 
   final RxBool showCoinTutorial = false.obs;
+  DateTime? _screenStartTime;
+
 
   @override
   void onInit() {
     super.onInit();
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     _initializeMode();
     // Check if it's first time from SharedPreferences
     checkFirstTime();
@@ -82,6 +91,7 @@ class DragAndDropMoneyController extends GetxController {
   @override
   void onClose() {
     appBarController.resetToDefault();
+    logScreenTime();
 
     reset();
     super.onClose();
@@ -473,4 +483,19 @@ class DragAndDropMoneyController extends GetxController {
     // Initialize the coin tutorial state but don't show it yet
     showCoinTutorial.value = false; // Will be shown after drag-drop tutorial completes
   }
+
+
+
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.signUp,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.signUp,
+    );
+  }
+
 }

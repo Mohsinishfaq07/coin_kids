@@ -14,6 +14,7 @@ import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_contr
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/core/constants/analytics_constants.dart';
 
@@ -23,6 +24,7 @@ class AddMoneyController extends GetxController {
   final analytics = Get.find<AnalyticsService>();
 
   final amount = 0.0.obs;
+  DateTime? _screenStartTime;
 
   @override
   void onInit() {
@@ -31,17 +33,12 @@ class AddMoneyController extends GetxController {
     if (Get.arguments == AmountAdditionMode.jarCreation) {
       amount.value = jarCreationController.amount.value;
     }
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     
-    // Track screen view when controller is initialized
-    _logScreenView();
+
   }
 
-  Future<void> _logScreenView() async {
-    await analytics.logScreenView(
-      screenName: AnalyticsScreenNames.kidAddMoney,
-      screenClass: 'AddMoneyScreen',
-    );
-  }
 
   Future<void> handleNextButton(AmountAdditionMode mode) async {
     if (!_validateAmount()) return;
@@ -175,4 +172,23 @@ class AddMoneyController extends GetxController {
     await analytics.logMoneyAddBackClicked(Get.arguments.toString());
     Get.back();
   }
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.addOrRequestMoney,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.addOrRequestMoney,
+    );
+  }
+
 }

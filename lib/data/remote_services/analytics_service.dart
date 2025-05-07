@@ -7,12 +7,13 @@ class AnalyticsService extends GetxService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   // Role Selection Events
-  Future<void> logRoleSelected(String role, String screen) async {
+  Future<void> logRoleSelected(String role, String screen, String nextScreen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.roleSelected,
       parameters: {
         AnalyticsParameterNames.role: role,
-        AnalyticsParameterNames.screenName : screen
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.nextScreenName: nextScreen
       },
     );
   }
@@ -21,29 +22,29 @@ class AnalyticsService extends GetxService {
   Future<void> logSignUpAttempt(String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpAttempt,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
+      parameters: {AnalyticsParameterNames.screenName: screen},
     );
   }
 
-  Future<void> logSignUpSuccess(String email, String screen,) async {
+  Future<void> logSignUpSuccess(
+    String email,
+    String screen,
+  ) async {
     await _analytics.logSignUp(signUpMethod: 'email');
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpSuccess,
       parameters: {
         AnalyticsParameterNames.email: email,
         AnalyticsParameterNames.screenName: screen,
-
       },
     );
   }
 
-  Future<void> logSignUpFailure( String error, String screen ) async {
+  Future<void> logSignUpFailure(String error, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signUpFailure,
       parameters: {
-         AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.screenName: screen,
         AnalyticsParameterNames.error: error,
       },
     );
@@ -65,106 +66,92 @@ class AnalyticsService extends GetxService {
       parameters: {
         AnalyticsParameterNames.goalId: goalId,
         AnalyticsParameterNames.targetAmount: targetAmount,
-        AnalyticsParameterNames.screenName : screen
-
+        AnalyticsParameterNames.screenName: screen
       },
     );
   }
 
-  Future<void> logGoalCompleted(String goalId, double savedAmount , String screen) async {
+  Future<void> logGoalCompleted(String goalId, double savedAmount, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.goalCompleted,
       parameters: {
         AnalyticsParameterNames.goalId: goalId,
         AnalyticsParameterNames.savedAmount: savedAmount,
-        AnalyticsParameterNames.screenName : screen
-
+        AnalyticsParameterNames.screenName: screen
       },
     );
   }
 
   // Jar Events
-  Future<void> logJarCreated(String jarType , String screen) async {
+  Future<void> logJarCreated(String jarType, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.jarCreated,
-
-
       parameters: {
         AnalyticsParameterNames.jarType: jarType,
-        AnalyticsParameterNames.screenName : screen
-        ,
+        AnalyticsParameterNames.screenName: screen,
       },
     );
   }
 
-  Future<void> logJarCreationStarted(String jarType , String screen) async {
+  Future<void> logJarCreationStarted(String jarType, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.jarCreationStarted,
-      parameters: {
-        AnalyticsParameterNames.jarType: jarType,
-        AnalyticsParameterNames.screenName : screen
-
-      },
+      parameters: {AnalyticsParameterNames.jarType: jarType, AnalyticsParameterNames.screenName: screen},
     );
   }
 
-  Future<void> logMoneyAdded(String jarType, double amount ,String screen) async {
+  Future<void> logMoneyAdded(String jarType, double amount, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.moneyAdded,
-      parameters: {
-        AnalyticsParameterNames.jarType: jarType,
-        AnalyticsParameterNames.amount: amount,
-        AnalyticsParameterNames.screenName : screen
-
-      },
+      parameters: {AnalyticsParameterNames.jarType: jarType, AnalyticsParameterNames.amount: amount, AnalyticsParameterNames.screenName: screen},
     );
   }
 
   // Screen tracking
-  Future<void> logScreenView({
-    required String screenName,
-    String? screenClass,
-  }) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.screenView,
-      parameters: {
-        AnalyticsParameterNames.screenName: screenName,
-        AnalyticsParameterNames.screenClass: screenClass ?? '',
-        AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
-      },
-    );
-  }
+  // Future<void> logScreenView({
+  //   required String screenName,
+  //   String? screenClass,
+  // }) async {
+  //   await _analytics.logEvent(
+  //     name: AnalyticsEventNames.screenView,
+  //     parameters: {
+  //       AnalyticsParameterNames.screenName: screenName,
+  //       AnalyticsParameterNames.screenClass: screenClass ?? '',
+  //       AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+  //     },
+  //   );
+  // }
 
   // User Properties
-  Future<void> setUserProperties({
-    String? userRole,
-    String? userId,
-    int? userAge,
-  }) async {
-    if (userRole != null) {
-      await _analytics.setUserProperty(name: 'user_role', value: userRole);
-    }
-    if (userId != null) {
-      await _analytics.setUserId(id: userId);
-    }
-    if (userAge != null) {
-      await _analytics.setUserProperty(name: 'user_age', value: userAge.toString());
-    }
-  }
+  // Future<void> setUserProperties({
+  //   String? userRole,
+  //   String? userId,
+  //   int? userAge,
+  // }) async {
+  //   if (userRole != null) {
+  //     await _analytics.setUserProperty(name: 'user_role', value: userRole);
+  //   }
+  //   if (userId != null) {
+  //     await _analytics.setUserId(id: userId);
+  //   }
+  //   if (userAge != null) {
+  //     await _analytics.setUserProperty(name: 'user_age', value: userAge.toString());
+  //   }
+  // }
 
   // Market Events
-  Future<void> logProductView(String productId, String productName, double price) async {
-    await _analytics.logViewItem(
-      items: [
-        AnalyticsEventItem(
-          itemId: productId,
-          itemName: productName,
-          price: price,
-        ),
-      ],
-      currency: 'EUR',
-    );
-  }
+  // Future<void> logProductView(String productId, String productName, double price) async {
+  //   await _analytics.logViewItem(
+  //     items: [
+  //       AnalyticsEventItem(
+  //         itemId: productId,
+  //         itemName: productName,
+  //         price: price,
+  //       ),
+  //     ],
+  //     currency: 'EUR',
+  //   );
+  // }
 
   Future<void> logAddToWishlist(String productId, String productName, double price) async {
     await _analytics.logAddToWishlist(
@@ -181,29 +168,23 @@ class AnalyticsService extends GetxService {
 
   // Sign-in analytics
 
-
-
-  Future<void> logSignInSuccess(String email ,String screen) async {
-    await _analytics.logLogin(loginMethod: 'email');
+  Future<void> logSignInSuccess(String email, String screen, String previousScreen, String nextScreen) async {
+    await _analytics.logLogin(loginMethod: AnalyticsParameterNames.email);
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInSuccess,
       parameters: {
-        'method': 'email',
-        AnalyticsParameterNames.screenName : screen,
-        AnalyticsParameterNames.email : screen
+        AnalyticsParameterNames.email: email,
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.previousScreen: previousScreen,
+        AnalyticsParameterNames.nextScreenName: nextScreen,
       },
     );
   }
 
-  Future<void> logSignInFailure( String error, String screen) async {
+  Future<void> logSignInFailure(String error, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInValidationFailure,
-
-      parameters: {
-        'error': error,
-        AnalyticsParameterNames.screenName : screen
-
-      },
+      parameters: {'error': error, AnalyticsParameterNames.screenName: screen},
     );
   }
 
@@ -211,80 +192,54 @@ class AnalyticsService extends GetxService {
     await _analytics.logLogin(loginMethod: 'google');
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInAttempt,
-      parameters: {
-        'method': 'google',
-        AnalyticsParameterNames.screenName : screen
-
-      },
+      parameters: {'method': 'google', AnalyticsParameterNames.screenName: screen},
     );
   }
 
-  Future<void> logGoogleSignInSuccess(String screen,String userType) async {
+  Future<void> logGoogleSignInSuccess(String screen, String userType) async {
     await _analytics.logSignUp(signUpMethod: AnalyticsParameterNames.google);
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInSuccess,
-
       parameters: {
         AnalyticsParameterNames.signInMethod: AnalyticsParameterNames.google,
-        AnalyticsParameterNames.screenName : screen,
-        AnalyticsParameterNames.userType :userType
-
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.userType: userType
       },
     );
   }
 
-  Future<void> screenTime(String screen,String durationInSeconds ) async {
+  Future<void> screenTime(String screen, String durationInSeconds) async {
+    final String deviceLocale = Get.deviceLocale?.languageCode ?? 'en';
     await _analytics.logEvent(
       name: AnalyticsEventNames.screenTimeSpent,
-
       parameters: {
-        AnalyticsParameterNames.screenName : screen,
-        AnalyticsParameterNames.screenTime : durationInSeconds,
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.screenTime: durationInSeconds,
       },
     );
-
+    await FirebaseAnalytics.instance.setUserProperty(
+      value: deviceLocale,
+      name: AnalyticsEventNames.userLanguage,
+    );
   }
 
-  Future<void> logGoogleSignInFailure(String error,String screen) async {
-
+  Future<void> logGoogleSignInFailure(String error, String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInFailure,
       parameters: {
-        AnalyticsParameterNames.screenName : screen,
+        AnalyticsParameterNames.screenName: screen,
         'method': 'google',
         'error': error,
       },
     );
   }
 
-  // Kid Onboarding Analytics
-  // Future<void> logOnboardingStepComplete(String stepName, {Map<String, dynamic>? parameters}) async {
-  //   await _analytics.logEvent(
-  //     name: AnalyticsEventNames.kidOnBoardingSteps,
-  //     parameters: {
-  //       'step_name': stepName,
-  //       ...?parameters,
-  //     },
-  //   );
-  // }
-
-  // Future<void> logOnboardingComplete(String screen) async {
-  //   await _analytics.logEvent(
-  //     name: AnalyticsEventNames.kidOnBoardingComplete,
-  //     parameters: {
-  //       AnalyticsParameterNames.screenName : screen,
-  //
-  //     }
-  //     // name: 'kid_onboarding_complete',
-  //   );
-  // }
-
   // App Launch Analytics
   Future<void> logAppLaunch() async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.appLaunch,
       parameters: {
-        AnalyticsParameterNames.screenName:AnalyticsScreenNames.splash,
+        AnalyticsParameterNames.screenName: AnalyticsScreenNames.splash,
         AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
       },
     );
@@ -453,117 +408,123 @@ class AnalyticsService extends GetxService {
       },
     );
   }
+
   Future<void> logSignInAttempt(String screen) async {
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInAttempt,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
+      parameters: {AnalyticsParameterNames.screenName: screen},
     );
   }
-  Future<void> logDrawerClick(String screen) async {
+
+  Future<void> logDrawerClick(String screen, String previousScreen, String nextScreen) async {
     await _analytics.getSessionId();
     print("sessionId${_analytics.getSessionId()}");
     await _analytics.logEvent(
       name: AnalyticsEventNames.drawerButtonClicked,
       parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logAddChildAttempt(String screen) async {
-    print("sessionId${_analytics.getSessionId()}");
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.addChildAttemptClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  } Future<void> logAlreadyAddedChildAttempt(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.alreadyAddChildClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logKidProfileClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.kidProfileClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logAddChildClickSuccessFull(String screen) async {
-    print("sessionId${_analytics.getSessionId()}");
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.addChildSuccessfulClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logAddChildFailures(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.addChildFailed,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logAddChildDiscard(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.addChildDiscard,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> logParentHomeTabClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.parentHomeTabClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  } Future<void> logParentNotificationTabClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.parentNotificationTabClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  } Future<void> logSwitchToKidZoneClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.parentKidZoneTabClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }Future<void> logParentMarketClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.parentMarketTabClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> backPressClicked(String screen) async {
-    await _analytics.logEvent(
-      name: AnalyticsEventNames.backButtonClicked,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
-      },
-    );
-  }
-  Future<void> buttonClicked(String eventName,String screen) async {
-    await _analytics.logEvent(
-      name: eventName,
-      parameters: {
-        AnalyticsParameterNames.screenName : screen
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.previousScreen: previousScreen,
+        AnalyticsParameterNames.nextScreenName: nextScreen
       },
     );
   }
 
+  Future<void> logAddChildAttempt(String screen, String previousScreen, String nextScreen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.addChildAttemptClicked,
+      parameters: {
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.previousScreen: previousScreen,
+        AnalyticsParameterNames.nextScreenName: nextScreen
+      },
+    );
+  }
+
+  Future<void> logQuickTransferButtonClick(String screen, String nextScreen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.quickTransferButtonClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen, AnalyticsParameterNames.nextScreenName: nextScreen},
+    );
+  }
+
+  Future<void> logAlreadyAddedChildAttempt(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.alreadyAddChildClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logKidProfileClicked(String screen, String nextScreen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.kidProfileClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen, AnalyticsParameterNames.nextScreenName: nextScreen},
+    );
+  }
+
+  Future<void> logAddChildClickSuccessFull(String screen) async {
+    print("sessionId${_analytics.getSessionId()}");
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.addChildSuccessfulClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logAddChildFailures(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.addChildFailed,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logAddChildDiscard(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.addChildDiscard,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logParentHomeTabClicked(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.parentHomeTabClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logParentNotificationTabClicked(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.parentNotificationTabClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logSwitchToKidZoneClicked(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.parentKidZoneTabClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> logParentMarketClicked(String screen) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.parentMarketTabClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen},
+    );
+  }
+
+  Future<void> backPressClicked(String screen, [String? nextScreen]) async {
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.backButtonClicked,
+      parameters: {AnalyticsParameterNames.screenName: screen,
+        if (nextScreen != null) 'next_screen': nextScreen,},
+    );
+  }
+
+  Future<void> buttonClicked(String eventName, String screen, [String? nextScreen]) async {
+    await _analytics.logEvent(
+      name: eventName,
+      parameters: {AnalyticsParameterNames.screenName: screen,
+        if (nextScreen != null) 'next_screen': nextScreen,
+      },
+    );
+  }
 }

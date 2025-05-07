@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
@@ -10,6 +11,7 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:coin_kids/presentation/controllers/parent/parent_base_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
 enum TransferMode {
@@ -29,9 +31,13 @@ class QuickTransferController extends GetxController {
   RxString message = ''.obs;
   RxString amountValidation = ''.obs;
   TransferMode mode = TransferMode.sendMoney;
+  DateTime? _screenStartTime;
+
 
   @override
   void onInit() {
+    _screenStartTime = DateTime.now();
+    logScreenTime();
     final args = Get.arguments;
     if (args != null) {
       amount.value = (args['amount'] ?? '').toString();
@@ -156,4 +162,23 @@ class QuickTransferController extends GetxController {
       Get.log("Exception $e");
     }
   }
+
+
+  @override
+  void onClose() {
+    logScreenTime();
+    super.onClose();
+  }
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.signIn,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.signIn,
+    );
+  }
+
 }

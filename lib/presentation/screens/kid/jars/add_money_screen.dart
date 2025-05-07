@@ -33,14 +33,12 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             KidButton(
-              onTap: ()async {
+              onTap: () async {
                 await controller.analytics
                     .buttonClicked(AnalyticsEventNames.addOrRequestMoneyNextButtonClickedClicked, AnalyticsScreenNames.addOrRequestMoney);
 
-      controller.handleNextButton(mode);},
-
-
-
+                controller.handleNextButton(mode);
+              },
               baseColor: AppColors.btnColorGreen,
               text: "Next",
               iconPath: Assets.icTick,

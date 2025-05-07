@@ -28,7 +28,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
         title: '',
         showBackButton: true,
         onBackPressed: () async {
-          await controller.analytics.buttonClicked(AnalyticsEventNames.parentDrawerBackButtonClicked, AnalyticsScreenNames.parentDrawerScreen);
+          await controller.analytics.buttonClicked(
+              AnalyticsEventNames.parentDrawerBackButtonClicked, AnalyticsScreenNames.parentDrawerScreen, AnalyticsScreenNames.parentBase);
 
           Get.back();
         },
@@ -36,7 +37,11 @@ class ParentDrawer extends GetView<ParentDrawerController> {
           TextButton(
             onPressed: () async {
               await controller.authService.signOut();
-              await controller.analytics.buttonClicked(AnalyticsEventNames.parentLogoutClicked, AnalyticsScreenNames.parentDrawerScreen);
+              await controller.analytics.buttonClicked(
+                AnalyticsEventNames.parentLogoutClicked,
+                AnalyticsScreenNames.parentDrawerScreen,
+                AnalyticsScreenNames.signIn,
+              );
 
               Get.offAllNamed(Routes.signIn);
             },
@@ -85,7 +90,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               _buildProfileImage(),
                               GestureDetector(
                                 onTap: () async {
-                                  await controller.analytics.buttonClicked(AnalyticsEventNames.parentImagePickerClicked, AnalyticsScreenNames.parentDrawerScreen);
+                                  await controller.analytics
+                                      .buttonClicked(AnalyticsEventNames.parentImagePickerClicked, AnalyticsScreenNames.parentDrawerScreen);
 
                                   ImagePickerBottomSheet.show(
                                     onCameraTap: () => controller.pickImage(source: ImageSource.camera),
@@ -113,8 +119,9 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                     SizedBox(height: 10.h),
 
                     // My Profile Section
-                    _buildSectionHeader("My Profile", onEdit: () async{
-                      await controller.analytics.buttonClicked(AnalyticsEventNames.parentEditClicked, AnalyticsScreenNames.parentDrawerScreen);
+                    _buildSectionHeader("My Profile", onEdit: () async {
+                      await controller.analytics.buttonClicked(
+                          AnalyticsEventNames.parentEditClicked, AnalyticsScreenNames.parentDrawerScreen, AnalyticsScreenNames.parentProfile);
 
                       Get.toNamed(Routes.parentEditProfile);
                     }),
@@ -323,32 +330,31 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                               //     }
                               //   },
                               // ),
-                             // Padding(
-                               // padding: EdgeInsets.symmetric(vertical: 30.h),
+                              // Padding(
+                              // padding: EdgeInsets.symmetric(vertical: 30.h),
                               //  padding: EdgeInsets.symmetric(vertical: 10.h),
-                               // child:
+                              // child:
                               _buildProfileRowWithArrow(
-                                  "Feedback",
-                                  Assets.icFeedback,
-                                  showArrow: false,
-                                  iconSize: 24.sp,
-                                  onTap: () async {
-                                    await controller.analytics.buttonClicked(AnalyticsEventNames.feedbackClicked, AnalyticsScreenNames.parentDrawerScreen);
+                                "Feedback",
+                                Assets.icFeedback,
+                                showArrow: false,
+                                iconSize: 24.sp,
+                                onTap: () async {
+                                  await controller.analytics
+                                      .buttonClicked(AnalyticsEventNames.feedbackClicked, AnalyticsScreenNames.parentDrawerScreen);
 
-                                    Get.toNamed(Routes.parentFeedback);
-                                  },
-                                ),
+                                  Get.toNamed(Routes.parentFeedback);
+                                },
+                              ),
                               Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                padding: EdgeInsets.symmetric(vertical: 10.h),
                                 child: Container(
-
                                   height: 0.5.h,
-                                width: 100.w
-                                  ,
-                                color: Colors.transparent,
+                                  width: 100.w,
+                                  color: Colors.transparent,
                                 ),
                               ),
-                             // ),
+                              // ),
                               _buildProfileRowWithArrow(
                                 "Privacy Policy",
                                 Assets.icLock,
@@ -357,8 +363,8 @@ class ParentDrawer extends GetView<ParentDrawerController> {
                                 onTap: () async {
                                   try {
                                     await ShareUtils.openPrivacyPolicy();
-                                    await controller.analytics.buttonClicked(AnalyticsEventNames.privacyPolicyClicked, AnalyticsScreenNames.parentDrawerScreen);
-
+                                    await controller.analytics
+                                        .buttonClicked(AnalyticsEventNames.privacyPolicyClicked, AnalyticsScreenNames.parentDrawerScreen);
                                   } catch (e) {
                                     ToastUtil.showToast(
                                       'Failed to open privacy policy',

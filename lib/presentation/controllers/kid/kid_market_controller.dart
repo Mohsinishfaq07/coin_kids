@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
@@ -16,6 +17,7 @@ import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -69,7 +71,7 @@ class KidMarketController extends GetxController {
 
   final RxBool showPointer = true.obs;
   final RxBool showWishlistTutorial = false.obs;
-  static const String hasSeenWishlistTutorial = 'hasSeenWishlistTutorial';
+  // static const String hasSeenWishlistTutorial = 'hasSeenWishlistTutorial';
   final analytics = Get.find<AnalyticsService>();
 
 
@@ -80,6 +82,8 @@ class KidMarketController extends GetxController {
     ever(appBarController.searchQuery, (query) {
       updateSearch(query);
     });
+    _screenStartTime = DateTime.now();
+    logScreenTime();
 
     fetchProducts();
     _initializeWishlist();
@@ -399,6 +403,9 @@ class KidMarketController extends GetxController {
   void onClose() {
     // appBarController.resetToDefault();
     scrollController.dispose();
+    logScreenTime();
+
+
     super.onClose();
   }
 
@@ -417,7 +424,7 @@ class KidMarketController extends GetxController {
     await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenMarketTutorial, true);
     
     // After favorite tutorial is dismissed, check if wishlist tutorial should be shown
-    final hasSeenWishlist = SharedPreferencesHelper.getBool(hasSeenWishlistTutorial) ?? false;
+    final hasSeenWishlist = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenWishlistTutorial) ?? false;
     if (!hasSeenWishlist) {
       showWishlistTutorial.value = true;
     }
@@ -425,7 +432,7 @@ class KidMarketController extends GetxController {
 
   Future<void> dismissWishlistTutorial() async {
     showWishlistTutorial.value = false;
-    await SharedPreferencesHelper.saveBool(hasSeenWishlistTutorial, true);
+    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenWishlistTutorial, true);
   }
 bool handleAddToGoalValidation(){
   final kid = _appState.currentKid.value;
@@ -479,6 +486,20 @@ bool handleAddToGoalValidation(){
     } finally {
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
+  }
+  DateTime? _screenStartTime;
+
+
+
+  Future<void> logScreenTime() async {
+    if (_screenStartTime != null) {
+      final endTime = DateTime.now();
+      final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
+      analytics.screenTime(AnalyticsScreenNames.kidMarketScreen,durationInSeconds.toString());
+    }
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: AnalyticsScreenNames.kidMarketScreen,
+    );
   }
 
 
