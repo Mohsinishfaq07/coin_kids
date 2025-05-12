@@ -4,6 +4,7 @@ import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
+import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_market_controller.dart';
@@ -203,10 +204,16 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
           SizedBox(width: 8.w),
           MarketFilterChip(
             label: 'Age',
-            selectedValue: controller.isAgeFilterActive.value ? controller.getAgeRangeText(controller.selectedAgeRange.value) : null,
+            selectedValue: controller.isAgeFilterActive.value
+                ? controller.getAgeRangeText()
+                : null,
+            // selectedValue: controller.isAgeFilterActive.value ? controller.getAgeRangeText(controller.selectedAgeRange.value) : null,
             isSelected: controller.isAgeFilterActive.value,
             iconPath: Assets.icGender,
-            onTap: () => _showAgeRangeDialog(controller),
+            onTap: ()async{
+              _showAgeRangeDialog();
+            },
+            // onTap: () => _showAgeRangeDialog(controller),
           ),
           SizedBox(width: 8.w),
           MarketFilterChip(
@@ -217,29 +224,36 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
             onTap: () => _showBudgetDialog(controller),
           ),
           SizedBox(width: 8.w),
-          MarketFilterChip(
-            label: 'Rating',
-            selectedValue: controller.isRatingFilterActive.value ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}' : null,
-            isSelected: controller.isRatingFilterActive.value,
-            iconPath: Assets.icStar,
-            onTap: () => _showRatingDialog(controller),
-          ),
+          // MarketFilterChip(
+          //   label: 'Rating',
+          //   selectedValue: controller.isRatingFilterActive.value ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}' : null,
+          //   isSelected: controller.isRatingFilterActive.value,
+          //   iconPath: Assets.icStar,
+          //   onTap: () => _showRatingDialog(controller),
+          // ),
         ],
       ),
     );
   }
 
-  void _showAgeRangeDialog(ParentMarketController controller) {
+  // void _showAgeRangeDialog(ParentMarketController controller) {
+  //   AgeFilterDialog.show(
+  //     selectedRanges: controller.selectedAgeRanges,
+  //     onSelect: controller.setAgeRange,
+  //   );
+  //
+  //  Get.dialog(
+  //     AgeRangeDialog(
+  //       selectedRange: controller.selectedAgeRange.value,
+  //       onSelect: controller.setAgeRange,
+  //     ),
+  //   );
+  // }
+  void _showAgeRangeDialog() {
     AgeFilterDialog.show(
-      selectedRange: controller.selectedAgeRange.value,
+      selectedRanges: controller.selectedAgeRanges,
       onSelect: controller.setAgeRange,
     );
-    // Get.dialog(
-    //   AgeRangeDialog(
-    //     selectedRange: controller.selectedAgeRange.value,
-    //     onSelect: controller.setAgeRange,
-    //   ),
-    // );
   }
 
   void _showBudgetDialog(ParentMarketController controller) {

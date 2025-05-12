@@ -43,7 +43,7 @@ class KidMarketController extends GetxController {
 
   // Filter states
   final Rx<FilterType> activeFilter = FilterType.all.obs;
-  final Rx<AgeRange> selectedAgeRange = AgeRange.all.obs;
+  final RxList<AgeRange> selectedAgeRanges = <AgeRange>[].obs;
   final RxDouble minBudget = 0.0.obs;
   final RxDouble maxBudget = 0.0.obs;
   final RxDouble selectedMinBudget = 0.0.obs;
@@ -112,13 +112,9 @@ class KidMarketController extends GetxController {
     activeFilter.value = type;
   }
 
-  void setAgeRange(AgeRange range) {
-    if (range == AgeRange.all) {
-      isAgeFilterActive.value = false;
-    } else {
-      isAgeFilterActive.value = true;
-    }
-    selectedAgeRange.value = range;
+  void setAgeRange(List<AgeRange> ranges) {
+    selectedAgeRanges.value = ranges;
+    isAgeFilterActive.value = ranges.isNotEmpty;
     applyFilters();
   }
 
@@ -143,7 +139,7 @@ class KidMarketController extends GetxController {
   }
 
   void resetAllFilters() {
-    selectedAgeRange.value = AgeRange.all;
+    selectedAgeRanges.clear();
     selectedMinBudget.value = minBudget.value;
     selectedMaxBudget.value = maxBudget.value;
     selectedMinRating.value = minRating.value;
@@ -156,7 +152,15 @@ class KidMarketController extends GetxController {
     applyFilters();
   }
 
-  String getAgeRangeText(AgeRange range) {
+  String getAgeRangeText() {
+    if (selectedAgeRanges.isEmpty) return '';
+    if (selectedAgeRanges.length == 1) {
+      return getSingleAgeRangeText(selectedAgeRanges.first);
+    }
+    return '${selectedAgeRanges.length} age groups';
+  }
+
+  String getSingleAgeRangeText(AgeRange range) {
     switch (range) {
       case AgeRange.all:
         return 'All Ages';
@@ -233,11 +237,16 @@ class KidMarketController extends GetxController {
       }
 
       // Apply age filter if active
-      if (isAgeFilterActive.value && selectedAgeRange.value != AgeRange.all) {
-        final (minAge, maxAge) = getAgeRangeValues(selectedAgeRange.value);
-        if (product.minAge > maxAge || product.maxAge < minAge) {
-          return false;
+      if (isAgeFilterActive.value && selectedAgeRanges.isNotEmpty) {
+        bool matchesAnyRange = false;
+        for (var range in selectedAgeRanges) {
+          final (minAge, maxAge) = getAgeRangeValues(range);
+          if (!(product.minAge > maxAge || product.maxAge < minAge)) {
+            matchesAnyRange = true;
+            break;
+          }
         }
+        if (!matchesAnyRange) return false;
       }
 
       // Apply budget filter if active
@@ -383,7 +392,7 @@ class KidMarketController extends GetxController {
   void _setupListeners() {
     // Listen to all filter changes and apply filters
     ever(searchQuery, (_) => applyFilters());
-    ever(selectedAgeRange, (_) => applyFilters());
+    ever(selectedAgeRanges, (_) => applyFilters());
     ever(selectedMinBudget, (_) => applyFilters());
     ever(selectedMaxBudget, (_) => applyFilters());
     ever(selectedMinRating, (_) => applyFilters());

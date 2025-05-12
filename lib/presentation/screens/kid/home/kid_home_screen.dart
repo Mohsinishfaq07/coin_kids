@@ -283,21 +283,13 @@ class KidHomeScreen extends GetView<KidBaseController> {
 
                               ParentPinDialog.show(
                                 onPinSubmit: (pin) async {
-                                  // Make this async
-
                                   final birthYear = int.tryParse(pin);
                                   final currentYear = DateTime.now().year;
                                   final age = currentYear - birthYear!;
                                   if (age >= 21 && age <= 80) {
-                                    // Update the PIN in parent state
-                                    final updatedParent = controller.appState.currentParent.value?.copyWith(pin: pin);
-                                    if (updatedParent != null) {
-                                      controller.appState.currentParent.value = updatedParent;
-                                      Get.back();
-                                      controller.switchToParentMode();
-                                      // await _launchProductUrl(product.url);
-                                      // Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
-                                    }
+                                     Get.back(); // Wait for dialog to dismiss
+                                    await Future.delayed(const Duration(milliseconds: 100)); // Small delay to ensure dialog is gone
+                                    controller.switchToParentMode();
                                   } else {
                                     Fluttertoast.showToast(
                                       msg: "Please enter a valid birth year (age must be between 21-80)",

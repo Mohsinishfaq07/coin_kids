@@ -8,11 +8,11 @@ import 'package:get/get.dart';
 
 class AgeFilterDialog extends StatelessWidget {
   final double width;
-  final AgeRange selectedRange;
-  final Function(AgeRange) onSelect;
+  final List<AgeRange> selectedRanges;
+  final Function(List<AgeRange>) onSelect;
 
   const AgeFilterDialog({
-    required this.selectedRange,
+    required this.selectedRanges,
     required this.onSelect,
     this.width = 0.6,
     super.key,
@@ -59,10 +59,16 @@ class AgeFilterDialog extends StatelessWidget {
                   runSpacing: 12.h,
                   alignment: WrapAlignment.center,
                   children: AgeRange.values.map((range) {
-                    final isSelected = range == selectedRange;
+                    final isSelected = selectedRanges.contains(range);
                     return GestureDetector(
                       onTap: () {
-                        onSelect(range);
+                        List<AgeRange> newSelection = List.from(selectedRanges);
+                        if (isSelected) {
+                          newSelection.remove(range);
+                        } else {
+                          newSelection.add(range);
+                        }
+                        onSelect(newSelection);
                         Get.back();
                       },
                       child: Container(
@@ -116,15 +122,15 @@ class AgeFilterDialog extends StatelessWidget {
 
   // Static method to show the dialog
   static Future<void> show({
-    required AgeRange selectedRange,
-    required Function(AgeRange) onSelect,
+    required List<AgeRange> selectedRanges,
+    required Function(List<AgeRange>) onSelect,
     double width = 0.8,
     bool dismissible = true,
   }) {
     return Get.dialog(
       AgeFilterDialog(
         width: width,
-        selectedRange: selectedRange,
+        selectedRanges: selectedRanges,
         onSelect: onSelect,
       ),
       barrierDismissible: dismissible,

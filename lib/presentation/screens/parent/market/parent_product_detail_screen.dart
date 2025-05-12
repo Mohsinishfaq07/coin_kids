@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
@@ -112,8 +113,13 @@ class ParentProductDetailScreen extends StatelessWidget {
                         final currentYear = DateTime.now().year;
                         final age = currentYear - birthYear!;
                         if (age >= 21 && age <= 80) {
+                          ToastUtil.showToast(
+                             "Success",
+
+                          );
+                          Get.back();
                         await   _launchProductUrl();
-                        Get.back();
+
                         } else {
                           Fluttertoast.showToast(
                             msg: "Please enter a valid birth year (age must be between 21-80)",

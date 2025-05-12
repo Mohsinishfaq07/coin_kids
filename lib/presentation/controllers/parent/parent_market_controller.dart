@@ -23,6 +23,8 @@ class ParentMarketController extends GetxController {
   final WishlistService _wishlistService = Get.find<WishlistService>();
   final AuthService _authService = Get.find();
   final analytics = Get.find<AnalyticsService>();
+  final RxList<AgeRange> selectedAgeRanges = <AgeRange>[].obs;
+
 
   // All products fetched from server (source of truth)
   final RxList<MarketProductModel> _allProducts = <MarketProductModel>[].obs;
@@ -99,14 +101,20 @@ class ParentMarketController extends GetxController {
     activeFilter.value = type;
   }
 
-  void setAgeRange(AgeRange range) {
-    if (range == AgeRange.all) {
-      isAgeFilterActive.value = false;
-    } else {
-      isAgeFilterActive.value = true;
-    }
-    selectedAgeRange.value = range;
+  // void setAgeRange(AgeRange range) {
+  //   if (range == AgeRange.all) {
+  //     isAgeFilterActive.value = false;
+  //   } else {
+  //     isAgeFilterActive.value = true;
+  //   }
+  //   selectedAgeRange.value = range;
+  // }
+  void setAgeRange(List<AgeRange> ranges) {
+    selectedAgeRanges.value = ranges;
+    isAgeFilterActive.value = ranges.isNotEmpty;
+    applyFilters();
   }
+
 
   void setBudgetRange(double min, double max) {
     if (min == minBudget.value && max == maxBudget.value) {
@@ -139,8 +147,15 @@ class ParentMarketController extends GetxController {
     isRatingFilterActive.value = false;
     activeFilter.value = FilterType.all;
   }
+  String getAgeRangeText() {
+    if (selectedAgeRanges.isEmpty) return '';
+    if (selectedAgeRanges.length == 1) {
+      return getSingleAgeRangeText(selectedAgeRanges.first);
+    }
+    return '${selectedAgeRanges.length} age groups';
+  }
 
-  String getAgeRangeText(AgeRange range) {
+  String getSingleAgeRangeText(AgeRange range) {
     switch (range) {
       case AgeRange.all:
         return 'All Ages';

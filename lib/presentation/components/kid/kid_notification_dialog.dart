@@ -70,7 +70,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Container(
-        width: 400.w,
+        width: MediaQuery.of(context).size.width *0.35,
         padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(
           color: AppColors.colorPrimary,

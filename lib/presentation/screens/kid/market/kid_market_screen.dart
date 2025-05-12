@@ -40,75 +40,61 @@ class KidMarketScreen extends GetView<KidMarketController> {
                 child: Column(
                   children: [
                     SizedBox(height: 4.h),
-                    Obx(() => AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          height: controller.showFilters.value ? 36.r : 0,
-                          child: SingleChildScrollView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      MarketFilterChip(
-                                          label: 'All',
-                                          isSelected: !controller.isAgeFilterActive.value &&
-                                              !controller.isBudgetFilterActive.value &&
-                                              !controller.isRatingFilterActive.value,
-                                          iconPath: Assets.icAll,
-                                          onTap: () async {
-                                            await controller.analytics
-                                                .buttonClicked(AnalyticsEventNames.marketAllFilterClicked, AnalyticsScreenNames.kidMarketScreen);
-                                            controller.resetAllFilters();
-                                          }),
-                                      SizedBox(width: 8.w),
-                                      MarketFilterChip(
-                                          label: 'Age',
-                                          selectedValue: controller.isAgeFilterActive.value
-                                              ? controller.getAgeRangeText(controller.selectedAgeRange.value)
-                                              : null,
-                                          isSelected: controller.isAgeFilterActive.value,
-                                          iconPath: Assets.icCalender,
-                                          onTap: () async {
-                                            await controller.analytics
-                                                .buttonClicked(AnalyticsEventNames.marketAgeFilterClicked, AnalyticsScreenNames.kidMarketScreen);
-                                            _showAgeRangeDialog;
-                                          }),
-                                      SizedBox(width: 8.w),
-                                      MarketFilterChip(
-                                          label: 'Budget',
-                                          selectedValue: controller.isBudgetFilterActive.value
-                                              ? '€${controller.selectedMinBudget.value.toStringAsFixed(0)}-${controller.selectedMaxBudget.value.toStringAsFixed(0)}'
-                                              : null,
-                                          isSelected: controller.isBudgetFilterActive.value,
-                                          iconPath: Assets.icBudget,
-                                          onTap: () async {
-                                            await controller.analytics
-                                                .buttonClicked(AnalyticsEventNames.marketBudgetFilterClicked, AnalyticsScreenNames.kidMarketScreen);
-                                            _showBudgetDialog();
-                                          }),
-                                      SizedBox(width: 8.w),
-                                      MarketFilterChip(
-                                          label: 'Rating',
-                                          selectedValue: controller.isRatingFilterActive.value
-                                              ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}'
-                                              : null,
-                                          isSelected: controller.isRatingFilterActive.value,
-                                          iconPath: Assets.icStar,
-                                          onTap: () async {
-                                            await controller.analytics
-                                                .buttonClicked(AnalyticsEventNames.marketRatingsFilterClicked, AnalyticsScreenNames.kidMarketScreen);
-                                            _showRatingDialog();
-                                          }),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )),
+                    Obx(() => Row(
+                      children: [
+                        MarketFilterChip(
+                            label: 'All',
+                            isSelected: !controller.isAgeFilterActive.value &&
+                                !controller.isBudgetFilterActive.value &&
+                                !controller.isRatingFilterActive.value,
+                            iconPath: Assets.icAll,
+                            onTap: () async {
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.marketAllFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                              controller.resetAllFilters();
+                            }),
+                        SizedBox(width: 8.w),
+                        MarketFilterChip(
+                            label: 'Age',
+                            selectedValue: controller.isAgeFilterActive.value
+                                ? controller.getAgeRangeText()
+                                : null,
+                            isSelected: controller.isAgeFilterActive.value,
+                            iconPath: Assets.icCalender,
+                            onTap: () async {
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.marketAgeFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                              _showAgeRangeDialog();
+                            }),
+                        SizedBox(width: 8.w),
+                        MarketFilterChip(
+                            label: 'Budget',
+                            selectedValue: controller.isBudgetFilterActive.value
+                                ? '€${controller.selectedMinBudget.value.toStringAsFixed(0)}-${controller.selectedMaxBudget.value.toStringAsFixed(0)}'
+                                : null,
+                            isSelected: controller.isBudgetFilterActive.value,
+                            iconPath: Assets.icBudget,
+                            onTap: () async {
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.marketBudgetFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                              _showBudgetDialog();
+                            }),
+                        SizedBox(width: 8.w),
+                        // MarketFilterChip(
+                        //     label: 'Rating',
+                        //     selectedValue: controller.isRatingFilterActive.value
+                        //         ? '${controller.selectedMinRating.value.toStringAsFixed(1)}-${controller.selectedMaxRating.value.toStringAsFixed(1)}'
+                        //         : null,
+                        //     isSelected: controller.isRatingFilterActive.value,
+                        //     iconPath: Assets.icStar,
+                        //     onTap: () async {
+                        //       await controller.analytics
+                        //           .buttonClicked(AnalyticsEventNames.marketRatingsFilterClicked, AnalyticsScreenNames.kidMarketScreen);
+                        //       _showRatingDialog();
+                        //     }),
+                      ],
+                    )),
+                    SizedBox(height: 14.h),
 
                     // Products Grid
                     Expanded(
@@ -379,7 +365,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
 
   void _showAgeRangeDialog() {
     AgeFilterDialog.show(
-      selectedRange: controller.selectedAgeRange.value,
+      selectedRanges: controller.selectedAgeRanges,
       onSelect: controller.setAgeRange,
     );
   }
