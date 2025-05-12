@@ -4,9 +4,11 @@ import 'package:coin_kids/presentation/components/common/circle_avatar_widget.da
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/custom_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/theme/color_theme.dart' show AppColors;
@@ -116,7 +118,32 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
                       if (goal.status == GoalStatus.completed)
                         KidButton(
                             onTap: () {
-                              controller.switchToParentMode();
+                             // controller.switchToParentMode();
+                              ParentPinDialog.show(
+                                onPinSubmit: (pin) async {
+                                  // Make this async
+
+                                  final birthYear = int.tryParse(pin);
+                                  final currentYear = DateTime.now().year;
+                                  final age = currentYear - birthYear!;
+                                  if (age >= 21 && age <= 80) {
+                                    // Update the PIN in parent state
+                                    final updatedParent = controller.appState.currentParent.value?.copyWith(pin: pin);
+                                    if (updatedParent != null) {
+                                      controller.appState.currentParent.value = updatedParent;
+                                      Get.back();
+                                      controller.switchToParentMode();
+
+                                    }
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: "Please enter a valid birth year (age must be between 21-80)",
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                    );
+                                  }
+                                },
+                              );
                             },
                             baseColor: AppColors.buttonPrimary,
                             text: "Go to Parent Zone "),

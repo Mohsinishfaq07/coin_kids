@@ -1,11 +1,15 @@
 import 'package:coin_kids/core/constants/analytics_constants.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
+import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
+import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +19,8 @@ class KidWishlistController extends GetxController {
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
   final marketController = Get.find<KidMarketController>();
   final analytics = Get.find<AnalyticsService>();
+  final  goalService = Get.find<GoalService>();
+
 
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
   final RxBool isLoading = false.obs;
@@ -65,9 +71,31 @@ class KidWishlistController extends GetxController {
     }
   }
 
-  void addToGoal(WishlistModel item) {
-    if (item.product != null) {
-      marketController.addToGoal(item.product!);
+  // void addToGoal(WishlistModel item) {
+  //   if (item.product != null) {
+  //   //  marketController.addToGoal(item.product!);
+  //   }
+  // }
+  // void addToGoal(MarketProductModel product) async {
+    void addToGoal(WishlistModel item) async {
+
+      showLoadingDialog("Adding to Goal");
+
+    try {
+      final goalId = await goalService.addToGoalsWithProduct(item.product!);
+
+      if (goalId == null) {
+        ToastUtil.showToast("Fail to add Goal");
+        return;
+      }
+      Get.back();
+
+      ToastUtil.showToast("Goal Added");
+    } catch (e) {
+      Get.log(e.toString(), isError: true);
+      ToastUtil.showToast("Fail to add Goal");
+    } finally {
+    //  Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
   Future<void> completeWishListTutorial() async {

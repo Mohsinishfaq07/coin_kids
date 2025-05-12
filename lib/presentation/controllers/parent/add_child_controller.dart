@@ -74,6 +74,9 @@ class AddChildController extends GetxController {
   }
 
   Future<void> createKid(bool isConnected) async {
+    if (isLoading.value) return; // Add early return if already loading
+    isLoading.value = true;
+    
     showLoadingDialog("Adding Child");
     try {
       // Validate inputs
@@ -108,7 +111,6 @@ class AddChildController extends GetxController {
       } else {
         age = int.parse(childAge.value);
       }
-      print("$isConnected ye isconnected h ");
 
       await kidsService.createKid(
         name: childName.value,
@@ -117,19 +119,17 @@ class AddChildController extends GetxController {
         customImagePath: kidImagePath.value,
         selectedAvatarUrl: selectedAvatarPath.value,
         isConnected: isConnected,
-
       );
 
       ToastUtil.showToast("Child added successfully");
       await analytics.logAddChildClickSuccessFull(AnalyticsScreenNames.parentAddKidScreen);
+      Get.until((route) => route.settings.name == Routes.parentBase);
 
     } catch (e) {
       await analytics.logAddChildFailures(AnalyticsScreenNames.parentAddKidScreen);
-
       Get.log("Failed to add child: $e");
       ToastUtil.showToast("Failed to add child: $e");
     } finally {
-      Get.until((route) => route.settings.name == Routes.parentBase);
       isLoading.value = false;
     }
   }

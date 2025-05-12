@@ -341,7 +341,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyMedium!
-                                                .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600),
+                                                .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600),
                                           ),
                                           TextSpan(
                                               text: 'or ',
@@ -354,7 +354,7 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium!
-                                                  .copyWith(color: CustomThemeData().primaryButtonColor, fontWeight: FontWeight.w600)),
+                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
                                           TextSpan(
                                               text: 'money from your child\'s account',
                                               style: Theme.of(context)

@@ -1,5 +1,6 @@
 import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
@@ -15,7 +16,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
-import '../../../../core/theme/color_theme.dart';
 
 class QuickTransferPage extends GetView<QuickTransferController> {
   final _amountNode = FocusNode();

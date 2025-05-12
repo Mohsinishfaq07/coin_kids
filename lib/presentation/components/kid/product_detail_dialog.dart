@@ -4,17 +4,12 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
-import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
-import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
-import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
-import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,9 +24,7 @@ class ProductDetailDialog extends StatelessWidget {
   }) {
     _checkTutorialState();
   }
-  final RoleController _roleController = Get.find<RoleController>();
   final analytics = Get.find<AnalyticsService>();
-
   final GlobalKey _addToGoalKey = GlobalKey();
   final RxBool showPointer = true.obs;
 
@@ -40,21 +33,8 @@ class ProductDetailDialog extends StatelessWidget {
     showPointer.value = !hasSeenTutorial;
   }
 
-  final appState = Get.find<AppStateController>();
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
 
-  void switchToParentMode() {
-    final isKidConnected = currentKid.value?.isConnected ?? false;
-    if (!isKidConnected) {
-      final kidService = Get.find<KidService>();
-      kidService.updateKid(
-        currentKid.value!.kidId,
-        currentKid.value!.copyWith(isConnected: true),
-      );
-    }
-
-    _roleController.switchToParentMode(true);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +92,8 @@ class ProductDetailDialog extends StatelessWidget {
                             KidButton(
                               key: _addToGoalKey,
                               onTap: () async {
-                                await analytics.buttonClicked(
-                                    AnalyticsEventNames.marketProductDetailAddToGoalClicked, AnalyticsScreenNames.kidMarketProductDetailScreenDialog,AnalyticsScreenNames.kidMarketScreen);
+                                await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAddToGoalClicked,
+                                    AnalyticsScreenNames.kidMarketProductDetailScreenDialog, AnalyticsScreenNames.kidMarketScreen);
 
                                 showPointer.value = false;
                                 onAddToGoal();
@@ -203,78 +183,34 @@ class ProductDetailDialog extends StatelessWidget {
                                     await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAmazonCardClicked,
                                         AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
 
-                                    ParentPinDialog.show(
-                                      onPinSubmit: (pin) async {  // Make this async
-
-                                          final birthYear = int.tryParse(pin);
-                                          final currentYear = DateTime.now().year;
-                                          final age = currentYear - birthYear!;
-                                          if (age >= 21 && age <= 80) {
-                                            // Update the PIN in parent state
-                                            final updatedParent = appState.currentParent.value?.copyWith(pin: pin);
-                                            if (updatedParent != null) {
-                                              appState.currentParent.value = updatedParent;
-                                             // await _launchProductUrl(product.url);
-                                              Get.back();
-                                              await _launchProductUrl(product.url);
-                                              // Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
-                                            }
-                                          } else {
-                                            Fluttertoast.showToast(
-                                              msg: "Please enter a valid birth year (age must be between 21-80)",
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                            );
-
-
-                                        }
-                                      },
-                                    );
+                                    // ParentPinDialog.show(
+                                    //   onPinSubmit: (pin) async {
+                                    //     // Make this async
+                                    //
+                                    //     final birthYear = int.tryParse(pin);
+                                    //     final currentYear = DateTime.now().year;
+                                    //     final age = currentYear - birthYear!;
+                                    //     if (age >= 21 && age <= 80) {
+                                    //       // Update the PIN in parent state
+                                    //       final updatedParent = appState.currentParent.value?.copyWith(pin: pin);
+                                    //       if (updatedParent != null) {
+                                    //         appState.currentParent.value = updatedParent;
+                                    //         // await _launchProductUrl(product.url);
+                                    //         Get.back();
+                                    //         await _launchProductUrl(product.url);
+                                    //         // Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
+                                    //       }
+                                    //     } else {
+                                    //       Fluttertoast.showToast(
+                                    //         msg: "Please enter a valid birth year (age must be between 21-80)",
+                                    //         backgroundColor: Colors.red,
+                                    //         textColor: Colors.white,
+                                    //       );
+                                    //     }
+                                    //   },
+                                    // );
                                   },
-                                  // onTap: () async {
-                                  //   await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAmazonCardClicked,
-                                  //       AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
-                                  //
-                                  //   final currentPin = appState.currentParent.value?.pin;
-                                  //   final isFirstTime = currentPin == "";
-                                  //
-                                  //   ParentPinDialog.show(
-                                  //     isFirstTime: isFirstTime,
-                                  //     onPinSubmit: (pin) {
-                                  //       if (isFirstTime) {
-                                  //         // For first time, validate birth year
-                                  //         final birthYear = int.tryParse(pin);
-                                  //         final currentYear = DateTime.now().year;
-                                  //         final age = currentYear - birthYear!;
-                                  //         if (age >= 21 && age <= 80) {
-                                  //           //TODO: Upload pin to parent
-                                  //           // controller.appState.currentParent.value?.pin = pin;
-                                  //           _launchProductUrl(product.url);
-                                  //           Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
-                                  //         } else {
-                                  //           Fluttertoast.showToast(
-                                  //             msg: "Invalid birth year",
-                                  //             backgroundColor: Colors.red,
-                                  //             textColor: Colors.white,
-                                  //           );
-                                  //         }
-                                  //       } else {
-                                  //         // For subsequent times, check against saved PIN
-                                  //         if (pin == currentPin) {
-                                  //           // switchToParentMode();
-                                  //           _launchProductUrl(product.url);
-                                  //         } else {
-                                  //           Fluttertoast.showToast(
-                                  //             msg: "Incorrect PIN",
-                                  //             backgroundColor: Colors.red,
-                                  //             textColor: Colors.white,
-                                  //           );
-                                  //         }
-                                  //       }
-                                  //     },
-                                  //   );
-                                  // },
-                                  //_launchProductUrl(product.url),
+
                                   borderRadius: BorderRadius.circular(12.r),
                                   child: Padding(
                                     padding: EdgeInsets.all(16.w),

@@ -12,11 +12,13 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart' as product;
 import 'package:showcaseview/showcaseview.dart';
-
 
 class KidHomeScreen extends GetView<KidBaseController> {
   const KidHomeScreen({super.key});
@@ -33,8 +35,6 @@ class KidHomeScreen extends GetView<KidBaseController> {
       controller.pointerPosition.value = Offset(pointerX, pointerY);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,8 @@ class KidHomeScreen extends GetView<KidBaseController> {
             final spendingJar = kid.wallet.spendingJar;
             final savingJar = kid.wallet.savingJar;
             final isSpendingJarCreated = spendingJar.color != 0;
-            final isSavingJarCreated = savingJar.color != 0;
+             final isSavingJarCreated = savingJar.color != 0;
+
 
             // Check showcase conditions only when the widget is first built
             if (!controller.hasInitializedShowcase.value) {
@@ -75,12 +76,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
                   child: GestureDetector(
-                    onTap: ()async {
+                    onTap: () async {
                       if (controller.showTransferPointer.value) {
-                        await controller.markTransferTutorialAsShown();
                         controller.showTransferPointer.value = false;
 
-
+                        await controller.markTransferTutorialAsShown();
                       }
                     },
                     behavior: HitTestBehavior.translucent,
@@ -127,7 +127,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     ToastUtil.showToast("Your parent is connected, please request money");
                                     return;
                                   }
-                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidJarColorSelection,);
+                                  await controller.analytics.buttonClicked(
+                                    AnalyticsEventNames.kidMoneyJarCreatedClicked,
+                                    AnalyticsScreenNames.kidHomeScreen,
+                                    AnalyticsScreenNames.kidJarColorSelection,
+                                  );
                                   controller.startJarCreation(Jars.spendingJar);
                                   Get.toNamed(Routes.kidJarColorSelection);
                                 },
@@ -153,13 +157,12 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 jarColor: Color(spendingJar.color),
                                 height: 0.45.sh,
                                 onTap: () async {
-                                  await controller.analytics.buttonClicked(AnalyticsEventNames.kidMoneyJarClicked,AnalyticsScreenNames.kidHomeScreen);
+                                  await controller.analytics
+                                      .buttonClicked(AnalyticsEventNames.kidMoneyJarClicked, AnalyticsScreenNames.kidHomeScreen);
 
                                   if (spendingJar.balance <= 0) {
-
                                     return;
                                   }
-
 
                                   // Get.toNamed(
                                   //   Routes.kidDragAndDrop,
@@ -173,17 +176,21 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               SizedBox(width: 0.05.sw),
 
                               // Transfer Button (show only if both jars exist)
-                              if (isSpendingJarCreated && isSavingJarCreated) ...[
+//                            //  if (isSpendingJarCreated && isSavingJarCreated) ...[
+                              if (isSpendingJarCreated && isSavingJarCreated && controller.showSavingJar == false.obs) ...[
                                 SizedBox(width: 20.w),
                                 Stack(
                                   clipBehavior: Clip.none,
                                   children: [
                                     KidButton.iconWithTitle(
                                       key: GlobalKeys.transferButtonKey,
-                                      onTap: () async{
-                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidTransferAmountScreen);
+                                      onTap: () async {
+                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,
+                                            AnalyticsScreenNames.kidHomeScreen, AnalyticsScreenNames.kidTransferAmountScreen);
 
                                         controller.showTransferPointer.value = false;
+                                        await controller.markTransferTutorialAsShown();
+
                                         Get.toNamed(Routes.kidMoneyTransfer);
                                       },
                                       baseColor: AppColors.colorPrimary,
@@ -193,12 +200,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     Obx(() {
                                       if (controller.showTransferPointer.value) {
                                         return Positioned(
-
                                           child: HandPointerOverlay(
                                             targetKey: GlobalKeys.transferButtonKey,
-                                            onTap: () async{
-                                               await controller.markTransferTutorialAsShown();
+                                            onTap: () async {
                                               controller.showTransferPointer.value = false;
+                                              await controller.markTransferTutorialAsShown();
                                             },
                                             width: 60.w,
                                             height: 60.w,
@@ -207,22 +213,23 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                       }
                                       return const SizedBox.shrink();
                                     }),
-
-
                                   ],
                                 ),
                                 SizedBox(width: 20.w),
                               ],
                               SizedBox(width: 0.05.sw),
                               // Saving Jar or Null Jar
-                              if (isSpendingJarCreated) ...[
-                                if (!isSavingJarCreated)
+                              // if (isSpendingJarCreated  ) ...[
+                              if (isSpendingJarCreated && isSavingJarCreated && controller.showSavingJar == false.obs) ...[
+
+                                if (!isSavingJarCreated )
                                   JarWidget(
                                     jarState: JarState.nullJar,
                                     jarName: "+ Add Savings",
                                     height: 0.45.sh,
-                                    onTap: ()async {
-                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.kidJarColorSelection);
+                                    onTap: () async {
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,
+                                          AnalyticsScreenNames.kidHomeScreen, AnalyticsScreenNames.kidJarColorSelection);
 
                                       controller.startJarCreation(Jars.savingJar);
                                       Get.toNamed(Routes.kidJarColorSelection);
@@ -240,8 +247,9 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     jarColor: Color(savingJar.color),
                                     amount: savingJar.balance,
                                     height: 0.45.sh,
-                                    onTap: ()async {
-                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarClicked,AnalyticsScreenNames.kidHomeScreen);
+                                    onTap: () async {
+                                      await controller.analytics
+                                          .buttonClicked(AnalyticsEventNames.kidSavingJarClicked, AnalyticsScreenNames.kidHomeScreen);
 
                                       if (savingJar.balance <= 0) {
                                         return;
@@ -257,7 +265,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                   ),
                               ],
                               //Negate Navigation Rail Effect to push content to center
-                              SizedBox(width: 40.w),
+                              // SizedBox(width: 40.w),
                             ],
                           ),
 
@@ -266,51 +274,44 @@ class KidHomeScreen extends GetView<KidBaseController> {
                           bottom: 0.h,
                           right: 20.w,
                           child: GestureDetector(
-                            onTap: () async{
-                              await controller.analytics.buttonClicked(AnalyticsEventNames.switchToParentClicked,AnalyticsScreenNames.kidHomeScreen,AnalyticsScreenNames.parentBase,);
+                            onTap: () async {
+                              await controller.analytics.buttonClicked(
+                                AnalyticsEventNames.switchToParentClicked,
+                                AnalyticsScreenNames.kidHomeScreen,
+                                AnalyticsScreenNames.parentBase,
+                              );
 
-                              controller.switchToParentMode();
-                             //  final currentPin = controller.appState.currentParent.value?.pin;
-                             //  final isFirstTime = currentPin == "";
-                             //
-                             //
-                             //  ParentPinDialog.show(
-                             //    isFirstTime: isFirstTime,
-                             //    onPinSubmit: (pin) {
-                             //      if (isFirstTime) {
-                             //        // For first time, validate birth year
-                             //        final birthYear = int.tryParse(pin);
-                             //        if (birthYear != null && DateTime.now().year - birthYear >= 21) {
-                             //          //TODO: Upload pin to parent
-                             //          // controller.appState.currentParent.value?.pin = pin;
-                             //          controller.switchToParentMode();
-                             //        } else {
-                             //          Fluttertoast.showToast(
-                             //            msg: "Invalid birth year",
-                             //            backgroundColor: Colors.red,
-                             //            textColor: Colors.white,
-                             //          );
-                             //        }
-                             //      } else {
-                             //        // For subsequent times, check against saved PIN
-                             //        if (pin == currentPin) {
-                             //          controller.switchToParentMode();
-                             //        } else {
-                             //          Fluttertoast.showToast(
-                             //            msg: "Incorrect PIN",
-                             //            backgroundColor: Colors.red,
-                             //            textColor: Colors.white,
-                             //          );
-                             //        }
-                             //      }
-                             //    },
-                             //  );
+                              ParentPinDialog.show(
+                                onPinSubmit: (pin) async {
+                                  // Make this async
+
+                                  final birthYear = int.tryParse(pin);
+                                  final currentYear = DateTime.now().year;
+                                  final age = currentYear - birthYear!;
+                                  if (age >= 21 && age <= 80) {
+                                    // Update the PIN in parent state
+                                    final updatedParent = controller.appState.currentParent.value?.copyWith(pin: pin);
+                                    if (updatedParent != null) {
+                                      controller.appState.currentParent.value = updatedParent;
+                                      Get.back();
+                                      controller.switchToParentMode();
+                                      // await _launchProductUrl(product.url);
+                                      // Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
+                                    }
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: "Please enter a valid birth year (age must be between 21-80)",
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                    );
+                                  }
+                                },
+                              );
+
                             },
                             child: ParentZoneWidget(),
                           ),
                         ),
-
-
                       ],
                     ),
                   ),

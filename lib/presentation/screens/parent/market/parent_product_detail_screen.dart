@@ -3,8 +3,11 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
+import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/parent/parent_password_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -99,56 +102,74 @@ class ParentProductDetailScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _launchProductUrl,
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                Assets.amazon,
-                                width: 92.w,
+                child: InkWell(
+                  onTap: () {
+                    ParentPasswordDialog.show(
+                      onPinSubmit: (pin) async {
+                        // Make this async
+
+                        final birthYear = int.tryParse(pin);
+                        final currentYear = DateTime.now().year;
+                        final age = currentYear - birthYear!;
+                        if (age >= 21 && age <= 80) {
+                        await   _launchProductUrl();
+                        Get.back();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: "Please enter a valid birth year (age must be between 21-80)",
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                        }
+                      },
+                    );
+                  },
+                  // onTap: _launchProductUrl,
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              Assets.amazon,
+                              width: 92.w,
+                            ),
+                            Text(
+                              '€${product.price.toStringAsFixed(2)}',
+                              style: AppTextStyle.headingLarge,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Free delivery by Amazon.\nOrder within 2 days.',
+                                style: AppTextStyle.bodyLarge,
+                                maxLines: 2,
                               ),
-                              Text(
-                                '€${product.price.toStringAsFixed(2)}',
-                                style: AppTextStyle.headingLarge,
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(1.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.colorPrimary,
+                                borderRadius: BorderRadius.circular(8.r),
                               ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Free delivery by Amazon.\nOrder within 2 days.',
-                                  style: AppTextStyle.bodyLarge,
-                                  maxLines: 2,
-                                ),
+                              child: Icon(
+                                Icons.navigate_next,
+                                color: Colors.white,
+                                size: 24.sp,
                               ),
-                              Container(
-                                padding: EdgeInsets.all(1.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.colorPrimary,
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Icon(
-                                  Icons.navigate_next,
-                                  color: Colors.white,
-                                  size: 24.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),

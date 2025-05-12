@@ -30,7 +30,7 @@ class KidMarketController extends GetxController {
   final WishlistService _wishlistService = Get.find<WishlistService>();
   final AppStateController _appState = Get.find();
   final KidAppBarController appBarController = Get.find<KidAppBarController>();
-  final GoalService goalSerive = Get.find<GoalService>();
+  final GoalService goalService = Get.find<GoalService>();
 
   // All products fetched from server (source of truth)
   final RxList<MarketProductModel> _allProducts = <MarketProductModel>[].obs;
@@ -472,7 +472,7 @@ bool handleAddToGoalValidation(){
     showLoadingDialog("Adding to Goal");
 
     try {
-      final goalId = await goalSerive.addToGoalsWithProduct(product);
+      final goalId = await goalService.addToGoalsWithProduct(product);
 
       if (goalId == null) {
         ToastUtil.showToast("Fail to add Goal");

@@ -71,10 +71,10 @@ class RoleController extends GetxController {
     OrientationUtils.lockToLandscape();
 
     // Add a delay to allow orientation change to complete
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(Duration(milliseconds: 100));
 
     // Force rebuild of the entire widget tree
-    Get.forceAppUpdate();
+    // Get.forceAppUpdate();
 
     // Navigate after rebuild
     if (!(Get.currentRoute == Routes.kidOnboarding)) {

@@ -18,6 +18,8 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
 
   final GlobalKey _kidZoneButtonShowcaseKey = GlobalKey();
   final Rx<Offset> _kidZoneButtonOffset = Offset(0, 0).obs;
+  bool _hasStartedShowcase = false; // Add this line
+
   // final RxBool isShowcaseVisible = false.obs;
 
   void _getWidgetCenter(GlobalKey key) {
@@ -33,6 +35,8 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
   }
 
   void _startShowcase(BuildContext context) async {
+    if (_hasStartedShowcase) return; // Don't run again
+    _hasStartedShowcase = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final hasShownKidsZoneShowcase = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasShownKidsZoneShowcase) ?? false;
       if (!hasShownKidsZoneShowcase && controller.showKidsZoneShowcase.value == true) {

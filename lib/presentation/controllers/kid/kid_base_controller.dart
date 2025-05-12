@@ -27,8 +27,8 @@ class KidBaseController extends GetxController {
   final kidService = Get.find<KidService>();
   final analytics = Get.find<AnalyticsService>();
   RxBool isNotificationShowing = true.obs;
-  final RxBool showTransferPointer = true.obs;
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
+  RxBool showSavingJar = false.obs;
 
 
   // Observables
@@ -44,6 +44,8 @@ class KidBaseController extends GetxController {
   var showJarShowcase = true.obs;
   var hasInitializedShowcase = false.obs;
   final RxBool showGoalsTutorial = true.obs;
+  final RxBool showTransferPointer = true.obs;
+
 
   // @override
   // void onInit() {
@@ -60,6 +62,8 @@ class KidBaseController extends GetxController {
     OrientationUtils.lockToLandscape();
     _initializeKid();
     _initializeGoalsTutorial();
+    _initializeTransferTutorial();
+
   }
 
   Future<void> _initializeKid() async {
@@ -80,6 +84,12 @@ class KidBaseController extends GetxController {
   Future<void> _initializeGoalsTutorial() async {
     final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsTutorial) ?? false;
     showGoalsTutorial.value = !hasSeenTutorial;
+
+  }
+  Future<void> _initializeTransferTutorial() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenTransferTutorial) ?? false;
+    showTransferPointer.value = !hasSeenTutorial;
+
   }
 
   Future<void> fetchAllNotifications() async {
