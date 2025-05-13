@@ -379,20 +379,22 @@ class KidMarketScreen extends GetView<KidMarketController> {
       currentMax: controller.selectedMaxBudget.value,
       onSelect: controller.setBudgetRange,
       labelFormat: (value) => '€${value.toStringAsFixed(0)}',
+      dialogWidth: 0.7,
     );
   }
 
-  void _showRatingDialog() {
-    RangeSliderDialog.show(
-      title: 'Select Rating Range',
-      minValue: controller.minRating.value,
-      maxValue: controller.maxRating.value,
-      currentMin: controller.selectedMinRating.value,
-      currentMax: controller.selectedMaxRating.value,
-      onSelect: controller.setRatingRange,
-      labelFormat: (value) => value.toStringAsFixed(1),
-    );
-  }
+  // void _showRatingDialog() {
+  //   RangeSliderDialog.show(
+  //     title: 'Select Rating Range',
+  //     minValue: controller.minRating.value,
+  //     maxValue: controller.maxRating.value,
+  //     currentMin: controller.selectedMinRating.value,
+  //     currentMax: controller.selectedMaxRating.value,
+  //     onSelect: controller.setRatingRange,
+  //     labelFormat: (value) => value.toStringAsFixed(1),
+  //     dialogWidth: 0.7,
+  //   );
+  // }
 
   int _calculateCrossAxisCount(double screenWidth) {
     final double targetCardWidth = 180.w;
