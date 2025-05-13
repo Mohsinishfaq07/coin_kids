@@ -37,9 +37,9 @@ class ParentHomeController extends GetxController {
       },
     );
 
-    if (kDebugMode) {
-      insertTestData();
-    }
+    // if (kDebugMode) {
+    //   insertTestData();
+    // }
 
   }
 
@@ -60,13 +60,13 @@ class ParentHomeController extends GetxController {
 
   // Clean up worker when controller is destroyed
 
-  void insertTestData() async {
-    final userId = Get.find<AuthService>().user.value?.uid;
-    if (userId != null) {
-      // await DummyDataGenerator.insertDummyNotifications(userId);
-      // await DummyDataGenerator.insertDummyGoals(appState.currentKid.value!.kidId);
-    }
-  }
+  // void insertTestData() async {
+  //   final userId = Get.find<AuthService>().user.value?.uid;
+  //   if (userId != null) {
+  //     // await DummyDataGenerator.insertDummyNotifications(userId);
+  //     // await DummyDataGenerator.insertDummyGoals(appState.currentKid.value!.kidId);
+  //   }
+  // }
 
 
 

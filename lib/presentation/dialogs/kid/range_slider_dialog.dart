@@ -278,57 +278,65 @@ class RangeSliderDialog extends StatelessWidget {
 
                       SizedBox(height: 12.h),
                       // Range Slider
-                      Obx(() => SfSliderTheme(
-                        data: SfSliderThemeData(
-                          thumbStrokeColor: Colors.blue,
-                          activeLabelStyle: TextStyle(color: Colors.white),
-                          inactiveLabelStyle: TextStyle(color: Colors.blue),
-                          activeTickColor: Colors.green,
-                          tooltipBackgroundColor: Colors.blue,
-                          activeDividerColor: Colors.teal,
-                          activeDividerStrokeColor: Colors.orange,
-                          activeMinorTickColor: Colors.blue,
-                          tooltipTextStyle: TextStyle(color: Colors.yellow),
-                          activeTrackHeight: 140.h,
-                          inactiveTrackHeight: 140.h,
-                          trackCornerRadius: 50.r,
-                          activeTrackColor: AppColors.btnColorOrange,
-                          inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
-                          thumbColor: Colors.transparent,
-                          thumbRadius: 50.r,
-                        ),
+                      Obx(() => Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 20.w),
+                        child: SfSliderTheme(
+                          data: SfSliderThemeData(
+                           //  thumbStrokeColor: Colors.blue,
+                           //  activeLabelStyle: TextStyle(color: Colors.white),
+                           //  inactiveLabelStyle: TextStyle(color: Colors.blue),
+                           //  activeTickColor: Colors.green,
+                           //  tooltipBackgroundColor: Colors.blue,
+                           //  activeDividerColor: Colors.teal,
+                           //  activeDividerStrokeColor: Colors.orange,
+                           //  activeMinorTickColor: Colors.blue,
+                           //  tooltipTextStyle: TextStyle(color: Colors.yellow),
+                           //  activeTrackHeight: 15.h,
+                           //  inactiveTrackHeight: 15.h,
+                           //  trackCornerRadius: 50.r,
+                           // // trackCornerRadius: 50.r,
+                           //  activeTrackColor: AppColors.btnColorOrange,
+                           //  inactiveTrackColor: AppColors.cardPrimary,
+                           //  thumbColor: Colors.transparent,
+                           //  thumbRadius: 50.r,
+                            activeTrackHeight: 15.h,
+                            inactiveTrackHeight: 15.h,
+                            trackCornerRadius: 50.r,
+                            activeTrackColor: AppColors.btnColorOrange,
+                            inactiveTrackColor: Colors.red,
+                            thumbColor: Colors.transparent,
+                            thumbRadius: 15.r,
+                          ),
+                          child: SfRangeSlider(
+                            min: minValue,
+                            max: maxValue,
 
-                        child: SfRangeSlider(
+                            values: SfRangeValues(selectedMin.value, selectedMax.value),
+                            onChanged: (SfRangeValues values) {
+                              selectedMin.value = values.start;
+                              selectedMax.value = values.end;
+                            },
+                            labelPlacement: LabelPlacement.onTicks,
+                            activeColor: Color(0xfff79009),
+                            inactiveColor: Colors.white.withValues(alpha: 0.3),
+                            // showDividers: false,
+                            tooltipTextFormatterCallback: (dynamic actualValue, String formattedText) {
+                              return labelFormat(actualValue);
+                            },
+                            labelFormatterCallback: (_, text) {
+                              return double.parse(text).toMoneyFormat();
+                            },
+                            edgeLabelPlacement: EdgeLabelPlacement.auto,
 
 
-                          min: minValue,
-                          max: maxValue,
-
-                          values: SfRangeValues(selectedMin.value, selectedMax.value),
-                          onChanged: (SfRangeValues values) {
-                            selectedMin.value = values.start;
-                            selectedMax.value = values.end;
-                          },
-                          labelPlacement: LabelPlacement.onTicks,
-                          activeColor: Color(0xfff79009),
-                          inactiveColor: Colors.white.withValues(alpha: 0.3),
-                          showDividers: false,
-                          shouldAlwaysShowTooltip: true,
-                          tooltipTextFormatterCallback: (dynamic actualValue, String formattedText) {
-                            return labelFormat(actualValue);
-                          },
-                          labelFormatterCallback: (_, text) {
-                            return double.parse(text).toMoneyFormat();
-                          },
-
-                          showLabels: true,
-                          showTicks: true,
-                          enableTooltip: true,
-                          edgeLabelPlacement: EdgeLabelPlacement.auto,
-
-
-                          startThumbIcon: SvgPicture.asset(Assets.icCoinEuro),
-                          endThumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                            startThumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                            endThumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                            showLabels: true,
+                            showTicks: true,
+                            enableTooltip: true,
+                            showDividers: true,
+                            shouldAlwaysShowTooltip: true,
+                          ),
                         ),
                       )),
                      // SizedBox(height: 12.h),

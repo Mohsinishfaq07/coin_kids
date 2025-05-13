@@ -87,14 +87,10 @@ class KidBaseScreen extends GetView<KidBaseController> {
                       child: Row(
                         children: [
                           // Navigation Rail
-                          SizedBox(
-                           // width: 80.w,
-                            child: Container(
-                              key: GlobalKeys.goalsNavKey,
-                              child: VerticalNavBar(),
-                            ),
+                          Container(
+                            key: GlobalKeys.goalsNavKey,
+                            child: VerticalNavBar(),
                           ),
-                        //  VerticalNavBar(),
 
                           // Content Area
                           Expanded(

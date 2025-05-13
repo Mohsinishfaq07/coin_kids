@@ -152,14 +152,14 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: CustomThemeData().borderColor, // Border color when unfocused
+            color: AppColors.cardBorder,// Border color when unfocused
             width: 1.5,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
-            color: CustomThemeData().borderColor, // Border color when enabled
+            color: AppColors.cardBorder,// Border color when enabled
             width: 1.5,
           ),
         ),

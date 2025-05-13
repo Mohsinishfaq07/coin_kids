@@ -153,7 +153,7 @@ class AddChildScreen extends GetView<AddChildController> {
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!
-                              .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w700, fontSize: 14.sp),
+                              .copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14.sp),
                         ),
                       ),
                       SizedBox(height: 12.h),

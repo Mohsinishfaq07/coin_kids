@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/translations/app_translations.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:coin_kids/core/analytics/screen_tracking_observer.dart';
 
 import 'firebase_options.dart';
 
@@ -48,18 +50,7 @@ void main() async {
       ),
     );
   });
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  //  // DeviceOrientation.landscapeLeft,
-  //   DeviceOrientation.landscapeRight,
-  // ]).then((_) {
-  //   runApp(
-  //     DevicePreview(
-  //       enabled: false,
-  //       builder: (context) => MyApp(), // Wrap your app
-  //     ),
-  //   );
-  // });
+
 }
 
 class MyApp extends StatelessWidget {
@@ -75,8 +66,10 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         navigatorObservers: [
           observer,
+          ScreenTrackingObserver(),
         ],
         smartManagement: SmartManagement.keepFactory,
+         //theme: AppColors();
         theme: CustomThemeData.getThemeData(),
         debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,

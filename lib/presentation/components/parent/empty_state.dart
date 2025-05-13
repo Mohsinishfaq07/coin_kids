@@ -61,19 +61,21 @@ Widget buildGoalsEmptyState(VoidCallback onTap) {
 }
 
 Widget buildJarEmptyState() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Image.asset(Assets.phJar, height: 100.h),
-      SizedBox(height: 16.h),
-      Text(
-        'No jar created',
-        style: TextStyle(
-          fontSize: 16.sp,
-          color: Colors.grey,
+  return SingleChildScrollView(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(Assets.phJar, height: 100.h),
+        SizedBox(height: 16.h),
+        Text(
+          'No jar created',
+          style: TextStyle(
+            fontSize: 16.sp,
+            color: Colors.grey,
+          ),
         ),
-      ),
-      SizedBox(height: 20),
-    ],
+        SizedBox(height: 20),
+      ],
+    ),
   );
 }

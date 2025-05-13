@@ -86,7 +86,7 @@ class ParentTextField extends StatelessWidget {
             decoration: InputDecoration(
               counterText: "",
               filled: true,
-              fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+              fillColor: AppColors.cardPrimary,
               hintText: hintText,
               hintStyle: isOptional
                   ? AppTextStyle.bodyMedium.copyWith(
@@ -96,14 +96,14 @@ class ParentTextField extends StatelessWidget {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
-                  color: CustomThemeData().borderColor,
+                  color: AppColors.cardBorder,
                   width: 1.5,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
-                  color: CustomThemeData().borderColor,
+                  color: AppColors.cardBorder,
                   width: 1.5,
                 ),
               ),
@@ -122,10 +122,16 @@ class ParentTextField extends StatelessWidget {
                     )
                   : null,
             ),
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: CustomThemeData().primaryTextColor,
-                )),
+            // style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            //       fontWeight: FontWeight.w800,
+            //   color:AppColors.textPrimary,
+            //     )
+        style:AppTextStyle.headingSmall.copyWith(
+           //fontWeight: FontWeight.w600,
+          //color:AppColors.textPrimary,
+
+        )
+        ),
         if (suffixIcon != null)
           Positioned(
             right: 12.w,

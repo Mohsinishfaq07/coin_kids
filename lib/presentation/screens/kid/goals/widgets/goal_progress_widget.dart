@@ -109,8 +109,6 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                             max: goal.targetAmount,
                                             interval: goal.targetAmount / 4,
                                             stepSize: controller.progressStep,
-                                            showDividers: true,
-                                            shouldAlwaysShowTooltip: true,
                                             tooltipTextFormatterCallback: (_, text) {
                                               return double.parse(text).toMoneyFormat();
                                             },
@@ -139,6 +137,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                             showLabels: true,
                                             showTicks: true,
                                             enableTooltip: true,
+                                            showDividers: true,
+                                            shouldAlwaysShowTooltip: true,
                                             thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
                                           ),
                                         ),

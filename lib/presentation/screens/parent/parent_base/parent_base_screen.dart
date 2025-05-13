@@ -275,7 +275,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
               label,
               style: TextStyle(
                 color: isSelected ? AppColors.textHighlighted : Colors.grey,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -296,7 +296,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
             descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
             targetPadding: EdgeInsets.all(6.w),
             disableBarrierInteraction: false,
-            tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
+            tooltipPadding: EdgeInsets.symmetric(vertical: 10.h,),
             child: navItem,
           ),
           // Obx(() {

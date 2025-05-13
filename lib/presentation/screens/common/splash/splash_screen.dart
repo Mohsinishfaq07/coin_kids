@@ -13,10 +13,11 @@ class SplashScreen extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      OrientationUtils.lockToPortrait();
+      controller.onInit();
+     // OrientationUtils.lockToPortrait();
     });
 
-    controller.onInit();
+
 
     return Scaffold(
       body: Container(

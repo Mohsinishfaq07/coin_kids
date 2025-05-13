@@ -121,14 +121,14 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineMedium!
-                                        .copyWith(color: CustomThemeData().primaryButtonColor, fontSize: 18.sp)),
+                                        .copyWith(color: AppColors.buttonPrimary, fontSize: 18.sp)),
                                 SizedBox(height: 12.h),
                                 Text("Starting by adding your first child.",
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
-                                        .copyWith(color: CustomThemeData().primaryTextColor, fontWeight: FontWeight.w800, fontSize: 14.sp)),
+                                        .copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w800, fontSize: 14.sp)),
                                 SizedBox(height: 22.h),
                                 AppButton(
                                   size: Size(0.4.sw, 50),
@@ -332,38 +332,40 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     padding: EdgeInsets.symmetric(
                                       horizontal: MediaQuery.of(context).size.height * 0.06,
                                     ),
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Send ',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600),
-                                          ),
-                                          TextSpan(
-                                              text: 'or ',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium!
-                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                          TextSpan(
-                                              text: 'remove ',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium!
-                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                          TextSpan(
-                                              text: 'money from your child\'s account',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium!
-                                                  .copyWith(color: CustomThemeData().secondaryTextColor, fontWeight: FontWeight.w600)),
-                                        ],
-                                      ),
-                                    ),
+                                    child: Text( textAlign: TextAlign.center, "Send or remove money \b from your child's account",style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary,fontSize: 17.sp),)
+                                    // RichText(
+                                    //   textAlign: TextAlign.center,
+                                    //   text: TextSpan(
+                                    //     children: [
+                                    //       TextSpan(
+                                    //         text: 'Send ',
+                                    //         s
+                                    //         // style: Theme.of(context)
+                                    //         //     .textTheme
+                                    //         //     .bodyMedium!
+                                    //         //     .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+                                    //       ),
+                                    //       TextSpan(
+                                    //           text: 'or ',
+                                    //           style: Theme.of(context)
+                                    //               .textTheme
+                                    //               .bodyMedium!
+                                    //               .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                    //       TextSpan(
+                                    //           text: 'remove ',
+                                    //           style: Theme.of(context)
+                                    //               .textTheme
+                                    //               .bodyMedium!
+                                    //               .copyWith(color:AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                    //       TextSpan(
+                                    //           text: 'money from your child\'s account',
+                                    //           style: Theme.of(context)
+                                    //               .textTheme
+                                    //               .bodyMedium!
+                                    //               .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                    //     ],
+                                    //   ),
+                                    // ),
                                   ),
                                 ],
                               ),

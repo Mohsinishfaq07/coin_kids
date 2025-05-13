@@ -167,7 +167,7 @@ class EditChildScreen extends GetView<EditChildController> {
                       Text(
                         "Select Avatar",
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: CustomThemeData().primaryTextColor,
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 14.sp),
                       ),

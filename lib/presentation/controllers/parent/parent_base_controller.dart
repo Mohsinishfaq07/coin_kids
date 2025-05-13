@@ -19,12 +19,12 @@ class ParentBaseController extends GetxController {
 
   final appState = Get.find<AppStateController>();
   final authService = Get.find<AuthService>();
-  final kidService = Get.find<KidService>();
+  //final kidService = Get.find<KidService>();
   final analytics = Get.find<AnalyticsService>();
 
 
   RxString selectedChildIdForQuickTransfer = ''.obs;
-  RxString selectedChildNameForQuickTransfer = ''.obs;
+ // RxString selectedChildNameForQuickTransfer = ''.obs;
 
   final RxString customAvatarPath = ''.obs;
   final RxString networkImageUrl = ''.obs;

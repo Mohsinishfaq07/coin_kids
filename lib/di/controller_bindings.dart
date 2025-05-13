@@ -43,11 +43,16 @@ import '../presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import '../presentation/controllers/parent/add_child_controller.dart';
 import '../presentation/controllers/parent/parent_drawer_controller.dart';
 import '../data/remote_services/analytics_service.dart';
+import '../presentation/controllers/common/analytics_controller.dart';
 
 class ControllerBindings extends Bindings {
   @override
   void dependencies() {
+    // First register AnalyticsService since AnalyticsController depends on it
     Get.put<AnalyticsService>(AnalyticsService(), permanent: true);
+    
+    // Then register AnalyticsController
+    Get.put<AnalyticsController>(AnalyticsController(), permanent: true);
 
     //Firebase Services
     Get.put<AuthService>(AuthService(), permanent: true);

@@ -112,7 +112,7 @@ class SignInScreen extends GetView<SignInController> {
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge!
-                              .copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12, fontWeight: FontWeight.w600),
+                              .copyWith(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -155,7 +155,7 @@ class SignInScreen extends GetView<SignInController> {
                       children: [
                         Text(
                           "Don't have account? ",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: CustomThemeData().primaryTextColor, fontSize: 12.sp),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.textPrimary, fontSize: 12.sp),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -173,7 +173,7 @@ class SignInScreen extends GetView<SignInController> {
                         padding: EdgeInsets.only(top: 31.h, bottom: 20.h),
                         child: Text("OR",
                             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                  color: CustomThemeData().disabledIconColor,
+                                  color: AppColors.buttonDisabled,
                                   fontWeight: FontWeight.w800,
                                 )),
                       ),

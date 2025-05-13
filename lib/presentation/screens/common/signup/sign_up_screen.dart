@@ -199,7 +199,7 @@ class SignupScreen extends GetView<SignupController> {
                                     .textTheme
                                     .bodySmall!
                                     .copyWith(
-                                        color: CustomThemeData().primaryTextColor,
+                                        color: AppColors.textPrimary,
                                         fontSize: 12.sp),
                               ),
                               GestureDetector(
