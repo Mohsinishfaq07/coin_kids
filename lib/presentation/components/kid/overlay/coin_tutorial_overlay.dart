@@ -6,11 +6,13 @@ import 'package:lottie/lottie.dart';
 class CoinTutorialOverlay extends StatefulWidget {
   final GlobalKey targetKey;
   final VoidCallback onComplete;
+  final bool disableForceClick;
 
   const CoinTutorialOverlay({
     super.key,
     required this.targetKey,
     required this.onComplete,
+    this.disableForceClick = false,
   });
 
   @override

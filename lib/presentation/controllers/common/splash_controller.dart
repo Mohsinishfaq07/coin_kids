@@ -38,31 +38,45 @@ class SplashController extends GetxController {
         Get.offNamed(Routes.signIn);
       }
     } else {
-      final String role = SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.none.name;
+      // Add validation to check if user exists in database
+      try {
+        final userExists = await _authService.checkUserExists(user.uid);
+        
+        if (!userExists) {
+          // User doesn't exist in database, sign out and redirect to sign in
+          await _authService.signOut();
+          Get.log("User not found in database, redirecting to sign in");
+          Get.offNamed(Routes.signIn);
+          return;
+        }
+        
+        // Continue with normal flow if user exists
+        final String role = SharedPreferencesHelper.getString(SharedPreferencesHelper.lastLoggedInRole) ?? UserRole.none.name;
 
-      if (role == UserRole.none.name) {
-        Get.offAllNamed(Routes.roleSelection);
-      } else if (role == UserRole.parent.name) {
-        _roleController.switchToParentMode(false);
-      } else {
-        try {
-          final kids = await _kidService.fetchKidsByParentId(user.uid);
+        if (role == UserRole.none.name) {
+          Get.offAllNamed(Routes.roleSelection);
+        } else if (role == UserRole.parent.name) {
+          _roleController.switchToParentMode(false);
+        } else {
+          try {
+            final kids = await _kidService.fetchKidsByParentId(user.uid);
 
-          if (kids.isNotEmpty) {
-            // Get.to(() => OrientationTransitionScreen(
-            //   nextScreen: Routes.kidBase,
-            //   targetOrientation: DeviceOrientation.landscapeLeft,
-            // ));
-
-            _roleController.switchToKidMode(true);
-          } else {
+            if (kids.isNotEmpty) {
+              _roleController.switchToKidMode(true);
+            } else {
+              _roleController.switchToKidOnboarding(true);
+            }
+          } catch (e) {
+            Get.log("Error checking kid status: $e");
+            // In case of error, default to onboarding
             _roleController.switchToKidOnboarding(true);
           }
-        } catch (e) {
-          Get.log("Error checking kid status: $e");
-          // In case of error, default to onboarding
-          _roleController.switchToKidOnboarding(true);
         }
+      } catch (e) {
+        Get.log("Error validating user: $e");
+        // In case of validation error, redirect to sign in
+        await _authService.signOut();
+        Get.offNamed(Routes.signIn);
       }
     }
   }

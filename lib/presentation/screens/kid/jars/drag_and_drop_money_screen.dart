@@ -3,6 +3,7 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_background.dart' show KidBackground;
 import 'package:coin_kids/presentation/components/kid/overlay/drag_drop_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/coin_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
@@ -15,8 +16,6 @@ import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-
 
 class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
   const DragAndDropMoneyScreen({super.key});
@@ -55,20 +54,13 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
       ),
       body: Stack(
         children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: AppColors.background,
-              image: const DecorationImage(image: AssetImage(Assets.kidBg), fit: BoxFit.cover),
-            ),
+          KidBackground(
             child: Column(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 50.w,left: 20.w),
+                    padding: EdgeInsets.only(top: 50.w, left: 20.w),
                     child: Row(
-
                       children: [
                         // Money Type Selector (left side)
                         Expanded(
@@ -95,7 +87,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
                                       onTap: () {
                                         controller.isShowingBills.value = false;
                                         controller.showCoinTutorial.value = false;
-                                        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                                     //   SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
                                       },
                                       baseColor: !controller.isShowingBills.value ? AppColors.colorPrimary : AppColors.iconDisabled,
                                       iconPath: Assets.icCoinEuro,
@@ -255,9 +247,8 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
               return CoinTutorialOverlay(
                 targetKey: GlobalKeys.coinButtonKey,
                 onComplete: () {
-                  controller.isShowingBills.value = false;
                   controller.showCoinTutorial.value = false;
-                  SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                  //SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
                 },
               );
             }
@@ -300,7 +291,7 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
 }
 
 Widget _buildDraggableMoney(MapEntry<String, double> moneyItem, double availableWidth, bool isShowingBills, int rowIndex) {
-  final key = moneyItem.value == 5.0 ?GlobalKeys.moneyKey : null;
+  final key = moneyItem.value == 5.0 ? GlobalKeys.moneyKey : null;
 
   return Draggable<double>(
     key: key,

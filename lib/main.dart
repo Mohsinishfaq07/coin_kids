@@ -1,4 +1,3 @@
-import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/translations/app_translations.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
@@ -61,46 +60,54 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: ()=> FocusManager.instance.primaryFocus?.unfocus(),
-      child: GetMaterialApp(
-        navigatorObservers: [
-          observer,
-          ScreenTrackingObserver(),
-        ],
-        smartManagement: SmartManagement.keepFactory,
-         //theme: AppColors();
-        theme: CustomThemeData.getThemeData(),
-        debugShowCheckedModeBanner: false,
-        useInheritedMediaQuery: true,
-        builder: (context, child) {
-          // Then apply DevicePreview
-          final devicePreviewChild = DevicePreview.appBuilder(context, child);
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GestureDetector(
+          onTap: ()=> FocusManager.instance.primaryFocus?.unfocus(),
+          child: GetMaterialApp(
+            navigatorObservers: [
+              observer,
+              ScreenTrackingObserver(),
+            ],
+            smartManagement: SmartManagement.keepFactory,
+             //theme: AppColors();
+            theme: CustomThemeData.getThemeData(),
+            debugShowCheckedModeBanner: false,
+            useInheritedMediaQuery: true,
+            builder: (context, child) {
+              // Then apply DevicePreview
+              final devicePreviewChild = DevicePreview.appBuilder(context, child);
 
-          return OrientationAwareBuilder(
-            builder: (context, orientation) {
-              return devicePreviewChild;
+              return OrientationAwareBuilder(
+                builder: (context, orientation) {
+                  return devicePreviewChild;
+                },
+              );
             },
-          );
-        },
-        initialBinding: ControllerBindings(),
-        translations: AppTranslations(),
-        fallbackLocale: const Locale('en', 'US'),
-        supportedLocales: const [
-          Locale('en', 'US'),
-          Locale('es', 'ES'),
-          Locale('ar', 'SA'),
-          Locale('fr', 'FR'),
-          Locale('de', 'DE'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        initialRoute: Routes.splash,
-        getPages: AppPages.pages,
-      ),
+            initialBinding: ControllerBindings(),
+            translations: AppTranslations(),
+            fallbackLocale: const Locale('en', 'US'),
+            supportedLocales: const [
+              Locale('en', 'US'),
+              Locale('es', 'ES'),
+              Locale('ar', 'SA'),
+              Locale('fr', 'FR'),
+              Locale('de', 'DE'),
+            ],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            initialRoute: Routes.splash,
+            getPages: AppPages.pages,
+            home: child,
+          ),
+        );
+      },
     );
   }
 }

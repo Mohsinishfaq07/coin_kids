@@ -20,8 +20,6 @@ class KidWishlistController extends GetxController {
   final marketController = Get.find<KidMarketController>();
   final analytics = Get.find<AnalyticsService>();
   final  goalService = Get.find<GoalService>();
-
-
   final RxList<WishlistModel> wishlistItems = <WishlistModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;

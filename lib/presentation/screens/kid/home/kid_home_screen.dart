@@ -44,7 +44,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
     return ShowCaseWidget(
       onComplete: (index, key) {
         controller.showJarShowcase.value = false;
-        controller.markMoneyJarShowcaseAsShown();
+       // controller.markMoneyJarShowcaseAsShown();
       },
       builder: (context) {
         return Obx(

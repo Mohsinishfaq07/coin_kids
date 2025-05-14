@@ -516,7 +516,7 @@ class KidGoalsController extends GetxController {
         _showMilestoneDialog(
             "Don't Give Up!",
             "You haven't entered any amount yet. Every step counts toward your goal!",
-            0,
+           // 0,
             Assets.emojiSad);
        // Get.until((route) => route.settings.name == Routes.kidBase);
        // appBarController.resetToDefault();
@@ -531,7 +531,7 @@ class KidGoalsController extends GetxController {
           _showMilestoneDialog(
               "Insufficient Funds",
               "Your Spending Jar doesn't have enough balance",
-              0,
+             // 0,
               Assets.emojiSad);
 
           return;
@@ -567,17 +567,22 @@ class KidGoalsController extends GetxController {
           _showMilestoneDialog(
               "So Close!",
               "You're 75% closer to reaching your goal",
-              3,
+            //  3,
               Assets.icConfetti);
         } else if (percentage >= 50 && oldPercentage < 50) {
           _showMilestoneDialog("Halfway There!", "Amazing work! Keep saving.",
-              2, Assets.icHappyStar);
+              //2,
+              Assets.icHappyStar);
         } else if (percentage >= 25 && oldPercentage < 25) {
           _showMilestoneDialog("Great Job!",
-              "You just reached your first milestone", 2, Assets.icClap);
+              "You just reached your first milestone",
+              //2,
+              Assets.icClap);
         } else {
           _showMilestoneDialog("Great Job!",
-              "You are about to reached your first milestone", 2, Assets.icClap);
+              "You are about to reached your first milestone",
+             // 2,
+              Assets.icClap);
          // Get.until((route) => route.settings.name == Routes.kidBase);
         }
       } else {
@@ -617,7 +622,10 @@ class KidGoalsController extends GetxController {
   }
 
   void _showMilestoneDialog(
-      String title, String subtitle, int coinKids, String emoji) {
+      String title, String subtitle,
+      //int coinKids,
+      String emoji
+      ) {
     KidDialog.show(
       emoji: emoji,
       title: title,
@@ -625,14 +633,14 @@ class KidGoalsController extends GetxController {
       extraContent: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            Assets.icCoinStar,
-            width: 20.w,
-            height: 20.w,
-          ),
+          // SvgPicture.asset(
+          //   Assets.icCoinStar,
+          //   width: 20.w,
+          //   height: 20.w,
+          // ),
           SizedBox(width: 4.w),
-          Text("+$coinKids CoinKids",
-              style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+          // Text("+$coinKids CoinKids",
+          //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
         ],
       ),
       buttons: [
@@ -661,14 +669,14 @@ class KidGoalsController extends GetxController {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                Assets.icCoinStar,
-                width: 20.w,
-                height: 20.w,
-              ),
+              // SvgPicture.asset(
+              //   Assets.icCoinStar,
+              //   width: 20.w,
+              //   height: 20.w,
+              // ),
               SizedBox(width: 4.w),
-              Text("+10 CoinKids",
-                  style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+              // Text("+10 CoinKids",
+              //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
             ],
           ),
         ],

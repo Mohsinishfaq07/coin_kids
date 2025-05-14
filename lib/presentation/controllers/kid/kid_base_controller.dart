@@ -157,11 +157,11 @@ class KidBaseController extends GetxController {
 
   void startShowcase(BuildContext context) async {
     if (shouldShowJarSpotLight() && !isNotificationShowing.value) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           ShowCaseWidget.of(context).startShowCase([moneyJarShowcaseKey]);
           showJarShowcase.value = false;
-          markMoneyJarShowcaseAsShown();
+         await  markMoneyJarShowcaseAsShown();
         } catch (e) {
           Get.log("Error starting showcase: $e");
           // Reset initialization state on error

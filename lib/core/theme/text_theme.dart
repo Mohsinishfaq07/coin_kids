@@ -9,14 +9,12 @@ class AppTextStyle {
     fontWeight: MyFontWeight.extraBold.fontWeight,
     color: AppColors.textPrimary,
   );
-
   static TextStyle headingMedium = TextStyle(
     fontFamily: 'OpenSans',
     fontSize: 18.sp,
     fontWeight: MyFontWeight.extraBold.fontWeight,
     color: AppColors.textPrimary,
   );
-
   static TextStyle headingSmall = TextStyle(
     fontFamily: 'OpenSans',
     fontSize: 14.sp,
@@ -29,13 +27,19 @@ class AppTextStyle {
     fontWeight: MyFontWeight.semiBold.fontWeight,
     color: AppColors.textPrimary,
   );
-
   static TextStyle bodyMedium = TextStyle(
     fontFamily: 'OpenSans',
     fontSize: 14.sp,
     fontWeight: MyFontWeight.regular.fontWeight,
     color: AppColors.textPrimary,
   );
+  static TextStyle bodySmall = TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 12.sp,
+    fontWeight: MyFontWeight.regular.fontWeight,
+    color: AppColors.textPrimary,
+  );
+
 
   static TextStyle appButton = TextStyle(
     fontFamily: 'OpenSans',
@@ -51,12 +55,6 @@ class AppTextStyle {
     color: AppColors.textOnPrimary,
   );
 
-  static TextStyle bodySmall = TextStyle(
-    fontFamily: 'OpenSans',
-    fontSize: 12.sp,
-    fontWeight: MyFontWeight.regular.fontWeight,
-    color: AppColors.textPrimary,
-  );
 
   static TextStyle labelSmall = TextStyle(
     fontFamily: 'OpenSans',

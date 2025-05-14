@@ -62,7 +62,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                     ),
                   ),
                   SizedBox(
-                    height: 30.h,
+                    height: MediaQuery.of(context).size.height*0.1,
                   ),
                   Row(
                     children: [

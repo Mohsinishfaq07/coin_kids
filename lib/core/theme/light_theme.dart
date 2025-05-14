@@ -1,5 +1,9 @@
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'color_theme.dart';
 
 // class ThemeClass{
 
@@ -48,6 +52,11 @@ class CustomThemeData {
         bodyMedium: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 18.0, fontWeight: FontWeight.w400),
         bodySmall: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 14.0, fontWeight: FontWeight.w400),
         headlineMedium: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 18.0, fontWeight: FontWeight.w800),
+        headlineLarge: GoogleFonts.openSans(
+          color: AppColors.textPrimary,
+          fontSize: 24.sp,
+          fontWeight: MyFontWeight.extraBold.fontWeight,
+        ),
       ),
       buttonTheme: ButtonThemeData(
         shape: RoundedRectangleBorder(

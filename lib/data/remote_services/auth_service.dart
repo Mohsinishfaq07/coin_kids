@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'parent_service.dart';
 
@@ -281,5 +282,16 @@ class AuthService extends GetxController {
       }
     }
     return Exception('An unexpected error occurred. $e');
+  }
+
+  Future<bool> checkUserExists(String uid) async {
+    try {
+      // Check if user document exists in Firestore
+      final userDoc = await FirebaseFirestore.instance.collection('parents').doc(uid).get();
+      return userDoc.exists;
+    } catch (e) {
+      Get.log("Error checking if user exists: $e");
+      return false;
+    }
   }
 }

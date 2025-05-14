@@ -49,9 +49,11 @@ class KidAvatarContainer extends StatelessWidget {
                   padding: EdgeInsets.only(left: iconSize / 2, right: 10.w),
                   child: Text(
                     kidName,
-                    style: AppTextStyle.headingMedium.copyWith(
-                      color: AppColors.textOnPrimary,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.white,fontSize: 18.sp,),
+                    // style: AppTextStyle.headingMedium.copyWith(
+                    //   color: AppColors.textOnPrimary,
+                    // ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

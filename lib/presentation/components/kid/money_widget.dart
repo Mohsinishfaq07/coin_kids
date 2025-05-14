@@ -71,9 +71,11 @@ class MoneyWidget extends StatelessWidget {
                           showSymbol: showSymbol,
                           showDecimals: showDecimals,
                         );
-                        final textStyle = AppTextStyle.headingMedium.copyWith(
-                          color: AppColors.textOnPrimary,
-                        );
+                        // final textStyle = AppTextStyle.headingMedium.copyWith(
+                        //   color: AppColors.textOnPrimary,
+                        // );
+                        final textStyle =   Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,fontSize: 18.sp,);
 
                         final textPainter = TextPainter(
                           text: TextSpan(text: text, style: textStyle),

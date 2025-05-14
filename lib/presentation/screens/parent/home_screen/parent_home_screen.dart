@@ -332,40 +332,40 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                     padding: EdgeInsets.symmetric(
                                       horizontal: MediaQuery.of(context).size.height * 0.06,
                                     ),
-                                    child: Text( textAlign: TextAlign.center, "Send or remove money \b from your child's account",style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary,fontSize: 17.sp),)
-                                    // RichText(
-                                    //   textAlign: TextAlign.center,
-                                    //   text: TextSpan(
-                                    //     children: [
-                                    //       TextSpan(
-                                    //         text: 'Send ',
-                                    //         s
-                                    //         // style: Theme.of(context)
-                                    //         //     .textTheme
-                                    //         //     .bodyMedium!
-                                    //         //     .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
-                                    //       ),
-                                    //       TextSpan(
-                                    //           text: 'or ',
-                                    //           style: Theme.of(context)
-                                    //               .textTheme
-                                    //               .bodyMedium!
-                                    //               .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                                    //       TextSpan(
-                                    //           text: 'remove ',
-                                    //           style: Theme.of(context)
-                                    //               .textTheme
-                                    //               .bodyMedium!
-                                    //               .copyWith(color:AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                                    //       TextSpan(
-                                    //           text: 'money from your child\'s account',
-                                    //           style: Theme.of(context)
-                                    //               .textTheme
-                                    //               .bodyMedium!
-                                    //               .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                                    //     ],
-                                    //   ),
-                                    // ),
+                                    child:
+                                    //Text( textAlign: TextAlign.center, "Send or remove money \b from your child's account",style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary,fontSize: 17.sp),)
+                                    RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Send ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+                                          ),
+                                          TextSpan(
+                                              text: 'or ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                          TextSpan(
+                                              text: 'remove ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color:AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                          TextSpan(
+                                              text: 'money from your child\'s account',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),

@@ -63,11 +63,30 @@ class AgeFilterDialog extends StatelessWidget {
                     return GestureDetector(
                       onTap: () {
                         List<AgeRange> newSelection = List.from(selectedRanges);
-                        if (isSelected) {
-                          newSelection.remove(range);
+                        
+                        // Handle the special case for "All Ages"
+                        if (range == AgeRange.all) {
+                          // If "All Ages" is being selected, clear all other selections
+                          if (!isSelected) {
+                            newSelection.clear();
+                            newSelection.add(range);
+                          } else {
+                            // If "All Ages" is being deselected, just remove it
+                            newSelection.remove(range);
+                          }
                         } else {
-                          newSelection.add(range);
+                          // For other age ranges
+                          if (isSelected) {
+                            // If this range is already selected, just remove it
+                            newSelection.remove(range);
+                          } else {
+                            // If selecting a specific range, remove "All Ages" if present
+                            newSelection.remove(AgeRange.all);
+                            // Then add the selected range
+                            newSelection.add(range);
+                          }
                         }
+                        
                         onSelect(newSelection);
                         Get.back();
                       },

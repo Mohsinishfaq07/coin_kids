@@ -186,29 +186,26 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                   flex: 2,
                   child: Padding(
                     padding: EdgeInsets.all(8.w),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.product?.name ?? '',
-                            style: AppTextStyle.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.product?.name ?? '',
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w800,
                           ),
-                          const Spacer(),
-                          Text(
-                            '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
-                            style: AppTextStyle.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                            ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Spacer(),
+                        Text(
+                          '€${item.product?.price.toStringAsFixed(2) ?? '0.00'}',
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

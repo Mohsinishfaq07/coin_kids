@@ -159,55 +159,55 @@ class KidDialog extends StatelessWidget {
   }
 }
 
-void showExampleDialog() {
-  KidDialog.show(
-    emoji: Assets.icClap,
-    title: 'Goal Achieved!',
-    subtitle: 'You saved enough for your goal',
-    buttons: [
-      KidButton(
-        text: 'Cancel',
-        onTap: () => Get.back(),
-        baseColor: AppColors.btnColorRed,
-      ),
-      SizedBox(width: 16.w),
-      KidButton(
-        text: 'Continue',
-        onTap: () {
-          // Handle continue action
-          Get.back();
-        },
-        baseColor: AppColors.btnColorGreen,
-        iconPath: Assets.icNext,
-        iconPosition: IconPosition.right,
-      ),
-    ],
-  );
-}
+// void showExampleDialog() {
+//   KidDialog.show(
+//     emoji: Assets.icClap,
+//     title: 'Goal Achieved!',
+//     subtitle: 'You saved enough for your goal',
+//     buttons: [
+//       KidButton(
+//         text: 'Cancel',
+//         onTap: () => Get.back(),
+//         baseColor: AppColors.btnColorRed,
+//       ),
+//       SizedBox(width: 16.w),
+//       KidButton(
+//         text: 'Continue',
+//         onTap: () {
+//           // Handle continue action
+//           Get.back();
+//         },
+//         baseColor: AppColors.btnColorGreen,
+//         iconPath: Assets.icNext,
+//         iconPosition: IconPosition.right,
+//       ),
+//     ],
+//   );
+// }
 
 //Usage
-void exampleDialog() {
-  KidDialog.show(
-    emoji: Assets.icTrophy,
-    title: 'Goal Achieved!',
-    subtitle: 'You saved enough for your goal',
-    buttons: [
-      KidButton(
-        text: 'Cancel',
-        onTap: () => Get.back(),
-        baseColor: AppColors.btnColorRed,
-      ),
-      SizedBox(width: 16.w),
-      KidButton(
-        text: 'Continue',
-        onTap: () {
-          // Handle continue action
-          Get.back();
-        },
-        baseColor: AppColors.btnColorGreen,
-        iconPath: Assets.icNext,
-        iconPosition: IconPosition.right,
-      ),
-    ],
-  );
-}
+// void exampleDialog() {
+//   KidDialog.show(
+//     emoji: Assets.icTrophy,
+//     title: 'Goal Achieved!',
+//     subtitle: 'You saved enough for your goal',
+//     buttons: [
+//       KidButton(
+//         text: 'Cancel',
+//         onTap: () => Get.back(),
+//         baseColor: AppColors.btnColorRed,
+//       ),
+//       SizedBox(width: 16.w),
+//       KidButton(
+//         text: 'Continue',
+//         onTap: () {
+//           // Handle continue action
+//           Get.back();
+//         },
+//         baseColor: AppColors.btnColorGreen,
+//         iconPath: Assets.icNext,
+//         iconPosition: IconPosition.right,
+//       ),
+//     ],
+//   );
+// }

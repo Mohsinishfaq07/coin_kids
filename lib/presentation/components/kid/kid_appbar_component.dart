@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
@@ -14,9 +15,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart' show ShowCaseWidget, Showcase;
 
-class KidAppBarShowcaseKeys {
-  static final GlobalKey totalMoneyCardKey = GlobalKey();
-}
+// class KidAppBarShowcaseKeys {
+//   static final GlobalKey totalMoneyCardKey = GlobalKey();
+// }
 
 class KidAppBarComponent extends GetView<KidAppBarController>
     implements PreferredSizeWidget {
@@ -44,7 +45,7 @@ class KidAppBarComponent extends GetView<KidAppBarController>
           try {
             controller.showTotalMoneySpotlight.value = false;
             ShowCaseWidget.of(mContext)
-                .startShowCase([KidAppBarShowcaseKeys.totalMoneyCardKey]);
+                .startShowCase([GlobalKeys.totalMoneyCardKey]);
             SharedPreferencesHelper.saveBool(
                 SharedPreferencesHelper.showTotalMoneySpotlight, false);
           } catch (e) {
@@ -149,87 +150,100 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                       Row(
                         children: [
                           // Spending Card
-                          Visibility(
-                            visible: controller.showSpendingCard.value,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 32.w),
-                              child: MoneyWidget(
-                                amount: kid.wallet.spendingJar.balance,
-                                rightIconPath: Assets.icSpendingCard,
-                                iconSize: 28.w,
-                                onCardTap: () {
-                                  // Handle spending card tap if needed
-                                },
-                              ),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: controller.showSpendingCard.value,
+                          //   child: Padding(
+                          //     padding: EdgeInsets.only(right: 32.w),
+                          //     child: MoneyWidget(
+                          //       amount: kid.wallet.spendingJar.balance,
+                          //       rightIconPath: Assets.icSpendingCard,
+                          //       iconSize: 28.w,
+                          //       onCardTap: () {
+                          //         // Handle spending card tap if needed
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
 
-                          Visibility(
-                            visible: controller.showCoinKidsCard.value,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 40.w),
-                              child: MoneyWidget(
-                                amount: kid.coinKidsBalance.toDouble(),
-                                rightIconPath: Assets.icCoinStar,
-                                iconSize: 28.w,
-                                isLocked: controller.appState.currentKid.value!
-                                        .coinKidsBalance ==
-                                    -1,
-                                showSymbol: false,
-                                showDecimals: false,
-                                onCardTap: () {
-                                  // Handle CoinKids card tap if needed
-                                },
-                              ),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: controller.showCoinKidsCard.value,
+                          //   child: Padding(
+                          //     padding: EdgeInsets.only(right: 40.w),
+                          //     child: MoneyWidget(
+                          //       amount: kid.coinKidsBalance.toDouble(),
+                          //       rightIconPath: Assets.icCoinStar,
+                          //       iconSize: 28.w,
+                          //       isLocked: controller.appState.currentKid.value!
+                          //               .coinKidsBalance ==
+                          //           -1,
+                          //       showSymbol: false,
+                          //       showDecimals: false,
+                          //       onCardTap: () {
+                          //         // Handle CoinKids card tap if needed
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
+                          MoneyWidget(
+                            amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
+                            rightIconPath: Assets.icCoinEuro,
+                            showAddButton: true,
+                            iconSize: 32.w,
+                            onAddTap: () {
 
+                              onAddMoneyTap?.call();
+                            },
+                            onCardTap: () {
+
+                              onAddMoneyTap?.call();
+                            },
+                          ),
                           // Total Money Card
-                          Visibility(
-                            visible: controller.showTotalCard.value,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 4.w),
-                              child: controller.shouldShowRequestMoneySpotlight()
-                                  ? Showcase(
-                                      key: KidAppBarShowcaseKeys.totalMoneyCardKey,
-                                      description: "Tap here to request money from your parent!",
-                                      descriptionAlignment: Alignment.center,
-                                      descriptionTextAlign: TextAlign.center,
-                                      tooltipBackgroundColor: AppColors.colorPrimary,
-                                      descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
-                                      targetPadding: EdgeInsets.all(6.h),
-                                      tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
-                                      child: MoneyWidget(
-                                        amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
-                                        rightIconPath: Assets.icCoinEuro,
-                                        showAddButton: true,
-                                        iconSize: 32.w,
-                                        onAddTap: () {
-
-                                          onAddMoneyTap?.call();
-                                        },
-                                        onCardTap: () {
-
-                                          onAddMoneyTap?.call();
-                                        },
-                                      ),
-                                    )
-                                  : MoneyWidget(
-                                      amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
-                                      rightIconPath: Assets.icCoinEuro,
-                                      showAddButton: true,
-                                      iconSize: 32.w,
-                                      onAddTap: () {
-
-                                        onAddMoneyTap?.call();
-                                      },
-                                      onCardTap: () {
-
-                                        onAddMoneyTap?.call();
-                                      },
-                                    ),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: controller.showTotalCard.value,
+                          //   child: Padding(
+                          //     padding: EdgeInsets.only(right: 4.w),
+                          //     child: controller.shouldShowRequestMoneySpotlight()
+                          //         ? Showcase(
+                          //             key: GlobalKeys.totalMoneyCardKey,
+                          //             description: "Tap here to request money from your parent!",
+                          //             descriptionAlignment: Alignment.center,
+                          //             descriptionTextAlign: TextAlign.center,
+                          //             tooltipBackgroundColor: AppColors.colorPrimary,
+                          //             descTextStyle: AppTextStyle.headingSmall.copyWith(color: Colors.white),
+                          //             targetPadding: EdgeInsets.all(6.h),
+                          //             tooltipPadding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0),
+                          //             child: MoneyWidget(
+                          //               amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
+                          //               rightIconPath: Assets.icCoinEuro,
+                          //               showAddButton: true,
+                          //               iconSize: 32.w,
+                          //               onAddTap: () {
+                          //
+                          //                 onAddMoneyTap?.call();
+                          //               },
+                          //               onCardTap: () {
+                          //
+                          //                 onAddMoneyTap?.call();
+                          //               },
+                          //             ),
+                          //           )
+                          //         : MoneyWidget(
+                          //             amount: kid.wallet.spendingJar.balance + kid.wallet.savingJar.balance,
+                          //             rightIconPath: Assets.icCoinEuro,
+                          //             showAddButton: true,
+                          //             iconSize: 32.w,
+                          //             onAddTap: () {
+                          //
+                          //               onAddMoneyTap?.call();
+                          //             },
+                          //             onCardTap: () {
+                          //
+                          //               onAddMoneyTap?.call();
+                          //             },
+                          //           ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
