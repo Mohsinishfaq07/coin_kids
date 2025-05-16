@@ -115,82 +115,79 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
 
   Widget _buildImageSection() {
     return Obx(() {
-      return Padding(
-        padding: EdgeInsets.all(12.h),
-        child: Container(
-          // height: 0.7.sh,
-          // width: 0.3.sw,
+      return Container(
+        // height: 0.7.sh,
+        // width: 0.3.sw,
 
-          decoration: BoxDecoration(
-            color: AppColors.iconOnPrimary,
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: AppColors.cardBorder, width: 2.w),
-          ),
-          child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
-              ? Padding(
-                  padding: EdgeInsets.all(12.h),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: controller.pickImageFromCamera,
-                        child: SvgPicture.asset(
-                          Assets.icCamera,
-                          height: 64.r,
-                          width: 64.r,
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      KidButton(
-                        onTap: () async {
-                          await controller.pickFromGallery();
-                        },
-                        baseColor: Color(0xFFFF9E29),
-                        text: 'Add Photo',
-                        iconPath: Assets.icAdd,
-                        iconPosition: IconPosition.left,
-                      ),
-                    ],
-                  ),
-                )
-              : Stack(
-                  clipBehavior: Clip.none,
+        decoration: BoxDecoration(
+          color: AppColors.iconOnPrimary,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: AppColors.cardBorder, width: 2.w),
+        ),
+        child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
+            ? Padding(
+                padding: EdgeInsets.all(12.h),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: SizedBox(
-                          width: 0.3.sw,
-                          height: 0.46.sh,
-                          child: controller.newGoal.value.photo!.startsWith("http")
-                              ? CachedNetworkImageWidget(
-                                  imageUrl: controller.newGoal.value.photo!,
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.file(
-                                  File(controller.newGoal.value.photo!),
-                                  fit: BoxFit.contain,
-                                ),
-                        ),
+                    GestureDetector(
+                      onTap: controller.pickImageFromCamera,
+                      child: SvgPicture.asset(
+                        Assets.icCamera,
+                        height: 64.r,
+                        width: 64.r,
                       ),
                     ),
-                    Positioned(
-                        right: -10,
-                        top: -10,
-                        child: KidButton.iconOnly(
-                          onTap: () {
-                            ToastUtil.showToast("Clicked");
-                            controller.removePhoto();
-                          },
-                          baseColor: AppColors.btnColorOrange,
-                          iconPath: Assets.icCross,
-                          size: 30.w,
-                          iconSize: 16.w,
-                        ))
+                    SizedBox(height: 20.h),
+                    KidButton(
+                      onTap: () async {
+                        await controller.pickFromGallery();
+                      },
+                      baseColor: Color(0xFFFF9E29),
+                      text: 'Add Photo',
+                      iconPath: Assets.icAdd,
+                      iconPosition: IconPosition.left,
+                    ),
                   ],
                 ),
-        ),
+              )
+            : Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: SizedBox(
+                        width: 0.3.sw,
+                        height: 0.46.sh,
+                        child: controller.newGoal.value.photo!.startsWith("http")
+                            ? CachedNetworkImageWidget(
+                                imageUrl: controller.newGoal.value.photo!,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                File(controller.newGoal.value.photo!),
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                      right: -10,
+                      top: -10,
+                      child: KidButton.iconOnly(
+                        onTap: () {
+                          ToastUtil.showToast("Clicked");
+                          controller.removePhoto();
+                        },
+                        baseColor: AppColors.btnColorOrange,
+                        iconPath: Assets.icCross,
+                        size: 30.w,
+                        iconSize: 16.w,
+                      ))
+                ],
+              ),
       );
     });
   }
@@ -207,6 +204,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: KidTextField(
+                textInputAction: TextInputAction.next,
                 hintText: controller.newGoal.value.title,
                 onChange: (value) {
                   // Remove initial spaces but keep other spaces
@@ -237,22 +235,25 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           children: [
             Align(
               alignment: Alignment.centerRight,
-              child: KidButton(
-                key: _createGoalKey,
-                onTap: () async {
-                  await controller.analytics.buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
+              child: Padding(
+                padding:  EdgeInsets.only(top: 12.h),
+                child: KidButton(
+                  key: _createGoalKey,
+                  onTap: () async {
+                    await controller.analytics.buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
-                  showPointer.value = false;
-                  await SharedPreferencesHelper.saveBool(
-                    SharedPreferencesHelper.hasSeenCreateGoalTutorial,
-                    true,
-                  );
-                  _handleButtonPress();
-                },
-                text: _getButtonText(),
-                baseColor: AppColors.btnColorGreen,
-                iconPath: Assets.icTick,
-                iconPosition: IconPosition.left,
+                    showPointer.value = false;
+                    await SharedPreferencesHelper.saveBool(
+                      SharedPreferencesHelper.hasSeenCreateGoalTutorial,
+                      true,
+                    );
+                    _handleButtonPress();
+                  },
+                  text: _getButtonText(),
+                  baseColor: AppColors.btnColorGreen,
+                  iconPath: Assets.icTick,
+                  iconPosition: IconPosition.left,
+                ),
               ),
             ),
             Obx(() {

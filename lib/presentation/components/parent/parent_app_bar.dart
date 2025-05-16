@@ -48,7 +48,7 @@ class ParentAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
 //        style: AppTextStyle.headingLarge.copyWith(fontWeight: FontWeight.w800, color: AppColors.textPrimary, fontSize: 18.sp),
-        style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 17.sp),
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 18.sp),
       ),
       centerTitle: centerTitle,
       actions: actions,

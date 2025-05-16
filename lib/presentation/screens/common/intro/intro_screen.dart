@@ -79,7 +79,8 @@ class IntroScreen extends GetView<IntroController> {
                                   onPressed: () => controller.skipToLast(),
                                   child: Text(
                                     "Skip",
-                                    style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
+//                                    style: AppTextStyle.bodyLarge.copyWith(color: AppColors.textSecondary),
+                                    style:Theme.of(context).textTheme.bodyLarge?.copyWith(color:  AppColors.textSecondary),
                                   ),
                                 ),
                                 Obx(() {
@@ -149,8 +150,8 @@ class OnboardingPage extends StatelessWidget {
           Text(
             description,
             textAlign: TextAlign.center,
-            style: AppTextStyle.headingMedium.copyWith(fontWeight: MyFontWeight.regular.fontWeight, color: AppColors.textSecondary),
-          ),
+            style: AppTextStyle.headingMedium.copyWith(fontWeight: MyFontWeight.regular.fontWeight, color: AppColors.textSecondary)),
+          //  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: MyFontWeight.thin.fontWeight, color: AppColors.textSecondary,fontSize: 18.sp)        ),
         ],
       ),
     );

@@ -74,8 +74,8 @@ class MoneyWidget extends StatelessWidget {
                         // final textStyle = AppTextStyle.headingMedium.copyWith(
                         //   color: AppColors.textOnPrimary,
                         // );
-                        final textStyle =   Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,fontSize: 18.sp,);
+                        final textStyle =   Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color:AppColors.textOnPrimary,fontSize: 18.sp,);
 
                         final textPainter = TextPainter(
                           text: TextSpan(text: text, style: textStyle),

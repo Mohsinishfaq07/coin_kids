@@ -48,15 +48,18 @@ class CustomThemeData {
       colorSchemeSeed: const Color(0xffA421D9),
       // primaryColor: const Color(0xffA421D9),
       textTheme: TextTheme(
-        bodyLarge: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 24.0, fontWeight: FontWeight.w800),
-        bodyMedium: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 18.0, fontWeight: FontWeight.w400),
-        bodySmall: GoogleFonts.openSans(color: const Color(0xff676666), fontSize: 14.0, fontWeight: FontWeight.w400),
-        headlineMedium: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 18.0, fontWeight: FontWeight.w800),
+        bodyLarge: GoogleFonts.openSans(color: const Color(0xff015486), fontSize: 14.sp, fontWeight: MyFontWeight.semiBold.fontWeight),
+
+        bodyMedium: GoogleFonts.openSans(color: AppColors.textPrimary, fontSize: 14.sp, fontWeight: MyFontWeight.regular.fontWeight,),
+
+        bodySmall: GoogleFonts.openSans(color: AppColors.textPrimary, fontSize: 12.sp, fontWeight: MyFontWeight.regular.fontWeight,),
         headlineLarge: GoogleFonts.openSans(
           color: AppColors.textPrimary,
           fontSize: 24.sp,
           fontWeight: MyFontWeight.extraBold.fontWeight,
         ),
+        headlineMedium: GoogleFonts.openSans(color: AppColors.textPrimary, fontSize: 18.sp, fontWeight:  MyFontWeight.extraBold.fontWeight),
+        headlineSmall: GoogleFonts.openSans(color:  AppColors.textPrimary,fontSize: 14.sp,fontWeight: MyFontWeight.bold.fontWeight),
       ),
       buttonTheme: ButtonThemeData(
         shape: RoundedRectangleBorder(

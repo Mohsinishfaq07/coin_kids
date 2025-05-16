@@ -41,11 +41,11 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                   ),
                   Text(
                     "Are you a parent or a child?",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontSize: 24.sp,
                         ),
                   ),
-                  SizedBox(height: 57.h),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.06),
                   OptionCard(
                     imagePath: Assets.icImParent,
                     title: "I'm a Parent",
@@ -57,7 +57,8 @@ class RoleSelectionScreen extends GetView<RoleSelectionController> {
                     description1: "Support your child's",
                     description2: "Financial journey  ",
                   ),
-                  SizedBox(height: 14.h),
+                  // SizedBox(height: 14.h),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.02),
                   OptionCard(
                     imagePath: Assets.icImKid,
                     title: "I'm a Child",
@@ -139,7 +140,7 @@ class OptionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
+                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 18.sp),
                     ),
                     SizedBox(height: 9.h),
                     Row(
@@ -151,7 +152,7 @@ class OptionCard extends StatelessWidget {
                         ),
                         SizedBox(width: 10.w),
                         Text(description,
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.textPrimary, fontSize: 14)),
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.textPrimary, fontSize: 14.sp)),
                       ],
                     ),
                     SizedBox(height: 8.h),
@@ -164,7 +165,7 @@ class OptionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(description1,
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.textPrimary, fontSize: 14)),
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.textPrimary, fontSize: 14.sp)),
                       ],
                     ),
                     Row(
@@ -175,7 +176,7 @@ class OptionCard extends StatelessWidget {
                           colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.clear),
                         ),
                         const SizedBox(width: 12),
-                        Text(description2, style: Theme.of(context).textTheme.bodySmall!.copyWith(color:  AppColors.textPrimary,)),
+                        Text(description2, style: Theme.of(context).textTheme.bodyMedium!.copyWith(color:  AppColors.textPrimary,)),
                       ],
                     ),
                   ],

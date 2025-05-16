@@ -308,7 +308,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Text(
-                                      "(items ${count.toString()})",
+                                      count.toString(),
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 14.sp,

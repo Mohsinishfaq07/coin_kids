@@ -480,13 +480,14 @@ class KidGoalsController extends GetxController {
           createdAt: DateTime.now(),
         );
         await _goalService.updateGoal(goal);
+        appBarController.resetToDefault();
       }
 
       resetNewGoal();
       resetOldGoal();
 
+
       Get.until((route) => route.settings.name == Routes.kidBase);
-      appBarController.resetToDefault();
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.back();

@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
@@ -158,8 +159,9 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
               child: KidButton.iconWithTitle(
                 size: 50,
                 title: "Delete",
-                belowTextStyle: TextStyle(color: AppColors.textPrimary),
-                baseColor: AppColors.critical,
+                belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 16.sp,fontWeight: MyFontWeight.semiBold.fontWeight
+                ),                  baseColor: AppColors.critical,
                 iconPath: Assets.icBin,
                 onTap: () => _showDeleteDialog(context),
               ),

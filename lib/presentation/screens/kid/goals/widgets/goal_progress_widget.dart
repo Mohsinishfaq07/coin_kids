@@ -62,7 +62,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                     ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height*0.1,
+                    height: MediaQuery.of(context).size.height * 0.1,
                   ),
                   Row(
                     children: [
@@ -72,8 +72,8 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           baseColor: AppColors.btnColorRed,
                           iconPath: Assets.icMinus,
                           onTap: () async {
-                            await controller.analytics
-                                .buttonClicked(AnalyticsEventNames.goalMinusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
+                            await controller.analytics.buttonClicked(AnalyticsEventNames.goalMinusButtonClicked,
+                                AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
 
                             controller.decrementProgress(goal);
                           }),
@@ -222,13 +222,16 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         children: <Widget>[
                           KidButton.iconWithTitle(
                             size: 50,
+
                             title: "Edit",
-                            belowTextStyle: TextStyle(color: AppColors.textPrimary),
+                            belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 16.sp,fontWeight: MyFontWeight.semiBold.fontWeight
+                            ),
                             baseColor: AppColors.btnColorGreen,
                             iconPath: Assets.icEdit,
                             onTap: () async {
-                              await controller.analytics
-                                  .buttonClicked(AnalyticsEventNames.goalProgressEditButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsSummaryScreen);
+                              await controller.analytics.buttonClicked(AnalyticsEventNames.goalProgressEditButtonClicked,
+                                  AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                               if (goal.productUrl != null && goal.productUrl!.isNotEmpty) {
                                 KidDialog.show(
@@ -253,19 +256,20 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                               controller.screenMode.value = GoalSummaryScreenMode.edit;
                               controller.newGoal.value = goal;
                               controller.oldGoal.value = goal;
-                              Get.toNamed(Routes.kidGoalSummary,arguments: false.obs);
+                              Get.toNamed(Routes.kidGoalSummary, arguments: false.obs);
                             },
                           ),
                           SizedBox(width: 40.w),
                           KidButton.iconWithTitle(
                               size: 50,
                               title: "Delete",
-                              belowTextStyle: TextStyle(color: AppColors.textPrimary),
-                              baseColor: AppColors.critical,
+                              belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontSize: 16.sp,fontWeight: MyFontWeight.semiBold.fontWeight
+                              ),                              baseColor: AppColors.critical,
                               iconPath: Assets.icBin,
                               onTap: () async {
-                                await controller.analytics
-                                    .buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
+                                await controller.analytics.buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked,
+                                    AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
                                 _showDeleteDialog(context);
                               }),
                         ],

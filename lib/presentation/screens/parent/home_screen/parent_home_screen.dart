@@ -358,7 +358,13 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                                   .bodyMedium!
                                                   .copyWith(color:AppColors.textSecondary, fontWeight: FontWeight.w600)),
                                           TextSpan(
-                                              text: 'money from your child\'s account',
+                                              text: 'money ',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(color:AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                          TextSpan(
+                                              text: '\nfrom your child\'s account',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium!
