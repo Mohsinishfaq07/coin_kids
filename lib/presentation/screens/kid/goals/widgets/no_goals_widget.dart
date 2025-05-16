@@ -28,7 +28,7 @@ class NoGoalsWidget extends StatelessWidget {
     showPointer.value = !hasSeenTutorial;
   }
 
-  Future<void> _dismissTutorial() async {
+  Future<void> _dismissHandAnimation() async {
     showPointer.value = false;
     await SharedPreferencesHelper.saveBool(
       SharedPreferencesHelper.hasSeenNoGoalsTutorial,
@@ -71,10 +71,12 @@ class NoGoalsWidget extends StatelessWidget {
       return;
     }
 
-    _dismissTutorial();
+    _dismissHandAnimation();
     await analytics.buttonClicked(AnalyticsEventNames.noGoalClicked,AnalyticsScreenNames.kidNoGoalScreen,AnalyticsScreenNames.kidGoalsNameScreen);
 
-    Get.toNamed(Routes.kidAddGoalName);
+    // Get.toNamed(Routes.kidAddGoalName);
+// Get.toNamed(Routes.kidGoalSummary);
+    Get.toNamed(Routes.kidGoalSummary, arguments: true);
   }
 
   @override
@@ -111,7 +113,7 @@ class NoGoalsWidget extends StatelessWidget {
             if (showPointer.value) {
               return GoalsAddTutorialOverlay(
                 targetKey: GlobalKeys.noGoalKey,
-                onComplete: _dismissTutorial,
+                onComplete: _dismissHandAnimation,
               );
             }
             return const SizedBox.shrink();

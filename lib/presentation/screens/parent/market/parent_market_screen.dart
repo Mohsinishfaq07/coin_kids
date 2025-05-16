@@ -264,7 +264,8 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
       currentMin: controller.selectedMinBudget.value,
       currentMax: controller.selectedMaxBudget.value,
       onSelect: controller.setBudgetRange,
-      labelFormat: (value) => '€${value.toStringAsFixed(0)}',
+      labelFormat: (value) => value.toStringAsFixed(0),
+
     );
     // Get.dialog(
     //   RangeFilterDialog(

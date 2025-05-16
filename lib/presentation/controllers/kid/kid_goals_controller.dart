@@ -21,6 +21,7 @@ import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/goal_details_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +34,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class KidGoalsController extends GetxController {
   final appBarController = Get.find<KidAppBarController>();
 
-  final appBar = Get.find<KidAppBarController>();
+  // final appBar = Get.find<KidAppBarController>();
   final appState = Get.find<AppStateController>();
   final _goalService = Get.find<GoalService>();
   final _kidService = Get.find<KidService>();
   final  _roleController = Get.find<RoleController>();
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
   final analytics = Get.find<AnalyticsService>();
+
 
 
 
@@ -65,6 +67,8 @@ class KidGoalsController extends GetxController {
   StreamSubscription<KidModel?>? _kidSubscription;
 
   final RxBool showPointer = true.obs;
+
+  final RxBool shouldResetAppBar = true.obs;
 
   // Future<void> checkTutorialState() async {
   //   final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
@@ -311,7 +315,7 @@ class KidGoalsController extends GetxController {
     );
   }
 
-  void createNewGoal() async {
+  Future<void> createNewGoal() async {
     showLoadingDialog("Creating Goal ...");
 
     try {
@@ -319,28 +323,31 @@ class KidGoalsController extends GetxController {
       final goal = newGoal.value.copyWith(
           userId: appState.currentKid.value!.kidId, createdAt: DateTime.now());
 
+      // Store the goal title to identify it later
+      final goalTitle = goal.title;
+      
       // Pass isFirstGoal flag to createGoal
       await _goalService.createGoal(goal, isFirstGoal);
 
-
+      // Handle first goal case with dialog
       if (isFirstGoal) {
         final RxBool showPointer = true.obs;
 
         KidDialog.show(
           emoji: Assets.icCoinStar,
           title: 'WoW',
-          subtitle: 'You unlock CoinKids bar and receive\nyour first Coinkids',
+          subtitle: 'You unlock CoinKids bar and receive\nyour first Goal',
           extraContent: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                Assets.icCoinStar,
-                width: 20.w,
-                height: 20.w,
-              ),
+              // SvgPicture.asset(
+              //   Assets.icCoinStar,
+              //   width: 20.w,
+              //   height: 20.w,
+              // ),
               SizedBox(width: 4.w),
-              Text("+2 CoinKids",
-                  style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
+              // Text("+2 CoinKids",
+              //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
             ],
           ),
           buttons: [
@@ -356,7 +363,9 @@ class KidGoalsController extends GetxController {
                       SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
                       true,
                     );
-                    appBarController.resetToDefault();
+                    if (shouldResetAppBar.value) {
+                      appBarController.resetToDefault();
+                    }
 
                     Get.until((route) => route.settings.name == Routes.kidBase);
                   },
@@ -388,12 +397,34 @@ class KidGoalsController extends GetxController {
 
         resetNewGoal();
         return;
+      } else {
+        // For regular goals, close the loading dialog
+        Get.back();
+        
+        // Reset the form
+        resetNewGoal();
+        
+        // Reset app bar if needed
+        if (shouldResetAppBar.value) {
+          appBarController.resetToDefault();
+        }
+        
+        // Wait a moment for the goal to be added to the database and streamed back
+        await Future.delayed(Duration(milliseconds: 500));
+        
+        // Find the goal with the matching title in our goals list
+        final createdGoal = goals.firstWhereOrNull((g) => 
+            g.title == goalTitle && 
+            g.targetAmount == goal.targetAmount &&
+            g.createdAt.isAfter(DateTime.now().subtract(Duration(minutes: 1))));
+        
+        if (createdGoal != null) {
+          Get.offNamed(Routes.kidGoalDetailsScreen, arguments: createdGoal.id);
+        } else {
+          // Fallback if we can't find the goal
+          Get.until((route) => route.settings.name == Routes.kidBase);
+        }
       }
-
-      resetNewGoal();
-      appBarController.resetToDefault();
-
-      Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.until((route) => route.settings.name == Routes.kidBase);
@@ -401,7 +432,7 @@ class KidGoalsController extends GetxController {
     }
   }
 
-  void updateGoal() async {
+  Future<void> updateGoal() async {
     try {
       if (oldGoal.value == newGoal.value) {
         return;

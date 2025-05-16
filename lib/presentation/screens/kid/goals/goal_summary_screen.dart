@@ -7,12 +7,14 @@ import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
+import 'package:coin_kids/presentation/components/kid/kid_background.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -23,7 +25,26 @@ enum GoalSummaryScreenMode {
 }
 
 class GoalSummaryScreen extends GetView<KidGoalsController> {
-  GoalSummaryScreen({super.key}) {
+  GoalSummaryScreen({
+    super.key,
+  }) {
+    // Get the argument passed to the screen
+    final dynamic arg = Get.arguments;
+    
+    // Check if it's a boolean or RxBool and set the controller value accordingly
+    if (arg is bool) {
+      controller.shouldResetAppBar.value = arg;
+      
+      // If coming from the goals list screen (shouldResetAppBar is true),
+      // we're creating a new goal
+      if (arg == true) {
+        controller.screenMode.value = GoalSummaryScreenMode.create;
+        controller.resetNewGoal(); // Start with a fresh goal
+      }
+    } else if (arg is RxBool) {
+      controller.shouldResetAppBar.value = arg.value;
+    }
+    
     _checkTutorialState();
   }
 
@@ -37,51 +58,56 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.appBarController.configureForGoalSetup();
+    });
     return Scaffold(
-   //   extendBodyBehindAppBar: true,
-      // appBar: KidAppBarComponent(
-      //   onBackPressed: () => Get.back(),
-      // ),
+      // resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      appBar: KidAppBarComponent(
+        title: controller.screenMode.value == GoalSummaryScreenMode.create
+            ? 'Create Goal'
+            : 'Edit Goal',
+        onBackPressed: () async {
+          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsSummaryScreen);
+          
+          // Only reset if shouldResetAppBar is true
+          if (controller.shouldResetAppBar.value) {
+            controller.appBarController.resetToDefault();
+
+          }
+
+          bool hasContent = controller.newGoal.value.title.isNotEmpty ||
+              controller.newGoal.value.targetAmount > 0 ||
+              (controller.newGoal.value.photo != null &&
+                  controller.newGoal.value.photo!.isNotEmpty);
+          if (hasContent) {
+            controller.resetNewGoal();
+            controller.removePhoto();
+          }
+          
+          Get.back();
+        }),
       body: GestureDetector(
         onTap: () async {
+          FocusScope.of(context).unfocus();
           showPointer.value = false;
           await SharedPreferencesHelper.saveBool(
             SharedPreferencesHelper.hasSeenCreateGoalTutorial,
             true,
           );
         },
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: AppColors.background,
-              ),
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              child: SingleChildScrollView(
-                child: Column(
-
-                  children: [
-                    KidAppBarComponent(
-                      onBackPressed: () => Get.back(),
-                    ),
-                    Row(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildImageSection(),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: _buildFormSection(),
-                        )),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+        child: KidBackground(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildImageSection(),
+                _buildFormSection(),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -90,7 +116,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   Widget _buildImageSection() {
     return Obx(() {
       return Padding(
-        padding:  EdgeInsets.all(12.h),
+        padding: EdgeInsets.all(12.h),
         child: Container(
           // height: 0.7.sh,
           // width: 0.3.sw,
@@ -100,8 +126,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(color: AppColors.cardBorder, width: 2.w),
           ),
-          child: controller.newGoal.value.photo == null ||
-                  controller.newGoal.value.photo!.isEmpty
+          child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
               ? Padding(
                   padding: EdgeInsets.all(12.h),
                   child: Column(
@@ -138,7 +163,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                         child: SizedBox(
                           width: 0.3.sw,
                           height: 0.46.sh,
-                          child: controller.newGoal.value.photo!.startsWith("http") 
+                          child: controller.newGoal.value.photo!.startsWith("http")
                               ? CachedNetworkImageWidget(
                                   imageUrl: controller.newGoal.value.photo!,
                                   fit: BoxFit.contain,
@@ -172,48 +197,50 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
 
   Widget _buildFormSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(height: 16.h),
-        Text('Goal Name', style: AppTextStyle.headingSmall),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.h),
-          child: KidTextField(
-            hintText: controller.newGoal.value.title,
-            onChange: (value) {
-              // Remove initial spaces but keep other spaces
-              String processedValue = value;
-              while (processedValue.startsWith(' ')) {
-                processedValue = processedValue.substring(1);
-              }
-              controller.setTitle(processedValue);
-            },
-          ),
-        ),
-        Text('Amount', style: AppTextStyle.headingSmall),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.h),
-          child: KidTextField(
-            maxlength: 8,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            hintText: controller.newGoal.value.targetAmount.toString(),
-            onChange: (value) {
-              controller.setAmount(double.tryParse(value) ?? 0.0);
-            },
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Goal Name', style: AppTextStyle.headingSmall),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: KidTextField(
+                hintText: controller.newGoal.value.title,
+                onChange: (value) {
+                  // Remove initial spaces but keep other spaces
+                  String processedValue = value;
+                  while (processedValue.startsWith(' ')) {
+                    processedValue = processedValue.substring(1);
+                  }
+                  controller.setTitle(processedValue);
+                },
+              ),
+            ),
+            Text('Amount', style: AppTextStyle.headingSmall),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: KidTextField(
+                maxlength: 8,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                hintText: controller.newGoal.value.targetAmount.toString(),
+                onChange: (value) {
+                  controller.setAmount(double.tryParse(value) ?? 0.0);
+                },
+              ),
+            ),
+          ],
         ),
         Stack(
           clipBehavior: Clip.none,
           children: [
             Align(
-              alignment: Alignment.bottomRight,
+              alignment: Alignment.centerRight,
               child: KidButton(
                 key: _createGoalKey,
                 onTap: () async {
-                  await controller.analytics
-                      .buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
-
+                  await controller.analytics.buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                   showPointer.value = false;
                   await SharedPreferencesHelper.saveBool(
@@ -249,7 +276,6 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             }),
           ],
         ),
-        SizedBox(height: 8.h),
       ],
     );
   }
@@ -285,11 +311,9 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
     switch (controller.screenMode.value) {
       case GoalSummaryScreenMode.create:
         controller.createNewGoal();
-        print("button called createNewGoal");
         break;
       case GoalSummaryScreenMode.edit:
         controller.updateGoal();
-        print("button called updateGoal");
         break;
     }
   }

@@ -253,7 +253,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                               controller.screenMode.value = GoalSummaryScreenMode.edit;
                               controller.newGoal.value = goal;
                               controller.oldGoal.value = goal;
-                              Get.toNamed(Routes.kidGoalSummary);
+                              Get.toNamed(Routes.kidGoalSummary,arguments: false.obs);
                             },
                           ),
                           SizedBox(width: 40.w),

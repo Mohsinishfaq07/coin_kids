@@ -140,7 +140,7 @@ class KidAppBarController extends GetxController {
   void configureForGoalSetup() {
     showBackButton.value = true;
     showProfile.value = false;
-    showTitle.value = false;
+    showTitle.value = true;
     showSearch.value = false;
     showSpendingCard.value = true;
     showCoinKidsCard.value = true;

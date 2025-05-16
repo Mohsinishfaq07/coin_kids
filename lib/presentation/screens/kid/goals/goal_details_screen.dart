@@ -3,10 +3,13 @@ import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
+import 'package:coin_kids/presentation/components/kid/kid_background.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_card.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_widget.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart' show GoalTimelineWidget;
 import 'package:flutter/material.dart';
@@ -24,7 +27,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.appBar.configureForGoalSetup();
+      controller.appBarController.configureForGoalSetup();
     });
 
     return Scaffold(
@@ -32,7 +35,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
       appBar: KidAppBarComponent(
         onBackPressed: () async {
           await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsProgressScreen);
-          controller.appBar.resetToDefault();
+          controller.appBarController.resetToDefault();
           Get.back();
         },
       ),

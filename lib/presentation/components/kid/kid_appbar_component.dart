@@ -86,13 +86,9 @@ class KidAppBarComponent extends GetView<KidAppBarController>
           Get.offAllNamed(Routes.signIn);
           return SizedBox.shrink();
         }
-
         return AppBar(
-
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0.0,
-
-
           elevation: 0.0,
           automaticallyImplyLeading: false,
           title: Padding(

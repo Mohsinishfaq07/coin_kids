@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'goal_summary_screen.dart';
 import 'widgets/no_goals_widget.dart';
 
 class KidGoalsScreen extends GetView<KidGoalsController> {
@@ -135,9 +136,15 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     child: KidButton(
                       baseColor: AppColors.btnColorOrange,
                       text: 'Add Goal',
-                      onTap: ()async {
-                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameScreenClicked,AnalyticsScreenNames.kidGoalsScreen,AnalyticsScreenNames.kidGoalsNameScreen);
-                        Get.toNamed(Routes.kidAddGoalName);
+                      onTap: () async {
+                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameScreenClicked,
+                            AnalyticsScreenNames.kidGoalsScreen, AnalyticsScreenNames.kidGoalsNameScreen);
+                        
+                        // Reset the controller state for a new goal
+                        controller.screenMode.value = GoalSummaryScreenMode.create;
+                        controller.resetNewGoal();
+                        
+                        Get.toNamed(Routes.kidGoalSummary, arguments: true);
                       },
                       iconPath: Assets.icAdd,
                     ),

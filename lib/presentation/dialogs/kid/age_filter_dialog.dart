@@ -21,6 +21,8 @@ class AgeFilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLandScape = Get.width > Get.height;
+    // Create a local RxList to track selections
+    final RxList<AgeRange> currentSelection = RxList<AgeRange>.from(selectedRanges);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -54,41 +56,42 @@ class AgeFilterDialog extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 16.h),
-                Wrap(
+                Obx(() => Wrap(
                   spacing: 12.w,
                   runSpacing: 12.h,
                   alignment: WrapAlignment.center,
                   children: AgeRange.values.map((range) {
-                    final isSelected = selectedRanges.contains(range);
+                    final isSelected = currentSelection.contains(range);
                     return GestureDetector(
                       onTap: () {
-                        List<AgeRange> newSelection = List.from(selectedRanges);
-                        
                         // Handle the special case for "All Ages"
                         if (range == AgeRange.all) {
                           // If "All Ages" is being selected, clear all other selections
                           if (!isSelected) {
-                            newSelection.clear();
-                            newSelection.add(range);
+                            currentSelection.clear();
+                            currentSelection.add(range);
+                            onSelect(currentSelection.toList());
+                            Get.back();
                           } else {
                             // If "All Ages" is being deselected, just remove it
-                            newSelection.remove(range);
+                            currentSelection.remove(range);
+                            onSelect(currentSelection.toList());
                           }
                         } else {
                           // For other age ranges
                           if (isSelected) {
                             // If this range is already selected, just remove it
-                            newSelection.remove(range);
+                            currentSelection.remove(range);
                           } else {
                             // If selecting a specific range, remove "All Ages" if present
-                            newSelection.remove(AgeRange.all);
+                            currentSelection.remove(AgeRange.all);
                             // Then add the selected range
-                            newSelection.add(range);
+                            currentSelection.add(range);
                           }
                         }
                         
-                        onSelect(newSelection);
-                        Get.back();
+                        // Always call onSelect and dismiss the dialog
+                        onSelect(currentSelection.toList());
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -110,7 +113,7 @@ class AgeFilterDialog extends StatelessWidget {
                       ),
                     );
                   }).toList(),
-                ),
+                )),
                 SizedBox(height: 16.h),
               ],
             ),

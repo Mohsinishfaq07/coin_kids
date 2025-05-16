@@ -18,7 +18,7 @@ class AddGoalNameScreen extends GetView<KidGoalsController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.appBar.configureForGoalSetup();
+      controller.appBarController.configureForGoalSetup();
     });
 
     return Scaffold(
