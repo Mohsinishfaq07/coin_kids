@@ -1,4 +1,5 @@
 import 'package:coin_kids/core/constants/analytics_constants.dart';
+import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
@@ -6,12 +7,17 @@ import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/goal_service.dart';
 import 'package:coin_kids/data/remote_services/wishlist_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
+import 'package:coin_kids/generated_assets/assets.dart';
+
 
 class KidWishlistController extends GetxController {
   final WishlistService _wishlistService = Get.find<WishlistService>();
@@ -76,26 +82,50 @@ class KidWishlistController extends GetxController {
   // }
   // void addToGoal(MarketProductModel product) async {
     void addToGoal(WishlistModel item) async {
-
       showLoadingDialog("Adding to Goal");
 
-    try {
-      final goalId = await goalService.addToGoalsWithProduct(item.product!);
+      try {
+        final goalId = await goalService.addToGoalsWithProduct(item.product!);
 
-      if (goalId == null) {
-        ToastUtil.showToast("Fail to add Goal");
-        return;
+        if (goalId == null) {
+          Get.back(); // Close loading dialog
+          ToastUtil.showToast("Failed to add Goal");
+          return;
+        }
+
+        Get.back(); // Close loading dialog
+
+        // Show success dialog
+        await KidDialogWithCross.show(
+          emoji: Assets.icClap,
+          title: 'Goal Created!',
+          subtitle: 'The goal was added \n successfully',
+          buttons: [
+            KidButton(
+              text: 'See Goal',
+              onTap: () async {
+                // Get.back(); // Close success dialog
+                // Navigate to base screen first
+                Get.until((route) => route.settings.name == Routes.kidBase);
+                // Then navigate to goal details
+                Get.toNamed(
+                  Routes.kidGoalDetailsScreen,
+                  arguments: goalId
+                );
+              },
+              baseColor: AppColors.btnColorGreen,
+            ),
+          ],
+        );
+
+      } catch (e) {
+        Get.back(); // Close loading dialog
+        Get.log(e.toString(), isError: true);
+        ToastUtil.showToast("Failed to add Goal");
+        Get.until((route) => route.settings.name == Routes.kidBase);
       }
-      Get.back();
-
-      ToastUtil.showToast("Goal Added");
-    } catch (e) {
-      Get.log(e.toString(), isError: true);
-      ToastUtil.showToast("Fail to add Goal");
-    } finally {
-    //  Get.until((route) => route.settings.name == Routes.kidBase);
     }
-  }
+
   Future<void> completeWishListTutorial() async {
     Get.log("Completing wishlist close tutorial");
     showPointer.value = false;

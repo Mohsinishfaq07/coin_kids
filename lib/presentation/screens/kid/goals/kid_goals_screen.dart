@@ -25,13 +25,17 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
   final RxBool showPointer = true.obs;
 
   Future<void> _checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ??
+        false;
     showPointer.value = !hasSeenTutorial;
   }
 
-
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.appBarController.configureForHome();
+    });
     controller.startListeningToGoals(currentKidId);
 
     return LayoutBuilder(
@@ -47,7 +51,6 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
           height: constraints.maxHeight,
           child: Stack(
             children: [
-
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Obx(() {
@@ -80,52 +83,56 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                             key: index == 0 ? GlobalKeys.firstGoalKey : null,
                             goal: goal,
                             isConnected:
-                                controller.currentKid.value?.isConnected ?? false,
+                                controller.currentKid.value?.isConnected ??
+                                    false,
                           );
                         },
                       ),
-                      Obx(() {
-                        if (controller.showPointer.value && controller.goals.isNotEmpty) {
-                          return Positioned(
-                            left: 80.w,
-                            top: 20,
-                            bottom: 10.h,
-                            child: HandPointerOverlay(
-                              targetKey: GlobalKeys.firstGoalKey,
-                              onTap: () async {
-                                controller.showPointer.value = false;
-                                await SharedPreferencesHelper.saveBool(
-                                  SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial,
-                                  true,
-                                );
-                              },
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
+                      // Obx(() {
+                      //   if (controller.showPointer.value &&
+                      //       controller.goals.isNotEmpty) {
+                      //     return Positioned(
+                      //       left: 80.w,
+                      //       top: 20,
+                      //       bottom: 10.h,
+                      //       child: HandPointerOverlay(
+                      //         targetKey: GlobalKeys.firstGoalKey,
+                      //         onTap: () async {
+                      //           controller.showPointer.value = false;
+                      //           await SharedPreferencesHelper.saveBool(
+                      //             SharedPreferencesHelper
+                      //                 .hasSeenGoalsListInGoalScreenTutorial,
+                      //             true,
+                      //           );
+                      //         },
+                      //       ),
+                      //     );
+                      //   }
+                      //   return const SizedBox.shrink();
+                      // }),
                     ],
                   );
                 }),
               ),
-              Obx(() => controller.showPointer.value 
-                ? Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTapDown: (_) async {
-                        controller.showPointer.value = false;
-                        await SharedPreferencesHelper.saveBool(
-                          SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial,
-                          true,
-                        );
-                      },
-                      child: Container(
-                        color: Colors.transparent, // Changed from green to transparent
+              Obx(() => controller.showPointer.value
+                  ? Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTapDown: (_) async {
+                          controller.showPointer.value = false;
+                          await SharedPreferencesHelper.saveBool(
+                            SharedPreferencesHelper
+                                .hasSeenGoalsListInGoalScreenTutorial,
+                            true,
+                          );
+                        },
+                        child: Container(
+                          color: Colors
+                              .transparent, // Changed from green to transparent
+                        ),
                       ),
-                    ),
-                  )
-                : const SizedBox.shrink()
-              ),
+                    )
+                  : const SizedBox.shrink()),
               // Add Goal Button
               Obx(() {
                 return Visibility(
@@ -137,13 +144,16 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                       baseColor: AppColors.btnColorOrange,
                       text: 'Add Goal',
                       onTap: () async {
-                        await controller.analytics.buttonClicked(AnalyticsEventNames.goalNameScreenClicked,
-                            AnalyticsScreenNames.kidGoalsScreen, AnalyticsScreenNames.kidGoalsNameScreen);
-                        
+                        await controller.analytics.buttonClicked(
+                            AnalyticsEventNames.goalNameScreenClicked,
+                            AnalyticsScreenNames.kidGoalsScreen,
+                            AnalyticsScreenNames.kidGoalsNameScreen);
+
                         // Reset the controller state for a new goal
-                        controller.screenMode.value = GoalSummaryScreenMode.create;
+                        controller.screenMode.value =
+                            GoalSummaryScreenMode.create;
                         controller.resetNewGoal();
-                        
+
                         Get.toNamed(Routes.kidGoalSummary, arguments: true);
                       },
                       iconPath: Assets.icAdd,

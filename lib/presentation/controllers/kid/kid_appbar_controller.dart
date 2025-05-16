@@ -49,8 +49,8 @@ class KidAppBarController extends GetxController {
     showProfile.value = true;
     showTitle.value = false;
     showSearch.value = false;
-    showSpendingCard.value = true;
-    showCoinKidsCard.value = true;
+    showSpendingCard.value = false;
+    showCoinKidsCard.value = false;
     showTotalCard.value = true;
   }
 
@@ -101,8 +101,8 @@ class KidAppBarController extends GetxController {
     showBackButton.value = false;
     showProfile.value = true;
     showTitle.value = false;
-    showSpendingCard.value = true;
-    showCoinKidsCard.value = true;
+    // showSpendingCard.value = true;
+    // showCoinKidsCard.value = true;
     showTotalCard.value = true;
     showSearch.value = false;
     searchQuery.value = '';

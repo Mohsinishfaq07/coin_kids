@@ -54,39 +54,41 @@ class KidDialog extends StatelessWidget {
             ),
             decoration: BoxDecoration(
                 color: backgroundColor ?? AppColors.colorPrimary, borderRadius: BorderRadius.circular(24.r), image: DecorationImage(image: AssetImage(Assets.kidDialogBgPng), fit: BoxFit.fill)),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyle.headingLarge.copyWith(
-                    color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyle.headingLarge.copyWith(
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  subtitle,
-                  style: AppTextStyle.headingSmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
+                  SizedBox(height: 4.h),
+                  Text(
+                    subtitle,
+                    style: AppTextStyle.headingSmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (extraContent != null) ...[
+                  if (extraContent != null) ...[
+                    SizedBox(height: 8.h),
+                    extraContent!,
+                  ],
                   SizedBox(height: 8.h),
-                  extraContent!,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: buttons,
+                  ),
                 ],
-                SizedBox(height: 8.h),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: buttons,
-                ),
-              ],
+              ),
             ),
           ),
 
@@ -211,3 +213,168 @@ class KidDialog extends StatelessWidget {
 //     ],
 //   );
 // }
+
+// Add this new class after the KidDialog class
+class KidDialogWithCross extends StatelessWidget {
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final Widget? extraContent;
+  final List<Widget> buttons;
+  final Color? backgroundColor;
+  final double width;
+  final double emojiSize;
+  final EdgeInsets contentPadding;
+  final VoidCallback? onClose;
+
+  const KidDialogWithCross({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    this.extraContent,
+    required this.buttons,
+    this.backgroundColor,
+    this.width = 0.8,
+    this.emojiSize = 60,
+    this.contentPadding = const EdgeInsets.all(24),
+    this.onClose,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          // Dialog content container
+          Container(
+            constraints: BoxConstraints(
+              minWidth: 350.w,
+            ),
+            margin: EdgeInsets.only(top: emojiSize.r / 2),
+            padding: EdgeInsets.only(
+              left: contentPadding.left,
+              right: contentPadding.right,
+              top: contentPadding.top + (emojiSize.r / 2),
+              bottom: contentPadding.bottom / 1.5,
+            ),
+            decoration: BoxDecoration(
+              color: backgroundColor ?? AppColors.colorPrimary,
+              borderRadius: BorderRadius.circular(24.r),
+              image: DecorationImage(
+                image: AssetImage(Assets.kidDialogBgPng),
+                fit: BoxFit.fill
+              )
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyle.headingLarge.copyWith(
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    subtitle,
+                    style: AppTextStyle.headingSmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (extraContent != null) ...[
+                    SizedBox(height: 8.h),
+                    extraContent!,
+                  ],
+                  SizedBox(height: 8.h),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: buttons,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Emoji at the top
+          Positioned(
+            top: 0,
+            child: emoji.endsWith("svg")
+                ? SvgPicture.asset(
+                    emoji,
+                    height: emojiSize,
+                    width: emojiSize,
+                  )
+                : Image.asset(
+                    emoji,
+                    height: emojiSize,
+                    width: emojiSize,
+                  ),
+          ),
+
+          // Close button
+          Positioned(
+            top: emojiSize.r / 2 + 10,
+            right: 10,
+            child: KidButton.iconOnly(
+              onTap: () {
+                if (onClose != null) {
+                  onClose!();
+                } else {
+                  Get.back();
+                }
+              },
+              baseColor: AppColors.btnColorOrange,
+              iconPath: Assets.icCross,
+              size: 30.w,
+              iconSize: 16.w,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Static method to show the dialog
+  static Future<T?> show<T>({
+    required String emoji,
+    required String title,
+    required String subtitle,
+    Widget? extraContent,
+    required List<Widget> buttons,
+    Color? backgroundColor,
+    double width = 0.8,
+    double emojiSize = 60,
+    EdgeInsets contentPadding = const EdgeInsets.all(24),
+    bool dismissible = false,
+    VoidCallback? onClose,
+  }) {
+    return Get.dialog<T>(
+      KidDialogWithCross(
+        emoji: emoji,
+        title: title,
+        subtitle: subtitle,
+        extraContent: extraContent,
+        buttons: buttons,
+        backgroundColor: backgroundColor ?? AppColors.colorPrimary,
+        width: width,
+        emojiSize: emojiSize,
+        contentPadding: contentPadding,
+        onClose: onClose,
+      ),
+      barrierDismissible: dismissible,
+    );
+  }
+}

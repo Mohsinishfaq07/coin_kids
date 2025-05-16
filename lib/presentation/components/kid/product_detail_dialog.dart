@@ -4,12 +4,15 @@ import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -147,106 +150,6 @@ class ProductDetailDialog extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 6.h),
-
-                          //  Amazon Card
-                          //   Container(
-                          //     decoration: BoxDecoration(
-                          //       borderRadius: BorderRadius.circular(12.r),
-                          //       boxShadow: [
-                          //         BoxShadow(
-                          //           color: Colors.black.withValues(alpha: 0.05),
-                          //           blurRadius: 10,
-                          //           offset: const Offset(0, -2),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     child: Material(
-                          //       color: Colors.white,
-                          //       borderRadius: BorderRadius.circular(12.r),
-                          //       child: InkWell(
-                          //         onTap: () async {
-                          //           await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAmazonCardClicked,
-                          //               AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
-                          //
-                          //           // ParentPinDialog.show(
-                          //           //   onPinSubmit: (pin) async {
-                          //           //     // Make this async
-                          //           //
-                          //           //     final birthYear = int.tryParse(pin);
-                          //           //     final currentYear = DateTime.now().year;
-                          //           //     final age = currentYear - birthYear!;
-                          //           //     if (age >= 21 && age <= 80) {
-                          //           //       // Update the PIN in parent state
-                          //           //       final updatedParent = appState.currentParent.value?.copyWith(pin: pin);
-                          //           //       if (updatedParent != null) {
-                          //           //         appState.currentParent.value = updatedParent;
-                          //           //         // await _launchProductUrl(product.url);
-                          //           //         Get.back();
-                          //           //         await _launchProductUrl(product.url);
-                          //           //         // Navigator.of(Get.overlayContext!, rootNavigator: true).pop();
-                          //           //       }
-                          //           //     } else {
-                          //           //       Fluttertoast.showToast(
-                          //           //         msg: "Please enter a valid birth year (age must be between 21-80)",
-                          //           //         backgroundColor: Colors.red,
-                          //           //         textColor: Colors.white,
-                          //           //       );
-                          //           //     }
-                          //           //   },
-                          //           // );
-                          //         },
-                          //
-                          //         borderRadius: BorderRadius.circular(12.r),
-                          //         child: Padding(
-                          //           padding: EdgeInsets.all(16.w),
-                          //           child: Column(
-                          //             children: [
-                          //               Row(
-                          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //                 children: [
-                          //                   Image.asset(
-                          //                     Assets.amazon,
-                          //                     width: 92.w,
-                          //                   ),
-                          //                   Text(
-                          //                     '€${product.price.toStringAsFixed(2)}',
-                          //                     style: AppTextStyle.headingLarge,
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //               SizedBox(height: 8.h),
-                          //               Row(
-                          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //                 crossAxisAlignment: CrossAxisAlignment.end,
-                          //                 children: [
-                          //                   Expanded(
-                          //                     child: Text(
-                          //                       'Free delivery by Amazon.\nOrder within 2 days.',
-                          //                       style: AppTextStyle.bodyLarge,
-                          //                       maxLines: 2,
-                          //                     ),
-                          //                   ),
-                          //                   Container(
-                          //                     padding: EdgeInsets.all(1.w),
-                          //                     decoration: BoxDecoration(
-                          //                       color: AppColors.textPrimary,
-                          //                       borderRadius: BorderRadius.circular(8.r),
-                          //                     ),
-                          //                     child: Icon(
-                          //                       Icons.navigate_next,
-                          //                       color: Colors.white,
-                          //                       size: 24.sp,
-                          //                     ),
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //             ],
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          //
                             Align(
                               alignment: Alignment.centerRight,
                               child: Column(
@@ -261,11 +164,18 @@ class ProductDetailDialog extends StatelessWidget {
                                   KidButton(
                                     key: _addToGoalKey,
                                     onTap: () async {
-                                      await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAddToGoalClicked,
-                                          AnalyticsScreenNames.kidMarketProductDetailScreenDialog, AnalyticsScreenNames.kidMarketScreen);
+                                      // First close the product detail dialog
+
+                                      await analytics.buttonClicked(
+                                          AnalyticsEventNames.marketProductDetailAddToGoalClicked,
+                                          AnalyticsScreenNames.kidMarketProductDetailScreenDialog,
+                                          AnalyticsScreenNames.kidMarketScreen
+                                      );
 
                                       showPointer.value = false;
                                       onAddToGoal();
+                                      // Then show the success dialog
+
                                     },
                                     text: 'Add to Goal ',
                                     baseColor: AppColors.btnColorOrange,
@@ -348,21 +258,4 @@ class ProductDetailDialog extends StatelessWidget {
     );
   }
 
-  Future<void> _launchProductUrl(String url) async {
-    final Uri uri = Uri.parse(url);
-    try {
-      if (!await launchUrl(uri)) {
-        throw Exception('Could not launch $url');
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Could not open product link',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
-    }
-  }
 }

@@ -9,9 +9,9 @@ import 'package:coin_kids/presentation/components/common/cached_network_image_wi
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/kid_background.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_card.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_widget.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart' show GoalTimelineWidget;
+import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart'
+    show GoalTimelineWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,20 +34,14 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
       resizeToAvoidBottomInset: false,
       appBar: KidAppBarComponent(
         onBackPressed: () async {
-          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsProgressScreen);
           controller.appBarController.resetToDefault();
-          Get.back();
+          await controller.analytics
+              .backPressClicked(AnalyticsScreenNames.kidGoalsProgressScreen);
+          Get.until((route) => route.settings.name == Routes.kidBase);
         },
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.background,
-          image: const DecorationImage(
-            image: AssetImage(Assets.kidBg),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: KidBackground(
         child: Obx(() {
           try {
             var goal = controller.goals.firstWhere((item) => item.id == goalId);
@@ -64,13 +58,15 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
                     ),
                   ),
                 ),
-                // Right side with controls
-
-                //
 
                 Expanded(
-                  child: goal.savedAmount != goal.targetAmount ? GoalProgressWidget(goal) : GoalTimelineWidget(goal: goal),
-                  // child: GoalTimelineScreen(goal: goal),
+                  child: goal.savedAmount != goal.targetAmount
+                      ? GoalProgressWidget(
+                          goal,
+                          key: ValueKey(
+                              'progress-${goal.id}-${DateTime.now().millisecondsSinceEpoch}'),
+                        )
+                      : GoalTimelineWidget(goal: goal),
                 ),
               ],
             );

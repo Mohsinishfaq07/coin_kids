@@ -58,13 +58,13 @@ class VerticalNavBarController extends GetxController {
       _initializeGoalsIfNeeded();
       completeGoalsTutorial();
       await analytics.buttonClicked(AnalyticsEventNames.kidGoalsNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
-      appBarController.resetToDefault();
+      appBarController.configureForHome();
     } else if (index == 2) {
       appBarController.configureForMarket();
       await analytics.buttonClicked(AnalyticsEventNames.kidMarketNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
 
     } else {
-      appBarController.resetToDefault();
+      appBarController.configureForHome();
       await analytics.buttonClicked(AnalyticsEventNames.kidHomeNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
 
     }

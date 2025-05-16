@@ -13,6 +13,7 @@ import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,11 +31,11 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   }) {
     // Get the argument passed to the screen
     final dynamic arg = Get.arguments;
-    
+
     // Check if it's a boolean or RxBool and set the controller value accordingly
     if (arg is bool) {
       controller.shouldResetAppBar.value = arg;
-      
+
       // If coming from the goals list screen (shouldResetAppBar is true),
       // we're creating a new goal
       if (arg == true) {
@@ -44,7 +45,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
     } else if (arg is RxBool) {
       controller.shouldResetAppBar.value = arg.value;
     }
-    
+
     _checkTutorialState();
   }
 
@@ -52,8 +53,11 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
   final RxBool showPointer = true.obs;
 
   Future<void> _checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenCreateGoalTutorial) ?? false;
-    showPointer.value = !hasSeenTutorial && controller.screenMode.value == GoalSummaryScreenMode.create;
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenCreateGoalTutorial) ??
+        false;
+    showPointer.value = !hasSeenTutorial &&
+        controller.screenMode.value == GoalSummaryScreenMode.create;
   }
 
   @override
@@ -65,29 +69,29 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
       // resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: KidAppBarComponent(
-        title: controller.screenMode.value == GoalSummaryScreenMode.create
-            ? 'Create Goal'
-            : 'Edit Goal',
-        onBackPressed: () async {
-          await controller.analytics.backPressClicked(AnalyticsScreenNames.kidGoalsSummaryScreen);
-          
-          // Only reset if shouldResetAppBar is true
-          if (controller.shouldResetAppBar.value) {
-            controller.appBarController.resetToDefault();
+          title: controller.screenMode.value == GoalSummaryScreenMode.create
+              ? 'Create Goal'
+              : 'Edit Goal',
+          onBackPressed: () async {
+            await controller.analytics
+                .backPressClicked(AnalyticsScreenNames.kidGoalsSummaryScreen);
 
-          }
+            // Only reset if shouldResetAppBar is true
+            if (controller.shouldResetAppBar.value) {
+              controller.appBarController.resetToDefault();
+            }
 
-          bool hasContent = controller.newGoal.value.title.isNotEmpty ||
-              controller.newGoal.value.targetAmount > 0 ||
-              (controller.newGoal.value.photo != null &&
-                  controller.newGoal.value.photo!.isNotEmpty);
-          if (hasContent) {
-            controller.resetNewGoal();
-            controller.removePhoto();
-          }
-          
-          Get.back();
-        }),
+            bool hasContent = controller.newGoal.value.title.isNotEmpty ||
+                controller.newGoal.value.targetAmount > 0 ||
+                (controller.newGoal.value.photo != null &&
+                    controller.newGoal.value.photo!.isNotEmpty);
+            if (hasContent) {
+              controller.resetNewGoal();
+              controller.removePhoto();
+            }
+
+            Get.back();
+          }),
       body: GestureDetector(
         onTap: () async {
           FocusScope.of(context).unfocus();
@@ -124,7 +128,8 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: AppColors.cardBorder, width: 2.w),
         ),
-        child: controller.newGoal.value.photo == null || controller.newGoal.value.photo!.isEmpty
+        child: controller.newGoal.value.photo == null ||
+                controller.newGoal.value.photo!.isEmpty
             ? Padding(
                 padding: EdgeInsets.all(12.h),
                 child: Column(
@@ -161,15 +166,16 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
                       child: SizedBox(
                         width: 0.3.sw,
                         height: 0.46.sh,
-                        child: controller.newGoal.value.photo!.startsWith("http")
-                            ? CachedNetworkImageWidget(
-                                imageUrl: controller.newGoal.value.photo!,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.file(
-                                File(controller.newGoal.value.photo!),
-                                fit: BoxFit.cover,
-                              ),
+                        child:
+                            controller.newGoal.value.photo!.startsWith("http")
+                                ? CachedNetworkImageWidget(
+                                    imageUrl: controller.newGoal.value.photo!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.file(
+                                    File(controller.newGoal.value.photo!),
+                                    fit: BoxFit.cover,
+                                  ),
                       ),
                     ),
                   ),
@@ -236,18 +242,20 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                padding:  EdgeInsets.only(top: 12.h),
+                padding: EdgeInsets.only(top: 12.h),
                 child: KidButton(
                   key: _createGoalKey,
                   onTap: () async {
-                    await controller.analytics.buttonClicked(AnalyticsEventNames.goalCreated, AnalyticsScreenNames.kidGoalsSummaryScreen);
+                    await controller.analytics.buttonClicked(
+                        AnalyticsEventNames.goalCreated,
+                        AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                     showPointer.value = false;
                     await SharedPreferencesHelper.saveBool(
                       SharedPreferencesHelper.hasSeenCreateGoalTutorial,
                       true,
                     );
-                    _handleButtonPress();
+                    await _handleButtonPress();
                   },
                   text: _getButtonText(),
                   baseColor: AppColors.btnColorGreen,
@@ -290,7 +298,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
     }
   }
 
-  void _handleButtonPress() {
+  Future<void> _handleButtonPress() async {
     // Validate goal name is not empty
     if (controller.newGoal.value.title.isEmpty) {
       ToastUtil.showToast("Goal name cannot be empty");
@@ -311,10 +319,10 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
 
     switch (controller.screenMode.value) {
       case GoalSummaryScreenMode.create:
-        controller.createNewGoal();
+        await controller.createNewGoal();
         break;
       case GoalSummaryScreenMode.edit:
-        controller.updateGoal();
+        await controller.updateGoal();
         break;
     }
   }

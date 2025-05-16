@@ -10,7 +10,6 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
-import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -171,25 +170,25 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                     );
                                   },
                                 ),
-                                Obx(() {
-                                  if (showPointer.value) {
-                                    return Positioned(
-                                      left: 10.w,
-                                      bottom: -10.h,
-                                      child: HandPointerOverlay(
-                                        targetKey: GlobalKeys.sliderKey,
-                                        onTap: () async {
-                                          showPointer.value = false;
-                                          await SharedPreferencesHelper.saveBool(
-                                            SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                                            true,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                }),
+                                // Obx(() {
+                                //   if (showPointer.value) {
+                                //     return Positioned(
+                                //       left: 10.w,
+                                //       bottom: -10.h,
+                                //       child: HandPointerOverlay(
+                                //         targetKey: GlobalKeys.sliderKey,
+                                //         onTap: () async {
+                                //           showPointer.value = false;
+                                //           await SharedPreferencesHelper.saveBool(
+                                //             SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                                //             true,
+                                //           );
+                                //         },
+                                //       ),
+                                //     );
+                                //   }
+                                //   return const SizedBox.shrink();
+                                // }),
                               ],
                             ),
                           ],
@@ -312,25 +311,25 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
                         },
                       ),
-                      Obx(() {
-                        if (showDoneButtonPointer.value) {
-                          return Positioned(
-                            right: 10.w,
-                            bottom: -10.h,
-                            child: HandPointerOverlay(
-                              targetKey: GlobalKeys.doneButtonKey,
-                              onTap: () async {
-                                showDoneButtonPointer.value = false;
-                                await SharedPreferencesHelper.saveBool(
-                                  SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                                  true,
-                                );
-                              },
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
+                      // Obx(() {
+                      //   if (showDoneButtonPointer.value) {
+                      //     return Positioned(
+                      //       right: 10.w,
+                      //       bottom: -10.h,
+                      //       child: HandPointerOverlay(
+                      //         targetKey: GlobalKeys.doneButtonKey,
+                      //         onTap: () async {
+                      //           showDoneButtonPointer.value = false;
+                      //           await SharedPreferencesHelper.saveBool(
+                      //             SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                      //             true,
+                      //           );
+                      //         },
+                      //       ),
+                      //     );
+                      //   }
+                      //   return const SizedBox.shrink();
+                      // }),
                     ],
                   ),
                 ],

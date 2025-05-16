@@ -38,12 +38,9 @@ class KidGoalsController extends GetxController {
   final appState = Get.find<AppStateController>();
   final _goalService = Get.find<GoalService>();
   final _kidService = Get.find<KidService>();
-  final  _roleController = Get.find<RoleController>();
+  final _roleController = Get.find<RoleController>();
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
   final analytics = Get.find<AnalyticsService>();
-
-
-
 
   final TextEditingController textController = TextEditingController();
 
@@ -74,9 +71,6 @@ class KidGoalsController extends GetxController {
   //   final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial) ?? false;
   //   showPointer.value = !hasSeenTutorial;
   // }
-
-
-
 
   void switchToParentMode() {
     final isKidConnected = currentKid.value?.isConnected ?? false;
@@ -248,7 +242,8 @@ class KidGoalsController extends GetxController {
       });
 
       ToastUtil.showToast('Goal deleted successfully');
-      appBarController.resetToDefault(); // Reset app bar after successful deletion
+      appBarController
+          .resetToDefault(); // Reset app bar after successful deletion
     } catch (e) {
       Get.log('Error deleting goal: $e');
       ToastUtil.showToast('Failed to delete goal');
@@ -325,49 +320,51 @@ class KidGoalsController extends GetxController {
 
       // Store the goal title to identify it later
       final goalTitle = goal.title;
-      
+
       // Pass isFirstGoal flag to createGoal
       await _goalService.createGoal(goal, isFirstGoal);
 
       // Handle first goal case with dialog
-      if (isFirstGoal) {
-        final RxBool showPointer = true.obs;
+      // Get.back();
 
+      // Reset the form
+      resetNewGoal();
+
+      // Reset app bar if needed
+      // if (shouldResetAppBar.value) {
+      //   appBarController.resetToDefault();
+      // }
+
+      // Wait a moment for the goal to be added to the database and streamed back
+      await Future.delayed(Duration(milliseconds: 500));
+
+      // Find the goal with the matching title in our goals list
+      final createdGoal = goals.firstWhereOrNull((g) =>
+          g.title == goalTitle &&
+          g.targetAmount == goal.targetAmount &&
+          g.createdAt.isAfter(DateTime.now().subtract(Duration(minutes: 1))));
+
+      if (createdGoal != null) {
         KidDialog.show(
-          emoji: Assets.icCoinStar,
-          title: 'WoW',
-          subtitle: 'You unlock CoinKids bar and receive\nyour first Goal',
-          extraContent: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // SvgPicture.asset(
-              //   Assets.icCoinStar,
-              //   width: 20.w,
-              //   height: 20.w,
-              // ),
-              SizedBox(width: 4.w),
-              // Text("+2 CoinKids",
-              //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
-            ],
-          ),
+          emoji: Assets.icClap,
+          title: 'Goal Created!',
+          subtitle: 'The goal was added \n successfully',
           buttons: [
             Stack(
               clipBehavior: Clip.none,
               children: [
                 KidButton(
                   key: GlobalKeys.okButtonKey,
-                  text: 'Ok',
+                  text: 'See Goal',
                   onTap: () async {
                     showPointer.value = false;
                     await SharedPreferencesHelper.saveBool(
                       SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
                       true,
                     );
-                    if (shouldResetAppBar.value) {
-                      appBarController.resetToDefault();
-                    }
 
-                    Get.until((route) => route.settings.name == Routes.kidBase);
+                    Get.offNamed(Routes.kidGoalDetailsScreen,
+                        arguments: createdGoal.id);
                   },
                   baseColor: AppColors.btnColorGreen,
                 ),
@@ -381,7 +378,8 @@ class KidGoalsController extends GetxController {
                         onTap: () async {
                           showPointer.value = false;
                           await SharedPreferencesHelper.saveBool(
-                            SharedPreferencesHelper.hasSeenFirstGoalDialogTutorial,
+                            SharedPreferencesHelper
+                                .hasSeenFirstGoalDialogTutorial,
                             true,
                           );
                         },
@@ -394,36 +392,9 @@ class KidGoalsController extends GetxController {
             ),
           ],
         );
-
-        resetNewGoal();
-        return;
       } else {
-        // For regular goals, close the loading dialog
-        Get.back();
-        
-        // Reset the form
-        resetNewGoal();
-        
-        // Reset app bar if needed
-        if (shouldResetAppBar.value) {
-          appBarController.resetToDefault();
-        }
-        
-        // Wait a moment for the goal to be added to the database and streamed back
-        await Future.delayed(Duration(milliseconds: 500));
-        
-        // Find the goal with the matching title in our goals list
-        final createdGoal = goals.firstWhereOrNull((g) => 
-            g.title == goalTitle && 
-            g.targetAmount == goal.targetAmount &&
-            g.createdAt.isAfter(DateTime.now().subtract(Duration(minutes: 1))));
-        
-        if (createdGoal != null) {
-          Get.offNamed(Routes.kidGoalDetailsScreen, arguments: createdGoal.id);
-        } else {
-          // Fallback if we can't find the goal
-          Get.until((route) => route.settings.name == Routes.kidBase);
-        }
+        // Fallback if we can't find the goal
+        Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       ToastUtil.showExceptionToast(e);
@@ -450,8 +421,9 @@ class KidGoalsController extends GetxController {
       // Check if saved amount equals or exceeds new target amount
       if (oldGoal.value.savedAmount >= newGoal.value.targetAmount) {
         // Calculate excess amount if any
-        final excessAmount = oldGoal.value.savedAmount - newGoal.value.targetAmount;
-        
+        final excessAmount =
+            oldGoal.value.savedAmount - newGoal.value.targetAmount;
+
         // Create updated goal with completed status
         final updatedGoal = newGoal.value.copyWith(
           userId: kid.kidId,
@@ -464,11 +436,13 @@ class KidGoalsController extends GetxController {
 
         if (excessAmount > 0) {
           // Return excess amount to spending jar
-          final newSpendingBalance = kid.wallet.spendingJar.balance + excessAmount;
+          final newSpendingBalance =
+              kid.wallet.spendingJar.balance + excessAmount;
           await _kidService.updateSpendingJar(kid.kidId, newSpendingBalance);
 
           // Show success message
-          ToastUtil.showToast('${excessAmount.toMoneyFormat()}€ returned to spending jar');
+          ToastUtil.showToast(
+              '${excessAmount.toMoneyFormat()}€ returned to spending jar');
         }
 
         // Show completion dialog
@@ -485,7 +459,6 @@ class KidGoalsController extends GetxController {
 
       resetNewGoal();
       resetOldGoal();
-
 
       Get.until((route) => route.settings.name == Routes.kidBase);
     } catch (e) {
@@ -548,22 +521,23 @@ class KidGoalsController extends GetxController {
         _showMilestoneDialog(
             "Don't Give Up!",
             "You haven't entered any amount yet. Every step counts toward your goal!",
-           // 0,
+            // 0,
             Assets.emojiSad);
-       // Get.until((route) => route.settings.name == Routes.kidBase);
-       // appBarController.resetToDefault();
+        // Get.until((route) => route.settings.name == Routes.kidBase);
+        // appBarController.resetToDefault();
         return;
       }
 
       // Check if we have enough spending balance when increasing progress
       if (difference > 0) {
         final spendingBalance = kid.wallet.spendingJar.balance;
-        if (difference > spendingBalance) { Get.back();
+        if (difference > spendingBalance) {
+          Get.back();
           // ToastUtil.showToast("Not enough money in spending jar");
           _showMilestoneDialog(
               "Insufficient Funds",
               "Your Spending Jar doesn't have enough balance",
-             // 0,
+              // 0,
               Assets.emojiSad);
 
           return;
@@ -574,7 +548,8 @@ class KidGoalsController extends GetxController {
         final returnAmount = -difference; // Make positive for display
         // _showMilestoneDialog("Great Job!",
         //     '${returnAmount.toMoneyFormat()}€ returned to spending jar', 2, Assets.icClap);
-        ToastUtil.showToast('${returnAmount.toMoneyFormat()}€ will be returned to spending jar');
+        ToastUtil.showToast(
+            '${returnAmount.toMoneyFormat()}€ will be returned to spending jar');
       }
 
       // Update the goal progress
@@ -599,28 +574,32 @@ class KidGoalsController extends GetxController {
           _showMilestoneDialog(
               "So Close!",
               "You're 75% closer to reaching your goal",
-            //  3,
+              //  3,
               Assets.icConfetti);
         } else if (percentage >= 50 && oldPercentage < 50) {
-          _showMilestoneDialog("Halfway There!", "Amazing work! Keep saving.",
+          _showMilestoneDialog(
+              "Halfway There!",
+              "Amazing work! Keep saving.",
               //2,
               Assets.icHappyStar);
         } else if (percentage >= 25 && oldPercentage < 25) {
-          _showMilestoneDialog("Great Job!",
+          _showMilestoneDialog(
+              "Great Job!",
               "You just reached your first milestone",
               //2,
               Assets.icClap);
         } else {
-          _showMilestoneDialog("Great Job!",
+          _showMilestoneDialog(
+              "Great Job!",
               "You are about to reached your first milestone",
-             // 2,
+              // 2,
               Assets.icClap);
-         // Get.until((route) => route.settings.name == Routes.kidBase);
+          // Get.until((route) => route.settings.name == Routes.kidBase);
         }
       } else {
         // _showMilestoneDialog("Great Job!",
         //     "You are about to reached your first milestone", 2, Assets.icClap);
-       // Get.until((route) => route.settings.name == Routes.kidBase);
+        // Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       Get.log('Error saving progress: $e');
@@ -654,10 +633,10 @@ class KidGoalsController extends GetxController {
   }
 
   void _showMilestoneDialog(
-      String title, String subtitle,
+      String title,
+      String subtitle,
       //int coinKids,
-      String emoji
-      ) {
+      String emoji) {
     KidDialog.show(
       emoji: emoji,
       title: title,
@@ -751,8 +730,9 @@ class KidGoalsController extends GetxController {
 
       // Show success message
 
-      ToastUtil.showToast('${excessAmount.toMoneyFormat()}€ returned to spending jar');
-      
+      ToastUtil.showToast(
+          '${excessAmount.toMoneyFormat()}€ returned to spending jar');
+
       // Show completion dialog
       showGoalCompletedDialog(goal.targetAmount);
 
@@ -763,21 +743,22 @@ class KidGoalsController extends GetxController {
       Get.log(e.toString(), isError: true);
     }
   }
+
   DateTime? _screenStartTime;
   @override
   void onInit() {
     super.onInit();
     _screenStartTime = DateTime.now();
     logScreenTime();
+    appBarController.resetToDefault();
   }
-
-
 
   Future<void> logScreenTime() async {
     if (_screenStartTime != null) {
       final endTime = DateTime.now();
       final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
-      analytics.screenTime(AnalyticsScreenNames.kidGoalsScreen,durationInSeconds.toString());
+      analytics.screenTime(
+          AnalyticsScreenNames.kidGoalsScreen, durationInSeconds.toString());
     }
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.kidGoalsScreen,

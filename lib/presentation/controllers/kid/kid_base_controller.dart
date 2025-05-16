@@ -20,16 +20,16 @@ import 'package:showcaseview/showcaseview.dart';
 class KidBaseController extends GetxController {
   // Dependencies
   final RoleController _roleController = Get.find<RoleController>();
-  final VerticalNavBarController navigationController = Get.find<VerticalNavBarController>();
+  final VerticalNavBarController navigationController =
+      Get.find<VerticalNavBarController>();
   final NotificationService _notificationService = NotificationService();
   final AppStateController appState = Get.find<AppStateController>();
-  final KidAppBarController appBarController = Get.find<KidAppBarController>();
+  final appBarController = Get.find<KidAppBarController>();
   final kidService = Get.find<KidService>();
   final analytics = Get.find<AnalyticsService>();
   RxBool isNotificationShowing = true.obs;
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
   RxBool showSavingJar = false.obs;
-
 
   // Observables
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
@@ -47,12 +47,6 @@ class KidBaseController extends GetxController {
   final RxBool showTransferPointer = true.obs;
 
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   OrientationUtils.lockToLandscape();
-  //   _initializeKid();
-  // }
 
   KidBaseController() {
     _initialize();
@@ -63,8 +57,8 @@ class KidBaseController extends GetxController {
     _initializeKid();
     _initializeGoalsTutorial();
     _initializeTransferTutorial();
-
   }
+
 
   Future<void> _initializeKid() async {
     currentKid.value = appState.currentKid.value;
@@ -82,14 +76,17 @@ class KidBaseController extends GetxController {
   }
 
   Future<void> _initializeGoalsTutorial() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalsTutorial) ?? false;
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenGoalsTutorial) ??
+        false;
     showGoalsTutorial.value = !hasSeenTutorial;
-
   }
-  Future<void> _initializeTransferTutorial() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenTransferTutorial) ?? false;
-    showTransferPointer.value = !hasSeenTutorial;
 
+  Future<void> _initializeTransferTutorial() async {
+    final hasSeenTutorial = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenTransferTutorial) ??
+        false;
+    showTransferPointer.value = !hasSeenTutorial;
   }
 
   Future<void> fetchAllNotifications() async {
@@ -161,7 +158,7 @@ class KidBaseController extends GetxController {
         try {
           ShowCaseWidget.of(context).startShowCase([moneyJarShowcaseKey]);
           showJarShowcase.value = false;
-         await  markMoneyJarShowcaseAsShown();
+          await markMoneyJarShowcaseAsShown();
         } catch (e) {
           Get.log("Error starting showcase: $e");
           // Reset initialization state on error
@@ -316,7 +313,8 @@ class KidBaseController extends GetxController {
     Get.log("Completing goals tutorial");
     showGoalsTutorial.value = false;
     navigationController.completeGoalsTutorial();
-    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenGoalsTutorial, true);
+    await SharedPreferencesHelper.saveBool(
+        SharedPreferencesHelper.hasSeenGoalsTutorial, true);
   }
 
   Future<void> markTransferTutorialAsShown() async {

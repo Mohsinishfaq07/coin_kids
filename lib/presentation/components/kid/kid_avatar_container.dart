@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/circle_avatar_widget.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +16,9 @@ class KidAvatarContainer extends StatelessWidget {
   });
 
   String getKidAvatar(String localPath) {
-    return File(localPath).existsSync() ? localPath : Assets.icAvatarPlaceholder;
+    return File(localPath).existsSync()
+        ? localPath
+        : Assets.icAvatarPlaceholder;
   }
 
   @override
@@ -43,14 +43,15 @@ class KidAvatarContainer extends StatelessWidget {
                     topRight: Radius.circular(10.r),
                     bottomRight: Radius.circular(10.r),
                   ),
-                  border: Border.all(color: const Color(0xff0095e5), width: 2.w),
+                  border:
+                      Border.all(color: const Color(0xff0095e5), width: 2.w),
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(left: iconSize / 2, right: 10.w),
                   child: Text(
                     kidName,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color:AppColors.textOnPrimary,fontSize: 18.sp),
+                        color: AppColors.textOnPrimary, fontSize: 18.sp),
                     // style: AppTextStyle.headingMedium.copyWith(
                     //   color: AppColors.textOnPrimary,
                     // ),

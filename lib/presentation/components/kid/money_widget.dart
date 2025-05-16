@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,8 +72,13 @@ class MoneyWidget extends StatelessWidget {
                         // final textStyle = AppTextStyle.headingMedium.copyWith(
                         //   color: AppColors.textOnPrimary,
                         // );
-                        final textStyle =   Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color:AppColors.textOnPrimary,fontSize: 18.sp,);
+                        final textStyle = Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                              color: AppColors.textOnPrimary,
+                              fontSize: 18.sp,
+                            );
 
                         final textPainter = TextPainter(
                           text: TextSpan(text: text, style: textStyle),

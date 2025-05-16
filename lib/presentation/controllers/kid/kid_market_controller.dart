@@ -484,15 +484,40 @@ bool handleAddToGoalValidation(){
       final goalId = await goalService.addToGoalsWithProduct(product);
 
       if (goalId == null) {
-        ToastUtil.showToast("Fail to add Goal");
+        Get.back(); // Close loading dialog
+        ToastUtil.showToast("Failed to add Goal");
         return;
       }
 
-      ToastUtil.showToast("Goal Added");
+      Get.back(); // Close loading dialog
+      
+      // Show success dialog
+      await KidDialogWithCross.show(
+        emoji: Assets.icClap,
+        title: 'Goal Created!',
+        subtitle: 'The goal was added \n successfully',
+        buttons: [
+          KidButton(
+            text: 'See Goal',
+            onTap: () async {
+              Get.back(); // Close success dialog
+              // Navigate to base screen first
+              Get.until((route) => route.settings.name == Routes.kidBase);
+              // Then navigate to goal details
+              Get.toNamed(
+                Routes.kidGoalDetailsScreen, 
+                arguments: goalId // Use goalId instead of product.id
+              );
+            },
+            baseColor: AppColors.btnColorGreen,
+          ),
+        ],
+      );
+
     } catch (e) {
+      Get.back(); // Close loading dialog
       Get.log(e.toString(), isError: true);
-      ToastUtil.showToast("Fail to add Goal");
-    } finally {
+      ToastUtil.showToast("Failed to add Goal");
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }

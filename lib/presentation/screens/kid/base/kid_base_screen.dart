@@ -18,8 +18,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
-   const KidBaseScreen({super.key});
-
+  const KidBaseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,9 @@ class KidBaseScreen extends GetView<KidBaseController> {
         return OrientationTransition(
           toPortrait: false,
           showInstruction: args == true,
-          child: orientation == Orientation.portrait ? _buildEmptyPortraitUI(context) : _buildKidUI(context),
+          child: orientation == Orientation.portrait
+              ? _buildEmptyPortraitUI(context)
+              : _buildKidUI(context),
         );
       },
     );
@@ -72,13 +73,17 @@ class KidBaseScreen extends GetView<KidBaseController> {
                 ),
                 child: Column(
                   children: [
-                   KidAppBarComponent(
-                      onSearchChanged: (query) => controller.appBarController.updateSearchQuery(query),
+                    KidAppBarComponent(
+                      onSearchChanged: (query) =>
+                          controller.appBarController.updateSearchQuery(query),
                       onAddMoneyTap: () {
-                        final isConnected = controller.appState.currentKid.value!.isConnected;
+                        final isConnected =
+                            controller.appState.currentKid.value!.isConnected;
                         Get.toNamed(
                           Routes.kidMoneyAddOrRequest,
-                          arguments: isConnected ? AmountAdditionMode.requestMoney : AmountAdditionMode.addMoney,
+                          arguments: isConnected
+                              ? AmountAdditionMode.requestMoney
+                              : AmountAdditionMode.addMoney,
                         );
                       },
                     ),
@@ -116,7 +121,8 @@ class KidBaseScreen extends GetView<KidBaseController> {
               // Check if spending jar exists and has a color
               final spendingJarColor = kid.wallet.spendingJar.color;
               if (spendingJarColor == 0) {
-                Get.log("Spending jar not created yet, keeping tutorial hidden");
+                Get.log(
+                    "Spending jar not created yet, keeping tutorial hidden");
                 return const SizedBox.shrink();
               }
 
@@ -150,7 +156,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
           return KidMarketScreen();
         default:
           //return const SizedBox.shrink();
-          return  KidHomeScreen();
+          return KidHomeScreen();
       }
     });
   }
