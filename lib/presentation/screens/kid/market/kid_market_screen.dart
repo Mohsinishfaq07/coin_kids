@@ -28,7 +28,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
         final double screenWidth = constraints.maxWidth;
         final int crossAxisCount = _calculateCrossAxisCount(screenWidth);
         final double cardWidth = (screenWidth - (crossAxisCount + 1) * 8.w) / crossAxisCount;
-        final double cardHeight = cardWidth * 1.40;
+        final double cardHeight = cardWidth * 1.20;
 
         return SizedBox(
           width: constraints.maxWidth,
@@ -94,7 +94,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
                         //     }),
                       ],
                     )),
-                    SizedBox(height: 14.h),
+                    SizedBox(height: 6.h),
 
                     // Products Grid
                     Expanded(
@@ -169,11 +169,11 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                 child: GridView.builder(
                                   controller: controller.scrollController,
                                   physics: const BouncingScrollPhysics(),
-                                  padding: EdgeInsets.only(top: 4.h, bottom: 12.h, right: 30.r),
+                                  padding: EdgeInsets.only(top: 0.h, bottom: 0.h, right: 30.r),
                                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: crossAxisCount,
-                                    crossAxisSpacing: 8.w,
-                                    mainAxisSpacing: 8.h,
+                                    crossAxisSpacing:18.w,
+                                    mainAxisSpacing: 4.h,
                                     childAspectRatio: cardWidth / cardHeight,
                                   ),
                                   itemCount: products.length,

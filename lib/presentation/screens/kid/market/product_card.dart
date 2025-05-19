@@ -31,7 +31,7 @@ class ProductCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Calculate image height proportionally
-          final double imageHeight = constraints.maxWidth * 0.8;
+          final double imageHeight = constraints.maxWidth * 0.6;
 
           return Container(
             clipBehavior: Clip.antiAlias,
@@ -50,6 +50,7 @@ class ProductCard extends StatelessWidget {
               ],
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Product Image Container
@@ -82,7 +83,9 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(
+                Container(
+                  height: 12.sp * 1.5 * 2, // fontSize * lineHeight * numberOfLines
+                  color: Colors.transparent,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 13.w),
                     child: Text(
@@ -92,6 +95,7 @@ class ProductCard extends StatelessWidget {
                         fontSize: 14.sp,
                         fontFamily: 'Open Sans',
                         fontWeight: FontWeight.w600,
+                        height: 1.2, // line height
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -99,7 +103,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(13.w),
+                  padding: EdgeInsets.only(top:13.w,right: 13.r,left: 13.r,bottom: 10.r),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

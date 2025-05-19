@@ -38,7 +38,6 @@ class ProductDetailDialog extends StatelessWidget {
 
   final Rx<KidModel?> currentKid = Rx<KidModel?>(null);
 
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -92,7 +91,6 @@ class ProductDetailDialog extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 16.h),
-
                           ],
                         ),
                       ),
@@ -166,16 +164,12 @@ class ProductDetailDialog extends StatelessWidget {
                                     onTap: () async {
                                       // First close the product detail dialog
 
-                                      await analytics.buttonClicked(
-                                          AnalyticsEventNames.marketProductDetailAddToGoalClicked,
-                                          AnalyticsScreenNames.kidMarketProductDetailScreenDialog,
-                                          AnalyticsScreenNames.kidMarketScreen
-                                      );
+                                      await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAddToGoalClicked,
+                                          AnalyticsScreenNames.kidMarketProductDetailScreenDialog, AnalyticsScreenNames.kidMarketScreen);
 
                                       showPointer.value = false;
                                       onAddToGoal();
                                       // Then show the success dialog
-
                                     },
                                     text: 'Add to Goal ',
                                     baseColor: AppColors.btnColorOrange,
@@ -257,5 +251,4 @@ class ProductDetailDialog extends StatelessWidget {
       ),
     );
   }
-
 }

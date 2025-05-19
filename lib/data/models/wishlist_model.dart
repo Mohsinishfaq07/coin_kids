@@ -20,13 +20,30 @@ class WishlistModel {
   });
 
   factory WishlistModel.fromJson(Map<String, dynamic> json, {String? id, MarketProductModel? product}) {
+    MarketProductModel? productModel;
+    
+    if (json['product'] != null) {
+      final productData = json['product'] as Map<String, dynamic>;
+      productModel = MarketProductModel(
+        id: productData['id'],
+        name: productData['name'] ?? '',
+        price: (productData['price'] ?? 0.0).toDouble(),
+        imageUrl: productData['image_url'] ?? '',
+        about: (productData['about'] as List<dynamic>?)?.cast<String>() ?? [],
+        minAge: productData['min_age'] ?? 0,
+        maxAge: productData['max_age'] ?? 18,
+        url: productData['url'] ?? '',
+        rating: productData['rating']?.toDouble(),
+      );
+    }
+
     return WishlistModel(
       id: id,
       userId: json['userId'] ?? '',
       productId: json['productId'] ?? '',
       addedAt: (json['addedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isPriority: json['isPriority'] ?? false,
-      product: product ?? (json['product'] != null ? MarketProductModel.fromJson(json['product'] as Map<String, dynamic>) : null),
+      product: product ?? productModel,
     );
   }
 
@@ -36,12 +53,18 @@ class WishlistModel {
       'productId': productId,
       'addedAt': Timestamp.fromDate(addedAt),
       'isPriority': isPriority,
-      // Only store minimal product data if available
+      // Store complete product data if available
       if (product != null)
         'product': {
+          'id': product!.id,
           'name': product!.name,
           'price': product!.price,
           'image_url': product!.imageUrl,
+          'about': product!.about,
+          'min_age': product!.minAge,
+          'max_age': product!.maxAge,
+          'url': product!.url,
+          'rating': product!.rating,
         },
     };
   }
