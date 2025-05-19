@@ -11,6 +11,7 @@ import 'package:coin_kids/presentation/components/kid/jar_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/components/kid/parent_zone_widget.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,8 +39,8 @@ class KidHomeScreen extends GetView<KidBaseController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _calculatePointerPosition();
       controller.appBarController.configureForHome();
+      _calculatePointerPosition();
     });
     return ShowCaseWidget(
       onComplete: (index, key) {
@@ -116,21 +117,21 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                       .balance;
 
                                   if (isConnected && kidBalance <= 0) {
-                                    // KidDialog.show(
-                                    //   emoji: Assets.icEmojiMessage,
-                                    //   title: "Woohoo! Parent Connected 🎈",
-                                    //   subtitle: "Your parent is connected, please request money",
-                                    //   buttons: [
-                                    //     KidButton(
-                                    //       text: "Ok",
-                                    //       onTap: () => Get.back(),
-                                    //       baseColor: AppColors.btnColorGreen,
-                                    //       iconPath: Assets.icTick,
-                                    //       iconPosition: IconPosition.left,
-                                    //     ),
-                                    //   ],
-                                    //
-                                    // );
+                                    KidDialog.show(
+                                      emoji: Assets.icEmojiMessage,
+                                      title: "Woohoo! Parent Connected 🎈",
+                                      subtitle: "Your parent is connected, please request money",
+                                      buttons: [
+                                        KidButton(
+                                          text: "Ok",
+                                          onTap: () => Get.back(),
+                                          baseColor: AppColors.btnColorGreen,
+                                          iconPath: Assets.icTick,
+                                          iconPosition: IconPosition.left,
+                                        ),
+                                      ],
+
+                                    );
                                     ToastUtil.showToast(
                                         "Your parent is connected, please request money");
                                     return;

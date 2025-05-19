@@ -45,6 +45,9 @@ class KidBaseScreen extends GetView<KidBaseController> {
   }
 
   Widget _buildKidUI(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.appBarController.configureForHome();
+    });
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
