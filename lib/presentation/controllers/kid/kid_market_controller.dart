@@ -6,6 +6,7 @@ import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/data/models/goal_model.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
@@ -73,7 +74,6 @@ class KidMarketController extends GetxController {
   final RxBool showWishlistTutorial = false.obs;
   // static const String hasSeenWishlistTutorial = 'hasSeenWishlistTutorial';
   final analytics = Get.find<AnalyticsService>();
-
 
   @override
   void onInit() {
@@ -215,7 +215,8 @@ class KidMarketController extends GetxController {
       }
 
       displayProducts.value = products;
-      isInitialized.value = true; // Set to true once products are loaded initially
+      isInitialized.value =
+          true; // Set to true once products are loaded initially
     } catch (e) {
       error.value = 'Failed to fetch products: ${e.toString()}';
     } finally {
@@ -251,14 +252,16 @@ class KidMarketController extends GetxController {
 
       // Apply budget filter if active
       if (isBudgetFilterActive.value) {
-        if (product.price < selectedMinBudget.value || product.price > selectedMaxBudget.value) {
+        if (product.price < selectedMinBudget.value ||
+            product.price > selectedMaxBudget.value) {
           return false;
         }
       }
 
       // Apply rating filter if active
       if (isRatingFilterActive.value) {
-        if (product.rating < selectedMinRating.value || product.rating > selectedMaxRating.value) {
+        if (product.rating < selectedMinRating.value ||
+            product.rating > selectedMaxRating.value) {
           return false;
         }
       }
@@ -289,7 +292,8 @@ class KidMarketController extends GetxController {
         await _wishlistService.removeFromWishlist(product.id!).timeout(
           const Duration(seconds: 10),
           onTimeout: () {
-            throw TimeoutException('Connection timed out. Please check your internet connection.');
+            throw TimeoutException(
+                'Connection timed out. Please check your internet connection.');
           },
         );
       } else {
@@ -297,7 +301,8 @@ class KidMarketController extends GetxController {
         await _wishlistService.addToWishlist(wishlistModel).timeout(
           const Duration(seconds: 10),
           onTimeout: () {
-            throw TimeoutException('Connection timed out. Please check your internet connection.');
+            throw TimeoutException(
+                'Connection timed out. Please check your internet connection.');
           },
         );
       }
@@ -414,14 +419,14 @@ class KidMarketController extends GetxController {
     scrollController.dispose();
     logScreenTime();
 
-
     super.onClose();
   }
 
-
   Future<void> checkTutorialState() async {
     // Check favorite tutorial state
-    final hasSeenFavoriteTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenMarketTutorial) ?? false;
+    final hasSeenFavoriteTutorial = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenMarketTutorial) ??
+        false;
     showPointer.value = !hasSeenFavoriteTutorial;
 
     // Initially hide wishlist tutorial, it will be shown after favorite tutorial
@@ -430,10 +435,13 @@ class KidMarketController extends GetxController {
 
   Future<void> dismissFavoriteTutorial() async {
     showPointer.value = false;
-    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenMarketTutorial, true);
-    
+    await SharedPreferencesHelper.saveBool(
+        SharedPreferencesHelper.hasSeenMarketTutorial, true);
+
     // After favorite tutorial is dismissed, check if wishlist tutorial should be shown
-    final hasSeenWishlist = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenWishlistTutorial) ?? false;
+    final hasSeenWishlist = SharedPreferencesHelper.getBool(
+            SharedPreferencesHelper.hasSeenWishlistTutorial) ??
+        false;
     if (!hasSeenWishlist) {
       showWishlistTutorial.value = true;
     }
@@ -441,22 +449,25 @@ class KidMarketController extends GetxController {
 
   Future<void> dismissWishlistTutorial() async {
     showWishlistTutorial.value = false;
-    await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenWishlistTutorial, true);
-  }
-bool handleAddToGoalValidation(){
-  final kid = _appState.currentKid.value;
-  if (kid == null) {
-    ToastUtil.showToast('Session expired');
-    return false ;
+    await SharedPreferencesHelper.saveBool(
+        SharedPreferencesHelper.hasSeenWishlistTutorial, true);
   }
 
-  final spendingJarColor = kid.wallet.spendingJar.color;
-  if (spendingJarColor == 0) {
-    _showCreateJarDialog();
-    return false;
+  bool handleAddToGoalValidation() {
+    final kid = _appState.currentKid.value;
+    if (kid == null) {
+      ToastUtil.showToast('Session expired');
+      return false;
+    }
+
+    final spendingJarColor = kid.wallet.spendingJar.color;
+    if (spendingJarColor == 0) {
+      _showCreateJarDialog();
+      return false;
+    }
+    return true;
   }
-  return true;
-}
+
   void _showCreateJarDialog() {
     KidDialog.show(
       dismissible: true,
@@ -473,14 +484,17 @@ bool handleAddToGoalValidation(){
           iconPath: Assets.icCross,
           iconPosition: IconPosition.left,
         ),
-
       ],
     );
   }
+
   void addToGoal(MarketProductModel product) async {
     showLoadingDialog("Adding to Goal");
 
     try {
+      // First check if goal already exists for this product
+
+      // If goal doesn't exist or has accepted/rejected/deleted status, proceed with creation
       final goalId = await goalService.addToGoalsWithProduct(product);
 
       if (goalId == null) {
@@ -490,7 +504,7 @@ bool handleAddToGoalValidation(){
       }
 
       Get.back(); // Close loading dialog
-      
+
       // Show success dialog
       await KidDialogWithCross.show(
         emoji: Assets.icClap,
@@ -501,19 +515,13 @@ bool handleAddToGoalValidation(){
             text: 'See Goal',
             onTap: () async {
               Get.back(); // Close success dialog
-              // Navigate to base screen first
               Get.until((route) => route.settings.name == Routes.kidBase);
-              // Then navigate to goal details
-              Get.toNamed(
-                Routes.kidGoalDetailsScreen, 
-                arguments: goalId // Use goalId instead of product.id
-              );
+              Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
             },
             baseColor: AppColors.btnColorGreen,
           ),
         ],
       );
-
     } catch (e) {
       Get.back(); // Close loading dialog
       Get.log(e.toString(), isError: true);
@@ -521,20 +529,18 @@ bool handleAddToGoalValidation(){
       Get.until((route) => route.settings.name == Routes.kidBase);
     }
   }
+
   DateTime? _screenStartTime;
-
-
 
   Future<void> logScreenTime() async {
     if (_screenStartTime != null) {
       final endTime = DateTime.now();
       final durationInSeconds = endTime.difference(_screenStartTime!).inSeconds;
-      analytics.screenTime(AnalyticsScreenNames.kidMarketScreen,durationInSeconds.toString());
+      analytics.screenTime(
+          AnalyticsScreenNames.kidMarketScreen, durationInSeconds.toString());
     }
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.kidMarketScreen,
     );
   }
-
-
 }

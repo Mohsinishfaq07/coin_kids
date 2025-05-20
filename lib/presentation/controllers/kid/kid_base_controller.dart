@@ -56,7 +56,7 @@ class KidBaseController extends GetxController {
     OrientationUtils.lockToLandscape();
     _initializeKid();
     _initializeGoalsTutorial();
-    _initializeTransferTutorial();
+   // _initializeTransferTutorial();
   }
 
 
@@ -129,23 +129,23 @@ class KidBaseController extends GetxController {
 
   bool shouldShowJarSpotLight() {
     final jarCreated = appState.currentKid.value!.wallet.spendingJar.color != 0;
-    final isParentOpened = appState.currentKid.value!.isConnected;
-    final hasShownEarlier = SharedPreferencesHelper.getBool(
-            SharedPreferencesHelper.showcaseMoneyJarKey) ??
-        false;
+   // final isParentOpened = appState.currentKid.value!.isConnected;
+    // final hasShownEarlier = SharedPreferencesHelper.getBool(
+    //         SharedPreferencesHelper.showcaseMoneyJarKey) ??
+    //     false;
     final hasBalance =
         appState.currentKid.value!.wallet.spendingJar.balance != 0;
 
-    Get.log('$jarCreated, $isParentOpened, $hasShownEarlier, $hasBalance');
+   // Get.log('$jarCreated, $isParentOpened, $hasShownEarlier, $hasBalance');
 
     if (showJarShowcase.value == false) return false;
     //Jar Exists - Return
     if (jarCreated) return false;
 
     //Jar Not Exist, But Spotlight already show - Return
-    if (hasShownEarlier) return false;
+    // if (hasShownEarlier) return false;
     //ar Not Exist, Spotlight Not Shown, has Parent and Balance
-    if (isParentOpened && !hasBalance) return false;
+   /// if (isParentOpened && !hasBalance) return false;
 
     return true;
   }
@@ -158,7 +158,7 @@ class KidBaseController extends GetxController {
         try {
           ShowCaseWidget.of(context).startShowCase([moneyJarShowcaseKey]);
           showJarShowcase.value = false;
-          await markMoneyJarShowcaseAsShown();
+          //await markMoneyJarShowcaseAsShown();
         } catch (e) {
           Get.log("Error starting showcase: $e");
           // Reset initialization state on error

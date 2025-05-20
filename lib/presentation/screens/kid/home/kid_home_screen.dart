@@ -21,30 +21,16 @@ import 'package:showcaseview/showcaseview.dart';
 
 class KidHomeScreen extends GetView<KidBaseController> {
   const KidHomeScreen({super.key});
-  void _calculatePointerPosition() {
-    final RenderBox? renderBox = GlobalKeys.transferButtonKey.currentContext
-        ?.findRenderObject() as RenderBox?;
-    if (renderBox != null) {
-      final position = renderBox.localToGlobal(Offset.zero);
-      final size = renderBox.size;
 
-      // Calculate the position for the pointer (center-right of the arrow)
-      final pointerX = position.dx + size.width - 30.w;
-      final pointerY = position.dy + (size.height / 2) - 30.h;
-
-      controller.pointerPosition.value = Offset(pointerX, pointerY);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.appBarController.configureForHome();
-    //  _calculatePointerPosition();
     });
     return ShowCaseWidget(
       onComplete: (index, key) {
-        controller.showJarShowcase.value = false;
+       // controller.showJarShowcase.value = false;
         // controller.markMoneyJarShowcaseAsShown();
       },
       builder: (context) {
@@ -100,7 +86,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               targetPadding: EdgeInsets.all(10),
                               tooltipBackgroundColor: AppColors.colorPrimary,
                               textColor: Colors.white,
-                              disableBarrierInteraction: false,
+                              disableBarrierInteraction: true,
                               child: JarWidget(
                                 jarState: JarState.nullJar,
                                 jarName: "+ Add Money",

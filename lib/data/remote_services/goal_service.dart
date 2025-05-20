@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/remote_services/base_service.dart';
@@ -41,7 +42,8 @@ class GoalService extends BaseService {
             try {
               final goalRef = _firestore.collection(collection).doc();
               final String goalId = goalRef.id;
-              final String fileName = 'goals/$goalId.${goal.photo!.split('.').last}';
+              final String fileName =
+                  'goals/$goalId.${goal.photo!.split('.').last}';
               final Reference ref = _storage.ref().child(fileName);
 
               final UploadTask uploadTask = ref.putFile(File(goal.photo!));
@@ -62,7 +64,7 @@ class GoalService extends BaseService {
           // Create goal with photo URL if upload succeeded, or empty string if failed
           final goalToCreate = goal.copyWith(
             id: goalId,
-            photo: goalPhotoUrl ?? '',  // Use empty string if upload failed
+            photo: goalPhotoUrl ?? '', // Use empty string if upload failed
           );
 
           transaction.set(goalRef, goalToCreate.toJson());
@@ -78,8 +80,37 @@ class GoalService extends BaseService {
   }
 
   // Create goal from product
+  // Future<String?> addToGoalsWithProduct(MarketProductModel product) async {
+  //   try {
+  //     // Get current user
+  //     final user = _auth.currentUser;
+  //     if (user == null) {
+  //       throw Exception('User not authenticated');
+  //     }
+  //
+  //     final appState = Get.find<AppStateController>();
+  //
+  //     // Create goal from product
+  //     final goal =
+  //         GoalModel.fromProduct(appState.currentKid.value!.kidId, product);
+  //
+  //     // Create the goal document
+  //     final docRef = await _firestore.collection('goals').add(goal.toJson());
+  //
+  //     Get.log("Goal created successfully with ID: ${docRef.id}");
+  //     return docRef.id;
+  //   } catch (e) {
+  //     Get.log("Error adding product to goals: $e");
+  //     return null;
+  //   }
+  // }
+
+  // Fetch goal by ID
+  // Create goal from product
   Future<String?> addToGoalsWithProduct(MarketProductModel product) async {
     try {
+      Get.log('Adding goal for product: ${product.toJson()}');
+
       // Get current user
       final user = _auth.currentUser;
       if (user == null) {
@@ -87,23 +118,56 @@ class GoalService extends BaseService {
       }
 
       final appState = Get.find<AppStateController>();
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        Get.log('No kid found in appState');
+        return null;
+      }
+
+      // Check if goal already exists by title
+      final existingGoal = await checkExistingGoal(product.id!, product.name);
+      Get.log("Checking existing goal: ${existingGoal?.toJson()}");
+
+      if (existingGoal != null) {
+        // If goal exists with inProgress status, don't allow adding
+        if (existingGoal.status == GoalStatus.inProgress) {
+          Get.log('Goal exists and is in progress');
+          return null;
+        }
+
+        // If goal exists with any status except approved/rejected/completed, don't allow adding
+        if (existingGoal.status != GoalStatus.approved &&
+            existingGoal.status != GoalStatus.rejected &&
+            existingGoal.status != GoalStatus.completed) {
+          Get.log('Goal exists with status: ${existingGoal.status}');
+          return null;
+        }
+      }
 
       // Create goal from product
-      final goal =
-          GoalModel.fromProduct(appState.currentKid.value!.kidId, product);
+      final goal = GoalModel(
+        userId: kid.kidId,
+        title: product.name,
+        photo: product.imageUrl,
+        productUrl: product.imageUrl,
+        targetAmount: product.price,
+        savedAmount: 0,
+        status: GoalStatus.inProgress,
+        createdAt: DateTime.now(),
+      );
+
+      Get.log('Created goal model: ${goal.toJson()}');
 
       // Create the goal document
       final docRef = await _firestore.collection('goals').add(goal.toJson());
-
       Get.log("Goal created successfully with ID: ${docRef.id}");
       return docRef.id;
+
     } catch (e) {
       Get.log("Error adding product to goals: $e");
       return null;
     }
   }
-
-  // Fetch goal by ID
   Future<GoalModel?> fetchGoalById(String goalId) async {
     try {
       final DocumentSnapshot doc =
@@ -136,6 +200,42 @@ class GoalService extends BaseService {
       throw Exception('Failed to fetch user goals: ${e.toString()}');
     }
   }
+  Future<GoalModel?> checkExistingGoal(String productId, String title) async {
+    try {
+      final appState = Get.find<AppStateController>();
+      final kid = appState.currentKid.value;
+      if (kid == null) {
+        Get.log('No kid found in appState');
+        return null;
+      }
+
+      Get.log('Checking goal for title: $title and kidId: ${kid.kidId}');
+
+      // Query goals collection for matching title and userId
+      final querySnapshot = await _firestore
+          .collection('goals')
+          .where('title', isEqualTo: title)  // Check by title
+          .where('userId', isEqualTo: kid.kidId)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return null;
+      }
+
+      // Return the first matching goal
+      final goal = GoalModel.fromJson(
+        querySnapshot.docs.first.data(),
+        id: querySnapshot.docs.first.id,
+      );
+
+      Get.log('Found existing goal with title: ${goal.title}');
+      return goal;
+    } catch (e) {
+      Get.log('Error checking existing goal: $e');
+      return null;
+    }
+  }
+
 
   // Update goal
   Future<void> updateGoal(GoalModel goal) async {
@@ -143,10 +243,11 @@ class GoalService extends BaseService {
       String? goalPhotoUrl;
 
       // If there's a photo and it's a local file path (not a URL), upload it to Storage
-      if (goal.photo != null && 
-          goal.photo!.isNotEmpty && 
+      if (goal.photo != null &&
+          goal.photo!.isNotEmpty &&
           !goal.photo!.startsWith('http')) {
-        final String fileName = 'goals/${goal.id}.${goal.photo!.split('.').last}';
+        final String fileName =
+            'goals/${goal.id}.${goal.photo!.split('.').last}';
         final Reference ref = _storage.ref().child(fileName);
 
         final UploadTask uploadTask = ref.putFile(File(goal.photo!));
@@ -321,7 +422,7 @@ class GoalService extends BaseService {
         double? milestonePercentage;
         NotificationType? notificationType;
 
-       /* // Check for milestone achievements (25%, 50%, 75%, 100%)
+        /* // Check for milestone achievements (25%, 50%, 75%, 100%)
         if (oldPercentage < 25 && newPercentage >= 25) {
           coinKidsToAward = 1;
           notificationTitle = "25% Milestone Reached!";
@@ -344,18 +445,15 @@ class GoalService extends BaseService {
         if (oldPercentage < 25 && newPercentage >= 25) {
           coinKidsToAward = 2;
           milestonePercentage = 25.0;
-
-        } if (oldPercentage < 50 && newPercentage >= 50) {
+        }
+        if (oldPercentage < 50 && newPercentage >= 50) {
           coinKidsToAward = 2;
           milestonePercentage = 50.0;
-
         }
         if (oldPercentage < 75 && newPercentage >= 75) {
           coinKidsToAward = 3;
           milestonePercentage = 75.0;
-
         }
-
 
         if (newPercentage == 100) {
           coinKidsToAward = 10;
@@ -417,22 +515,22 @@ class GoalService extends BaseService {
                 milestonePercentage != null &&
                 notificationType != null) {
               final metadata =
-              // milestonePercentage == 100.0 ?
-              GoalCompletedMetadata(
-                      goalId: goalId,
-                      goalName: goal.title,
-                      targetAmount: goal.targetAmount,
-                      name: kid.name,
-                      photo: kid.avatar,
-                    );
-                  // :GoalMilestoneMetadata(
-                  //     goalId: goalId,
-                  //     goalName: goal.title,
-                  //     targetAmount: goal.targetAmount,
-                  //     currentAmount: newAmount,
-                  //     name: kid.name,
-                  //     photo: kid.avatar,
-                  //   );
+                  // milestonePercentage == 100.0 ?
+                  GoalCompletedMetadata(
+                goalId: goalId,
+                goalName: goal.title,
+                targetAmount: goal.targetAmount,
+                name: kid.name,
+                photo: kid.avatar,
+              );
+              // :GoalMilestoneMetadata(
+              //     goalId: goalId,
+              //     goalName: goal.title,
+              //     targetAmount: goal.targetAmount,
+              //     currentAmount: newAmount,
+              //     name: kid.name,
+              //     photo: kid.avatar,
+              //   );
 
               final notificationData = NotificationModel(
                 userId: kid.parentId,
