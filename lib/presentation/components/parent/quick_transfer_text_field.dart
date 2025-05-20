@@ -173,7 +173,7 @@ class _CustomTextFormFieldState extends State<QuickTransferTextField> {
 
         floatingLabelBehavior: widget.floatingLabelBehavior,
         hintText: widget.hintText,
-        hintStyle: TextStyle(color: Colors.grey, fontSize: 15.sp, fontWeight: FontWeight.normal),
+        hintStyle: TextStyle(color: AppColors.textPrimary, fontSize: 15.sp, fontWeight: FontWeight.normal),
         labelStyle: TextStyle(color: Colors.grey.shade200, fontSize: 14.sp),
         suffixIcon: _buildSuffixIcon(),
         prefixIcon: Row(

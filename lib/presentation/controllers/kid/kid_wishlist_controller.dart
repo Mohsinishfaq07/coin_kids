@@ -125,6 +125,40 @@ class KidWishlistController extends GetxController {
         Get.until((route) => route.settings.name == Routes.kidBase);
       }
     }
+  bool handleAddToGoalValidation(){
+    final kid = _appState.currentKid.value;
+    if (kid == null) {
+      ToastUtil.showToast('Session expired');
+      return false ;
+    }
+
+    final spendingJarColor = kid.wallet.spendingJar.color;
+    if (spendingJarColor == 0) {
+      _showCreateJarDialog();
+      return false;
+    }
+    return true;
+  }  void _showCreateJarDialog() {
+    KidDialog.show(
+      dismissible: true,
+      emoji: Assets.emojiSad,
+      title: "Create Jar First",
+      subtitle: "You need to create a spending jar before adding goals",
+      buttons: [
+        KidButton(
+          text: "OK",
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icCross,
+          iconPosition: IconPosition.left,
+        ),
+
+      ],
+    );
+  }
+
 
   Future<void> completeWishListTutorial() async {
     Get.log("Completing wishlist close tutorial");

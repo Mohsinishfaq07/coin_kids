@@ -62,11 +62,21 @@ class CustomThemeData {
         headlineSmall: GoogleFonts.openSans(color:  AppColors.textPrimary,fontSize: 14.sp,fontWeight: MyFontWeight.bold.fontWeight),
       ),
       buttonTheme: ButtonThemeData(
+
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
         buttonColor: const Color(0xffA421D9),
       ),
+
+    //   static TextStyle appButton = TextStyle(
+    //   fontFamily: 'OpenSans',
+    //   fontSize: 14.h,
+    //   fontWeight: MyFontWeight.extraBold.fontWeight,
+    //   color: Colors.white,
+    // );
+
+
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
         color: Color(0xFFCAF0FF),

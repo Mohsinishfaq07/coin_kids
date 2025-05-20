@@ -142,7 +142,7 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                     right: 16.w,
                     child: KidButton(
                       baseColor: AppColors.btnColorOrange,
-                      text: 'Add Goal',
+                      text: 'Create Goal',
                       onTap: () async {
                         await controller.analytics.buttonClicked(
                             AnalyticsEventNames.goalNameScreenClicked,

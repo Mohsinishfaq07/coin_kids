@@ -15,6 +15,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart' show ShowCaseWidget, Showcase;
 
+import 'kid_search_textfield.dart';
+
 // class KidAppBarShowcaseKeys {
 //   static final GlobalKey totalMoneyCardKey = GlobalKey();
 // }
@@ -131,8 +133,8 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                             padding: EdgeInsets.symmetric(
                               horizontal: 60.w,
                             ),
-                            child: ParentTextField(
-                              titleText: "",
+                            child: KidSearchTextField(
+
                               hintText: "e.g Electric bike",
                               suffixIconColor: AppColors.iconPrimaryVariant,
                               suffixSvgPath: Assets.icSearch,

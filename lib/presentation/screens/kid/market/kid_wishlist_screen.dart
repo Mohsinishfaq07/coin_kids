@@ -4,6 +4,7 @@ import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/wishlist_model.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/close_button_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
@@ -33,7 +34,7 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
               onBackPressed: () async {
                 await controller.analytics.backPressClicked(AnalyticsScreenNames.kidMarketScreen);
                 controller.appBarController.configureForMarket();
-                Get.back();
+                Get.until((route) => route.settings.name == Routes.kidBase);
               }),
           body: Container(
             decoration: BoxDecoration(gradient: AppColors.background),
@@ -85,44 +86,60 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                   ),
                 );
               }
-
-              return Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 48.w),
-                    child: GridView.builder(
-                      padding: EdgeInsets.all(16.w),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 16.w,
-                        mainAxisSpacing: 16.w,
-                        childAspectRatio: cardWidth / cardHeight,
-                      ),
-                      itemCount: controller.wishlistItems.length,
-                      itemBuilder: (context, index) {
-                        final item = controller.wishlistItems[index];
-                        return _buildWishlistItem(item);
-                      },
-                    ),
+              return Padding(
+                padding: EdgeInsets.only(top: 48.w),
+                child: GridView.builder(
+                  padding: EdgeInsets.all(16.w),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16.w,
+                    mainAxisSpacing: 16.w,
+                    childAspectRatio: cardWidth / cardHeight,
                   ),
-                  if (controller.showPointer.value)
-                    Positioned.fill(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTapDown: (_) async {
-                          controller.showPointer.value = false;
-                          await SharedPreferencesHelper.saveBool(
-                            SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
-                            true,
-                          );
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                ],
+                  itemCount: controller.wishlistItems.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.wishlistItems[index];
+                    return _buildWishlistItem(item);
+                  },
+                ),
               );
+              // return Stack(
+              //   children: [
+              //     Padding(
+              //       padding: EdgeInsets.only(top: 48.w),
+              //       child: GridView.builder(
+              //         padding: EdgeInsets.all(16.w),
+              //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //           crossAxisCount: crossAxisCount,
+              //           crossAxisSpacing: 16.w,
+              //           mainAxisSpacing: 16.w,
+              //           childAspectRatio: cardWidth / cardHeight,
+              //         ),
+              //         itemCount: controller.wishlistItems.length,
+              //         itemBuilder: (context, index) {
+              //           final item = controller.wishlistItems[index];
+              //           return _buildWishlistItem(item);
+              //         },
+              //       ),
+              //     ),
+              //     if (controller.showPointer.value)
+              //       Positioned.fill(
+              //         child: GestureDetector(
+              //           behavior: HitTestBehavior.translucent,
+              //           onTapDown: (_) async {
+              //             controller.showPointer.value = false;
+              //             await SharedPreferencesHelper.saveBool(
+              //               SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
+              //               true,
+              //             );
+              //           },
+              //           child: Container(
+              //             color: Colors.transparent,
+              //           ),
+              //         ),
+              //       ),
+              //   ],
+              // );
             }),
           ),
         );
@@ -157,6 +174,8 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                     product: item.product!,
                     onAddToGoal: () {
                       //  Get.back();
+                      final canProceed = controller.handleAddToGoalValidation();
+                      if (!canProceed) return;
                       controller.addToGoal(item);
                     },
                   ),
@@ -243,32 +262,32 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                       ),
                     ),
                   ),
-                  Obx(() {
-                    if (controller.showPointer.value) {
-                      return Positioned(
-                        right: 10.w,
-                        bottom: -28.h,
-                        child: CloseButtonOverlay(
-                          onComplete: () async {
-                            controller.completeWishListTutorial();
-                          },
-                          targetKey: GlobalKeys.closeButtonKey,
-                          onTap: () async {
-                            controller.completeWishListTutorial();
-                            controller.showPointer.value = false;
-                            // controller.showPointer.value = false;
-                            // await SharedPreferencesHelper.saveBool(
-                            //   SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
-                            //   true,
-                            // );
-                          },
-                          width: 60.w,
-                          height: 60.w,
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
+                  // Obx(() {
+                  //   if (controller.showPointer.value) {
+                  //     return Positioned(
+                  //       right: 10.w,
+                  //       bottom: -28.h,
+                  //       child: CloseButtonOverlay(
+                  //         onComplete: () async {
+                  //           controller.completeWishListTutorial();
+                  //         },
+                  //         targetKey: GlobalKeys.closeButtonKey,
+                  //         onTap: () async {
+                  //           controller.completeWishListTutorial();
+                  //           controller.showPointer.value = false;
+                  //           // controller.showPointer.value = false;
+                  //           // await SharedPreferencesHelper.saveBool(
+                  //           //   SharedPreferencesHelper.hasSeenWishlistCloseTutorial,
+                  //           //   true,
+                  //           // );
+                  //         },
+                  //         width: 60.w,
+                  //         height: 60.w,
+                  //       ),
+                  //     );
+                  //   }
+                  //   return const SizedBox.shrink();
+                  // }),
                 ],
               ),
             ),

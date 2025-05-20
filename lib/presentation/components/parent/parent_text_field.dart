@@ -58,83 +58,94 @@ class ParentTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width to calculate adaptive sizes
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+    // Calculate adaptive values
+    final double borderRadius = screenWidth < 600 ? 15.r : 20.r;
+    final double iconSize = screenWidth < 600 ? 24.sp : 28.sp;
+    final double contentPadding = screenWidth < 600 ? 20.w : 25.w;
+    final double borderWidth = screenWidth < 600 ? 1.5.w : 2.w;
+    
+    // Calculate text sizes - significantly increased for tablet
+    final double textSize = screenWidth < 600 ? 16.sp : 24.sp;
+    final double hintSize = screenWidth < 600 ? 16.sp : 12.sp;
+
     return Stack(
       children: [
         TextFormField(
-            focusNode: focusNode,
-            inputFormatters: [
-              inputFormatter != null
-                  ? inputFormatter!
-                  : TextInputFormatter.withFunction(
-                      (oldValue, newValue) {
-                        return newValue;
-                      },
-                    ),
-            ],
-            maxLength: maxLength,
-            initialValue: initialValue,
-            textInputAction: textInputAction ??
-                (nextFocusNode != null
-                    ? TextInputAction.next
-                    : TextInputAction.done),
-            controller: controller,
-            onChanged: onChanged,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            validator: validator,
-            enabled: enabled,
-            decoration: InputDecoration(
-              counterText: "",
-              filled: true,
-              fillColor: AppColors.cardPrimary,
-              hintText: hintText,
-              hintStyle: isOptional
-                  ? AppTextStyle.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: AppColors.cardBorder,
-                  width: 1.5,
-                ),
+          focusNode: focusNode,
+          inputFormatters: [
+            inputFormatter ?? TextInputFormatter.withFunction((oldValue, newValue) => newValue),
+          ],
+          maxLength: maxLength,
+          initialValue: initialValue,
+          textInputAction: textInputAction ?? (nextFocusNode != null ? TextInputAction.next : TextInputAction.done),
+          controller: controller,
+          onChanged: onChanged,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          validator: validator,
+          enabled: enabled,
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
+            fontSize: textSize,
+            height: 1.2,
+          ),
+          decoration: InputDecoration(
+            counterText: "",
+            filled: true,
+            fillColor: AppColors.cardPrimary,
+            hintText: hintText,
+            hintStyle: isOptional ? Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: hintSize,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ):null,
+            // isDense: true,
+            alignLabelWithHint: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(
+                color: AppColors.cardBorder,
+                width: borderWidth,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: AppColors.cardBorder,
-                  width: 1.5,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: AppColors.textPrimary,
-                  width: 2,
-                ),
-              ),
-              contentPadding: const EdgeInsets.only(left: 20, right: 12),
-              prefixIcon: prefixIcon != null
-                  ? GestureDetector(
-                      onTap: onPrefixTap,
-                      child: Icon(prefixIcon, color: Colors.grey),
-                    )
-                  : null,
             ),
-            // style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            //       fontWeight: FontWeight.w800,
-            //   color:AppColors.textPrimary,
-            //     )
-        style:AppTextStyle.headingSmall.copyWith(
-           //fontWeight: FontWeight.w600,
-          //color:AppColors.textPrimary,
-
-        )
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(
+                color: AppColors.cardBorder,
+                width: borderWidth,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(
+                color: AppColors.textPrimary,
+                width: borderWidth * 1.2,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: contentPadding,
+              vertical: screenWidth < 600 ? 16.h : 24.h,
+            ),
+            prefixIcon: prefixIcon != null
+                ? GestureDetector(
+                    onTap: onPrefixTap,
+                    child: Icon(
+                      prefixIcon,
+                      color: Colors.grey,
+                      size: iconSize,
+                    ),
+                  )
+                : null,
+          ),
         ),
         if (suffixIcon != null)
           Positioned(
-            right: 12.w,
+            right: contentPadding,
             top: 0,
             bottom: 0,
             child: Center(
@@ -143,14 +154,14 @@ class ParentTextField extends StatelessWidget {
                 child: Icon(
                   suffixIcon,
                   color: suffixIconColor ?? Colors.grey,
-                  size: 24.sp,
+                  size: iconSize,
                 ),
               ),
             ),
           ),
         if (suffixSvgPath != null)
           Positioned(
-            right: 12.w,
+            right: contentPadding,
             top: 0,
             bottom: 0,
             child: Center(
@@ -159,8 +170,10 @@ class ParentTextField extends StatelessWidget {
                 child: SvgPicture.asset(
                   suffixSvgPath!,
                   colorFilter: ColorFilter.mode(
-                      suffixIconColor ?? Colors.grey, BlendMode.srcIn),
-                  width: 20.sp,
+                    suffixIconColor ?? Colors.grey,
+                    BlendMode.srcIn,
+                  ),
+                  width: iconSize * 0.8,
                 ),
               ),
             ),

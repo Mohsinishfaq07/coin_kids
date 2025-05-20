@@ -97,7 +97,6 @@ class SignInScreen extends GetView<SignInController> {
                           }
                           return null;
                         },
-                        titleText: 'Password',
                       );
                     }),
                     SizedBox(height: 8.h),

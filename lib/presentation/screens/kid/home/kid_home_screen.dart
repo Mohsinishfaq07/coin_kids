@@ -40,7 +40,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.appBarController.configureForHome();
-      _calculatePointerPosition();
+    //  _calculatePointerPosition();
     });
     return ShowCaseWidget(
       onComplete: (index, key) {
@@ -132,8 +132,8 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                       ],
 
                                     );
-                                    ToastUtil.showToast(
-                                        "Your parent is connected, please request money");
+                                    // ToastUtil.showToast(
+                                    //     "Your parent is connected, please request money");
                                     return;
                                   }
                                   await controller.analytics.buttonClicked(

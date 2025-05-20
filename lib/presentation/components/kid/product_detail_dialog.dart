@@ -171,7 +171,8 @@ class ProductDetailDialog extends StatelessWidget {
                                       onAddToGoal();
                                       // Then show the success dialog
                                     },
-                                    text: 'Add to Goal ',
+//                                    text: 'Add to Goal ',
+                                    text: 'Create Goal ',
                                     baseColor: AppColors.btnColorOrange,
                                     height: 48.w,
                                     width: 0.25.sw - 20.w,

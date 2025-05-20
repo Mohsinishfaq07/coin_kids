@@ -62,7 +62,6 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                                 DateTime.fromMillisecondsSinceEpoch(controller.appState.currentParent.value!.dob!),
                               ))
                         : controller.formatDate(controller.birthday.value!),
-                    titleText: 'Birthday',
                     enabled: false,
                     suffixIcon: Icons.calendar_month,
                     suffixIconColor: AppColors.textPrimary,
@@ -133,7 +132,6 @@ class UpdateParentProfile extends GetView<UpdateProfileController> {
                 ),
                 SizedBox(height: 12.h),
                 Obx(() => ParentTextField(
-                      titleText: 'Full name',
                       hintText: controller.appState.currentParent.value?.name ?? "",
                       onChanged: (value) {
                         controller.parentName.value = value.trim();

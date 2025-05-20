@@ -337,40 +337,40 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
             ],
           ),
           // Move the GestureDetector outside of the conditional and wrap it with Obx
-          Obx(() => showPointer.value
-              ? Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      showPointer.value = false;
-                      await SharedPreferencesHelper.saveBool(
-                        SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                        true,
-                      );
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()),
-          Obx(() => showDoneButtonPointer.value
-              ? Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () async {
-                      showDoneButtonPointer.value = false;
-                      await SharedPreferencesHelper.saveBool(
-                        SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                        true,
-                      );
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()),
+          // Obx(() => showPointer.value
+          //     ? Positioned.fill(
+          //         child: GestureDetector(
+          //           behavior: HitTestBehavior.translucent,
+          //           onTap: () async {
+          //             showPointer.value = false;
+          //             await SharedPreferencesHelper.saveBool(
+          //               SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+          //               true,
+          //             );
+          //           },
+          //           child: Container(
+          //             color: Colors.transparent,
+          //           ),
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
+          // Obx(() => showDoneButtonPointer.value
+          //     ? Positioned.fill(
+          //         child: GestureDetector(
+          //           behavior: HitTestBehavior.translucent,
+          //           onTap: () async {
+          //             showDoneButtonPointer.value = false;
+          //             await SharedPreferencesHelper.saveBool(
+          //               SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+          //               true,
+          //             );
+          //           },
+          //           child: Container(
+          //             color: Colors.transparent,
+          //           ),
+          //         ),
+          //       )
+          //     : const SizedBox.shrink()),
         ],
       ),
     );

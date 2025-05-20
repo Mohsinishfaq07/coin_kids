@@ -81,7 +81,6 @@ class ParentMarketScreen extends GetView<ParentMarketController> {
                       title: "Market",
                     ),
                     ParentTextField(
-                      titleText: "",
                       hintText: "e.g Electric bike",
                       suffixIconColor: AppColors.iconPrimaryVariant,
                       suffixSvgPath: Assets.icSearch,

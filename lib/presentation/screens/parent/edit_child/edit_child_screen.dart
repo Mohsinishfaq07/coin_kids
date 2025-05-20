@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/light_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/presentation/components/common/app_button.dart';
 import 'package:coin_kids/presentation/components/common/image_picker_bottom_sheet.dart';
@@ -320,7 +319,7 @@ class EditChildScreen extends GetView<EditChildController> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha:3),
+                    color: Colors.transparent,
                   ),
                   child: Icon(
                     Icons.check,
@@ -371,7 +370,7 @@ class EditChildScreen extends GetView<EditChildController> {
                 if (_isCustomImageSelected())
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha:3),
+                      color: Colors.transparent,
                     ),
                     child: Icon(
                       Icons.check,

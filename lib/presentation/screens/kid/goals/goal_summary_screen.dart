@@ -13,9 +13,7 @@ import 'package:coin_kids/presentation/components/kid/kid_text_field.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
-import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -211,7 +209,8 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: KidTextField(
                 textInputAction: TextInputAction.next,
-                hintText: controller.newGoal.value.title,
+                hintText: controller.screenMode.value == GoalSummaryScreenMode.create
+                    ? 'Goal name': controller.newGoal.value.title,
                 onChange: (value) {
                   // Remove initial spaces but keep other spaces
                   String processedValue = value;

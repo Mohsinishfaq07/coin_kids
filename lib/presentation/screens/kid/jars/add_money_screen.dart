@@ -75,6 +75,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
               SizedBox(height: 16.h),
               Center(
                 child: Text(
+                  textAlign: TextAlign.center,
                   _getScreenTitle(),
                   style: AppTextStyle.headingLarge,
                 ),
@@ -83,7 +84,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: 40.h,
+                      top: 20.h,
                       bottom: MediaQuery.of(context).viewInsets.bottom,
                     ),
                     child: Center(
@@ -114,7 +115,9 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
   String _getScreenTitle() {
     switch (mode) {
       case AmountAdditionMode.jarCreation:
-        return "Enter the amount 💸💰";
+        return "Lets fill your jar!\n \n"
+            "Type in how much money you have 💸💰";
+
       case AmountAdditionMode.requestMoney:
         return "Request Money from Parent 🙏";
       default:

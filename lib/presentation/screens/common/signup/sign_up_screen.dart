@@ -66,7 +66,6 @@ class SignupScreen extends GetView<SignupController> {
                             onChanged: (value) {
                               controller.name.value = value.trim();
                             },
-                            titleText: 'Full Name',
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Full Name is required";
@@ -84,7 +83,6 @@ class SignupScreen extends GetView<SignupController> {
                               onChanged: (value) {
                                 controller.email.value = value.trim();
                               },
-                              titleText: 'Email',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "Email is required";
@@ -106,7 +104,6 @@ class SignupScreen extends GetView<SignupController> {
                               onChanged: (value) {
                                 controller.password.value = value.trim();
                               },
-                              titleText: 'Password',
                               obscureText: controller.showPassword.value,
                               suffixIconColor: AppColors.textPrimary,
                               suffixSvgPath: controller.showPassword.value
@@ -133,7 +130,6 @@ class SignupScreen extends GetView<SignupController> {
                                   onChanged: (value) {
                                     controller.confirmPassword.value = value.trim();
                                   },
-                                  titleText: 'Confirm Password',
                                   obscureText: controller.showPassword.value,
                                   suffixIconColor: AppColors.textPrimary,
                                   suffixSvgPath: controller.showPassword.value

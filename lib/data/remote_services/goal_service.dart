@@ -36,26 +36,33 @@ class GoalService extends BaseService {
             }
           }
 
-          // STEP 2: If there's a photo, upload it to Storage (this is not part of the transaction)
+          // STEP 2: Try to upload photo if exists, but don't block on failure
           if (goal.photo != null && goal.photo!.isNotEmpty) {
-            final goalRef = _firestore.collection(collection).doc();
-            final String goalId = goalRef.id;
-            final String fileName =
-                'goals/$goalId.${goal.photo!.split('.').last}';
-            final Reference ref = _storage.ref().child(fileName);
+            try {
+              final goalRef = _firestore.collection(collection).doc();
+              final String goalId = goalRef.id;
+              final String fileName = 'goals/$goalId.${goal.photo!.split('.').last}';
+              final Reference ref = _storage.ref().child(fileName);
 
-            final UploadTask uploadTask = ref.putFile(File(goal.photo!));
-            final TaskSnapshot snapshot = await uploadTask;
-            goalPhotoUrl = await snapshot.ref.getDownloadURL();
+              final UploadTask uploadTask = ref.putFile(File(goal.photo!));
+              final TaskSnapshot snapshot = await uploadTask;
+              goalPhotoUrl = await snapshot.ref.getDownloadURL();
+            } catch (e) {
+              // Log the error but continue with goal creation
+              print('Failed to upload image: $e');
+              // Set photo URL to empty since upload failed
+              goalPhotoUrl = '';
+            }
           }
 
           // STEP 3: PERFORM ALL WRITES
           final goalRef = _firestore.collection(collection).doc();
           final String goalId = goalRef.id;
 
+          // Create goal with photo URL if upload succeeded, or empty string if failed
           final goalToCreate = goal.copyWith(
             id: goalId,
-            photo: goalPhotoUrl ?? '',
+            photo: goalPhotoUrl ?? '',  // Use empty string if upload failed
           );
 
           transaction.set(goalRef, goalToCreate.toJson());
