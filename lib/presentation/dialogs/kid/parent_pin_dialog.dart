@@ -24,14 +24,29 @@ class ParentPinDialog extends StatelessWidget {
     final pinController = TextEditingController();
     final RxString pin = ''.obs;
 
+    // void addDigit(String digit) {
+    //   if (pin.value.length < 4) {
+    //     pin.value += digit;
+    //     pinController.text = pin.value;
+    //     if (pin.value.length == 4) {
+    //       onPinSubmit(pin.value);
+    //       pin.value = '';
+    //       pinController.text = '';        }
+    //   }
+    // }
     void addDigit(String digit) {
       if (pin.value.length < 4) {
         pin.value += digit;
         pinController.text = pin.value;
         if (pin.value.length == 4) {
-          onPinSubmit(pin.value);
-          pin.value = '';
-          pinController.text = '';        }
+          // Add delay before processing
+          Future.delayed(const Duration(seconds: 1), () {
+            final currentPin = pin.value;  // Store current PIN
+            onPinSubmit(currentPin);       // Process the PIN
+            pin.value = '';                // Clear after processing
+            pinController.text = '';
+          });
+        }
       }
     }
 

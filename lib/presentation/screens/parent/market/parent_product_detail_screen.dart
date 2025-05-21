@@ -113,8 +113,9 @@ class ParentProductDetailScreen extends StatelessWidget {
                         final currentYear = DateTime.now().year;
                         final age = currentYear - birthYear!;
                         if (age >= 21 && age <= 80) {
+
                           ToastUtil.showToast(
-                             "Success",
+                             "Going to Amazon",
 
                           );
                           Get.back();
