@@ -33,9 +33,6 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.appBarController.configureForHome();
-    });
     controller.startListeningToGoals(currentKidId);
 
     return LayoutBuilder(

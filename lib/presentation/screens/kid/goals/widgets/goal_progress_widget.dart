@@ -20,7 +20,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class GoalProgressWidget extends GetView<KidGoalsController> {
   GoalProgressWidget(this.goal, {super.key}) {
-    _checkTutorialState();
+    //_checkTutorialState();
   }
 
   final GoalModel goal;
@@ -115,19 +115,19 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                               return double.parse(text).toMoneyFormat();
                                             },
                                             onChanged: (value) async {
-                                              showPointer.value = false;
-                                              SharedPreferencesHelper.saveBool(
-                                                SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                                                true,
-                                              );
+                                              // showPointer.value = false;
+                                              // SharedPreferencesHelper.saveBool(
+                                              //   SharedPreferencesHelper.hasSeenGoalProgressTutorial,
+                                              //   true,
+                                              // );
                                               // Only show done button pointer if tutorial hasn't been seen
-                                              final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
-                                                    SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                                                  ) ??
-                                                  false;
-                                              if (!hasSeenDoneButtonTutorial) {
-                                                showDoneButtonPointer.value = true;
-                                              }
+                                              // final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
+                                              //       SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
+                                              //     ) ??
+                                              //     false;
+                                              // if (!hasSeenDoneButtonTutorial) {
+                                              //   showDoneButtonPointer.value = true;
+                                              // }
                                               await controller.analytics.buttonClicked(
                                                   AnalyticsEventNames.goalProgressSliderClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
 
@@ -291,6 +291,31 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                             SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
                             true,
                           );
+
+                          // Get the amount to be saved (difference between new and current saved amount)
+                          double amountToSave = controller.progressValue.value - goal.savedAmount;
+                          
+                          // Check if we have sufficient balance before proceeding
+                          if (amountToSave > 0 && !await controller.hasEnoughBalance(amountToSave)) {
+                            KidDialog.show(
+                              dismissible: true,
+                              emoji: Assets.emojiSad,
+                              title: "Insufficient Funds",
+                              subtitle: "You don't have enough money in your spending jar to save this amount.",
+                              buttons: [
+                                KidButton(
+                                  text: "OK",
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  baseColor: AppColors.btnColorGreen,
+                                  iconPath: Assets.icTick,
+                                  iconPosition: IconPosition.left,
+                                ),
+                              ],
+                            );
+                            return;
+                          }
 
                           // Calculate percentage achieved
                           double progressPercentage = (controller.progressValue.value / goal.targetAmount) * 100;

@@ -119,7 +119,8 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
             "Type in how much money you have 💸💰";
 
       case AmountAdditionMode.requestMoney:
-        return "Request Money from Parent 🙏";
+//        return "Request Money from Parent 🙏";
+        return "Ask your parent for money ";
       default:
         return "Add Money to Spending 💰";
     }

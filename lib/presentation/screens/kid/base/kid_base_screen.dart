@@ -86,7 +86,8 @@ class KidBaseScreen extends GetView<KidBaseController> {
                           Routes.kidMoneyAddOrRequest,
                           arguments: isConnected
                               ? AmountAdditionMode.requestMoney
-                              : AmountAdditionMode.addMoney,
+                              : AmountAdditionMode.requestMoney
+                              // : AmountAdditionMode.addMoney,
                         );
                       },
                     ),

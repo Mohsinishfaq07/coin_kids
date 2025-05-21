@@ -5,6 +5,7 @@ import 'package:coin_kids/presentation/components/parent/goal_list_item.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 
 class GoalsTabWidget extends GetView<KidProfileController> {
   const GoalsTabWidget({super.key});

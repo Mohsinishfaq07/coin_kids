@@ -39,6 +39,7 @@ class ParentPinDialog extends StatelessWidget {
         pin.value += digit;
         pinController.text = pin.value;
         if (pin.value.length == 4) {
+
           // Add delay before processing
           Future.delayed(const Duration(seconds: 1), () {
             final currentPin = pin.value;  // Store current PIN

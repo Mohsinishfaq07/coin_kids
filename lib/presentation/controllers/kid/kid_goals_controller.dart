@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/extensions/number_extensions.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
-import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/goal_model.dart';
@@ -21,27 +19,21 @@ import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
-import 'package:coin_kids/presentation/screens/kid/goals/goal_details_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class KidGoalsController extends GetxController {
   final appBarController = Get.find<KidAppBarController>();
-
-  // final appBar = Get.find<KidAppBarController>();
   final appState = Get.find<AppStateController>();
   final _goalService = Get.find<GoalService>();
   final _kidService = Get.find<KidService>();
   final _roleController = Get.find<RoleController>();
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
   final analytics = Get.find<AnalyticsService>();
-
   final TextEditingController textController = TextEditingController();
 
   var sliderValue = 0.0.obs; // .obs makes it reactive
@@ -75,8 +67,8 @@ class KidGoalsController extends GetxController {
   void switchToParentMode() {
     final isKidConnected = currentKid.value?.isConnected ?? false;
     if (!isKidConnected) {
-      final kidService = Get.find<KidService>();
-      kidService.updateKid(
+      // final kidService = Get.find<KidService>();
+      _kidService.updateKid(
         currentKid.value!.kidId,
         currentKid.value!.copyWith(isConnected: true),
       );
@@ -596,10 +588,6 @@ class KidGoalsController extends GetxController {
               Assets.icClap);
           // Get.until((route) => route.settings.name == Routes.kidBase);
         }
-      } else {
-        // _showMilestoneDialog("Great Job!",
-        //     "You are about to reached your first milestone", 2, Assets.icClap);
-        // Get.until((route) => route.settings.name == Routes.kidBase);
       }
     } catch (e) {
       Get.log('Error saving progress: $e');
@@ -674,24 +662,8 @@ class KidGoalsController extends GetxController {
       title: 'You Did It!',
       subtitle:
           'Congratulations, ${appState.currentKid.value!.name}, You\'ve reached\nyour savings goal ${amount.toMoneyFormat()}',
-      extraContent: Column(
-        children: [
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // SvgPicture.asset(
-              //   Assets.icCoinStar,
-              //   width: 20.w,
-              //   height: 20.w,
-              // ),
-              SizedBox(width: 4.w),
-              // Text("+10 CoinKids",
-              //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
-            ],
-          ),
-        ],
-      ),
+
+
       buttons: [
         KidButton(
           text: 'Awesome!',
@@ -763,5 +735,19 @@ class KidGoalsController extends GetxController {
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.kidGoalsScreen,
     );
+  }
+
+  Future<bool> hasEnoughBalance(double amount) async {
+    // Get the current kid
+    final kid = appState.currentKid.value;
+    if (kid == null) {
+      return false;
+    }
+    
+    // Get the current spending jar balance
+    final spendingBalance = kid.wallet.spendingJar.balance;
+    
+    // Return true if we have enough balance
+    return spendingBalance >= amount;
   }
 }

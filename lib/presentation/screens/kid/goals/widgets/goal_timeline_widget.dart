@@ -156,7 +156,7 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
             Positioned(
               bottom: 24.h,
               right: 24.w,
-              child: KidButton.iconWithTitle(
+              child: goal.status != GoalStatus.completed ? KidButton.iconWithTitle(
                 size: 50,
                 title: "Delete",
                 belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -164,7 +164,7 @@ class GoalTimelineWidget extends GetView<KidGoalsController> {
                 ),                  baseColor: AppColors.critical,
                 iconPath: Assets.icBin,
                 onTap: () => _showDeleteDialog(context),
-              ),
+              ) : const SizedBox.shrink(),
             ),
           ],
         ),
