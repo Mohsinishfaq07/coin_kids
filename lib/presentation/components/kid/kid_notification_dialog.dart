@@ -43,6 +43,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
         currentIndex++;
       });
       widget.onDismissSingle(currentNotification);
+      print("Next Notification Tapped");
     }
   }
 
@@ -66,7 +67,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
     final hasMultipleNotifications = widget.notifications.length > 1;
 
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
 
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.r),
@@ -89,42 +90,60 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
             ),
             // margin: EdgeInsets.symmetric(vertical:14.r),
             width: MediaQuery.of(context).size.width *0.35,
-            padding: EdgeInsets.all(8.r),
+            padding: EdgeInsets.all(4.r),
 
             child: Column(
                mainAxisSize: MainAxisSize.min,
               children: [
                 // Header with close button and notification count
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Notification count
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Text(
-                        '${currentIndex + 1}/${widget.notifications.length}',
-                        style: AppTextStyle.bodySmall.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                Container(
+                  color:Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Notification count
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Text(
+                          '${currentIndex + 1}/${widget.notifications.length}',
+                          style: AppTextStyle.bodySmall.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
 
-                    // Close button
-                    InkWell(
-                      onTap: () {
-                        Get.log("Close button tapped"); // Debug print
-                        widget.onDismissAll();
-                      },
-
-                      child: SvgPicture.asset(Assets.icRoundClose),
-                    ),
-                  ],
+                      // Close button
+                      Material(
+                        color: Colors.transparent,
+                        child: SizedBox(
+                          width: 48.w,  // Increased tap area
+                          height: 48.w,  // Increased tap area
+                          child: Center(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,  // Important for capturing all taps
+                              onTap: () {
+                                Get.log("Close button tapped");
+                                Get.back();
+                                widget.onDismissSingle(notification);
+                                widget.onDismissAll();
+                              },
+                              child: SvgPicture.asset(
+                                Assets.icRoundClose,
+                                height: 32.w,
+                                width: 32.w,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 Column(
@@ -132,7 +151,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                   children: [
                     // Title
                     Padding(
-                      padding:  EdgeInsets.all(10.h),
+                      padding:  EdgeInsets.only(bottom:6.h),
                       child: Text(
                         notification.title,
                         style: AppTextStyle.headingMedium.copyWith(
@@ -140,28 +159,29 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 2,
+                        // maxLines: 2,
                         overflow: TextOverflow.clip,
                       ),
                     ),
 
-                    if (getNotificationDescription(notification).isNotEmpty)
 
                     // Message
                       if (getNotificationDescription(notification).isNotEmpty)
                         Padding(
-                          padding:  EdgeInsets.all(2.h),
+                          padding:  EdgeInsets.all(6.h),
 
                           child: Text(
                             getNotificationDescription(notification),
                             style: AppTextStyle.bodyMedium.copyWith(
                               color: AppColors.textOnPrimary,
+
                             ),
                             textAlign: TextAlign.center,
+                            maxLines: 2,
                           ),
                         ),
 
-                    SizedBox(height: 10.h),
+                    // SizedBox(height: 10.h),
 
                     // Timestamp
                     Text(
@@ -173,7 +193,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                       textAlign: TextAlign.center,
                     ),
 
-                     SizedBox(height: 10.h),
+                      SizedBox(height: 6.h),
                   ],
                 ),
                 // Navigation and action buttons
@@ -235,7 +255,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
             ),
           ),
           Positioned(
-            top: -20.h,
+            top: -30.h,
             left: 0,
             right: 0,
             child:  _buildNotificationHeader(notification),)
@@ -298,13 +318,15 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
       }
     } else if (notification.type == NotificationType.transactionApproved ||
         notification.type == NotificationType.transactionRejected) {
-      final TransactionMetadata metaData =
-          notification.metadata as TransactionMetadata;
-      if (metaData.type == NotificationType.transactionApproved) {
-        return "${metaData.amount.toMoneyFormat()} added to your account";
-      } else if (metaData.type == NotificationType.transactionRejected) {
-        return "${metaData.amount.toMoneyFormat()} money request rejected.";
+      final TransactionMetadata metaData = notification.metadata as TransactionMetadata;
+      String text = notification.type == NotificationType.transactionApproved
+          ? "${metaData.amount.toMoneyFormat()} added to your account"
+          : "${metaData.amount.toMoneyFormat()} money request rejected";
+
+      if (metaData.message != null && metaData.message!.isNotEmpty) {
+        text = "$text\nMessage: ${metaData.message}";
       }
+      return text;
     } else if (notification.type == NotificationType.goalApproved) {
       final GoalApprovedMetadata metaData =
           notification.metadata as GoalApprovedMetadata;
@@ -316,7 +338,8 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
       // return "${metaData.name} has rejected your goal '${metaData.goalName}'";
       return "The amount ${metaData.targetAmount} will be refunded";
     }
-
     return "";
   }
 }
+
+

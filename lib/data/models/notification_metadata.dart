@@ -217,9 +217,11 @@ class TransactionPendingMetadata extends NotificationMetadata {
 
 class TransactionMetadata extends NotificationMetadata {
   final double amount;
+  final String? message;
 
   TransactionMetadata({
     required this.amount,
+    this.message,
     required NotificationType type,
   }) : super(type);
 
@@ -227,6 +229,7 @@ class TransactionMetadata extends NotificationMetadata {
       NotificationType type) {
     return TransactionMetadata(
       amount: json['amount'] ?? 0.0,
+      message: (json['message'] ?? ""),
       type: type,
     );
   }
@@ -235,6 +238,7 @@ class TransactionMetadata extends NotificationMetadata {
   Map<String, dynamic> toJson() =>
       {
         'amount': amount,
+        'message': message,
       };
 
   @override

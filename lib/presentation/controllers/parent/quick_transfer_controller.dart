@@ -80,7 +80,7 @@ class QuickTransferController extends GetxController {
               type: NotificationType.transactionApproved,
               title: "Request Approved",
               timestamp: DateTime.now(),
-              metadata: TransactionMetadata(amount: enteredAmount, type: NotificationType.transactionApproved),
+              metadata: TransactionMetadata(amount: enteredAmount, type: NotificationType.transactionApproved,message: message.value),
             ),
           );
         }

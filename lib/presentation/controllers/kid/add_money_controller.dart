@@ -10,11 +10,15 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/drag_and_drop_money_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/core/constants/analytics_constants.dart';
 
@@ -22,6 +26,8 @@ class AddMoneyController extends GetxController {
   final appState = Get.find<AppStateController>();
   final jarCreationController = Get.find<JarCreationController>();
   final analytics = Get.find<AnalyticsService>();
+  final  _roleController = Get.find<RoleController>();
+
 
   final amount = 0.0.obs;
   DateTime? _screenStartTime;
@@ -151,6 +157,28 @@ class AddMoneyController extends GetxController {
           KidButton(
             onTap: () {
               Get.back();
+
+              ParentPinDialog.show(
+                onPinSubmit: (pin) async {
+                  final birthYear = int.tryParse(pin);
+                  final currentYear = DateTime.now().year;
+                  final age = currentYear - birthYear!;
+                  if (age >= 21 && age <= 80) {
+                    Get.back(); // Wait for dialog to dismiss
+                    await Future.delayed(const Duration(
+                        milliseconds:
+                        100)); // Small delay to ensure dialog is gone
+                    _roleController.switchToParentMode(true);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg:
+                      "Please enter a valid birth year (age must be between 21-80)",
+                      backgroundColor: AppColors.critical,
+                      textColor: Colors.white,
+                    );
+                  }
+                },
+              );
             },
             baseColor: AppColors.btnColorGreen,
             text: "Got it",

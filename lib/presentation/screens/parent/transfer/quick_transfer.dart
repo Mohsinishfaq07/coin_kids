@@ -16,7 +16,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
-
 class QuickTransferPage extends GetView<QuickTransferController> {
   final _amountNode = FocusNode();
 
@@ -181,7 +180,9 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                       hintText: "e.g Remember to save some money",
                       keyboardType: TextInputType.name,
                       isOptional: true,
-                      onChanged: (val) {},
+                      onChanged: (val) {
+                        controller.message.value = val;
+                      },
                     ),
                     SizedBox(height: 30.h),
                     Row(
@@ -198,7 +199,8 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                             // size: Size(123.w, 45.h),
                             backgroundColor: hasEnoughBalance ? AppColors.buttonPrimary : AppColors.buttonDisabled,
                             onPressed: () async {
-                              await controller.analytics.buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
 
                               if (!hasEnoughBalance) {
                                 controller.amountValidation.value = 'Insufficient balance';
@@ -231,16 +233,16 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                             // size: Size(123.w, 45.h),
                             //  size: Size(80, 43.h),
                             backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                            onPressed: ()async {
-                              await controller.analytics.buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+                            onPressed: () async {
+                              await controller.analytics
+                                  .buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
 
-                            controller.sendMoney();
+                              controller.sendMoney();
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-
                                 Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                                   child: Icon(
