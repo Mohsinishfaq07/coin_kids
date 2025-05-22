@@ -143,7 +143,7 @@ class AddMoneyController extends GetxController {
       await analytics.logMoneyRequestSent(amount.value);
       
       Get.back();
-      KidDialog.show(
+      KidDialogWithCross.show(
         emoji: Assets.icCoinEuro,
         title: "Money Requested",
         subtitle: "Go to Parent zone to Accept request.",

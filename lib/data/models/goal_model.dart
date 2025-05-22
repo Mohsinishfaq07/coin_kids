@@ -16,6 +16,7 @@ class GoalModel {
   final GoalStatus status;
   final DateTime createdAt;
   final DateTime? completedAt;
+  final List<String> about;
 
   GoalModel({
     this.id,
@@ -28,6 +29,7 @@ class GoalModel {
     required this.status,
     required this.createdAt,
     this.completedAt,
+    this.about = const [],
   });
 
   factory GoalModel.fromJson(Map<String, dynamic> json, {String? id}) {
@@ -42,6 +44,7 @@ class GoalModel {
       status: _stringToGoalStatus(json['status'] ?? ''),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       completedAt: (json['completedAt'] as Timestamp?)?.toDate(),
+      about: List<String>.from(json['about'] ?? []),
     );
   }
 
@@ -56,6 +59,7 @@ class GoalModel {
       'status': status.toString().split('.').last,
       'createdAt': Timestamp.fromDate(createdAt),
       if (completedAt != null) 'completedAt': Timestamp.fromDate(completedAt!),
+      'about': about,
     };
   }
 
@@ -70,6 +74,7 @@ class GoalModel {
     GoalStatus? status,
     DateTime? createdAt,
     DateTime? completedAt,
+    List<String>? about,
   }) {
     return GoalModel(
       id: id ?? this.id,
@@ -82,6 +87,7 @@ class GoalModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       completedAt: completedAt ?? this.completedAt,
+      about: about ?? this.about,
     );
   }
 
@@ -135,6 +141,7 @@ class GoalModel {
       status: GoalStatus.inProgress,
       createdAt: DateTime.now(),
       completedAt: null,
+      about: product.about,
     );
   }
 }

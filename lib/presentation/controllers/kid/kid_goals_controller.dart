@@ -397,18 +397,28 @@ class KidGoalsController extends GetxController {
 
   Future<void> updateGoal() async {
     try {
-      if (oldGoal.value == newGoal.value) {
+      // Check if anything has changed
+      if (oldGoal.value.title == newGoal.value.title && 
+          oldGoal.value.targetAmount == newGoal.value.targetAmount) {
+        Get.back();  // Close the edit screen
+        ToastUtil.showToast('No changes were made to your goal');
         return;
       }
 
       showLoadingDialog("Updating Goal...");
-// update gol validation implemented if the amount goes less than target amount
+
       final kid = appState.currentKid.value;
       if (kid == null) {
         ToastUtil.showToast("Session Expired");
         Get.offAllNamed(Routes.signIn);
         return;
       }
+
+      // Store the values we want to compare before resetting
+      final oldTitle = oldGoal.value.title;
+      final oldAmount = oldGoal.value.targetAmount;
+      final newTitle = newGoal.value.title;
+      final newAmount = newGoal.value.targetAmount;
 
       // Check if saved amount equals or exceeds new target amount
       if (oldGoal.value.savedAmount >= newGoal.value.targetAmount) {
@@ -446,16 +456,33 @@ class KidGoalsController extends GetxController {
           createdAt: DateTime.now(),
         );
         await _goalService.updateGoal(goal);
-        appBarController.resetToDefault();
       }
 
       resetNewGoal();
       resetOldGoal();
 
-      Get.until((route) => route.settings.name == Routes.kidBase);
+      // Navigate back
+       // This will close the current screen and return to goal details
+      
+      // Show updates based on what changed
+      List<String> updates = [];
+      
+      if (oldTitle != newTitle) {
+        updates.add('Goal name updated to "$newTitle"');
+      }
+      
+      if (oldAmount != newAmount) {
+        updates.add('Target amount updated to ${newAmount.toMoneyFormat()}€');
+      }
+      
+      if (updates.isNotEmpty) {
+        ToastUtil.showToast(updates.join(' and '));
+      }
+      Get.back();
+
     } catch (e) {
       ToastUtil.showExceptionToast(e);
-      Get.back();
+      Get.back();  // Close loading dialog
       Get.log(e.toString(), isError: true);
     }
   }
@@ -512,7 +539,7 @@ class KidGoalsController extends GetxController {
         Get.back();
         _showMilestoneDialog(
             "Don't Give Up!",
-            "You haven't entered any amount yet. Every step counts toward your goal!",
+            "You haven't entered any amount yet.\n Every step counts toward your goal!",
             // 0,
             Assets.emojiSad);
         // Get.until((route) => route.settings.name == Routes.kidBase);
@@ -625,23 +652,10 @@ class KidGoalsController extends GetxController {
       String subtitle,
       //int coinKids,
       String emoji) {
-    KidDialog.show(
+    KidDialogWithCross.show(
       emoji: emoji,
       title: title,
       subtitle: subtitle,
-      extraContent: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // SvgPicture.asset(
-          //   Assets.icCoinStar,
-          //   width: 20.w,
-          //   height: 20.w,
-          // ),
-          SizedBox(width: 4.w),
-          // Text("+$coinKids CoinKids",
-          //     style: AppTextStyle.bodyMedium.copyWith(color: Colors.white))
-        ],
-      ),
       buttons: [
         KidButton(
           text: 'Continue',

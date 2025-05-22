@@ -6,6 +6,7 @@ import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/data/models/market_product_model.dart';
 
 class GoalsTabWidget extends GetView<KidProfileController> {
   const GoalsTabWidget({super.key});
@@ -37,7 +38,22 @@ class GoalsTabWidget extends GetView<KidProfileController> {
                     AnalyticsScreenNames.kidProfileScreen,
                     AnalyticsScreenNames.productDetailScreen,
                   );
-                  controller.navigateToProductDetails(goalData);
+                  final productData = MarketProductModel(
+                    id: goalData.id,
+                    name: goalData.title,
+                    price: goalData.targetAmount,
+                    rating: 0, 
+                    minAge: 0, 
+                    maxAge: 0, 
+                    imageUrl: goalData.photo!, 
+                    url: goalData.productUrl!, 
+                    about: goalData.about,
+                  );
+                  
+                  Get.toNamed(
+                    Routes.parentProductDetails,
+                    arguments: productData,
+                  );
                 },
                 onReject: goalData.status == GoalStatus.completed
                     ? () async {

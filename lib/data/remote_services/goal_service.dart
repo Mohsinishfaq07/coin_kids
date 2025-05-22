@@ -149,10 +149,11 @@ class GoalService extends BaseService {
         userId: kid.kidId,
         title: product.name,
         photo: product.imageUrl,
-        productUrl: product.imageUrl,
+        productUrl: product.url,
         targetAmount: product.price,
         savedAmount: 0,
         status: GoalStatus.inProgress,
+        about: product.about,
         createdAt: DateTime.now(),
       );
 

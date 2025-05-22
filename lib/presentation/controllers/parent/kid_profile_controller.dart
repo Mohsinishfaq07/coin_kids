@@ -17,11 +17,9 @@ import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/dialogs/parent/app_parent_dialog.dart';
-import 'package:coin_kids/presentation/screens/parent/market/parent_product_detail_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart' show Colors, showDialog;
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class KidProfileController extends GetxController {
   final appState = Get.find<AppStateController>();
@@ -38,6 +36,7 @@ class KidProfileController extends GetxController {
   final isGoalsLoading = true.obs;
 
   final RxList<GoalModel> goals = RxList();
+  final RxList<MarketProductModel> marketProductsList = RxList();
   DateTime? _screenStartTime;
 
   @override
@@ -284,6 +283,7 @@ class KidProfileController extends GetxController {
       // Fetch the actual product details instead of creating a dummy one
       if (goal.productUrl != null) {
         final product = await marketService.fetchProductByUrl(goal.productUrl!);
+        print("$product called");
         if (product != null) {
           // Navigate to product detail screen with the actual product data
           Get.toNamed(Routes.parentProductDetails, arguments: product);
@@ -306,12 +306,19 @@ class KidProfileController extends GetxController {
   }
 
   Future<void> navigateToProductDetails(GoalModel goal) async {
+    print("product == ${goal}called");
+
     if (goal.productUrl != null) {
       try {
+        //1 time
         final product = await marketService.fetchProductByUrl(goal.productUrl!);
+        print("$product is called");
         if (product != null) {
+          print("product != null called");
+
           Get.toNamed(Routes.parentProductDetails, arguments: product);
         } else {
+          print("product == null called");
           Get.snackbar(
             'Error',
             'Product not found',

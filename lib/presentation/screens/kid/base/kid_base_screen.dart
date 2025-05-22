@@ -154,12 +154,10 @@ class KidBaseScreen extends GetView<KidBaseController> {
         case 0:
           return KidHomeScreen();
         case 1:
-          // return KidHomeScreen();
           return KidGoalsScreen(currentKidId: kid.kidId);
         case 2:
           return KidMarketScreen();
         default:
-          //return const SizedBox.shrink();
           return KidHomeScreen();
       }
     });

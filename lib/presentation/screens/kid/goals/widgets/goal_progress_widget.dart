@@ -233,7 +233,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                                   AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsSummaryScreen);
 
                               if (goal.productUrl != null && goal.productUrl!.isNotEmpty) {
-                                KidDialog.show(
+                                KidDialogWithCross.show(
                                   dismissible: true,
                                   emoji: Assets.emojiSad,
                                   title: "Cannot Edit",
@@ -402,7 +402,7 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
   }
 
   void _showDeleteDialog(BuildContext context) {
-    KidDialog.show(
+    KidDialogWithCross.show(
       dismissible: true,
       emoji: Assets.icCoinStar,
       title: "Delete Goal?",

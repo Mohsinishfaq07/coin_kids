@@ -4,7 +4,6 @@ import 'package:coin_kids/data/models/market_product_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/market_filter_chips.dart';
-import 'package:coin_kids/presentation/components/parent/market_filter_dialogs.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/components/parent/parent_text_field.dart';
 import 'package:coin_kids/presentation/controllers/parent/parent_market_controller.dart';

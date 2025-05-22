@@ -65,95 +65,92 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
     final notification = widget.notifications[currentIndex];
     final hasMultipleNotifications = widget.notifications.length > 1;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical:14.r),
-      child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Container(
-          // margin: EdgeInsets.symmetric(vertical:14.r),
-          width: MediaQuery.of(context).size.width *0.35,
-          padding: EdgeInsets.all(8.r),
-          decoration: BoxDecoration(
-            color: AppColors.colorPrimary,
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
 
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Column(
-             mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header with close button and notification count
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Notification count
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Text(
-                      '${currentIndex + 1}/${widget.notifications.length}',
-                      style: AppTextStyle.bodySmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              minWidth: 350.w,
+            ),
+            decoration: BoxDecoration(
+                color:  AppColors.colorPrimary,
+                borderRadius: BorderRadius.circular(24.r),
+                image: DecorationImage(
+                    image: AssetImage(Assets.kidDialogBgPng),
+                    fit: BoxFit.fill
+                )
+            ),
+            // margin: EdgeInsets.symmetric(vertical:14.r),
+            width: MediaQuery.of(context).size.width *0.35,
+            padding: EdgeInsets.all(8.r),
+
+            child: Column(
+               mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with close button and notification count
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Notification count
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        '${currentIndex + 1}/${widget.notifications.length}',
+                        style: AppTextStyle.bodySmall.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // Close button
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
+                    // Close button
+                    InkWell(
                       onTap: () {
                         Get.log("Close button tapped"); // Debug print
                         widget.onDismissAll();
                       },
-                      customBorder: CircleBorder(),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.r),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 24.r,
+
+                      child: SvgPicture.asset(Assets.icRoundClose),
+                    ),
+                  ],
+                ),
+
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Title
+                    Padding(
+                      padding:  EdgeInsets.all(10.h),
+                      child: Text(
+                        notification.title,
+                        style: AppTextStyle.headingMedium.copyWith(
+                          color: AppColors.textOnPrimary,
+                          fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.clip,
                       ),
                     ),
-                  ),
-                ],
-              ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildNotificationHeader(notification),
+                    if (getNotificationDescription(notification).isNotEmpty)
 
-
-                      // Title
-                      Padding(
-                        padding:  EdgeInsets.all(12.h),
-                        child: Text(
-                          notification.title,
-                          style: AppTextStyle.headingMedium.copyWith(
-                            color: AppColors.textOnPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.clip,
-                        ),
-                      ),
-
-                      if (getNotificationDescription(notification).isNotEmpty)
-
-                      // Message
+                    // Message
                       if (getNotificationDescription(notification).isNotEmpty)
                         Padding(
-                          padding:  EdgeInsets.all(12.h),
+                          padding:  EdgeInsets.all(2.h),
 
                           child: Text(
                             getNotificationDescription(notification),
@@ -164,81 +161,85 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                           ),
                         ),
 
-                       SizedBox(height: 10.h),
+                    SizedBox(height: 10.h),
 
-                      // Timestamp
-                      Text(
-                        time_ago.format(notification.timestamp),
-                        style: AppTextStyle.bodySmall.copyWith(
-                          color: AppColors.textOnPrimary,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        textAlign: TextAlign.center,
+                    // Timestamp
+                    Text(
+                      time_ago.format(notification.timestamp),
+                      style: AppTextStyle.bodySmall.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontStyle: FontStyle.italic,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
 
-                      // SizedBox(height: 24.h),
-                    ],
-                  ),
+                     SizedBox(height: 10.h),
+                  ],
                 ),
-              ),
-              // Navigation and action buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Previous button (only if multiple notifications)
-                  if (hasMultipleNotifications)
-                    Opacity(
-                      opacity: currentIndex > 0 ? 1.0 : 0.3,
-                      child: KidButton.iconOnly(
-                        onTap: currentIndex > 0 ? previousNotification : () {},
-                        baseColor: AppColors.btnColorOrange,
-                        iconPath: Assets.icBack,
-                        size: 40.r,
-                        iconSize: 20.r,
+                // Navigation and action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Previous button (only if multiple notifications)
+                    if (hasMultipleNotifications)
+                      Opacity(
+                        opacity: currentIndex > 0 ? 1.0 : 0.3,
+                        child: KidButton.iconOnly(
+                          onTap: currentIndex > 0 ? previousNotification : () {},
+                          baseColor: AppColors.btnColorOrange,
+                          iconPath: Assets.icBack,
+                          size: 40.r,
+                          iconSize: 20.r,
+                        ),
                       ),
+
+                    SizedBox(width: hasMultipleNotifications ? 16.w : 0),
+
+                    // Action button
+                    KidButton(
+                      onTap: () {
+                        if (currentIndex < widget.notifications.length - 1) {
+                          nextNotification();
+                        } else {
+                          widget.onDismissSingle(notification);
+                          widget.onDismissAll();
+                        }
+                      },
+                      text: currentIndex < widget.notifications.length - 1
+                          ? "Next"
+                          : "Got it!",
+                      baseColor: AppColors.btnColorGreen,
                     ),
 
-                  SizedBox(width: hasMultipleNotifications ? 16.w : 0),
+                    SizedBox(width: hasMultipleNotifications ? 16.w : 0),
 
-                  // Action button
-                  KidButton(
-                    onTap: () {
-                      if (currentIndex < widget.notifications.length - 1) {
-                        nextNotification();
-                      } else {
-                        widget.onDismissSingle(notification);
-                        widget.onDismissAll();
-                      }
-                    },
-                    text: currentIndex < widget.notifications.length - 1
-                        ? "Next"
-                        : "Got it!",
-                    baseColor: AppColors.btnColorGreen,
-                  ),
-
-                  SizedBox(width: hasMultipleNotifications ? 16.w : 0),
-
-                  // Next button (only if multiple notifications)
-                  if (hasMultipleNotifications)
-                    Opacity(
-                      opacity: currentIndex < widget.notifications.length - 1
-                          ? 1.0
-                          : 0.3,
-                      child: KidButton.iconOnly(
-                        onTap: currentIndex < widget.notifications.length - 1
-                            ? nextNotification
-                            : () {},
-                        baseColor: AppColors.btnColorOrange,
-                        iconPath: Assets.icNext,
-                        size: 40.r,
-                        iconSize: 20.r,
+                    // Next button (only if multiple notifications)
+                    if (hasMultipleNotifications)
+                      Opacity(
+                        opacity: currentIndex < widget.notifications.length - 1
+                            ? 1.0
+                            : 0.3,
+                        child: KidButton.iconOnly(
+                          onTap: currentIndex < widget.notifications.length - 1
+                              ? nextNotification
+                              : () {},
+                          baseColor: AppColors.btnColorOrange,
+                          iconPath: Assets.icNext,
+                          size: 40.r,
+                          iconSize: 20.r,
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            top: -20.h,
+            left: 0,
+            right: 0,
+            child:  _buildNotificationHeader(notification),)
+        ],
       ),
     );
   }

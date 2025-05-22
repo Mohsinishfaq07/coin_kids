@@ -109,12 +109,7 @@ class KidDialog extends StatelessWidget {
           ),
 
           // Buttons at the bottom
-          // Positioned(
-          //   bottom: 0,
-          //   left: 0,
-          //   right: 0,
-          //   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons),
-          // ),
+
         ],
       ),
     );
