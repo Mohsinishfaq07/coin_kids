@@ -514,9 +514,11 @@ class KidMarketController extends GetxController {
           KidButton(
             text: 'See Goal',
             onTap: () async {
-              Get.back(); // Close success dialog
-              Get.until((route) => route.settings.name == Routes.kidBase);
-              Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
+              Get.offNamed(Routes.kidGoalDetailsScreen,
+                  arguments: goalId);
+              // Get.back(); // Close success dialog
+              // Get.until((route) => route.settings.name == Routes.kidBase);
+              // Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
             },
             baseColor: AppColors.btnColorGreen,
           ),

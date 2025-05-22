@@ -197,59 +197,62 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                   ],
                 ),
                 // Navigation and action buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Previous button (only if multiple notifications)
-                    if (hasMultipleNotifications)
-                      Opacity(
-                        opacity: currentIndex > 0 ? 1.0 : 0.3,
-                        child: KidButton.iconOnly(
-                          onTap: currentIndex > 0 ? previousNotification : () {},
-                          baseColor: AppColors.btnColorOrange,
-                          iconPath: Assets.icBack,
-                          size: 40.r,
-                          iconSize: 20.r,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // Previous button (only if multiple notifications)
+                      if (hasMultipleNotifications)
+                        Opacity(
+                          opacity: currentIndex > 0 ? 1.0 : 0.3,
+                          child: KidButton.iconOnly(
+                            onTap: currentIndex > 0 ? previousNotification : () {},
+                            baseColor: AppColors.btnColorOrange,
+                            iconPath: Assets.icBack,
+                            size: 40.r,
+                            iconSize: 20.r,
+                          ),
                         ),
+
+                      // SizedBox(width: hasMultipleNotifications ? 10.w : 0),
+
+                      // Action button
+                      KidButton(
+                        onTap: () {
+                          if (currentIndex < widget.notifications.length - 1) {
+                            nextNotification();
+                          } else {
+                            widget.onDismissSingle(notification);
+                            widget.onDismissAll();
+                          }
+                        },
+                        text: currentIndex < widget.notifications.length - 1
+                            ? "Next"
+                            : "Got it!",
+                        baseColor: AppColors.btnColorGreen,
                       ),
 
-                    SizedBox(width: hasMultipleNotifications ? 16.w : 0),
+                                 //     SizedBox(width: hasMultipleNotifications ? 16.w : 0),
 
-                    // Action button
-                    KidButton(
-                      onTap: () {
-                        if (currentIndex < widget.notifications.length - 1) {
-                          nextNotification();
-                        } else {
-                          widget.onDismissSingle(notification);
-                          widget.onDismissAll();
-                        }
-                      },
-                      text: currentIndex < widget.notifications.length - 1
-                          ? "Next"
-                          : "Got it!",
-                      baseColor: AppColors.btnColorGreen,
-                    ),
-
-                    SizedBox(width: hasMultipleNotifications ? 16.w : 0),
-
-                    // Next button (only if multiple notifications)
-                    if (hasMultipleNotifications)
-                      Opacity(
-                        opacity: currentIndex < widget.notifications.length - 1
-                            ? 1.0
-                            : 0.3,
-                        child: KidButton.iconOnly(
-                          onTap: currentIndex < widget.notifications.length - 1
-                              ? nextNotification
-                              : () {},
-                          baseColor: AppColors.btnColorOrange,
-                          iconPath: Assets.icNext,
-                          size: 40.r,
-                          iconSize: 20.r,
+                      // Next button (only if multiple notifications)
+                      if (hasMultipleNotifications)
+                        Opacity(
+                          opacity: currentIndex < widget.notifications.length - 1
+                              ? 1.0
+                              : 0.3,
+                          child: KidButton.iconOnly(
+                            onTap: currentIndex < widget.notifications.length - 1
+                                ? nextNotification
+                                : () {},
+                            baseColor: AppColors.btnColorOrange,
+                            iconPath: Assets.icNext,
+                            size: 40.r,
+                            iconSize: 20.r,
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

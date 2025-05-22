@@ -249,7 +249,7 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
             Stack(
               children: [
                 icon,
-                if (index == 1 && controller.messagesController.unreadNotificationsCount.value != 0)
+                if (index == 1 && controller.messagesController.unreadCount.value != 0)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -259,9 +259,9 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Text(
-                            controller.messagesController.unreadNotificationsCount.value > 9
+                            controller.messagesController.unreadCount.value > 9
                                 ? "9+"
-                                : controller.messagesController.unreadNotificationsCount.value.toString(),
+                                : controller.messagesController.unreadCount.value.toString(),
                             style: TextStyle(fontSize: 8.sp, color: Colors.white),
                           ),
                         ),

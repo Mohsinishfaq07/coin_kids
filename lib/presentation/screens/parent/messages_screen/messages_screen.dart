@@ -13,10 +13,6 @@ class MessagesScreen extends GetView<MessagesController> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.markAllAsRead();
-    });
-
     return Scaffold(
       appBar: const ParentAppBar(
         showBackButton: false,
@@ -62,9 +58,6 @@ class MessagesScreen extends GetView<MessagesController> {
                         .buttonClicked(AnalyticsEventNames.parentMessageRefreshClicked, AnalyticsScreenNames.parentMessageScreen);
                   })
                 : _buildNotificationsList(),
-            //child: controller.notifications.isEmpty
-            //                 ? buildNotificationEmptyState(() {})
-            //                 : _buildNotificationsList(),
           );
         }),
       ),
@@ -77,18 +70,19 @@ class MessagesScreen extends GetView<MessagesController> {
       itemBuilder: (context, index) {
         final notification = controller.notifications[index];
 
-        // Check notification preferences before showing
-        // if (!controller.shouldShowNotification(notification)) {
-        //   return const SizedBox.shrink();
-        // }
-
         return NotificationCard(
           notification: notification,
-          onTap: () async{
+          onTap: () async {
             await controller.analytics
                 .buttonClicked(AnalyticsEventNames.messageSeeDetailsClicked, AnalyticsScreenNames.parentMessageScreen);
+            
+            final updatedNotification = notification.copyWith(isRead: true);
+            
+            final updatedNotifications = [...controller.notifications];
+            updatedNotifications[index] = updatedNotification;
+            controller.notifications.value = updatedNotifications;
 
-            controller.markAsRead(notification.id!);
+            await controller.markAsRead(notification.id!);
           },
           onActionPressed: (actionId) {
             controller.handleActionClick(notification, actionId);

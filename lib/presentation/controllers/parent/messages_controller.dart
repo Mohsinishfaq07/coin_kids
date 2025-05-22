@@ -21,7 +21,7 @@ class MessagesController extends GetxController {
       Get.find<NotificationService>();
   final selectedNotifications = <String>[].obs;
   final notifications = <NotificationModel>[].obs;
-  final unreadNotificationsCount = 0.obs;
+  final RxInt unreadCount = 0.obs;
   final isLoading = true.obs;
   final isLoadingMore = false.obs;
   final hasMoreData = true.obs;
@@ -33,7 +33,6 @@ class MessagesController extends GetxController {
   final analytics = Get.find<AnalyticsService>();
   DateTime? _screenStartTime;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -41,6 +40,7 @@ class MessagesController extends GetxController {
     getUnReadNotificationCount();
     _screenStartTime = DateTime.now();
     logScreenTime();
+    ever(notifications, (_) => _updateUnreadCount());
   }
 
   @override
@@ -61,7 +61,7 @@ class MessagesController extends GetxController {
 
     _notificationCountSubscription =
         _notificationService.getUnreadCount(userId).listen((int count) {
-      unreadNotificationsCount.value = count;
+      unreadCount.value = count;
     });
   }
 
@@ -69,6 +69,7 @@ class MessagesController extends GetxController {
     hasMoreData.value = true;
     _lastDocument = null;
     await fetchNotifications(refresh: true);
+    _updateUnreadCount();
     refreshController.refreshCompleted();
   }
 
@@ -109,6 +110,7 @@ class MessagesController extends GetxController {
         notifications.addAll(result.notifications);
         _lastDocument = result.lastDocument;
       }
+      _updateUnreadCount();
     } catch (e) {
       Get.log('Error fetching notifications: $e');
       ToastUtil.showToast('Failed to load notifications');
@@ -178,16 +180,18 @@ class MessagesController extends GetxController {
 
   Future<void> markAsRead(String notificationId) async {
     try {
+      // Update in backend first
+      await _notificationService.markAsRead(notificationId);
+      
+      // Update in UI
       final index = notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
-        notifications[index] = notifications[index].copyWith(isRead: true);
-        notifications.refresh();
+        var updatedNotifications = [...notifications];
+        updatedNotifications[index] = notifications[index].copyWith(isRead: true);
+        notifications.value = updatedNotifications;  // This will trigger the _updateUnreadCount
       }
-
-      // await _notificationService.markAsRead(notificationId);
     } catch (e) {
-      Get.log('Error updating notifications: $e');
-      ToastUtil.showToast('Failed to update notifications');
+      Get.log('Error marking notification as read: $e');
     }
   }
 
@@ -323,8 +327,6 @@ class MessagesController extends GetxController {
     }
   }
 
-
-
   Future<void> logScreenTime() async {
     if (_screenStartTime != null) {
       final endTime = DateTime.now();
@@ -336,4 +338,9 @@ class MessagesController extends GetxController {
     );
   }
 
+  void _updateUnreadCount() {
+    unreadCount.value = notifications
+        .where((notification) => !notification.isRead)
+        .length;
+  }
 }

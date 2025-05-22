@@ -57,7 +57,7 @@ class MoneyWidget extends StatelessWidget {
                   onTap: onCardTap,
                   child: Container(
                     height: containerHeight,
-                    width: min(100.w, Get.width / 6),
+                    width: min(110.w, Get.width / 6),
                     decoration: BoxDecoration(
                       color: backgroundColor,
                       borderRadius: borderRadius ?? BorderRadius.circular(10.r),

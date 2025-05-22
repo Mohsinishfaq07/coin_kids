@@ -1,6 +1,8 @@
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
+import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class KidAppBarController extends GetxController {
   final AppStateController appState = Get.find<AppStateController>();
@@ -20,23 +22,16 @@ class KidAppBarController extends GetxController {
   final searchQuery = ''.obs;
   final title = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-
-    showTotalMoneySpotlight.value = SharedPreferencesHelper.getBool(SharedPreferencesHelper.showTotalMoneySpotlight) ?? true;
-  }
 
   bool shouldShowRequestMoneySpotlight() {
     if (appState.currentKid.value == null || appState.currentParent.value == null) {
       return false;
     }
 
-    final isParentOpened = appState.currentKid.value!.isConnected;
     final jarNotCreated = appState.currentKid.value!.wallet.spendingJar.color == 0;
     final noBalance = appState.currentKid.value!.wallet.spendingJar.balance == 0;
 
-    final result = isParentOpened && jarNotCreated && noBalance && showTotalMoneySpotlight.value;
+    final result = jarNotCreated && noBalance && showTotalMoneySpotlight.value;
 
     Get.log("shouldShowRequestMoneySpotlight: $result");
 
