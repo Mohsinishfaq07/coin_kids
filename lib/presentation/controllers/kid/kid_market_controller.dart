@@ -20,7 +20,9 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../dialogs/common/loading_dialog.dart';
 import '../kid/kid_appbar_controller.dart';
@@ -462,13 +464,13 @@ class KidMarketController extends GetxController {
 
     final spendingJarColor = kid.wallet.spendingJar.color;
     if (spendingJarColor == 0) {
-      _showCreateJarDialog();
+      showCreateJarDialog();
       return false;
     }
     return true;
   }
 
-  void _showCreateJarDialog() {
+  void showCreateJarDialog() {
     KidDialog.show(
       dismissible: true,
       emoji: Assets.emojiSad,
@@ -499,18 +501,27 @@ class KidMarketController extends GetxController {
 
       if (goalId == null) {
         Get.back(); // Close loading dialog
-        ToastUtil.showToast("Failed to add Goal");
+        ToastUtil.showToast("Goal is already added ");
         return;
       }
 
       Get.back(); // Close loading dialog
+      // showCelebrationDialog();
 
       // Show success dialog
+
       await KidDialogWithCross.show(
+
         emoji: Assets.icClap,
         title: 'Goal Created!',
         subtitle: 'The goal was added \n successfully',
+        animation: Lottie.asset(
+          Assets.celebrationsAnimation,
+          height: 200.h,
+          fit: BoxFit.contain,
+        ),
         buttons: [
+
           KidButton(
             text: 'See Goal',
             onTap: () async {
@@ -543,6 +554,57 @@ class KidMarketController extends GetxController {
     }
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.kidMarketScreen,
+    );
+  }
+  void showCelebrationDialog() {
+    Get.dialog(
+      Dialog(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                minWidth: 350.w,
+                maxHeight: 400.h,
+              ),
+              padding: EdgeInsets.all(20.w),
+              decoration: BoxDecoration(
+                color: AppColors.colorPrimary,
+                borderRadius: BorderRadius.circular(24.r),
+                image: DecorationImage(
+                  image: AssetImage(Assets.kidDialogBgPng),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Lottie.asset(
+                    "assets/animations/celebrations.json",
+                    height: 200.h,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(height: 20.h),
+                  Text(
+                    'Congratulations!',
+                    style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: true,
     );
   }
 }

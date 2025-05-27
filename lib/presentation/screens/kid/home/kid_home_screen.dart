@@ -3,7 +3,6 @@ import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/kid/overlay/hand_pointer_overlay.dart';
@@ -22,7 +21,6 @@ import 'package:showcaseview/showcaseview.dart';
 class KidHomeScreen extends GetView<KidBaseController> {
   const KidHomeScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -30,7 +28,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
     });
     return ShowCaseWidget(
       onComplete: (index, key) {
-       // controller.showJarShowcase.value = false;
+        // controller.showJarShowcase.value = false;
         // controller.markMoneyJarShowcaseAsShown();
       },
       builder: (context) {
@@ -49,8 +47,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
             // Check showcase conditions only when the widget is first built
             if (!controller.hasInitializedShowcase.value) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (controller.shouldShowJarSpotLight() &&
-                    !controller.isNotificationShowing.value) {
+                if (controller.shouldShowJarSpotLight() && !controller.isNotificationShowing.value) {
                   controller.startShowcase(context);
                 }
                 controller.hasInitializedShowcase.value = true;
@@ -92,15 +89,8 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 jarName: "+ Add Money",
                                 height: 0.45.sh,
                                 onTap: () async {
-                                  final isConnected = controller
-                                      .appState.currentKid.value!.isConnected;
-                                  final kidBalance = controller
-                                      .appState
-                                      .currentKid
-                                      .value!
-                                      .wallet
-                                      .spendingJar
-                                      .balance;
+                                  final isConnected = controller.appState.currentKid.value!.isConnected;
+                                  final kidBalance = controller.appState.currentKid.value!.wallet.spendingJar.balance;
 
                                   if (isConnected && kidBalance <= 0) {
                                     KidDialog.show(
@@ -116,15 +106,13 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                           iconPosition: IconPosition.left,
                                         ),
                                       ],
-
                                     );
                                     // ToastUtil.showToast(
                                     //     "Your parent is connected, please request money");
                                     return;
                                   }
                                   await controller.analytics.buttonClicked(
-                                    AnalyticsEventNames
-                                        .kidMoneyJarCreatedClicked,
+                                    AnalyticsEventNames.kidMoneyJarCreatedClicked,
                                     AnalyticsScreenNames.kidHomeScreen,
                                     AnalyticsScreenNames.kidJarColorSelection,
                                   );
@@ -146,18 +134,15 @@ class KidHomeScreen extends GetView<KidBaseController> {
                             children: [
                               // Spending/Money
                               JarWidget(
-                                jarState: spendingJar.balance > 0
-                                    ? JarState.filled
-                                    : JarState.empty,
+                                jarState: spendingJar.balance > 0 ? JarState.filled : JarState.empty,
                                 jarName: "Money",
                                 showAmount: true,
                                 amount: spendingJar.balance,
                                 jarColor: Color(spendingJar.color),
                                 height: 0.45.sh,
                                 onTap: () async {
-                                  await controller.analytics.buttonClicked(
-                                      AnalyticsEventNames.kidMoneyJarClicked,
-                                      AnalyticsScreenNames.kidHomeScreen);
+                                  await controller.analytics
+                                      .buttonClicked(AnalyticsEventNames.kidMoneyJarClicked, AnalyticsScreenNames.kidHomeScreen);
 
                                   if (spendingJar.balance <= 0) {
                                     return;
@@ -176,9 +161,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
 
                               // Transfer Button (show only if both jars exist)
 //                            //  if (isSpendingJarCreated && isSavingJarCreated) ...[
-                              if (isSpendingJarCreated &&
-                                  isSavingJarCreated &&
-                                  controller.showSavingJar == false.obs) ...[
+                              if (isSpendingJarCreated && isSavingJarCreated && controller.showSavingJar == false.obs) ...[
                                 SizedBox(width: 20.w),
                                 Stack(
                                   clipBehavior: Clip.none,
@@ -186,19 +169,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                     KidButton.iconWithTitle(
                                       key: GlobalKeys.transferButtonKey,
                                       onTap: () async {
-                                        await controller.analytics
-                                            .buttonClicked(
-                                                AnalyticsEventNames
-                                                    .kidTransferButtonClicked,
-                                                AnalyticsScreenNames
-                                                    .kidHomeScreen,
-                                                AnalyticsScreenNames
-                                                    .kidTransferAmountScreen);
+                                        await controller.analytics.buttonClicked(AnalyticsEventNames.kidTransferButtonClicked,
+                                            AnalyticsScreenNames.kidHomeScreen, AnalyticsScreenNames.kidTransferAmountScreen);
 
-                                        controller.showTransferPointer.value =
-                                            false;
-                                        await controller
-                                            .markTransferTutorialAsShown();
+                                        controller.showTransferPointer.value = false;
+                                        await controller.markTransferTutorialAsShown();
 
                                         Get.toNamed(Routes.kidMoneyTransfer);
                                       },
@@ -207,17 +182,13 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                       title: 'Transfer',
                                     ),
                                     Obx(() {
-                                      if (controller
-                                          .showTransferPointer.value) {
+                                      if (controller.showTransferPointer.value) {
                                         return Positioned(
                                           child: HandPointerOverlay(
-                                            targetKey:
-                                                GlobalKeys.transferButtonKey,
+                                            targetKey: GlobalKeys.transferButtonKey,
                                             onTap: () async {
-                                              controller.showTransferPointer
-                                                  .value = false;
-                                              await controller
-                                                  .markTransferTutorialAsShown();
+                                              controller.showTransferPointer.value = false;
+                                              await controller.markTransferTutorialAsShown();
                                             },
                                             width: 60.w,
                                             height: 60.w,
@@ -233,24 +204,17 @@ class KidHomeScreen extends GetView<KidBaseController> {
                               SizedBox(width: 0.05.sw),
                               // Saving Jar or Null Jar
                               // if (isSpendingJarCreated  ) ...[
-                              if (isSpendingJarCreated &&
-                                  isSavingJarCreated &&
-                                  controller.showSavingJar == false.obs) ...[
+                              if (isSpendingJarCreated && isSavingJarCreated && controller.showSavingJar == false.obs) ...[
                                 if (!isSavingJarCreated)
                                   JarWidget(
                                     jarState: JarState.nullJar,
                                     jarName: "+ Add Savings",
                                     height: 0.45.sh,
                                     onTap: () async {
-                                      await controller.analytics.buttonClicked(
-                                          AnalyticsEventNames
-                                              .kidSavingJarCreatedClicked,
-                                          AnalyticsScreenNames.kidHomeScreen,
-                                          AnalyticsScreenNames
-                                              .kidJarColorSelection);
+                                      await controller.analytics.buttonClicked(AnalyticsEventNames.kidSavingJarCreatedClicked,
+                                          AnalyticsScreenNames.kidHomeScreen, AnalyticsScreenNames.kidJarColorSelection);
 
-                                      controller
-                                          .startJarCreation(Jars.savingJar);
+                                      controller.startJarCreation(Jars.savingJar);
                                       Get.toNamed(Routes.kidJarColorSelection);
                                     },
                                     textStyle: AppTextStyle.bodySmall.copyWith(
@@ -261,18 +225,14 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                   )
                                 else
                                   JarWidget(
-                                    jarState: savingJar.balance > 0
-                                        ? JarState.filled
-                                        : JarState.empty,
+                                    jarState: savingJar.balance > 0 ? JarState.filled : JarState.empty,
                                     jarName: "Saving",
                                     jarColor: Color(savingJar.color),
                                     amount: savingJar.balance,
                                     height: 0.45.sh,
                                     onTap: () async {
-                                      await controller.analytics.buttonClicked(
-                                          AnalyticsEventNames
-                                              .kidSavingJarClicked,
-                                          AnalyticsScreenNames.kidHomeScreen);
+                                      await controller.analytics
+                                          .buttonClicked(AnalyticsEventNames.kidSavingJarClicked, AnalyticsScreenNames.kidHomeScreen);
 
                                       if (savingJar.balance <= 0) {
                                         return;
@@ -311,14 +271,11 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                   final age = currentYear - birthYear!;
                                   if (age >= 21 && age <= 80) {
                                     Get.back(); // Wait for dialog to dismiss
-                                    await Future.delayed(const Duration(
-                                        milliseconds:
-                                            100)); // Small delay to ensure dialog is gone
+                                    await Future.delayed(const Duration(milliseconds: 100)); // Small delay to ensure dialog is gone
                                     controller.switchToParentMode();
                                   } else {
                                     Fluttertoast.showToast(
-                                      msg:
-                                          "Please enter a valid birth year (age must be between 21-80)",
+                                      msg: "Please enter a valid birth year (age must be between 21-80)",
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
                                     );
@@ -344,8 +301,7 @@ class KidHomeScreen extends GetView<KidBaseController> {
   String getSpotlightDescription() {
     if (controller.appState.currentKid.value!.isConnected) {
       //Parent exists
-      if (controller.appState.currentKid.value!.wallet.spendingJar.balance ==
-          0) {
+      if (controller.appState.currentKid.value!.wallet.spendingJar.balance == 0) {
         //Show spotlight on AddMoney
         return "You don't have money, Let's Request Money from parent";
       } else {

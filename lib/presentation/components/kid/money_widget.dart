@@ -7,8 +7,98 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+
+class PulsingAddButton extends StatefulWidget {
+  final double size;
+  final VoidCallback? onTap;
+  final bool showAnimation;
+
+  const PulsingAddButton({
+    super.key,
+    required this.size,
+    required this.showAnimation,
+    this.onTap,
+  });
+
+  @override
+  State<PulsingAddButton> createState() => _PulsingAddButtonState();
+}
+
+class _PulsingAddButtonState extends State<PulsingAddButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _animation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 50,
+      ),
+    ]).animate(_controller);
+
+    if (widget.showAnimation) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(PulsingAddButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showAnimation != oldWidget.showAnimation) {
+      if (widget.showAnimation) {
+        _controller.repeat();
+      } else {
+        _controller.stop();
+        _controller.reset();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: widget.showAnimation ? _animation.value : 1.0,
+            child: child,
+          );
+        },
+        child: SvgPicture.asset(
+          Assets.icAddIcon,
+          height: widget.size,
+          width: widget.size,
+        ),
+      ),
+    );
+  }
+}
 
 class MoneyWidget extends StatelessWidget {
+  static final _scaleNotifier = ValueNotifier<double>(1.0);
+  
   final double amount;
   final VoidCallback? onAddTap;
   final VoidCallback? onCardTap;
@@ -21,6 +111,7 @@ class MoneyWidget extends StatelessWidget {
   final Key? showcaseKey;
   final bool showSymbol;
   final bool showDecimals;
+  final bool showGlowAnimation;
 
   const MoneyWidget({
     super.key,
@@ -36,6 +127,7 @@ class MoneyWidget extends StatelessWidget {
     this.showcaseKey,
     this.showSymbol = true,
     this.showDecimals = true,
+    this.showGlowAnimation = false,
   });
 
   @override
@@ -44,6 +136,43 @@ class MoneyWidget extends StatelessWidget {
     final defaultIconSize = 28.r;
     final addButtonSize = 24.r;
 
+    return SizedBox(
+      // height: containerHeight,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          _buildMainContent(containerHeight, defaultIconSize),
+          if (showAddButton && onAddTap != null)
+            Positioned(
+              left: -addButtonSize / 2,
+              top: (containerHeight / 2) - (addButtonSize / 2),
+              child: showGlowAnimation 
+                ? AvatarGlow(
+                    glowColor: AppColors.btnColorGreen,
+                    duration: Duration(milliseconds: 2000),
+                    repeat: true,
+                    animate: true,
+                    startDelay: Duration(seconds: 1),
+                    child: _buildAddButton(addButtonSize),
+                  )
+                : _buildAddButton(addButtonSize),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddButton(double size) {
+    return PulsingAddButton(
+      size: size,
+      onTap: onAddTap,
+      showAnimation: showGlowAnimation,
+    );
+  }
+
+  static bool _isPressed = false;
+
+  Widget _buildMainContent(double containerHeight, double defaultIconSize) {
     Widget moneyCard = SizedBox(
       height: containerHeight,
       child: Stack(
@@ -145,19 +274,6 @@ class MoneyWidget extends StatelessWidget {
                       rightIconPath!,
                       height: iconSize ?? defaultIconSize,
                       width: iconSize ?? defaultIconSize,
-                    ),
-                  ),
-                if (showAddButton && onAddTap != null)
-                  Positioned(
-                    left: -addButtonSize / 2,
-                    top: (containerHeight / 2) - (addButtonSize / 2),
-                    child: GestureDetector(
-                      onTap: onAddTap,
-                      child: SvgPicture.asset(
-                        Assets.icAddIcon,
-                        height: addButtonSize,
-                        width: addButtonSize,
-                      ),
                     ),
                   ),
               ],

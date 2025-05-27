@@ -67,8 +67,6 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
     final hasMultipleNotifications = widget.notifications.length > 1;
 
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.r),
       ),
@@ -90,14 +88,12 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
             ),
             // margin: EdgeInsets.symmetric(vertical:14.r),
             width: MediaQuery.of(context).size.width *0.35,
-            padding: EdgeInsets.all(4.r),
-
             child: Column(
                mainAxisSize: MainAxisSize.min,
               children: [
                 // Header with close button and notification count
-                Container(
-                  color:Colors.transparent,
+                Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: 6.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -157,6 +153,7 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                         style: AppTextStyle.headingMedium.copyWith(
                           color: AppColors.textOnPrimary,
                           fontWeight: FontWeight.bold,
+                          fontSize: 28.sp,
                         ),
                         textAlign: TextAlign.center,
                         // maxLines: 2,
@@ -174,7 +171,9 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                             getNotificationDescription(notification),
                             style: AppTextStyle.bodyMedium.copyWith(
                               color: AppColors.textOnPrimary,
+                                fontWeight: FontWeight.bold,
 
+                                fontSize: 16.sp
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
@@ -184,16 +183,16 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
                     // SizedBox(height: 10.h),
 
                     // Timestamp
-                    Text(
-                      time_ago.format(notification.timestamp),
-                      style: AppTextStyle.bodySmall.copyWith(
-                        color: AppColors.textOnPrimary,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                      SizedBox(height: 6.h),
+                    // Text(
+                    //   time_ago.format(notification.timestamp),
+                    //   style: AppTextStyle.bodySmall.copyWith(
+                    //     color: AppColors.textOnPrimary,
+                    //     fontStyle: FontStyle.italic,
+                    //   ),
+                    //   textAlign: TextAlign.center,
+                    // ),
+                    //
+                    //   SizedBox(height: 6.h),
                   ],
                 ),
                 // Navigation and action buttons
@@ -272,15 +271,18 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
 
     switch (notification.type) {
       case NotificationType.balanceRemoved:
+        iconPath = Assets.coinFlyingPng;
       case NotificationType.goalRejected:
         iconPath = Assets.emojiSad;
         break;
       case NotificationType.balanceAdded:
+        iconPath = Assets.icCoinEuro;
       case NotificationType.transactionApproved:
-      iconPath = Assets.icCoinEuro;
+      iconPath = Assets.transactionApprovePng;
+
       case NotificationType.goalApproved:
-        // iconPath = Assets.icCoinEuro;
-      iconPath = Assets.icStar;
+         iconPath = Assets.transactionApprovePng;
+      //iconPath = Assets.icStar;
         break;
       case NotificationType.transactionRejected:
         iconPath = Assets.emojiSad;
@@ -334,12 +336,13 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
       final GoalApprovedMetadata metaData =
           notification.metadata as GoalApprovedMetadata;
       // return "${metaData.name} has approved your goal '${metaData.goalName}'";
-      return "it'll arrive soon ";
+      return "Time to get what you saved for! 🎁";
     } else if (notification.type == NotificationType.goalRejected) {
       final GoalRejectedMetadata metaData =
           notification.metadata as GoalRejectedMetadata;
       // return "${metaData.name} has rejected your goal '${metaData.goalName}'";
-      return "The amount ${metaData.targetAmount} will be refunded";
+//      return "The amount ${metaData.targetAmount} will be refunded";
+      return "Try savings for something else!";
     }
     return "";
   }

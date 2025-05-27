@@ -3,6 +3,7 @@ import 'package:coin_kids/presentation/controllers/common/app_state_controller.d
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 
 class KidAppBarController extends GetxController {
   final AppStateController appState = Get.find<AppStateController>();
@@ -22,6 +23,27 @@ class KidAppBarController extends GetxController {
   final searchQuery = ''.obs;
   final title = ''.obs;
 
+  // Add this observable
+  final RxBool showAddMoneyGlow = true.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    initializeGlowState();
+  }
+
+  Future<void> initializeGlowState() async {
+    try {
+      final shouldGlow = await SharedPreferencesHelper.getBool(
+        SharedPreferencesHelper.showAddMoneyGlow,
+      );
+      Get.log("Loading glow state: $shouldGlow");
+      showAddMoneyGlow.value = shouldGlow ?? true;
+    } catch (e) {
+      Get.log("Error loading glow state: $e");
+      showAddMoneyGlow.value = true;
+    }
+  }
 
   bool shouldShowRequestMoneySpotlight() {
     if (appState.currentKid.value == null || appState.currentParent.value == null) {
@@ -150,5 +172,28 @@ class KidAppBarController extends GetxController {
     showSpendingCard.value = true;
     showCoinKidsCard.value = false;
     showTotalCard.value = false;
+  }
+
+  Future<void> stopAddMoneyGlow() async {
+    try {
+      Get.log("Stopping glow animation...");
+      showAddMoneyGlow.value = false;
+      await SharedPreferencesHelper.saveBool(
+        SharedPreferencesHelper.showAddMoneyGlow,
+        false,
+      );
+      Get.log("Glow animation stopped and saved to preferences");
+    } catch (e) {
+      Get.log("Error stopping glow animation: $e");
+    }
+  }
+
+  // Add method to reset glow if needed
+  Future<void> resetGlowState() async {
+    showAddMoneyGlow.value = true;
+    await SharedPreferencesHelper.saveBool(
+      SharedPreferencesHelper.showAddMoneyGlow,
+      true,
+    );
   }
 }

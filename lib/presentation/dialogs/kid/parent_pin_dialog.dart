@@ -178,28 +178,32 @@ class ParentPinDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
 
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding:  EdgeInsets.only(right: 12.w),
-                                  child: Icon(
-                                    Icons.volume_up,
-                                    color: Colors.white,
-                                    size: 30.sp,
+                            SingleChildScrollView(
+
+
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding:  EdgeInsets.only(right: 12.w),
+                                    child: Icon(
+                                      Icons.volume_up,
+                                      color: Colors.white,
+                                      size: 30.sp,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Ask Your Parent ',
-                                  //isFirstTime ? 'Set Parent PIN' : 'Enter Parent PIN',
-                                  style: AppTextStyle.headingLarge.copyWith(
-                                    fontSize: 25.sp,
-                                    color: Colors.white,
+                                  Text(
+                                    'Ask Your Parent ',
+                                    //isFirstTime ? 'Set Parent PIN' : 'Enter Parent PIN',
+                                    style: AppTextStyle.headingLarge.copyWith(
+                                      fontSize: 25.sp,
+                                      color: Colors.white,
+                                    ),
+                                    // textAlign: TextAlign.center,
                                   ),
-                                  // textAlign: TextAlign.center,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Text(
                               'Enter parent year of birth ',

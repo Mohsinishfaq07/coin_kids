@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 
 class KidGoalsController extends GetxController {
   final appBarController = Get.find<KidAppBarController>();
@@ -317,7 +318,7 @@ class KidGoalsController extends GetxController {
       await _goalService.createGoal(goal, isFirstGoal);
 
       // Handle first goal case with dialog
-      // Get.back();
+      //  Get.back();
 
       // Reset the form
       resetNewGoal();
@@ -337,10 +338,17 @@ class KidGoalsController extends GetxController {
           g.createdAt.isAfter(DateTime.now().subtract(Duration(minutes: 1))));
 
       if (createdGoal != null) {
+
+
         KidDialog.show(
           emoji: Assets.icClap,
           title: 'Goal Created!',
           subtitle: 'The goal was added \n successfully',
+          animation: Lottie.asset(
+            Assets.celebrationsAnimation,
+            height: 200.h,
+            fit: BoxFit.contain,
+          ),
           buttons: [
             Stack(
               clipBehavior: Clip.none,
@@ -671,13 +679,17 @@ class KidGoalsController extends GetxController {
   }
 
   void showGoalCompletedDialog(double amount) {
-    KidDialog.show(
+    KidDialogWithCross.show(
       emoji: Assets.icTrophy,
       title: 'You Did It!',
       subtitle:
           'Congratulations, ${appState.currentKid.value!.name}, You\'ve reached\nyour savings goal ${amount.toMoneyFormat()}',
 
-
+      animation: Lottie.asset(
+        Assets.celebrationsAnimation,
+        height: 200.h,
+        fit: BoxFit.contain,
+      ),
       buttons: [
         KidButton(
           text: 'Awesome!',

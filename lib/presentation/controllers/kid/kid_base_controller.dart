@@ -7,6 +7,7 @@ import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
+import 'package:coin_kids/generated/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_notification_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
@@ -16,6 +17,11 @@ import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
+import 'dart:math';
+import 'package:flutter/animation.dart';
 
 class KidBaseController extends GetxController {
   // Dependencies
@@ -113,7 +119,7 @@ class KidBaseController extends GetxController {
       if (unreadNotifications.isNotEmpty && shouldShowNotification) {
         SharedPreferencesHelper.saveBool(
             SharedPreferencesHelper.showKidsNotifications, false);
-        showNotificationsDialog();
+        await showNotificationsDialog();
       } else {
         isNotificationShowing.value = false;
         if (shouldShowJarSpotLight()) {
@@ -177,7 +183,10 @@ class KidBaseController extends GetxController {
         SharedPreferencesHelper.showcaseMoneyJarKey, true);
   }
 
-  void showNotificationsDialog() {
+
+
+
+  Future<void> showNotificationsDialog() async {
     if (unreadNotifications.isEmpty) return;
 
     // Only show notifications in kid mode
@@ -203,82 +212,199 @@ class KidBaseController extends GetxController {
     }
 
     final BuildContext context = Get.context!;
+    if (!context.mounted) return;
 
     isNotificationShowing.value = true;
 
-    // Show the notifications dialog first
-    showGeneralDialog(
-      barrierColor: Colors.transparent,
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: "Notifications",
-      transitionDuration: Duration(milliseconds: 200),
-      pageBuilder: (BuildContext buildContext, Animation<double> animation,
-          Animation<double> secondaryAnimation) {
-        return WillPopScope(
-          onWillPop: () async {
-            isNotificationShowing.value = false;
-            // Handle back button press
-            if (unreadNotifications.isNotEmpty) {
-              markAllNotificationsAsRead();
-            }
-            if (shouldShowJarSpotLight()) {
-              startShowcase(Get.context!);
-            }
-            return true;
-          },
-          child: SafeArea(
-            child: Material(
-              type: MaterialType.transparency,
-              child: Center(
-                child: KidNotificationDialog(
-                  notifications: currentNotifications,
-                  onDismissSingle: (notification) {
-                    // Mark single notification as read
-                    _notificationService.markAsRead(notification.id!);
-                    unreadNotifications
-                        .removeWhere((n) => n.id == notification.id);
-                    unreadNotificationCount.value = unreadNotifications.length;
+    try {
+      // Show the notifications dialog first
+      await showGeneralDialog(
+        barrierColor: Colors.transparent,
+        context: context,
+        barrierDismissible: false,
+        barrierLabel: "Notifications",
+        transitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (BuildContext buildContext, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return WillPopScope(
+            onWillPop: () async {
+              isNotificationShowing.value = false;
+              if (unreadNotifications.isNotEmpty) {
+                markAllNotificationsAsRead();
+              }
+              
+              // Show animation before proceeding
+             // await _showDismissAnimation();
+              
+              if (shouldShowJarSpotLight()) {
+                startShowcase(Get.context!);
+              }
+              return true;
+            },
+            child: SafeArea(
+              child: Material(
+                type: MaterialType.transparency,
+                child: Center(
+                  child: KidNotificationDialog(
+                    notifications: currentNotifications,
+                    onDismissSingle: (notification) async {
+                      // Mark single notification as read
+                      _notificationService.markAsRead(notification.id!);
+                      unreadNotifications.removeWhere((n) => n.id == notification.id);
+                      unreadNotificationCount.value = unreadNotifications.length;
 
-                    if (unreadNotifications.isEmpty) {
+                      // For single notification or final notification
+                      if (unreadNotifications.isEmpty) {
+                        SharedPreferencesHelper.saveBool(
+                            SharedPreferencesHelper.showKidsNotifications, true);
+                        isNotificationShowing.value = false;
+                        Get.back(); // Close notification dialog
+                        // if (notification.type == NotificationType.balanceAdded) {
+                        //   await _showDismissForMoneyAddedAnimation();
+                        // } else if (notification.type == NotificationType.balanceRemoved) {
+                        //   await _showDismissForMoneyRemovedAnimation();
+                        // }
+                        if (shouldShowJarSpotLight()) {
+                          startShowcase(Get.context!);
+                        }
+                      }
+                    },
+                    onDismissAll: () async {
+                      // Mark all as read and close dialog
+                      if (currentKid.value != null) {
+                        _notificationService.markAllAsRead(currentKid.value!.kidId);
+                        unreadNotifications.clear();
+                        unreadNotificationCount.value = 0;
+                      }
+
                       SharedPreferencesHelper.saveBool(
                           SharedPreferencesHelper.showKidsNotifications, true);
-                      Get.back(); // Use Get.back() instead of Navigator.pop
                       isNotificationShowing.value = false;
+                      Get.back(); // Close notification dialog
+                      // final lastNotification = currentNotifications.last;
+                      // if (lastNotification.type == NotificationType.balanceAdded) {
+                      //   await _showDismissForMoneyAddedAnimation();
+                      // } else if (lastNotification.type == NotificationType.balanceRemoved) {
+                      //   await _showDismissForMoneyRemovedAnimation();
+                      // }
                       if (shouldShowJarSpotLight()) {
                         startShowcase(Get.context!);
                       }
-                    }
-                  },
-                  onDismissAll: () {
-                    // Mark all as read and close dialog
-                    if (currentKid.value != null) {
-                      _notificationService
-                          .markAllAsRead(currentKid.value!.kidId);
-                      unreadNotifications.clear();
-                      unreadNotificationCount.value = 0;
-                      Get.back(); // Use Get.back() instead of Navigator.pop
-                    }
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      Get.log("Error showing notifications dialog: $e");
+      isNotificationShowing.value = false;
+    }
+  }
 
-                    SharedPreferencesHelper.saveBool(
-                        SharedPreferencesHelper.showKidsNotifications, true);
-                    isNotificationShowing.value = false;
-                    if (shouldShowJarSpotLight()) {
-                      startShowcase(Get.context!);
-                    }
+  // Helper method to show appropriate animation based on type
+  Future<void> _showAppropriateAnimation(NotificationType type) async {
+    switch (type) {
+      case NotificationType.balanceAdded:
+      case NotificationType.transactionApproved:
+        await _showDismissForMoneyAddedAnimation();
+        break;
+      case NotificationType.balanceRemoved:
+      case NotificationType.transactionRejected:
+        await _showDismissForMoneyRemovedAnimation();
+        break;
+      default:
+        // No animation for other notification types
+        break;
+    }
+  }
+
+  Future<void> _showDismissForMoneyAddedAnimation() async {
+    try {
+      // Add half second delay before showing animation
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      await Get.dialog(
+        Material(
+          type: MaterialType.transparency,
+          color: Colors.green,
+          child: Container(
+            height: Get.height,
+            color: Colors.transparent,
+            child: Center(
+              child: Transform.rotate(
+                angle: 20 * pi / 180,
+                child: Lottie.asset(
+                  Assets.animationsReceivedMoney,
+                  fit: BoxFit.contain,
+                  repeat: false,
+                  frameRate: FrameRate(60),
+                  onLoaded: (composition) {
+                    Future.delayed(composition.duration, () {
+                      if (Get.isDialogOpen!) {
+                        Get.back();
+                      }
+                    });
                   },
                 ),
               ),
             ),
           ),
-        );
-      },
-    ).then((_) {
-      // This will run after dialog is dismissed
-      if (unreadNotifications.isNotEmpty) {
-        markAllNotificationsAsRead();
-      }
-    });
+        ),
+        barrierColor: Colors.transparent,
+        barrierDismissible: true,
+        transitionDuration: const Duration(milliseconds: 200),
+        useSafeArea: false,
+      );
+      
+    } catch (e) {
+      Get.log("Error showing money added animation: $e");
+    }
+  }
+
+  Future<void> _showDismissForMoneyRemovedAnimation() async {
+    try {
+      // Add half second delay before showing animation
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      await Get.dialog(
+        Material(
+          type: MaterialType.transparency,
+          color: Colors.red,
+          child: Container(
+            height: Get.height,
+            color: Colors.transparent,
+            child: Center(
+              child: Transform.rotate(
+                angle: 20 * pi / 180,
+                child: Lottie.asset(
+                  'assets/animations/money_goes.json',
+                  fit: BoxFit.contain,
+                  repeat: false,
+                  frameRate: FrameRate(60),
+                  onLoaded: (composition) {
+                    Future.delayed(composition.duration, () {
+                      if (Get.isDialogOpen!) {
+                        Get.back();
+                      }
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+        barrierColor: Colors.transparent,
+        barrierDismissible: true,
+        transitionDuration: const Duration(milliseconds: 200),
+        useSafeArea: false,
+      );
+      
+    } catch (e) {
+      Get.log("Error showing money removed animation: $e");
+    }
   }
 
   void markAllNotificationsAsRead() {
@@ -333,3 +459,4 @@ class KidBaseController extends GetxController {
     super.onClose();
   }
 }
+

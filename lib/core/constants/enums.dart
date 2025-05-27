@@ -32,3 +32,7 @@ enum AmountAdditionMode {
   requestMoney,
   addMoney,
 }
+enum MoneyAnimationType {
+  added,
+  removed,
+}

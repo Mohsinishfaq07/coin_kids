@@ -67,7 +67,7 @@ class QuickTransferController extends GetxController {
               userId: kid.kidId,
               senderId: kid.parentId,
               type: NotificationType.balanceAdded,
-              title: "Received Money",
+              title: "Money Received",
               timestamp: DateTime.now(),
               metadata: BalanceMetadata(amount: enteredAmount, type: NotificationType.balanceAdded, message: message.value),
             ),

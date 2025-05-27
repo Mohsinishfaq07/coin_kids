@@ -16,6 +16,7 @@ class SharedPreferencesHelper {
   static String showcaseMoneyJarKey = "showcaseMoneyJarKey";
   static String showKidsNotifications = "showKidsNotifications";
   static String showTotalMoneySpotlight = "showTotalMoneySpotlight";
+  static String showAddMoneyGlow = "show_add_money_glow_v1";
   
   // Market Tutorial Keys
   static String hasSeenMarketTutorial = "hasSeenMarketTutorial";

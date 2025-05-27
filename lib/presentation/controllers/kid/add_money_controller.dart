@@ -1,6 +1,7 @@
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
+import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/models/notification_metadata.dart';
 import 'package:coin_kids/data/models/notification_model.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/core/constants/analytics_constants.dart';
+import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
 
 class AddMoneyController extends GetxController {
   final appState = Get.find<AppStateController>();
@@ -149,14 +151,22 @@ class AddMoneyController extends GetxController {
       await analytics.logMoneyRequestSent(amount.value);
       
       Get.back();
+      onGotItPressed();
       KidDialogWithCross.show(
         emoji: Assets.icCoinEuro,
         title: "Money Requested",
         subtitle: "Go to Parent zone to Accept request.",
         buttons: [
           KidButton(
-            onTap: () {
+            onTap: () async {
               Get.back();
+              final appBarController = Get.find<KidAppBarController>();
+              await appBarController.stopAddMoneyGlow();
+
+              // Verify the state was saved
+              final isGlowStopped = await SharedPreferencesHelper.getBool(
+                SharedPreferencesHelper.showAddMoneyGlow,
+              );
 
               ParentPinDialog.show(
                 onPinSubmit: (pin) async {
@@ -217,6 +227,12 @@ class AddMoneyController extends GetxController {
     FirebaseAnalytics.instance.logScreenView(
       screenName: AnalyticsScreenNames.addOrRequestMoney,
     );
+  }
+
+  void onGotItPressed() async {
+    final appBarController = Get.find<KidAppBarController>();
+    appBarController.stopAddMoneyGlow();
+    Get.back();
   }
 
 }

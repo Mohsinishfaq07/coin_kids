@@ -2,6 +2,9 @@
 class Assets {
   Assets._();
 
+  static const String animationsCelebrations = 'assets/animations/celebrations.json';
+  static const String animationsMoneyGoes = 'assets/animations/money_goes.json';
+  static const String animationsReceivedMoney = 'assets/animations/received_money.json';
   static const String assetsAppIcon = 'assets/app_icon.png';
   static const String assetsAppIconText = 'assets/app_icon_text.svg';
   static const String assetsCentFifty = 'assets/cent_fifty.png';
@@ -10,6 +13,7 @@ class Assets {
   static const String assetsCentTen = 'assets/cent_ten.png';
   static const String assetsCentTwenty = 'assets/cent_twenty.png';
   static const String assetsCentTwo = 'assets/cent_two.png';
+  static const String assetsCoinFlying = 'assets/coin_flying.png';
   static const String assetsDialogTop = 'assets/dialog_top.svg';
   static const String assetsDotIndicator = 'assets/dot_indicator.svg';
   static const String assetsEmojiSad = 'assets/emoji_sad.png';
@@ -89,6 +93,7 @@ class Assets {
   static const String assetsNewTap = 'assets/new_tap.json';
   static const String assetsParentBgCloud = 'assets/parent_bg_cloud.svg';
   static const String assetsTap = 'assets/tap.json';
+  static const String assetsTransactionApprove = 'assets/transactionApprove.png';
   static const String assetsTransferToSavingArrow = 'assets/transfer_to_saving_arrow.png';
   static const String assetsTransferToSpendArrow = 'assets/transfer_to_spend_arrow.png';
   static const String drawerIcAvatarPlaceholder = 'assets/drawer/ic_avatar_placeholder.svg';

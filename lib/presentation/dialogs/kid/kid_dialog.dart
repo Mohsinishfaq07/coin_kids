@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class KidDialog extends StatelessWidget {
   final String emoji;
@@ -17,6 +18,7 @@ class KidDialog extends StatelessWidget {
   final double width;
   final double emojiSize;
   final EdgeInsets contentPadding;
+  final Widget? animation;
 
   const KidDialog({
     required this.emoji,
@@ -28,6 +30,7 @@ class KidDialog extends StatelessWidget {
     this.width = 0.8,
     this.emojiSize = 60,
     this.contentPadding = const EdgeInsets.all(24),
+    this.animation,
     super.key,
   });
 
@@ -91,6 +94,12 @@ class KidDialog extends StatelessWidget {
               ),
             ),
           ),
+          if (animation != null)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: animation!,
+              ),
+            ),
 
           // Emoji at the top
           Positioned(
@@ -137,6 +146,7 @@ class KidDialog extends StatelessWidget {
       Color? backgroundColor,
       double width = 0.8,
       double emojiSize = 60,
+        Widget? animation,
       EdgeInsets contentPadding = const EdgeInsets.all(24),
       dismissible = false}) {
     return Get.dialog<T>(
@@ -150,6 +160,7 @@ class KidDialog extends StatelessWidget {
         width: width,
         emojiSize: emojiSize,
         contentPadding: contentPadding,
+        animation: animation,
       ),
       barrierDismissible: dismissible,
     );
@@ -221,8 +232,9 @@ class KidDialogWithCross extends StatelessWidget {
   final double emojiSize;
   final EdgeInsets contentPadding;
   final VoidCallback? onClose;
+  Widget? animation;
 
-  const KidDialogWithCross({
+   KidDialogWithCross({
     required this.emoji,
     required this.title,
     required this.subtitle,
@@ -233,6 +245,7 @@ class KidDialogWithCross extends StatelessWidget {
     this.emojiSize = 60,
     this.contentPadding = const EdgeInsets.all(24),
     this.onClose,
+    this.animation,
     super.key,
   });
 
@@ -302,6 +315,23 @@ class KidDialogWithCross extends StatelessWidget {
               ),
             ),
           ),
+          if (animation != null)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: animation!,
+              ),
+            ),
+
+          // Lottie animation with IgnorePointer
+          // Positioned.fill(
+          //   child: IgnorePointer(
+          //     child: Lottie.asset(
+          //       "assets/animations/celebrations.json",
+          //       height: 200.h,
+          //       fit: BoxFit.contain,
+          //     ),
+          //   ),
+          // ),
 
           // Emoji at the top
           Positioned(
@@ -323,18 +353,21 @@ class KidDialogWithCross extends StatelessWidget {
           Positioned(
             top: emojiSize.r / 2 + 10,
             right: 10,
-            child: KidButton.iconOnly(
-              onTap: () {
-                if (onClose != null) {
-                  onClose!();
-                } else {
-                  Get.back();
-                }
-              },
-              baseColor: AppColors.btnColorOrange,
-              iconPath: Assets.icCross,
-              size: 30.w,
-              iconSize: 16.w,
+            child: Material(
+              color: Colors.transparent,
+              child: KidButton.iconOnly(
+                onTap: () {
+                  if (onClose != null) {
+                    onClose!();
+                  } else {
+                    Get.back();
+                  }
+                },
+                baseColor: AppColors.btnColorOrange,
+                iconPath: Assets.icCross,
+                size: 30.w,
+                iconSize: 16.w,
+              ),
             ),
           ),
         ],
@@ -355,6 +388,7 @@ class KidDialogWithCross extends StatelessWidget {
     EdgeInsets contentPadding = const EdgeInsets.all(24),
     bool dismissible = false,
     VoidCallback? onClose,
+    Widget? animation,
   }) {
     return Get.dialog<T>(
       KidDialogWithCross(
@@ -368,6 +402,7 @@ class KidDialogWithCross extends StatelessWidget {
         emojiSize: emojiSize,
         contentPadding: contentPadding,
         onClose: onClose,
+        animation: animation,
       ),
       barrierDismissible: dismissible,
     );

@@ -88,6 +88,9 @@ class KidAppBarComponent extends GetView<KidAppBarController>
         Get.offAllNamed(Routes.signIn);
         return SizedBox.shrink();
       }
+
+      final shouldShowGlow = controller.showAddMoneyGlow.value;
+      
       return AppBar(
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0.0,
@@ -164,6 +167,7 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                                   iconSize: 32.w,
                                   onAddTap: onAddMoneyTap,
                                   onCardTap: onAddMoneyTap,
+                                  showGlowAnimation: shouldShowGlow,
                                 ),
                               )
                             : MoneyWidget(
@@ -173,6 +177,7 @@ class KidAppBarComponent extends GetView<KidAppBarController>
                                 iconSize: 32.w,
                                 onAddTap: onAddMoneyTap,
                                 onCardTap: onAddMoneyTap,
+                                showGlowAnimation: shouldShowGlow,
                               ),
                       ],
                     ),

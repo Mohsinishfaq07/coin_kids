@@ -136,5 +136,10 @@ class Assets {
   static const String transferToSavingArrow = 'assets/transfer_to_saving_arrow.png';
   static const String transferToSpendArrow = 'assets/transfer_to_spend_arrow.png';
   static const String icBackSpace = 'assets/ic_back_space.svg';
+  static const String celebrationsAnimation = 'assets/animations/celebrations.json';
+  static const String animationsReceivedMoney = 'assets/animations/received_money.json';
+  static const String coinFlyingPng = 'assets/coin_flying.png';
+  static const String transactionApprovePng = 'assets/transactionApprove.png';
+
 
 }

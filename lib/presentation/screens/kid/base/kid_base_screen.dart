@@ -4,11 +4,13 @@ import 'package:coin_kids/core/widgets/orientation_transition.dart';
 import 'package:coin_kids/data/models/kid_model.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart' show IconPosition, KidButton;
 import 'package:coin_kids/presentation/components/kid/overlay/goals_nav_tutorial_overlay.dart';
 import 'package:coin_kids/presentation/components/kid/kid_exit_dialog.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_base_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/kid_goals_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/home/kid_home_screen.dart';
 import 'package:coin_kids/presentation/screens/kid/market/kid_market_screen.dart';
@@ -16,6 +18,7 @@ import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:coin_kids/core/utils/toast_util.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
   const KidBaseScreen({super.key});
@@ -79,15 +82,33 @@ class KidBaseScreen extends GetView<KidBaseController> {
                     KidAppBarComponent(
                       onSearchChanged: (query) =>
                           controller.appBarController.updateSearchQuery(query),
+                      // onAddMoneyTap: () {
+                      //   final kid = controller.appState.currentKid.value;
+                      //   if (kid == null) return;
+                      //
+                      //   // Check if spending jar exists
+                      //   if (kid.wallet.spendingJar.color == 0) {
+                      //     showCreateJarDialog();                          return;
+                      //   }
+                      //
+                      //   final isConnected = kid.isConnected;
+                      //   Get.toNamed(
+                      //     Routes.kidMoneyAddOrRequest,
+                      //     arguments: isConnected
+                      //         ? AmountAdditionMode.requestMoney
+                      //         : AmountAdditionMode.requestMoney
+                      //         // : AmountAdditionMode.addMoney,
+                      //   );
+                      // },
                       onAddMoneyTap: () {
                         final isConnected =
                             controller.appState.currentKid.value!.isConnected;
                         Get.toNamed(
-                          Routes.kidMoneyAddOrRequest,
-                          arguments: isConnected
-                              ? AmountAdditionMode.requestMoney
-                              : AmountAdditionMode.requestMoney
-                              // : AmountAdditionMode.addMoney,
+                            Routes.kidMoneyAddOrRequest,
+                            arguments: isConnected
+                                ? AmountAdditionMode.requestMoney
+                                : AmountAdditionMode.requestMoney
+                          // : AmountAdditionMode.addMoney,
                         );
                       },
                     ),
@@ -204,6 +225,26 @@ class KidBaseScreen extends GetView<KidBaseController> {
           ),
         ),
       ),
+    );
+  }
+
+  void showCreateJarDialog() {
+    KidDialog.show(
+      dismissible: true,
+      emoji: Assets.emojiSad,
+      title: "Create Jar First",
+      subtitle: "Please create a Spending Jar before requesting money",
+      buttons: [
+        KidButton(
+          text: "OK",
+          onTap: () {
+            Get.back();
+          },
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icCross,
+          iconPosition: IconPosition.left,
+        ),
+      ],
     );
   }
 }

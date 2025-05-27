@@ -16,8 +16,11 @@ import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dar
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
+import 'package:lottie/lottie.dart';
 
 
 class KidWishlistController extends GetxController {
@@ -101,6 +104,11 @@ class KidWishlistController extends GetxController {
           emoji: Assets.icClap,
           title: 'Goal Created!',
           subtitle: 'The goal was added \n successfully',
+          animation: Lottie.asset(
+            Assets.celebrationsAnimation,
+            height: 200.h,
+            fit: BoxFit.contain,
+          ),
           buttons: [
             KidButton(
               text: 'See Goal',
