@@ -138,7 +138,7 @@ class Assets {
   static const String icBackSpace = 'assets/ic_back_space.svg';
   static const String celebrationsAnimation = 'assets/animations/celebrations.json';
   static const String animationsReceivedMoney = 'assets/animations/received_money.json';
-  static const String coinFlyingPng = 'assets/coin_flying.png';
+  static const String coinFlyingPng = 'assets/ic_fly_coin.png';
   static const String transactionApprovePng = 'assets/transactionApprove.png';
 
 
