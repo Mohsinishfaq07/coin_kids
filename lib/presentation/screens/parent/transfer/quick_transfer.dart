@@ -21,34 +21,34 @@ class QuickTransferPage extends GetView<QuickTransferController> {
 
   QuickTransferPage({super.key});
 
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
-    return KeyboardActionsConfig(
-      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      actions: [
-        KeyboardActionsItem(
-          focusNode: _amountNode,
-          toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: Padding(
-                  padding: EdgeInsets.all(8.w),
-                  child: Text(
-                    "Done",
-                    style: TextStyle(
-                      color: AppColors.colorPrimary,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ],
-        ),
-      ],
-    );
-  }
+  // KeyboardActionsConfig _buildConfig(BuildContext context) {
+  //   return KeyboardActionsConfig(
+  //     keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+  //     actions: [
+  //       KeyboardActionsItem(
+  //         focusNode: _amountNode,
+  //         toolbarButtons: [
+  //           (node) {
+  //             return GestureDetector(
+  //               onTap: () => node.unfocus(),
+  //               child: Padding(
+  //                 padding: EdgeInsets.all(8.w),
+  //                 child: Text(
+  //                   "Done",
+  //                   style: TextStyle(
+  //                     color: AppColors.colorPrimary,
+  //                     fontSize: 16.sp,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,213 +62,210 @@ class QuickTransferPage extends GetView<QuickTransferController> {
           await controller.analytics.backPressClicked(AnalyticsScreenNames.parentQuickTransferScreen);
         },
       ),
-      body: KeyboardActions(
-        config: _buildConfig(context),
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.background,
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.background,
+          ),
+          child: Stack(children: [
+            SvgPicture.asset(
+              Assets.parentBgCloud,
+              width: 400.w,
             ),
-            child: Stack(children: [
-              SvgPicture.asset(
-                Assets.parentBgCloud,
-                width: 400.w,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.h),
-                    Obx(() {
-                      return quickTransferChildGeneralDetailWidget(kid: controller.appState.currentKid.value);
-                    }),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20.h),
-                      child: Center(
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: 'Send ',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.h),
+                  Obx(() {
+                    return quickTransferChildGeneralDetailWidget(kid: controller.appState.currentKid.value);
+                  }),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    child: Center(
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: 'Send ',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
 
-                              color: AppColors.textHighlighted, // Default color for non-bold text
-                            ),
-                            children: [
-                              const TextSpan(
-                                text: 'or ',
-                                style: TextStyle(
-                                  color: Colors.black, // Default color for "or"
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'remove ',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-
-                                  color: AppColors.textHighlighted, // Purple color for "remove"
-                                ),
-                              ),
-                              // TextSpan(
-                              //    text: 'money\nfrom your ${controller.appState.currentKid.value}\'s account',
-                              //   style:  TextStyle(
-                              //     color: Colors.black,
-                              //     fontSize: 12.sp,
-                              //       fontWeight:FontWeight.normal
-                              //
-                              //
-                              //
-                              //     // Default color for the remaining text
-                              //   ),
-                              // ),
-                            ],
+                            color: AppColors.textPrimary, // Default color for non-bold text
                           ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Enter amount',
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    QuickTransferTextField(
-                      maxLength: 8,
-                      hintText: 0.toMoneyFormat(),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
-                      onChanged: (val) {
-                        controller.amount.value = val;
-                      },
-                      initialValue: controller.amount.value,
-                      focusNode: _amountNode,
-                      prefix: SvgPicture.asset(
-                        Assets.icCurrencyRound,
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text.rich(
-                        TextSpan(
-                          text: 'Leave a Message ', // Default text
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                fontSize: 14.h,
-                                fontWeight: FontWeight.bold,
-                              ),
                           children: [
-                            TextSpan(
-                              text: '(Optional)', // Optional in gray color
-                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                    fontSize: 14.h,
-                                    fontFamily: 'Open Sans',
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w100,
-                                  ),
+                              TextSpan(
+                              text: 'or ',
+                              style: TextStyle(
+                                color:AppColors.textPrimary,  // Default color for "or"
+                              ),
                             ),
+                            TextSpan(
+                              text: 'remove ',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+
+                                color: AppColors.textPrimary, // Purple color for "remove"
+                              ),
+                            ),
+                            // TextSpan(
+                            //    text: 'money\nfrom your ${controller.appState.currentKid.value}\'s account',
+                            //   style:  TextStyle(
+                            //     color: Colors.black,
+                            //     fontSize: 12.sp,
+                            //       fontWeight:FontWeight.normal
+                            //
+                            //
+                            //
+                            //     // Default color for the remaining text
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: 12.h),
-                    ParentTextField(
-                      titleText: "Leave a Message",
-                      hintText: "e.g Remember to save some money",
-                      keyboardType: TextInputType.name,
-                      isOptional: true,
-                      onChanged: (val) {
-                        controller.message.value = val;
-                      },
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Enter amount',
+                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 30.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Obx(() {
-                          bool hasEnoughBalance = controller.amount.value.isNotEmpty &&
-                              double.tryParse(controller.amount.value) != null &&
-                              double.parse(controller.amount.value) <= controller.appState.currentKid.value!.wallet.spendingJar.balance;
+                  ),
+                  SizedBox(height: 12.h),
+                  QuickTransferTextField(
+                    maxLength: 8,
+                    hintText: 0.toMoneyFormat(),
+                    keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
+                    onChanged: (val) {
+                      controller.amount.value = val;
+                    },
+                    initialValue: controller.amount.value,
+                    focusNode: _amountNode,
+                    prefix: SvgPicture.asset(
+                      Assets.icCurrencyRound,
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Leave a Message ', // Default text
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          fontSize: 14.h,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '(Optional)', // Optional in gray color
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              fontSize: 14.h,
+                              fontFamily: 'Open Sans',
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w100,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  ParentTextField(
+                    titleText: "Leave a Message",
+                    hintText: "e.g Remember to save some money",
+                    keyboardType: TextInputType.name,
+                    isOptional: true,
+                    onChanged: (val) {
+                      controller.message.value = val;
+                    },
+                  ),
+                  SizedBox(height: 30.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Obx(() {
+                        bool hasEnoughBalance = controller.amount.value.isNotEmpty &&
+                            double.tryParse(controller.amount.value) != null &&
+                            double.parse(controller.amount.value) <= controller.appState.currentKid.value!.wallet.spendingJar.balance;
 
-                          return AppButton(
-                            // size: Size(120, 43),
+                        return AppButton(
+                          // size: Size(120, 43),
 
-                            // size: Size(123.w, 45.h),
-                            backgroundColor: hasEnoughBalance ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                            onPressed: () async {
-                              await controller.analytics
-                                  .buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+                          // size: Size(123.w, 45.h),
+                          backgroundColor: hasEnoughBalance ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                          onPressed: () async {
+                            await controller.analytics
+                                .buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
 
-                              if (!hasEnoughBalance) {
-                                controller.amountValidation.value = 'Insufficient balance';
-                              } else {
-                                controller.removeMoney();
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Remove  ",
-                                  style: AppTextStyle.appButton,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Icon(
-                                  Icons.remove,
+                            if (!hasEnoughBalance) {
+                              controller.amountValidation.value = 'Insufficient balance';
+                            } else {
+                              controller.removeMoney();
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Remove  ",
+                                style: AppTextStyle.appButton,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.remove,
+                                size: 22,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                      Obx(() {
+                        return AppButton(
+                          // size: Size(123.w, 45.h),
+                          //  size: Size(80, 43.h),
+                          backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
+                          onPressed: () async {
+                            await controller.analytics
+                                .buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
+
+                            controller.sendMoney();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                child: Icon(
+                                  Icons.add,
                                   size: 22,
                                   color: Colors.white,
                                 ),
-                              ],
-                            ),
-                          );
-                        }),
-                        Obx(() {
-                          return AppButton(
-                            // size: Size(123.w, 45.h),
-                            //  size: Size(80, 43.h),
-                            backgroundColor: controller.amount.value.isNotEmpty ? AppColors.buttonPrimary : AppColors.buttonDisabled,
-                            onPressed: () async {
-                              await controller.analytics
-                                  .buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
-
-                              controller.sendMoney();
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 22,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Text(
-                                  "Send   ",
-                                  style: AppTextStyle.appButton,
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    )
-                  ],
-                ),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                "Send   ",
+                                style: AppTextStyle.appButton,
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  )
+                ],
               ),
-            ]),
-          ),
+            ),
+          ]),
         ),
       ),
     );

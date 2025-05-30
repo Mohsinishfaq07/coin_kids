@@ -55,8 +55,13 @@ class EditChildScreen extends GetView<EditChildController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      bottomNavigationBar:        Padding(
-        padding:   EdgeInsets.only(bottom:14.h),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom,
+          left: 20.w,
+          right: 20.w,
+          top: 2.h,
+        ),
         child: AppButton(
           size: Size(0.8.sw, 50),
           child: Text(
@@ -72,7 +77,6 @@ class EditChildScreen extends GetView<EditChildController> {
               await controller.updateKid();
             }
           },
-
         ),
       ),
 

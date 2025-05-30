@@ -162,16 +162,12 @@ class ProductDetailDialog extends StatelessWidget {
                                   KidButton(
                                     key: _addToGoalKey,
                                     onTap: () async {
-                                      // First close the product detail dialog
-
                                       await analytics.buttonClicked(AnalyticsEventNames.marketProductDetailAddToGoalClicked,
                                           AnalyticsScreenNames.kidMarketProductDetailScreenDialog, AnalyticsScreenNames.kidMarketScreen);
 
                                       showPointer.value = false;
                                       onAddToGoal();
-                                      // Then show the success dialog
                                     },
-//                                    text: 'Add to Goal ',
                                     text: 'Create Goal ',
                                     baseColor: AppColors.btnColorOrange,
                                     height: 48.w,

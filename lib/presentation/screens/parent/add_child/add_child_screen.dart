@@ -56,7 +56,12 @@ class AddChildScreen extends GetView<AddChildController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(8.h),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom,
+          left: 20.w,
+          right: 20.w,
+          top: 2.h,
+        ),
         child: AppButton(
           size: Size(0.8.sw, 50),
           child: Text(
