@@ -176,6 +176,7 @@ class KidWishlistScreen extends GetView<KidWishlistController> {
                       //  Get.back();
                       final canProceed = controller.handleAddToGoalValidation();
                       if (!canProceed) return;
+                      Get.back();
                       controller.addToGoal(item);
                     },
                   ),

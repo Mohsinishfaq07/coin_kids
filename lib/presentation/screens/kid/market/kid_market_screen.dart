@@ -207,7 +207,7 @@ class KidMarketScreen extends GetView<KidMarketController> {
 
                                                     final canProceed = controller.handleAddToGoalValidation();
                                                     if (!canProceed) return;
-
+                                                    Get.back();
                                                     controller.addToGoal(product);
                                                   },
                                                 ),

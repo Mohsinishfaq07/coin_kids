@@ -27,6 +27,8 @@ import 'package:lottie/lottie.dart';
 import '../../dialogs/common/loading_dialog.dart';
 import '../kid/kid_appbar_controller.dart';
 import '../parent/parent_market_controller.dart';
+import 'kid_base_controller.dart';
+import 'kid_goals_controller.dart';
 
 class KidMarketController extends GetxController {
   final MarketService _marketService = Get.find<MarketService>();
@@ -525,11 +527,26 @@ class KidMarketController extends GetxController {
           KidButton(
             text: 'See Goal',
             onTap: () async {
-              Get.offNamed(Routes.kidGoalDetailsScreen,
-                  arguments: goalId);
-              // Get.back(); // Close success dialog
-              // Get.until((route) => route.settings.name == Routes.kidBase);
-              // Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
+              // Close the dialog first
+              Get.back();
+              // Navigate back to kid base and switch to goals tab
+              //  Get.until((route) => route.settings.name == Routes.kidBase);
+              // Switch to goals tab (index 1)
+              final kidBaseController = Get.find<KidBaseController>();
+              kidBaseController.navigationController.selectedIndex.value = 2;
+              // Wait for the goals screen to load and refresh
+              await Future.delayed(const Duration(milliseconds: 300));
+              // Ensure goals controller is initialized and has the latest data
+              final goalsController = Get.find<KidGoalsController>();
+              final kid = _appState.currentKid.value;
+              if (kid != null) {
+                // Make sure goals are being listened to
+                goalsController.startListeningToGoals(kid.kidId);
+                // Wait a bit more for the stream to update
+                await Future.delayed(const Duration(milliseconds: 200));
+              }
+              // Then navigate to goal details
+              Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
             },
             baseColor: AppColors.btnColorGreen,
           ),

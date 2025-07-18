@@ -102,7 +102,7 @@ class CustomThemeData {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

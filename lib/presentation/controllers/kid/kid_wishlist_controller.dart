@@ -22,6 +22,9 @@ import 'package:get/get.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:lottie/lottie.dart';
 
+import 'kid_base_controller.dart';
+import 'kid_goals_controller.dart';
+
 
 class KidWishlistController extends GetxController {
   final WishlistService _wishlistService = Get.find<WishlistService>();
@@ -113,14 +116,22 @@ class KidWishlistController extends GetxController {
             KidButton(
               text: 'See Goal',
               onTap: () async {
-                // Get.back(); // Close success dialog
-                // Navigate to base screen first
-                Get.until((route) => route.settings.name == Routes.kidBase);
-                // Then navigate to goal details
-                Get.toNamed(
-                  Routes.kidGoalDetailsScreen,
-                  arguments: goalId
-                );
+                Get.back();
+                final kidBaseController = Get.find<KidBaseController>();
+                kidBaseController.navigationController.selectedIndex.value = 2;
+                // Wait for the goals screen to load and refresh
+                await Future.delayed(const Duration(milliseconds: 300));
+                // Ensure goals controller is initialized and has the latest data
+                final goalsController = Get.find<KidGoalsController>();
+                final kid = _appState.currentKid.value;
+                if (kid != null) {
+                  // Make sure goals are being listened to
+                  goalsController.startListeningToGoals(kid.kidId);
+                  // Wait a bit more for the stream to update
+                  await Future.delayed(const Duration(milliseconds: 200));
+                }
+                Get.toNamed(Routes.kidGoalDetailsScreen, arguments: goalId);
+
               },
               baseColor: AppColors.btnColorGreen,
             ),
