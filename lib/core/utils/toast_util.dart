@@ -7,7 +7,7 @@ class ToastUtil {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       backgroundColor: color ?? AppColors.colorPrimary,
       textColor: Colors.white,
       fontSize: 16.0,
@@ -19,7 +19,7 @@ class ToastUtil {
     Fluttertoast.showToast(
       msg: error,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       backgroundColor: AppColors.notificationCritical,
       textColor: Colors.white,
       fontSize: 16.0,

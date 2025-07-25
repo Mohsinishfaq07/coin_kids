@@ -5,6 +5,7 @@ import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ import 'package:get/get.dart';
 class SignupController extends GetxController {
   final _authService = Get.find<AuthService>();
   final analytics = Get.find<AnalyticsService>();
+  final roleSelectionController = Get.find<RoleSelectionController>();
 
 
   final name = ''.obs;
@@ -63,7 +65,8 @@ class SignupController extends GetxController {
       if (credential.user != null) {
         await logScreenTime(); // Log screen time before navigation
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
-        Get.offAllNamed(Routes.roleSelection);
+        // Get.offAllNamed(Routes.roleSelection);
+        roleSelectionController.finalizeRole(UserRole.child);
       }
     } catch (e) {
       ToastUtil.showExceptionToast(e);

@@ -57,10 +57,9 @@ class EditChildScreen extends GetView<EditChildController> {
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom,
+          bottom: MediaQuery.of(context).padding.bottom *1.2,
           left: 20.w,
           right: 20.w,
-          top: 2.h,
         ),
         child: AppButton(
           size: Size(0.8.sw, 50),
@@ -104,7 +103,7 @@ class EditChildScreen extends GetView<EditChildController> {
               key: _formKey,
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -125,7 +124,7 @@ class EditChildScreen extends GetView<EditChildController> {
                         );
                       }),
                       SizedBox(height: 16.h),
-                
+
                       // Child Age Field
                       Obx(() {
                         return ParentTextField(
@@ -150,22 +149,22 @@ class EditChildScreen extends GetView<EditChildController> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter child age';
                             }
-                
+
                             final intValue = int.tryParse(value);
                             if (intValue == null) {
                               return 'Please enter a valid number';
                             }
-                
+
                             if (intValue < 3 || intValue > 15) {
                               return 'Age must be between 3 to 15 years old';
                             }
-                
+
                             return null;
                           },
                         );
                       }),
                       SizedBox(height: 19.h),
-                
+
                       // Avatar Selection Title
                       Text(
                         "Select Avatar",
@@ -175,10 +174,10 @@ class EditChildScreen extends GetView<EditChildController> {
                             fontSize: 14.sp),
                       ),
                       SizedBox(height: 12.h),
-                
+
                       // Avatar Selection
                       _buildAvatarGrid(context),
-                
+
 
                     ],
                   ),
