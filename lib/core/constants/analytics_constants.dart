@@ -5,6 +5,11 @@ class AnalyticsEventNames {
   static const String splashNavigation = 'splash_navigation';
   static const String splashError = 'splash_error';
 
+  static const String goalCreatedSuccessfully = 'goal_created_successfully';
+  static const String goalCreatedFromWishlist = 'goal_created_wishlist';
+  static const String marketProductDetailAddToGoalClicked ='goal_created_store';
+
+
   // Intro/Onboarding Events
   static const String introPageView = 'intro_page_view';
   static const String introAction = 'intro_action';
@@ -133,7 +138,6 @@ class AnalyticsEventNames {
   static const String marketProductWishlistScreenClicked ='goal_progress_wishlist_navigation_clicked';
   // market detail
   static const String marketProductDetailCrossClicked ='goal_product_detail_cross_clicked';
-  static const String marketProductDetailAddToGoalClicked ='goal_product_detail_add_to_goal_clicked';
   static const String marketProductDetailAmazonCardClicked ='goal_product_detail_amazon_clicked';
   ///wishlist screen events
 

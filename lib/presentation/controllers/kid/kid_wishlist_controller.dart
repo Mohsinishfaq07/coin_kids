@@ -82,12 +82,8 @@ class KidWishlistController extends GetxController {
     }
   }
 
-  // void addToGoal(WishlistModel item) {
-  //   if (item.product != null) {
-  //   //  marketController.addToGoal(item.product!);
-  //   }
-  // }
-  // void addToGoal(MarketProductModel product) async {
+
+
     void addToGoal(WishlistModel item) async {
       showLoadingDialog("Adding to Goal");
 
@@ -101,6 +97,16 @@ class KidWishlistController extends GetxController {
         }
 
         Get.back(); // Close loading dialog
+        // Log goal created from wishlist
+        await analytics.logGoalCreatedFromWishlist(
+          goalId,
+          item.product!.name, // Goal title is the product name
+          item.product!.price, // Target amount is the product price
+          item.productId,
+          item.product!.name,
+          item.product!.price,
+          AnalyticsScreenNames.kidWishlistScreen,
+        );
 
         // Show success dialog
         await KidDialogWithCross.show(

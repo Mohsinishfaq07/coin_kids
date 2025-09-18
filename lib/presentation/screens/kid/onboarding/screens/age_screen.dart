@@ -23,7 +23,7 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
         children: [
           // Left spacer (same width as button)
           Padding(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(12.w),
             child: SizedBox(width: 120.w),
           ),
 
@@ -35,7 +35,7 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
                   "How old are you?",
                   style: AppTextStyle.headingMedium,
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 12.h),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {

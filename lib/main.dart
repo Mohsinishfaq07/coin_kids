@@ -24,6 +24,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Enable Firebase Analytics debug mode for development
+  if (kDebugMode) {
+    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+    print('🔥 FIREBASE ANALYTICS: Debug mode enabled');
+  }
 
   // Disable App Check for development
   await FirebaseAppCheck.instance.activate(

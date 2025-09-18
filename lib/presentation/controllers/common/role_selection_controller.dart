@@ -26,14 +26,56 @@ class RoleSelectionController extends GetxController {
     super.onInit();
   }
 
+  // void finalizeRole(UserRole role) async {
+  //   await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, role.name);
+  //
+  //   if (role == UserRole.parent) {
+  //     roleController.switchToParentMode(false);
+  //     await analytics.logRoleSelected(AnalyticsParameterNames.roleParent, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.parentHome );
+  //
+  //   } else if (role == UserRole.child) {
+  //     final user = _authService.user.value;
+  //     if (user == null) {
+  //       ToastUtil.showToast("Session Expired");
+  //       Get.offAllNamed(Routes.signIn);
+  //       return;
+  //     }
+  //     final isKidInDb = await _kidService.fetchKidsByParentId(user.uid);
+  //     Get.log("$isKidInDb");
+  //     if (isKidInDb.isEmpty) {
+  //       await analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.kidOnboardingNameScreen );
+  //
+  //       roleController.switchToKidOnboarding(true);
+  //     } else {
+  //       await analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.kidBaseScreen );
+  //
+  //       roleController.switchToKidMode(true);
+  //     }
+  //   }
+  // }
+
   void finalizeRole(UserRole role) async {
     await SharedPreferencesHelper.saveString(SharedPreferencesHelper.lastLoggedInRole, role.name);
 
     if (role == UserRole.parent) {
+      print('🔥 ANALYTICS: Role selected - PARENT');
       roleController.switchToParentMode(false);
-      await analytics.logRoleSelected(AnalyticsParameterNames.roleParent, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.parentHome );
 
+      // Log role selection with detailed parameters for Firebase DebugView
+      await analytics.logEvent(
+        AnalyticsEventNames.roleSelected,
+        {
+          AnalyticsParameterNames.role: AnalyticsParameterNames.roleParent,
+          AnalyticsParameterNames.screenName: AnalyticsScreenNames.roleSelection,
+          AnalyticsParameterNames.nextScreenName: AnalyticsScreenNames.parentHome,
+          'role_type': 'parent',
+          'user_action': 'role_selection',
+          AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+        },
+      );
+      print('✅ ANALYTICS: Role-selected-parent logged successfully');
     } else if (role == UserRole.child) {
+      print('🔥 ANALYTICS: Role selected - KID');
       final user = _authService.user.value;
       if (user == null) {
         ToastUtil.showToast("Session Expired");
@@ -43,14 +85,44 @@ class RoleSelectionController extends GetxController {
       final isKidInDb = await _kidService.fetchKidsByParentId(user.uid);
       Get.log("$isKidInDb");
       if (isKidInDb.isEmpty) {
-        await analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.kidOnboardingNameScreen );
+        print('📊 ANALYTICS: Kid not found in DB, navigating to video player');
 
+        // Log role selection with detailed parameters for Firebase DebugView
+        await analytics.logEvent(
+          AnalyticsEventNames.roleSelected,
+          {
+            AnalyticsParameterNames.role: AnalyticsParameterNames.roleChild,
+            AnalyticsParameterNames.screenName: AnalyticsScreenNames.roleSelection,
+            AnalyticsParameterNames.nextScreenName: AnalyticsScreenNames.signUp,
+            'role_type': 'kid_new',
+            'user_action': 'role_selection',
+            'kid_status': 'new_user',
+            AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+          },
+        );
+
+        // Navigate to video player first, then to kid onboarding
         roleController.switchToKidOnboarding(true);
       } else {
-        await analytics.logRoleSelected(AnalyticsParameterNames.roleChild, AnalyticsScreenNames.roleSelection ,AnalyticsScreenNames.kidBaseScreen );
+        print('📊 ANALYTICS: Kid found in DB, navigating to kid base screen');
+
+        // Log role selection with detailed parameters for Firebase DebugView
+        await analytics.logEvent(
+          AnalyticsEventNames.roleSelected,
+          {
+            AnalyticsParameterNames.role: AnalyticsParameterNames.roleChild,
+            AnalyticsParameterNames.screenName: AnalyticsScreenNames.roleSelection,
+            AnalyticsParameterNames.nextScreenName: AnalyticsScreenNames.kidBaseScreen,
+            'role_type': 'kid_existing',
+            'user_action': 'role_selection',
+            'kid_status': 'existing_user',
+            AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+          },
+        );
 
         roleController.switchToKidMode(true);
       }
+      print('✅ ANALYTICS: Role-selected-kid logged successfully');
     }
   }
 

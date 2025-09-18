@@ -338,6 +338,13 @@ class KidGoalsController extends GetxController {
           g.createdAt.isAfter(DateTime.now().subtract(Duration(minutes: 1))));
 
       if (createdGoal != null) {
+        // Log goal created successfully
+        await analytics.logGoalCreatedSuccessfully(
+          createdGoal.id?? "goal id",
+          createdGoal.title,
+          createdGoal.targetAmount,
+          AnalyticsScreenNames.kidGoalsScreen,
+        );
 
 
         KidDialog.show(

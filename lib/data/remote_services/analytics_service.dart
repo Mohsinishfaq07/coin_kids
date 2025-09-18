@@ -17,6 +17,51 @@ class AnalyticsService extends GetxService {
       },
     );
   }
+  Future<void> logGoalCreatedSuccessfully(String goalId, String goalTitle, double targetAmount, String screen) async {
+    print('🔥 ANALYTICS: Logging goal created successfully');
+    print('📊 Goal ID: $goalId');
+    print('📊 Goal Title: $goalTitle');
+    print('📊 Target Amount: $targetAmount');
+    print('📊 Screen: $screen');
+
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.goalCreatedSuccessfully,
+      parameters: {
+        AnalyticsParameterNames.goalId: goalId,
+        AnalyticsParameterNames.productName: goalTitle, // Using productName for goal title
+        AnalyticsParameterNames.targetAmount: targetAmount,
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+      },
+    );
+    print('✅ ANALYTICS: Goal created successfully logged');
+  }
+
+  Future<void> logGoalCreatedFromWishlist(String goalId, String goalTitle, double targetAmount, String productId, String productName, double productPrice, String screen) async {
+    print('🔥 ANALYTICS: Logging goal created from wishlist');
+    print('📊 Goal ID: $goalId');
+    print('📊 Goal Title: $goalTitle');
+    print('📊 Target Amount: $targetAmount');
+    print('📊 Product ID: $productId');
+    print('📊 Product Name: $productName');
+    print('📊 Product Price: $productPrice');
+    print('📊 Screen: $screen');
+
+    await _analytics.logEvent(
+      name: AnalyticsEventNames.goalCreatedFromWishlist,
+      parameters: {
+        AnalyticsParameterNames.goalId: goalId,
+        AnalyticsParameterNames.productName: goalTitle,
+        AnalyticsParameterNames.targetAmount: targetAmount,
+        AnalyticsParameterNames.productId: productId,
+        'wishlist_product_name': productName,
+        'wishlist_product_price': productPrice,
+        AnalyticsParameterNames.screenName: screen,
+        AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
+      },
+    );
+    print('✅ ANALYTICS: Goal created from wishlist logged');
+  }
 
   // Auth Events
   Future<void> logSignUpAttempt(String screen) async {
