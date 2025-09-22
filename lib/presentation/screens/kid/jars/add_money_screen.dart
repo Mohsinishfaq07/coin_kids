@@ -95,7 +95,7 @@ class AddMoneyScreen extends GetView<AddMoneyController> {
                           textInputAction: TextInputAction.done,
                           maxlength: 8,
                           keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          hintText: "e.g 10.50",
+                          hintText: "10.50",
                           onChange: (val) {
                             controller.amount.value = double.tryParse(val.trim()) ?? 0.0;
                           },

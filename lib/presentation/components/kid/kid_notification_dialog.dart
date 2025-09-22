@@ -278,10 +278,10 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
       case NotificationType.balanceAdded:
         iconPath = Assets.icCoinEuro;
       case NotificationType.transactionApproved:
-      iconPath = Assets.transactionApprovePng;
+      iconPath = Assets.icTrophy;
 
       case NotificationType.goalApproved:
-         iconPath = Assets.transactionApprovePng;
+         iconPath = Assets.icTrophy;
       //iconPath = Assets.icStar;
         break;
       case NotificationType.transactionRejected:

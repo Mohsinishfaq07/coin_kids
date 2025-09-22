@@ -102,8 +102,8 @@ class SignupScreen extends GetView<SignupController> {
                       ),
                       onPressed: () async {
                         try {
-                          await controller.signInWithGoogle();
-                          await controller.analytics.logSignUpSuccess("google_sign_in", "sign_up_screen");
+                          await controller.signInWithApple();
+                          await controller.analytics.logSignUpSuccess("apple_sign_in", "sign_up_screen");
                         } catch (e) {
                           Get.log("Error: $e");
                           await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");

@@ -25,6 +25,7 @@ class KidAppBarController extends GetxController {
 
   // Add this observable
   final RxBool showAddMoneyGlow = true.obs;
+  // Guard flags to avoid redundant reconfiguration
 
   @override
   void onInit() {
@@ -45,20 +46,20 @@ class KidAppBarController extends GetxController {
     }
   }
 
-  bool shouldShowRequestMoneySpotlight() {
-    if (appState.currentKid.value == null || appState.currentParent.value == null) {
-      return false;
-    }
-
-    final jarNotCreated = appState.currentKid.value!.wallet.spendingJar.color == 0;
-    final noBalance = appState.currentKid.value!.wallet.spendingJar.balance == 0;
-
-    final result = jarNotCreated && noBalance && showTotalMoneySpotlight.value;
-
-    Get.log("shouldShowRequestMoneySpotlight: $result");
-
-    return result;
-  }
+  // bool shouldShowRequestMoneySpotlight() {
+  //   if (appState.currentKid.value == null || appState.currentParent.value == null) {
+  //     return false;
+  //   }
+  //
+  //   final jarNotCreated = appState.currentKid.value!.wallet.spendingJar.color == 0;
+  //   final noBalance = appState.currentKid.value!.wallet.spendingJar.balance == 0;
+  //
+  //   final result = jarNotCreated && noBalance && showTotalMoneySpotlight.value;
+  //
+  //   Get.log("shouldShowRequestMoneySpotlight: $result");
+  //
+  //   return result;
+  // }
 
   // Configure the app bar for different screens
   void configureForHome() {

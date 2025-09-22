@@ -225,7 +225,7 @@ class DragAndDropMoneyController extends GetxController {
       KidDialog.show(
         emoji: Assets.icCoinStar,
         title: "Add More Money",
-        subtitle: "You need to add ${remainingAmount.toMoneyFormat()}€ more to create your jar",
+        subtitle: "You need to add ${remainingAmount.toMoneyFormat()} more to create your jar",
         buttons: [
           KidButton(
             text: "Continue",
@@ -266,7 +266,7 @@ class DragAndDropMoneyController extends GetxController {
           KidDialog.show(
             emoji: Assets.icCoinStar,
             title: "Add More Money",
-            subtitle: "You need to add ${remainingAmount.toMoneyFormat()}€ more",
+            subtitle: "You need to add ${remainingAmount.toMoneyFormat()} more",
             buttons: [
               KidButton(
                 text: "Continue",

@@ -17,7 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-class GoalDetailsScreen extends GetView<KidGoalsController> {
+class GoalDetailsScreen extends StatefulWidget {
   final String goalId;
 
   GoalDetailsScreen({
@@ -25,11 +25,28 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
   }) : goalId = Get.arguments;
 
   @override
-  Widget build(BuildContext context) {
+  State<GoalDetailsScreen> createState() => _GoalDetailsScreenState();
+}
+
+class _GoalDetailsScreenState extends State<GoalDetailsScreen> {
+  final KidGoalsController controller = Get.find<KidGoalsController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Defer reactive appbar config to next frame to avoid setState during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.appBarController.configureForGoalSetup();
+      // Initialize progress value once when entering the screen
+      try {
+        final goal = controller.goals.firstWhere((g) => g.id == widget.goalId);
+        controller.progressValue.value = goal.savedAmount;
+      } catch (_) {}
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: KidAppBarComponent(
@@ -44,7 +61,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
       body: KidBackground(
         child: Obx(() {
           try {
-            var goal = controller.goals.firstWhere((item) => item.id == goalId);
+            var goal = controller.goals.firstWhere((item) => item.id == widget.goalId);
             return Row(
               children: [
                 // Left side with goal card (35% width)
@@ -63,8 +80,7 @@ class GoalDetailsScreen extends GetView<KidGoalsController> {
                   child: goal.savedAmount != goal.targetAmount
                       ? GoalProgressWidget(
                           goal,
-                          key: ValueKey(
-                              'progress-${goal.id}-${DateTime.now().millisecondsSinceEpoch}'),
+                          key: ValueKey('progress-${goal.id}'),
                         )
                       : GoalTimelineWidget(goal: goal),
                 ),

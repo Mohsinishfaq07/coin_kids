@@ -170,7 +170,7 @@ class KidMarketController extends GetxController {
         return 'All Ages';
       case AgeRange.zeroToTwo:
         return '0-2 years';
-      case AgeRange.threeToFive:
+      case AgeRange. threeToFive:
         return '3-5 years';
       case AgeRange.sixToNine:
         return '6-9 years';

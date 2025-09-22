@@ -10,7 +10,6 @@ import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
 import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/goal_summary_screen.dart';
-import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,199 +18,113 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class GoalProgressWidget extends GetView<KidGoalsController> {
-  GoalProgressWidget(this.goal, {super.key}) {
-    //_checkTutorialState();
-  }
-
   final GoalModel goal;
-  final RxBool showPointer = true.obs;
-  final RxBool showDoneButtonPointer = false.obs;
-
-  Future<void> _checkTutorialState() async {
-    final hasSeenTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalProgressTutorial) ?? false;
-    final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial) ?? false;
-    showPointer.value = !hasSeenTutorial;
-    showDoneButtonPointer.value = false;
-  }
+  const GoalProgressWidget(this.goal, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.progressValue.value = goal.savedAmount;
-    });
+    // Do not reset progress here; avoid side-effects during rebuilds
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 10.h),
-      child: Stack(
-        children: [
-          Column(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(32.w, 32.h, 32.w, 10.h),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // SizedBox(height: 50.h),
-
-              SizedBox(),
-              // Slider with +/- buttons
-              Column(
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01.h,
+              ),
+              Center(
+                child: Text(
+                  'Goal Progress',
+                  style: AppTextStyle.headingMedium,
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+              ),
+              Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  Center(
-                    child: Text(
-                      'Goal Progress',
-                      style: AppTextStyle.headingMedium,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                  Row(
-                    children: [
-                      KidButton.iconOnly(
-                          size: 32.w,
-                          iconSize: 4.w,
-                          baseColor: AppColors.btnColorRed,
-                          iconPath: Assets.icMinus,
-                          onTap: () async {
-                            await controller.analytics.buttonClicked(AnalyticsEventNames.goalMinusButtonClicked,
-                                AnalyticsScreenNames.kidGoalsProgressScreen, AnalyticsScreenNames.kidGoalsScreen);
+                  Obx(
+                    () {
+                      final double sliderValue =
+                          controller.progressValue.value > goal.targetAmount ? goal.targetAmount : controller.progressValue.value;
 
-                            controller.decrementProgress(goal);
-                          }),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Obx(
-                                  () {
-                                    if (controller.progressValue.value > goal.targetAmount) {
-                                      controller.progressValue.value = goal.targetAmount;
-                                    }
-
-                                    return Stack(
-                                      key: GlobalKeys.sliderKey,
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        SfSliderTheme(
-                                          data: SfSliderThemeData(
-                                            activeTrackHeight: 15.h,
-                                            inactiveTrackHeight: 15.h,
-                                            trackCornerRadius: 50.r,
-                                            activeTrackColor: AppColors.btnColorOrange,
-                                            inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
-                                            thumbColor: Colors.transparent,
-                                            thumbRadius: 15.r,
-                                          ),
-                                          child: SfSlider(
-                                            value: controller.progressValue.value,
-                                            min: 0,
-                                            max: goal.targetAmount,
-                                            interval: goal.targetAmount / 4,
-                                            stepSize: controller.progressStep,
-                                            tooltipTextFormatterCallback: (_, text) {
-                                              return double.parse(text).toMoneyFormat();
-                                            },
-                                            labelFormatterCallback: (_, text) {
-                                              return double.parse(text).toMoneyFormat();
-                                            },
-                                            onChanged: (value) async {
-                                              // showPointer.value = false;
-                                              // SharedPreferencesHelper.saveBool(
-                                              //   SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                                              //   true,
-                                              // );
-                                              // Only show done button pointer if tutorial hasn't been seen
-                                              // final hasSeenDoneButtonTutorial = SharedPreferencesHelper.getBool(
-                                              //       SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                                              //     ) ??
-                                              //     false;
-                                              // if (!hasSeenDoneButtonTutorial) {
-                                              //   showDoneButtonPointer.value = true;
-                                              // }
-                                              await controller.analytics.buttonClicked(
-                                                  AnalyticsEventNames.goalProgressSliderClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
-
-                                              controller.updateProgress(value, goal);
-                                            },
-                                            showLabels: true,
-                                            showTicks: true,
-                                            enableTooltip: true,
-                                            showDividers: true,
-                                            shouldAlwaysShowTooltip: true,
-                                            thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          left: 18.w,
-                                          right: 0,
-                                          top: -8.h,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  Assets.icGoalYellow,
-                                                  width: 24.w,
-                                                ),
-                                                SvgPicture.asset(
-                                                  Assets.icFlagBlue,
-                                                  width: 24.w,
-                                                ),
-                                                SvgPicture.asset(
-                                                  Assets.icFlagGreen,
-                                                  width: 24.w,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                                // Obx(() {
-                                //   if (showPointer.value) {
-                                //     return Positioned(
-                                //       left: 10.w,
-                                //       bottom: -10.h,
-                                //       child: HandPointerOverlay(
-                                //         targetKey: GlobalKeys.sliderKey,
-                                //         onTap: () async {
-                                //           showPointer.value = false;
-                                //           await SharedPreferencesHelper.saveBool(
-                                //             SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-                                //             true,
-                                //           );
-                                //         },
-                                //       ),
-                                //     );
-                                //   }
-                                //   return const SizedBox.shrink();
-                                // }),
-                              ],
+                      return Stack(
+                        key: GlobalKeys.sliderKey,
+                        clipBehavior: Clip.none,
+                        children: [
+                          SfSliderTheme(
+                            data: SfSliderThemeData(
+                              activeTrackHeight: 15.h,
+                              inactiveTrackHeight: 15.h,
+                              trackCornerRadius: 50.r,
+                              activeTrackColor: AppColors.btnColorOrange,
+                              inactiveTrackColor: AppColors.btnColorOrange.withValues(alpha: 0.2),
+                              thumbColor: Colors.transparent,
+                              thumbRadius: 15.r,
                             ),
-                          ],
-                        ),
-                      ),
-                      KidButton.iconOnly(
-                        size: 32.w,
-                        iconSize: 14.w,
-                        baseColor: AppColors.btnColorGreen,
-                        iconPath: Assets.icAdd,
-                        onTap: () async {
-                          await controller.analytics
-                              .buttonClicked(AnalyticsEventNames.goalPlusButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
+                            child: SfSlider(
+                              value: sliderValue,
+                              min: 0,
+                              max: goal.targetAmount,
+                              interval: goal.targetAmount / 4,
+                              stepSize: controller.progressStep,
+                              tooltipTextFormatterCallback: (_, text) {
+                                return double.parse(text).toMoneyFormat();
+                              },
+                              labelFormatterCallback: (_, text) {
+                                return double.parse(text).toMoneyFormat();
+                              },
+                              onChanged: (value) async {
+                                await controller.analytics
+                                    .buttonClicked(AnalyticsEventNames.goalProgressSliderClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
 
-                          controller.incrementProgress(goal);
-                        },
-                      ),
-                    ],
+                                controller.updateProgress(value, goal);
+                              },
+                              showLabels: true,
+                              showTicks: true,
+                              enableTooltip: true,
+                              showDividers: true,
+                              shouldAlwaysShowTooltip: true,
+                              thumbIcon: SvgPicture.asset(Assets.icCoinEuro),
+                            ),
+                          ),
+                          Positioned(
+                            left: 18.w,
+                            right: 0,
+                            top: -8.h,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SvgPicture.asset(
+                                    Assets.icGoalYellow,
+                                    width: 24.w,
+                                  ),
+                                  SvgPicture.asset(
+                                    Assets.icFlagBlue,
+                                    width: 24.w,
+                                  ),
+                                  SvgPicture.asset(
+                                    Assets.icFlagGreen,
+                                    width: 24.w,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
-              // Spacer(),
-              // Edit and Delete buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -221,11 +134,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                         children: <Widget>[
                           KidButton.iconWithTitle(
                             size: 50,
-
                             title: "Edit",
-                            belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontSize: 16.sp,fontWeight: MyFontWeight.semiBold.fontWeight
-                            ),
+                            belowTextStyle:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16.sp, fontWeight: MyFontWeight.semiBold.fontWeight),
                             baseColor: AppColors.btnColorGreen,
                             iconPath: Assets.icEdit,
                             onTap: () async {
@@ -262,9 +173,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           KidButton.iconWithTitle(
                               size: 50,
                               title: "Delete",
-                              belowTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontSize: 16.sp,fontWeight: MyFontWeight.semiBold.fontWeight
-                              ),                              baseColor: AppColors.critical,
+                              belowTextStyle:
+                                  Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16.sp, fontWeight: MyFontWeight.semiBold.fontWeight),
+                              baseColor: AppColors.critical,
                               iconPath: Assets.icBin,
                               onTap: () async {
                                 await controller.analytics.buttonClicked(AnalyticsEventNames.goalProgressDeleteButtonClicked,
@@ -286,15 +197,9 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
                           await controller.analytics
                               .buttonClicked(AnalyticsEventNames.goalProgressDoneButtonClicked, AnalyticsScreenNames.kidGoalsProgressScreen);
 
-                          showDoneButtonPointer.value = false;
-                          await SharedPreferencesHelper.saveBool(
-                            SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                            true,
-                          );
-
                           // Get the amount to be saved (difference between new and current saved amount)
                           double amountToSave = controller.progressValue.value - goal.savedAmount;
-                          
+
                           // Check if we have sufficient balance before proceeding
                           if (amountToSave > 0 && !await controller.hasEnoughBalance(amountToSave)) {
                             KidDialog.show(
@@ -334,70 +239,18 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
 
                           // Save progress and award coins if milestone reached
                           await controller.saveProgress(goal.id!, rewardCoins: rewardCoins);
+                          controller.progressValueController.clear();
                         },
                       ),
-                      // Obx(() {
-                      //   if (showDoneButtonPointer.value) {
-                      //     return Positioned(
-                      //       right: 10.w,
-                      //       bottom: -10.h,
-                      //       child: HandPointerOverlay(
-                      //         targetKey: GlobalKeys.doneButtonKey,
-                      //         onTap: () async {
-                      //           showDoneButtonPointer.value = false;
-                      //           await SharedPreferencesHelper.saveBool(
-                      //             SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-                      //             true,
-                      //           );
-                      //         },
-                      //       ),
-                      //     );
-                      //   }
-                      //   return const SizedBox.shrink();
-                      // }),
                     ],
                   ),
                 ],
               ),
             ],
           ),
-          // Move the GestureDetector outside of the conditional and wrap it with Obx
-          // Obx(() => showPointer.value
-          //     ? Positioned.fill(
-          //         child: GestureDetector(
-          //           behavior: HitTestBehavior.translucent,
-          //           onTap: () async {
-          //             showPointer.value = false;
-          //             await SharedPreferencesHelper.saveBool(
-          //               SharedPreferencesHelper.hasSeenGoalProgressTutorial,
-          //               true,
-          //             );
-          //           },
-          //           child: Container(
-          //             color: Colors.transparent,
-          //           ),
-          //         ),
-          //       )
-          //     : const SizedBox.shrink()),
-          // Obx(() => showDoneButtonPointer.value
-          //     ? Positioned.fill(
-          //         child: GestureDetector(
-          //           behavior: HitTestBehavior.translucent,
-          //           onTap: () async {
-          //             showDoneButtonPointer.value = false;
-          //             await SharedPreferencesHelper.saveBool(
-          //               SharedPreferencesHelper.hasSeenGoalDoneButtonTutorial,
-          //               true,
-          //             );
-          //           },
-          //           child: Container(
-          //             color: Colors.transparent,
-          //           ),
-          //         ),
-          //       )
-          //     : const SizedBox.shrink()),
-        ],
-      ),
+        ),
+        Positioned(top: 105.h, left: 0.w, right: 0.w, child: AmountInputRow(key: ValueKey('amount-input-${goal.id}'), goal: goal)),
+      ],
     );
   }
 
@@ -426,6 +279,153 @@ class GoalProgressWidget extends GetView<KidGoalsController> {
           baseColor: AppColors.btnColorGreen,
           iconPath: Assets.icTick,
           iconPosition: IconPosition.left,
+        ),
+      ],
+    );
+  }
+}
+
+class AmountInputRow extends StatefulWidget {
+  final GoalModel goal;
+  const AmountInputRow({super.key, required this.goal});
+
+  @override
+  State<AmountInputRow> createState() => AmountInputRowState();
+}
+
+class AmountInputRowState extends State<AmountInputRow> {
+    KidGoalsController kidGoalController = Get.find<KidGoalsController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        KidButton.iconOnly(
+          size: 32.w,
+          iconSize: 14.w,
+          baseColor: AppColors.btnColorGreen,
+          iconPath: Assets.icAdd,
+          onTap: () async {
+            await kidGoalController.analytics.buttonClicked(
+              AnalyticsEventNames.goalPlusButtonClicked,
+              AnalyticsScreenNames.kidGoalsProgressScreen,
+            );
+            final double amount = double.tryParse(kidGoalController.progressValueController.text) ?? 0;
+            if (amount > 0) {
+              // 1) Check available funds in spending jar
+              final bool hasFunds = await kidGoalController.hasEnoughBalance(amount);
+              if (!hasFunds) {
+                Get.snackbar(
+                  'Insufficient funds',
+                  "You don't have enough money in your spending jar.",
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+                return;
+              }
+
+              // 2) Do not exceed remaining target (product price - saved)
+              final double current = kidGoalController.progressValue.value;
+              final double remaining = (widget.goal.targetAmount - current).clamp(0, widget.goal.targetAmount).toDouble();
+              if (amount > remaining) {
+                Get.snackbar(
+                  'Excessive amount',
+                  'Please enter an amount ≤ ${remaining.toStringAsFixed(2)}',
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+                return;
+              }
+
+              final next = (current + amount).clamp(0, widget.goal.targetAmount).toDouble();
+              kidGoalController.progressValue.value = next;
+              // _controller.clear();
+            }
+          },
+        ),
+        SizedBox(width: 16.w),
+        SizedBox(
+          height: 40.h,
+          width: 140.w,
+          child: TextField(
+            controller: kidGoalController.progressValueController,
+            keyboardType: TextInputType.phone,
+            textAlign: TextAlign.center,
+            textAlignVertical: TextAlignVertical.center,
+            style: AppTextStyle.headingMedium.copyWith(
+              // 👈 yahan control hoga text ka size
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+            decoration: InputDecoration(
+              hintText: "29.11",
+              hintStyle: AppTextStyle.headingMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textSecondary,
+                fontSize: 16.sp,
+              ),
+              isDense: true, // ✅ yahan adjust karo
+              contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+
+              filled: true,
+              fillColor: const Color(0xffffffff),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.r),
+                borderSide: BorderSide(
+                  color: const Color(0xFF848484),
+                  width: 1.w,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.r),
+                borderSide: BorderSide(
+                  color: const Color(0xFF848484),
+                  width: 1.w,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.r),
+                borderSide: BorderSide(
+                  color: AppColors.textPrimary,
+                  width: 1.w,
+                ),
+              ),
+            ),
+            onSubmitted: (_) {
+              // Only dismiss keyboard, do not mutate progress or clear text
+              FocusScope.of(context).unfocus();
+            },
+          ),
+        ),
+        SizedBox(width: 16.w),
+        KidButton.iconOnly(
+          size: 32.w,
+          iconSize: 4.w,
+          baseColor: AppColors.btnColorRed,
+          iconPath: Assets.icMinus,
+          onTap: () async {
+            await kidGoalController.analytics.buttonClicked(
+              AnalyticsEventNames.goalMinusButtonClicked,
+              AnalyticsScreenNames.kidGoalsProgressScreen,
+              AnalyticsScreenNames.kidGoalsScreen,
+            );
+            final double amount = double.tryParse(kidGoalController.progressValueController.text) ?? 0;
+            if (amount > 0) {
+              final double current = kidGoalController.progressValue.value;
+              if (amount > current) {
+                Get.snackbar(
+                  'Excessive amount',
+                  'You can decrease up to ${current.toStringAsFixed(2)} only.',
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+                return;
+              }
+
+              final next = (current - amount).clamp(0, widget.goal.targetAmount).toDouble();
+              kidGoalController.progressValue.value = next;
+              // _controller.clear();
+            }
+          },
         ),
       ],
     );

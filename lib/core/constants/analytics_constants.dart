@@ -147,6 +147,10 @@ class AnalyticsEventNames {
   static const String addOrRequestMoneyNextButtonClickedClicked ='wishlist_product_detail_clicked';
   static const String userLanguage ='user_language';
 
+  // Video Player Events
+  static const String videoSkipped = 'video_skipped';
+  static const String videoCompleted = 'video_completed';
+
 
 
 
@@ -173,6 +177,7 @@ class AnalyticsParameterNames {
 
   // Goals
   static const String goalId = 'goal_id';
+  static const String goalTitle = 'goal_title';
   static const String targetAmount = 'target_amount';
   static const String savedAmount = 'saved_amount';
 

@@ -35,7 +35,8 @@ class KidGoalsController extends GetxController {
   final _roleController = Get.find<RoleController>();
   final Rx<Offset?> pointerPosition = Rx<Offset?>(null);
   final analytics = Get.find<AnalyticsService>();
-  final TextEditingController textController = TextEditingController();
+  final TextEditingController progressValueController = TextEditingController();
+
 
   var sliderValue = 0.0.obs; // .obs makes it reactive
   RxBool isMinus = false.obs;
