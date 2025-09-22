@@ -40,8 +40,9 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getWidgetCenter(GlobalKeys.containerKey);
       _getWidgetCenter(GlobalKeys.moneyKey);
+      _getWidgetCenter(GlobalKeys.containerKey);
+      controller.startTutorialOnce();
     });
 
     return Scaffold(
@@ -229,27 +230,27 @@ class DragAndDropMoneyScreen extends GetView<DragAndDropMoneyController> {
             ),
           ),
 
-          // Tutorial overlays
-          Obx(() {
-            if (controller.isTutorialPlaying.value && controller.jarOffset.value.dx != 0 && controller.moneyOffset.value.dx != 0) {
-              return DragDropTutorialOverlay(
-                startPosition: controller.moneyOffset.value,
-                endPosition: controller.jarOffset.value,
-                onComplete: () => controller.endTutorial(),
-              );
-            }
-            return const SizedBox.shrink();
-          }),
-
-          // Coin tutorial overlay
+          // Coin (hand) tutorial first
           Obx(() {
             if (controller.showCoinTutorial.value) {
               return CoinTutorialOverlay(
                 targetKey: GlobalKeys.coinButtonKey,
                 onComplete: () {
                   controller.showCoinTutorial.value = false;
-                  //SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenCoinTutorial, true);
+                  controller.isTutorialPlaying.value = true; // then start drag-drop
                 },
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+
+          // Then drag-drop tutorial
+          Obx(() {
+            if (controller.isTutorialPlaying.value && controller.jarOffset.value.dx != 0 && controller.moneyOffset.value.dx != 0) {
+              return DragDropTutorialOverlay(
+                startPosition: controller.moneyOffset.value,
+                endPosition: controller.jarOffset.value,
+                onComplete: () => controller.endTutorial(),
               );
             }
             return const SizedBox.shrink();

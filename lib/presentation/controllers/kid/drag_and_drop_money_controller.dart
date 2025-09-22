@@ -61,6 +61,7 @@ class DragAndDropMoneyController extends GetxController {
   Animation<Offset>? dragAnimation;
 
   final RxBool showCoinTutorial = false.obs;
+  final RxBool tutorialInitialized = false.obs;
   DateTime? _screenStartTime;
 
 
@@ -450,13 +451,8 @@ class DragAndDropMoneyController extends GetxController {
   }
 
   Future<void> checkFirstTime() async {
-    isFirstTime.value =
-        SharedPreferencesHelper.getBool('drag_drop_tutorial_shown') ?? true;
-    if (isFirstTime.value) {
-      // Small delay to ensure screen is built
-      await Future.delayed(const Duration(milliseconds: 500));
-      showTutorial();
-    }
+    isFirstTime.value = SharedPreferencesHelper.getBool('drag_drop_tutorial_shown') ?? true;
+    // Do not start any overlay here; flow is controlled by startTutorialOnce()
   }
 
   void showTutorial() {
@@ -467,21 +463,24 @@ class DragAndDropMoneyController extends GetxController {
     isTutorialPlaying.value = false;
     await SharedPreferencesHelper.saveBool(SharedPreferencesHelper.hasSeenDragDropTutorial, false);
     isFirstTime.value = false;
-    
-    // Show coin tutorial after drag-drop tutorial completes
-    final hasSeenCoinTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenCoinTutorial) ?? false;
-    if (!hasSeenCoinTutorial) {
-      showCoinTutorial.value = true;
-    }
+    // Do NOT restart coin tutorial here; flow is hand first, then drag-drop once
+    showCoinTutorial.value = false;
   }
 
   void _initTutorialStates() async {
-    // Initialize the drag-drop tutorial state
-    final hasSeenDragDropTutorial = SharedPreferencesHelper.getBool(SharedPreferencesHelper.hasSeenDragDropTutorial) ?? false;
-    isTutorialPlaying.value = !hasSeenDragDropTutorial;
+    // Always start with both overlays off; screen will decide sequence
+    isTutorialPlaying.value = false;
+    showCoinTutorial.value = false;
+  }
 
-    // Initialize the coin tutorial state but don't show it yet
-    showCoinTutorial.value = false; // Will be shown after drag-drop tutorial completes
+  // Start tutorial sequence once per screen lifetime: hand first, then drag-drop
+  void startTutorialOnce() {
+    if (tutorialInitialized.value) return;
+    // Show hand (coin) overlay first
+    showCoinTutorial.value = true;
+    // Drag-drop overlay will be enabled by the hand overlay completion handler
+    isTutorialPlaying.value = false;
+    tutorialInitialized.value = true;
   }
 
 

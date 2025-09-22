@@ -23,6 +23,8 @@ class DragDropTutorialOverlay extends StatefulWidget {
 class _DragDropTutorialOverlayState extends State<DragDropTutorialOverlay> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _positionAnimation;
+  double _dragAccumulatedDx = 0.0;
+  bool _completed = false;
 
   @override
   void initState() {
@@ -62,8 +64,17 @@ class _DragDropTutorialOverlayState extends State<DragDropTutorialOverlay> with 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) {
-        widget.onComplete();
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragUpdate: (details) {
+        if (_completed) return;
+        _dragAccumulatedDx += details.delta.dx;
+        if (_dragAccumulatedDx.abs() > 40) {
+          _completed = true;
+          widget.onComplete();
+        }
+      },
+      onHorizontalDragEnd: (_) {
+        _dragAccumulatedDx = 0.0;
       },
       child: Stack(
         children: [
