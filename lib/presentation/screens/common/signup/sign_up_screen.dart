@@ -38,7 +38,7 @@ class SignupScreen extends GetView<SignupController> {
         }
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         appBar: ParentAppBar(
           backgroundColor: Color(0xFFCAF0FF),
           title: "Let's Get Start!",
@@ -210,122 +210,124 @@ class SignupScreen extends GetView<SignupController> {
                   ],
                   Form(
                     key: _formKey,
-                    child: Column(
-                      children: [
-                        ParentTextField(
-                          textInputAction: TextInputAction.next,
-                          hintText: 'Full Name',
-                          onChanged: (value) {
-                            controller.name.value = value.trim();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Full Name is required";
-                            }
-                            return null;
-                          },
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: ParentTextField(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ParentTextField(
                             textInputAction: TextInputAction.next,
-                            hintText: 'Email',
-                            keyboardType: TextInputType.emailAddress,
+                            hintText: 'Full Name',
                             onChanged: (value) {
-                              controller.email.value = value.trim();
+                              controller.name.value = value.trim();
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Email is required";
-                              }
-                              // Validate email format
-                              if (!GetUtils.isEmail(value)) {
-                                return "Enter a valid email address";
+                                return "Full Name is required";
                               }
                               return null;
                             },
                           ),
-                        ),
-              
-                        // PIN Input
-                        Obx(() {
-                          return ParentTextField(
-                            textInputAction: TextInputAction.next,
-                            hintText: 'Password',
-                            onChanged: (value) {
-                              controller.password.value = value.trim();
-                            },
-                            obscureText: controller.showPassword.value,
-                            suffixIconColor: AppColors.textPrimary,
-                            suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
-                            onSuffixTap: () {
-                              controller.showPassword.value = !controller.showPassword.value;
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Password is required";
-                              }
-                              return null;
-                            },
-                          );
-                        }),
-                        Obx(() {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 16.h, bottom: 36.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
                             child: ParentTextField(
-                                textInputAction: TextInputAction.done,
-                                hintText: 'Confirm Password',
-                                onChanged: (value) {
-                                  controller.confirmPassword.value = value.trim();
-                                },
-                                obscureText: controller.showPassword.value,
-                                suffixIconColor: AppColors.textPrimary,
-                                suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
-                                onSuffixTap: () {
-                                  controller.showPassword.value = !controller.showPassword.value;
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Confirm Password is required";
-                                  }
-                                  if (value != controller.password.value) {
-                                    return "Passwords do not match";
-                                  }
-                                  if (value.length < 6) {
-                                    return "Password must be at least 6 characters long";
-                                  }
-                                  return null;
-                                }),
-                          );
-                        }),
-              
-                        Center(
-                          child: AppButton(
-                            backgroundColor: AppColors.buttonPrimary,
-                            size: Size(0.8.sw, 50),
-                            child: Text(
-                              "Sign up",
-                              style: AppTextStyle.appButton,
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                try {
-                                  await controller.analytics.logSignUpAttempt("sign_up_screen");
-                                  await controller.signUpWithEmail();
-                                  await controller.analytics.logSignUpSuccess(controller.email.value, "sign_up_screen");
-                                } catch (e) {
-                                  Get.log("Error: $e");
-                                  await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                              textInputAction: TextInputAction.next,
+                              hintText: 'Email',
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: (value) {
+                                controller.email.value = value.trim();
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Email is required";
                                 }
-                              } else {
-                                await controller.analytics.logSignUpValidationFailure("sign_up_screen");
-                                Get.log("Form validation failed");
-                              }
-                            },
+                                // Validate email format
+                                if (!GetUtils.isEmail(value)) {
+                                  return "Enter a valid email address";
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 12.h),
-                      ],
+                                    
+                          // PIN Input
+                          Obx(() {
+                            return ParentTextField(
+                              textInputAction: TextInputAction.next,
+                              hintText: 'Password',
+                              onChanged: (value) {
+                                controller.password.value = value.trim();
+                              },
+                              obscureText: controller.showPassword.value,
+                              suffixIconColor: AppColors.textPrimary,
+                              suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
+                              onSuffixTap: () {
+                                controller.showPassword.value = !controller.showPassword.value;
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Password is required";
+                                }
+                                return null;
+                              },
+                            );
+                          }),
+                          Obx(() {
+                            return Padding(
+                              padding: EdgeInsets.only(top: 16.h, bottom: 36.h),
+                              child: ParentTextField(
+                                  textInputAction: TextInputAction.done,
+                                  hintText: 'Confirm Password',
+                                  onChanged: (value) {
+                                    controller.confirmPassword.value = value.trim();
+                                  },
+                                  obscureText: controller.showPassword.value,
+                                  suffixIconColor: AppColors.textPrimary,
+                                  suffixSvgPath: controller.showPassword.value ? Assets.icEyeHide : Assets.icEye,
+                                  onSuffixTap: () {
+                                    controller.showPassword.value = !controller.showPassword.value;
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Confirm Password is required";
+                                    }
+                                    if (value != controller.password.value) {
+                                      return "Passwords do not match";
+                                    }
+                                    if (value.length < 6) {
+                                      return "Password must be at least 6 characters long";
+                                    }
+                                    return null;
+                                  }),
+                            );
+                          }),
+                                    
+                          Center(
+                            child: AppButton(
+                              backgroundColor: AppColors.buttonPrimary,
+                              size: Size(0.8.sw, 50),
+                              child: Text(
+                                "Sign up",
+                                style: AppTextStyle.appButton,
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState?.validate() ?? false) {
+                                  try {
+                                    await controller.analytics.logSignUpAttempt("sign_up_screen");
+                                    await controller.signUpWithEmail();
+                                    await controller.analytics.logSignUpSuccess(controller.email.value, "sign_up_screen");
+                                  } catch (e) {
+                                    Get.log("Error: $e");
+                                    await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                                  }
+                                } else {
+                                  await controller.analytics.logSignUpValidationFailure("sign_up_screen");
+                                  Get.log("Form validation failed");
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                        ],
+                      ),
                     ),
                   ),
                   // Terms and Conditions at bottom
