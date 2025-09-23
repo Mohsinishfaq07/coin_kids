@@ -1,8 +1,6 @@
-import 'package:coin_kids/core/constants/global_keys.dart';
+import 'package:coin_kids/di/routes/app_pages.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:showcaseview/showcaseview.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 
 class KidAppBarController extends GetxController {
@@ -63,6 +61,9 @@ class KidAppBarController extends GetxController {
 
   // Configure the app bar for different screens
   void configureForHome() {
+    // Only apply when we're actually on the KidBase route
+    final route = Get.currentRoute;
+    if (route != Routes.kidBase) return;
     showBackButton.value = false;
     showProfile.value = true;
     showTitle.value = false;
@@ -156,6 +157,11 @@ class KidAppBarController extends GetxController {
   }
 
   void configureForGoalSetup() {
+    // Only apply when we're on goal-related routes to avoid late post-frame flips
+    final route = Get.currentRoute;
+    if (route != Routes.kidGoalDetailsScreen && route != Routes.kidGoalSummary) {
+      return;
+    }
     showBackButton.value = true;
     showProfile.value = false;
     showTitle.value = true;

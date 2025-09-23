@@ -8,7 +8,9 @@ import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/common/cached_network_image_widget.dart';
 import 'package:coin_kids/presentation/components/kid/kid_appbar_component.dart';
 import 'package:coin_kids/presentation/components/kid/kid_background.dart';
+import 'package:coin_kids/presentation/components/kid/kid_button.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_goals_controller.dart';
+import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_progress_widget.dart';
 import 'package:coin_kids/presentation/screens/kid/goals/widgets/goal_timeline_widget.dart'
     show GoalTimelineWidget;
@@ -45,6 +47,7 @@ class _GoalDetailsScreenState extends State<GoalDetailsScreen> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +58,8 @@ class _GoalDetailsScreenState extends State<GoalDetailsScreen> {
           await controller.analytics
               .backPressClicked(AnalyticsScreenNames.kidGoalsProgressScreen);
           Get.until((route) => route.settings.name == Routes.kidBase);
+          controller.progressValueController.clear();
+
         },
       ),
       extendBodyBehindAppBar: true,

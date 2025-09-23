@@ -1,9 +1,11 @@
 import 'package:coin_kids/core/constants/analytics_constants.dart';
+import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/local_services/shared_preferences_helper.dart';
 import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/data/remote_services/auth_service.dart';
 import 'package:coin_kids/di/routes/app_pages.dart';
+import 'package:coin_kids/presentation/controllers/common/role_selection_controller.dart';
 import 'package:coin_kids/presentation/dialogs/common/loading_dialog.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
@@ -11,6 +13,8 @@ import 'package:get/get.dart';
 class SignInController extends GetxController {
   final _authService = Get.find<AuthService>();
   final analytics = Get.find<AnalyticsService>();
+  final roleSelectionController = Get.find<RoleSelectionController>();
+
 
   final password = ''.obs;
   final email = ''.obs;
@@ -92,6 +96,32 @@ class SignInController extends GetxController {
     } catch (e) {
       // Log Google sign-in failure
       await analytics.logGoogleSignInFailure(e.toString(),"sign_in_screen");
+      ToastUtil.showExceptionToast(e);
+      Get.log(e.toString());
+    } finally {
+      isLoading.value = false;
+      Get.back();
+    }
+  }
+  Future<void> signInWithApple() async {
+    try {
+      isLoading.value = true;
+      showLoadingDialog("Signing in...");
+
+      final credential = await _authService.signInWithApple();
+
+      if (credential.user != null) {
+        await logScreenTime(); // Log screen time before navigation
+        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
+        // If user already exists, directly finalize role
+        final bool exists = await _authService.checkUserExists(credential.user!.uid);
+        if (exists) {
+          roleSelectionController.finalizeRole(UserRole.child);
+        } else {
+          Get.offAllNamed(Routes.roleSelection);
+        }
+      }
+    } catch (e) {
       ToastUtil.showExceptionToast(e);
       Get.log(e.toString());
     } finally {

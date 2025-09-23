@@ -108,7 +108,13 @@ class SignupController extends GetxController {
       if (credential.user != null) {
         await logScreenTime(); // Log screen time before navigation
         SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
-        Get.offAllNamed(Routes.roleSelection);
+        // If user already exists, directly finalize role
+        final bool exists = await _authService.checkUserExists(credential.user!.uid);
+        if (exists) {
+          roleSelectionController.finalizeRole(UserRole.child);
+        } else {
+          Get.offAllNamed(Routes.roleSelection);
+        }
       }
     } catch (e) {
       ToastUtil.showExceptionToast(e);

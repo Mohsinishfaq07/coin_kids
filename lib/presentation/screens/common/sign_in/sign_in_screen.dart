@@ -212,6 +212,86 @@ class SignInScreen extends GetView<SignInController> {
                         ),
                       ),
                     SizedBox(height: 16.h),
+                    if (Platform.isIOS) ...[
+                      Padding(
+                        padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
+                        child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
+                      ),
+                      // Google Login Button
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
+                        ),
+                        onPressed: () async {
+                          try {
+                            await controller.signInWithGoogle();
+                            await controller.analytics.logSignUpSuccess("google_sign_in", "sign_up_screen");
+                          } catch (e) {
+                            Get.log("Error: $e");
+                            await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                              child: SvgPicture.asset(Assets.icGoogle, height: 24),
+                            ),
+                            Text(
+                              "Sign in with Google",
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                            ),
+                            SizedBox.shrink()
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
+                        ),
+                        onPressed: () async {
+                          try {
+                            await controller.signInWithApple();
+                            await controller.analytics.logSignUpSuccess("apple_sign_in", "sign_up_screen");
+                          } catch (e) {
+                            Get.log("Error: $e");
+                            await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                              child: SvgPicture.asset(Assets.icApple, height: 24),
+                            ),
+                            Text(
+                              "Sign in with Apple",
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                            ),
+                            SizedBox.shrink()
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 16.h,
+                      ),
+
+
+                    ],
+
                   ],
                 ),
               ),
