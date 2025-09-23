@@ -22,6 +22,7 @@ import 'package:coin_kids/presentation/controllers/kid/kid_market_controller.dar
 import 'package:coin_kids/presentation/controllers/kid/kid_onboarding_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_transfer_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_wishlist_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/vertical_navigationbar_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/change_language_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/edit_child_controller.dart';
 import 'package:coin_kids/presentation/controllers/parent/kid_profile_controller.dart';

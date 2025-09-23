@@ -9,17 +9,15 @@ import 'package:coin_kids/data/remote_services/kid_service.dart';
 import 'package:coin_kids/data/remote_services/notification_service.dart';
 import 'package:coin_kids/generated/assets.dart';
 import 'package:coin_kids/presentation/components/kid/kid_notification_dialog.dart';
-import 'package:coin_kids/presentation/components/kid/vertical_navigation_bar.dart';
 import 'package:coin_kids/presentation/controllers/common/app_state_controller.dart';
 import 'package:coin_kids/presentation/controllers/common/role_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/jar_creation_controller.dart';
 import 'package:coin_kids/presentation/controllers/kid/kid_appbar_controller.dart';
+import 'package:coin_kids/presentation/controllers/kid/vertical_navigationbar_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:coin_kids/presentation/dialogs/kid/kid_dialog.dart';
 import 'dart:math';
 import 'package:flutter/animation.dart';
 
