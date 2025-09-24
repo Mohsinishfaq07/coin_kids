@@ -225,6 +225,7 @@ class GoalSummaryScreen extends GetView<KidGoalsController> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h),
               child: KidTextField(
+                textInputAction: TextInputAction.done,
                 maxlength: 8,
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 hintText: controller.newGoal.value.targetAmount.toString(),

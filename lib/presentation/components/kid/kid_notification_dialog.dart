@@ -271,7 +271,8 @@ class _KidNotificationDialogState extends State<KidNotificationDialog> {
 
     switch (notification.type) {
       case NotificationType.balanceRemoved:
-        iconPath = Assets.coinFlyingPng;
+       // iconPath = Assets.coinFlyingPng;
+        iconPath = Assets.icCoinEuro;
       case NotificationType.goalRejected:
         iconPath = Assets.emojiSad;
         break;

@@ -19,7 +19,6 @@ import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:math';
-import 'package:flutter/animation.dart';
 
 class KidBaseController extends GetxController {
   // Dependencies

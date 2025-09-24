@@ -35,6 +35,17 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
   Widget build(BuildContext context) {
     controller.startListeningToGoals(currentKidId);
 
+    // Auto-dismiss tutorial overlay immediately to avoid blocking first tap
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (showPointer.value) {
+        showPointer.value = false;
+        await SharedPreferencesHelper.saveBool(
+          SharedPreferencesHelper.hasSeenGoalsListInGoalScreenTutorial,
+          true,
+        );
+      }
+    });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final double screenWidth = constraints.maxWidth;
@@ -111,25 +122,8 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                   );
                 }),
               ),
-              Obx(() => controller.showPointer.value
-                  ? Positioned.fill(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTapDown: (_) async {
-                          controller.showPointer.value = false;
-                          await SharedPreferencesHelper.saveBool(
-                            SharedPreferencesHelper
-                                .hasSeenGoalsListInGoalScreenTutorial,
-                            true,
-                          );
-                        },
-                        child: Container(
-                          color: Colors
-                              .transparent, // Changed from green to transparent
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink()),
+              // Overlay auto-dismissed above; keep this as a safety no-op
+              const SizedBox.shrink(),
               // Add Goal Button
               Obx(() {
                 return Visibility(
