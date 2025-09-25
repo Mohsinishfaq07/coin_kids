@@ -263,6 +263,9 @@ class KidHomeScreen extends GetView<KidBaseController> {
                                 AnalyticsScreenNames.kidHomeScreen,
                                 AnalyticsScreenNames.parentBase,
                               );
+                              await controller.analytics.logEvent(AnalyticsEventNames.kidClickParentZoneButton, {
+                                AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidHomeScreen,
+                              });
 
                               ParentPinDialog.show(
                                 onPinSubmit: (pin) async {

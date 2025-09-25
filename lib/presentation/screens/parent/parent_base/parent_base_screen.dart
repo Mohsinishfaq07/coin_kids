@@ -224,12 +224,29 @@ class ParentBaseScreen extends GetView<ParentBaseController> {
             break;
           case 1:
             controller.analytics.logParentNotificationTabClicked(AnalyticsScreenNames.parentBase);
+            controller. analytics.logEvent(AnalyticsEventNames.parentClickMessageButton, {
+              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentBase,
+            });
+            controller. analytics.logEvent(AnalyticsEventNames.parentViewMessagePage, {
+              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentBase,
+            });
             break;
           case 2:
             controller.analytics.logParentMarketClicked(AnalyticsScreenNames.parentBase);
+            controller. analytics.logEvent(AnalyticsEventNames.parentClickShopButton, {
+              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentBase,
+            });
+            controller. analytics.logEvent(AnalyticsEventNames.parentViewShopPage, {
+              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentBase,
+            });
+
             break;
           case 3:
             controller.analytics.logSwitchToKidZoneClicked(AnalyticsScreenNames.parentBase);
+              controller.analytics.logEvent(AnalyticsEventNames.parentClickKidZone, {
+              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentBase,
+            });
+
             break;
         }
 

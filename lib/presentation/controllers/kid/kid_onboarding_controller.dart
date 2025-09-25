@@ -22,7 +22,6 @@ class KidOnboardingController extends GetxController {
   final ImagePicker _picker = ImagePicker();
   final analytics = Get.find<AnalyticsService>();
 
-
   // Step Management
   final currentStep = OnboardingStep.name.obs;
 
@@ -35,7 +34,6 @@ class KidOnboardingController extends GetxController {
   final _avatars = <String>[].obs;
   final _isLoading = false.obs;
   DateTime? _screenStartTime;
-
 
   // Getters
   String get name => _name.value;
@@ -52,7 +50,7 @@ class KidOnboardingController extends GetxController {
 
   bool get isLoading => _isLoading.value;
 
-  final ageList = ['3','4','5','6', '7', '8', '9', '10', '11', '12', '13', '14+'];
+  final ageList = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14+'];
 
   @override
   void onInit() {
@@ -175,13 +173,22 @@ class KidOnboardingController extends GetxController {
       }
 
       await kidsService
-          .createKid(name: _name.value, age: _age.value, parentId: parentId, customImagePath: _customImagePath.value, selectedAvatarUrl: _selectedAvatarUrl.value, isConnected: false)
+          .createKid(
+              name: _name.value,
+              age: _age.value,
+              parentId: parentId,
+              customImagePath: _customImagePath.value,
+              selectedAvatarUrl: _selectedAvatarUrl.value,
+              isConnected: false)
           .timeout(
         Duration(seconds: 15),
         onTimeout: () {
           throw Exception("Slow or No Internet Connection");
         },
       );
+      await analytics.logEvent(AnalyticsEventNames.kidProfileCreated, {
+        AnalyticsParameterNames.roleChild: AnalyticsParameterNames.kidProfileCreated
+      });
 
       KidDialog.show(
         emoji: Assets.icHappyStar,
@@ -217,7 +224,4 @@ class KidOnboardingController extends GetxController {
       _isLoading.value = false;
     }
   }
-
-
-
 }

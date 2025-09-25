@@ -76,8 +76,8 @@ class AnalyticsEventNames {
   static const String parentMarketTabClicked = 'parent_market_tab_clicked';
   static const String parentKidZoneTabClicked = 'parent_kid_zone_tab_clicked';
   static const String backButtonClicked = "back_button_clicked";
-  static const String sendMoneyButtonClicked = "send_button_clicked";
-  static const String removeMoneyButtonClicked= "remove_button_clicked";
+  static const String sendMoneyButtonClicked = "pt_clicked_send_money";
+  static const String removeMoneyButtonClicked= "pt_clicked_remove_money";
   static const String quickTransferButtonClicked= "quick_transfer_button_clicked";
   static const String scheduleAllowanceButtonClicked= "schedule_allowance_button_clicked";
   static const String kidEditProfileClicked= "kid_edit_profile_button_clicked";
@@ -102,9 +102,9 @@ class AnalyticsEventNames {
   static const String parentImagePickerClicked = 'parent_image_picker_clicked';
   static const String updateParentProfileClicked = 'update_parent_profile_clicked';
   //kid side
-  static const String kidHomeNavigationClicked = 'kid_home_clicked';
-  static const String kidGoalsNavigationClicked = 'kid_goals_clicked';
-  static const String kidMarketNavigationClicked = 'kid_market_clicked';
+  static const String kidHomeNavigationClicked = 'kd_clk_button_home';
+  static const String kidGoalsNavigationClicked = 'kd_clk_button_goal';
+  static const String kidMarketNavigationClicked = 'kd_clk_button_shop';
 
 
   static const String kidMoneyJarCreatedClicked = 'spending_jar_creation_clicked';
@@ -154,6 +154,43 @@ class AnalyticsEventNames {
 
 
 
+  // new events
+  static const String signupGoogle = 'signup_method_google';
+  static const String signupApple = 'signup_method_apple';
+  static const String signupForm = 'signup_form_completed';
+
+  static const String kidProfileCreated = 'kd_created_profile_successful';
+  static const String kidJarCreated = 'kd_created_jar_successful';
+  static const String kidClickHomeButton = 'kd_clk_button_home';
+  static const String kidClickGoalButton = 'kd_clk_button_goal';
+  static const String kidClickShopButton = 'kd_clk_button_shop';
+  static const String kidClickAgeButton = 'kd_enter_age';
+  static const String kidClickEnterNameButton = 'kd_enter_name';
+  static const String kidClickRequestMoney = 'kd_clk_button_request_money';
+  static const String kidClickParentZoneButton = 'kd_clk_button_parent_zone';
+
+  static const String userTypeChooseButtonParent = 'user_type_chosen_parent';
+  static const String userTypeChooseButtonKid = 'user_type_chosen_kid';
+
+  static const String parentClickQuickTransferHome = 'pt_clk_quickTransfer_home';
+  static const String parentClickQuickTransfer = 'pt_clk_quickTransfer';
+  static const String parentClickShopButton = 'pt_clk_shop_button_home';
+  static const String parentClickMessageButton = 'pt_clk_message_button_home';
+  static const String parentClickKidZone = 'pt_clk_kidZone';
+  static const String parentClickKidProfile = 'pt_clk_kid_profile';
+  static const String parentClickAffiliateLink = 'parent_clicked_affiliatelink_shop';
+   static const String kidClickGoalCreatedButton = 'kd_clk_create_goal_button';
+  static const String kidClickGoalCreatedShopButton = 'kd_clk_create_goal_button_shop';
+
+  static const String parentViewShopPage = 'pt_viewed_shop_page';
+  static const String parentViewMessagePage = 'pt_viewed_messages_page';
+  static const String parentViewKidProfilePage = 'pt_viewed_kid_profile_page';
+
+  static const String parentClickApproveGoal = 'pt_clicked_approve_goal';
+
+
+
+
 
 
 
@@ -170,8 +207,7 @@ class AnalyticsParameterNames {
   // Auth
   static const String email = 'email';
   static const String error = 'error';
-  static const String signInMethod = 'sign_in_method';
-  static const String google = "google";
+
   //user type
   static const String userType = 'user_type';
 
@@ -209,6 +245,15 @@ class AnalyticsParameterNames {
   static const String isFirstLaunch = 'is_first_launch';
   static const String userLanguage = 'user_language';
 
+// new perameters
+  static const String signInMethod = 'sign_in_method';
+  static const String signInGoogle = "google_signup";
+  static const String signInApple = "apple_signup";
+  static const String signUpFormCompleted = "form_completed_signup";
+  static const String kidProfileCreated = 'kid_profile_created';
+
+
+
 
 
 
@@ -239,10 +284,14 @@ class AnalyticsScreenNames {
 
   //kid goal screen
   static const String kidGoalsNameScreen = 'kid_goals_name_screen';
+  static const String kidNameScreen = 'kid_name_screen';
+  static const String kidAgeScreen = 'kid_age_screen';
   static const String kidGoalsAmountScreen = 'kid_goals_amount_screen';
   static const String kidGoalsImageScreen = 'kid_goals_image_screen';
   static const String kidGoalsSummaryScreen = 'kid_goals_summary_screen';
   static const String kidGoalsProgressScreen = 'kid_goals_progress_screen';
+  static const String kidGoalCreateScreen = 'kid_goals_create_screen';
+  static const String kidGoalCreateShop = 'kid_goals_create_shop';
   static const String kidNoGoalScreen = 'kid_no_goal_screen';
   static const String kidWishlistScreen = 'kid_wishlist_screen';
   static const String kidAddMoney = 'kid_add_money_screen';
@@ -274,4 +323,10 @@ class AnalyticsScreenNames {
   static const String parentChangePinScreen = 'parent_change_pin_screen';
   static const String parentChangeLanguageScreen = 'parent_change_language_screen';
   static const String parentForgotPasswordScreen = 'parent_forgot_password_screen';
+
+
+
+
+
+
 }

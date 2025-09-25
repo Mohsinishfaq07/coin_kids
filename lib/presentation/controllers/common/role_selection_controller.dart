@@ -73,6 +73,9 @@ class RoleSelectionController extends GetxController {
           AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
         },
       );
+      await analytics.logEvent(AnalyticsEventNames.userTypeChooseButtonParent, {
+        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.roleSelection,
+      });
       print('✅ ANALYTICS: Role-selected-parent logged successfully');
     } else if (role == UserRole.child) {
       print('🔥 ANALYTICS: Role selected - KID');
@@ -100,6 +103,9 @@ class RoleSelectionController extends GetxController {
             AnalyticsParameterNames.timestamp: DateTime.now().toIso8601String(),
           },
         );
+        await analytics.logEvent(AnalyticsEventNames.userTypeChooseButtonKid, {
+          AnalyticsParameterNames.roleChild: AnalyticsScreenNames.roleSelection,
+        });
 
         // Navigate to video player first, then to kid onboarding
         roleController.switchToKidOnboarding(true);

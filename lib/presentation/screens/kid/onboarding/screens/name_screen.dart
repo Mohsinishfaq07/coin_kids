@@ -62,6 +62,9 @@ class KidNameScreen extends GetView<KidOnboardingController> {
                         // Track name step completion
 
                         await controller.analytics.buttonClicked(AnalyticsEventNames.kidOnBoardingNameStepsClicked,AnalyticsScreenNames.kidOnboardingNameScreen,);
+                        controller. analytics.logEvent(AnalyticsEventNames.kidClickEnterNameButton, {
+                          AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidNameScreen
+                        });
                         controller.proceedToAge();
                       },
                       text: 'Next',

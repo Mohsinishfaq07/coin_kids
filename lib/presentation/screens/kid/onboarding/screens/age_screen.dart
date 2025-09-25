@@ -71,6 +71,9 @@ class KidAgeScreen extends GetView<KidOnboardingController> {
                 // await controller.analytics.logOnboardingStepComplete('age', parameters: {
                 //   'selected_age': controller.selectedAge.toString(),
                 // });
+                controller. analytics.logEvent(AnalyticsEventNames.kidClickAgeButton, {
+                  AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidAgeScreen
+                });
                 controller.proceedToAvatar();
               },
               text: 'Next',

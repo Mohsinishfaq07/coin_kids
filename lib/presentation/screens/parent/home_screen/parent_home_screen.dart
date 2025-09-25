@@ -252,6 +252,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                         AnalyticsScreenNames.parentHome,
                                         AnalyticsScreenNames.kidProfileScreen,
                                       );
+                                      await controller.analytics.logEvent(AnalyticsEventNames.parentClickKidProfile, {
+                                        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentHome,
+                                      });
 
                                       Get.toNamed(Routes.parentKidProfile);
                                     },
@@ -316,6 +319,9 @@ class ParentsHomeScreen extends GetView<ParentHomeController> {
                                         AnalyticsScreenNames.parentHome,
                                         AnalyticsScreenNames.kidProfileScreen,
                                       );
+                                      await controller.analytics.logEvent(AnalyticsEventNames.parentClickQuickTransferHome, {
+                                        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentHome,
+                                      });
                                       Get.toNamed(Routes.parentQuickTransfer);
                                     },
                                     size: Size(0.5.sw, 50),

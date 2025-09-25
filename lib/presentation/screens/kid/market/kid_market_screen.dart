@@ -205,10 +205,14 @@ class KidMarketScreen extends GetView<KidMarketController> {
                                                         AnalyticsScreenNames.kidMarketScreen,
                                                         AnalyticsScreenNames.kidMarketProductDetailScreenDialog);
 
+
                                                     final canProceed = controller.handleAddToGoalValidation();
                                                     if (!canProceed) return;
                                                     Get.back();
                                                     controller.addToGoal(product);
+                                                    await controller.analytics.logEvent(AnalyticsEventNames.kidClickGoalCreatedShopButton, {
+                                                      AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidGoalCreateShop,
+                                                    });
                                                   },
                                                 ),
                                                 barrierDismissible: true,

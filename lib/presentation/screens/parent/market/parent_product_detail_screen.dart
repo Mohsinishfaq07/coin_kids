@@ -1,7 +1,9 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/text_theme.dart';
 import 'package:coin_kids/core/utils/toast_util.dart';
 import 'package:coin_kids/data/models/market_product_model.dart';
+import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:coin_kids/generated_assets/assets.dart';
 import 'package:coin_kids/presentation/components/parent/parent_app_bar.dart';
 import 'package:coin_kids/presentation/dialogs/kid/parent_pin_dialog.dart';
@@ -119,7 +121,12 @@ class ParentProductDetailScreen extends StatelessWidget {
 
                           );
                           Get.back();
+                          final analytics = Get.find<AnalyticsService>();
+                          await analytics.logEvent(AnalyticsEventNames.parentClickAffiliateLink, {
+                            AnalyticsParameterNames.roleParent: AnalyticsScreenNames.productDetailScreen,
+                          });
                         await   _launchProductUrl();
+
 
                         } else {
                           Fluttertoast.showToast(

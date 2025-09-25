@@ -1,3 +1,4 @@
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/enums.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/widgets/orientation_transition.dart';
@@ -18,7 +19,6 @@ import 'package:coin_kids/core/constants/global_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:coin_kids/core/utils/toast_util.dart';
 
 class KidBaseScreen extends GetView<KidBaseController> {
   const KidBaseScreen({super.key});
@@ -100,7 +100,7 @@ class KidBaseScreen extends GetView<KidBaseController> {
                       //         // : AmountAdditionMode.addMoney,
                       //   );
                       // },
-                      onAddMoneyTap: () {
+                      onAddMoneyTap: ()async {
                         final isConnected =
                             controller.appState.currentKid.value!.isConnected;
                         Get.toNamed(
@@ -109,7 +109,11 @@ class KidBaseScreen extends GetView<KidBaseController> {
                                 ? AmountAdditionMode.requestMoney
                                 : AmountAdditionMode.requestMoney
                           // : AmountAdditionMode.addMoney,
+
                         );
+                        await controller.analytics.logEvent(AnalyticsEventNames.kidClickRequestMoney, {
+                          AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidHomeScreen,
+                        });
                       },
                     ),
                     SizedBox(height: 10.h),

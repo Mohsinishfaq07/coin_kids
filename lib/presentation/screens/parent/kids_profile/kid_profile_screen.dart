@@ -50,7 +50,11 @@ class KidProfileScreen extends GetView<KidProfileController> {
                     iconPath: Assets.icTransfer,
                     onTap: () async {
                       await controller.analytics.buttonClicked(AnalyticsEventNames.quickTransferButtonClicked, AnalyticsScreenNames.kidProfileScreen,AnalyticsScreenNames.parentQuickTransferScreen);
+                      await controller.analytics.logEvent(AnalyticsEventNames.parentClickQuickTransfer, {
+                        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentQuickTransferScreen,
+                      });
                       Get.toNamed(Routes.parentQuickTransfer);
+
                     },
                     baseColor: AppColors.colorPrimary,
                     iconSize: 28.w,

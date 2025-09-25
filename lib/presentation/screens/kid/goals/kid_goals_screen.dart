@@ -139,6 +139,9 @@ class KidGoalsScreen extends GetView<KidGoalsController> {
                             AnalyticsEventNames.goalNameScreenClicked,
                             AnalyticsScreenNames.kidGoalsScreen,
                             AnalyticsScreenNames.kidGoalsNameScreen);
+                        await controller.analytics.logEvent(AnalyticsEventNames.kidClickGoalCreatedButton, {
+                          AnalyticsParameterNames.roleChild: AnalyticsScreenNames.kidGoalCreateScreen,
+                        });
 
                         // Reset the controller state for a new goal
                         controller.screenMode.value =

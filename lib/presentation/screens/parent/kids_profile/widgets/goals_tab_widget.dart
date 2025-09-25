@@ -65,6 +65,9 @@ class GoalsTabWidget extends GetView<KidProfileController> {
                     ? () async {
                         await controller.analytics.buttonClicked(AnalyticsEventNames.goalApproveClicked, AnalyticsScreenNames.kidProfileScreen);
                         controller.handleApproveGoal(goalData);
+                        controller.analytics.logEvent(AnalyticsEventNames.parentClickApproveGoal, {
+                          AnalyticsParameterNames.roleParent: AnalyticsScreenNames.kidProfileScreen,
+                        });
                       }
                     : null,
               );

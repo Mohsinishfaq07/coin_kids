@@ -199,7 +199,9 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                           onPressed: () async {
                             await controller.analytics
                                 .buttonClicked(AnalyticsEventNames.removeMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
-
+                            await controller.analytics.logEvent(AnalyticsEventNames.removeMoneyButtonClicked, {
+                              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentQuickTransferScreen,
+                            });
                             if (!hasEnoughBalance) {
                               controller.amountValidation.value = 'Insufficient balance';
                             } else {
@@ -234,7 +236,9 @@ class QuickTransferPage extends GetView<QuickTransferController> {
                           onPressed: () async {
                             await controller.analytics
                                 .buttonClicked(AnalyticsEventNames.sendMoneyButtonClicked, AnalyticsScreenNames.parentQuickTransferScreen);
-
+                            await controller.analytics.logEvent(AnalyticsEventNames.sendMoneyButtonClicked, {
+                              AnalyticsParameterNames.roleParent: AnalyticsScreenNames.parentQuickTransferScreen,
+                            });
                             controller.sendMoney();
                           },
                           child: Row(

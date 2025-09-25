@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coin_kids/core/constants/analytics_constants.dart';
 import 'package:coin_kids/core/constants/constants.dart';
 import 'package:coin_kids/core/theme/color_theme.dart';
 import 'package:coin_kids/core/theme/light_theme.dart';
@@ -68,7 +69,10 @@ class SignupScreen extends GetView<SignupController> {
                       onPressed: () async {
                         try {
                           await controller.signInWithGoogle();
-                          await controller.analytics.logSignUpSuccess("google_sign_in", "sign_up_screen");
+                          // await controller.analytics.logSignUpSuccess("signup_google", "sign_up_screen");
+                          await controller.analytics.logEvent(AnalyticsEventNames.signupGoogle, {
+                            AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInGoogle,
+                          });
                         } catch (e) {
                           Get.log("Error: $e");
                           await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
@@ -103,7 +107,10 @@ class SignupScreen extends GetView<SignupController> {
                       onPressed: () async {
                         try {
                           await controller.signInWithApple();
-                          await controller.analytics.logSignUpSuccess("apple_sign_in", "sign_up_screen");
+                          await controller.analytics.logSignUpSuccess("Signup_apple", "sign_up_screen");
+                          await controller.analytics.logEvent(AnalyticsEventNames.signupApple, {
+                            AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInApple,
+                          });
                         } catch (e) {
                           Get.log("Error: $e");
                           await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
@@ -162,7 +169,11 @@ class SignupScreen extends GetView<SignupController> {
                       onPressed: () async {
                         try {
                           await controller.signInWithGoogle();
-                          await controller.analytics.logSignUpSuccess("google_sign_in", "sign_up_screen");
+
+                          await controller.analytics.logSignUpSuccess("signup_google", "sign_up_screen");
+                          await controller.analytics.logEvent(AnalyticsEventNames.signupGoogle, {
+                            AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInGoogle,
+                          });
                         } catch (e) {
                           Get.log("Error: $e");
                           await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
@@ -247,7 +258,7 @@ class SignupScreen extends GetView<SignupController> {
                               },
                             ),
                           ),
-                                    
+
                           // PIN Input
                           Obx(() {
                             return ParentTextField(
@@ -299,7 +310,7 @@ class SignupScreen extends GetView<SignupController> {
                                   }),
                             );
                           }),
-                                    
+
                           Center(
                             child: AppButton(
                               backgroundColor: AppColors.buttonPrimary,
@@ -311,9 +322,14 @@ class SignupScreen extends GetView<SignupController> {
                               onPressed: () async {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   try {
-                                    await controller.analytics.logSignUpAttempt("sign_up_screen");
+                                    // await controller.analytics.logSignUpAttempt("sign_up_screen");
+                                    // await controller.analytics.logSignUpSuccess("signup_form_complete", "sign_up_screen");
+
                                     await controller.signUpWithEmail();
-                                    await controller.analytics.logSignUpSuccess(controller.email.value, "sign_up_screen");
+                                    // await controller.analytics.logSignUpSuccess(controller.email.value, "sign_up_screen");
+                                    await controller.analytics.logEvent(AnalyticsEventNames.signupForm, {
+                                      AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signUpFormCompleted,
+                                    });
                                   } catch (e) {
                                     Get.log("Error: $e");
                                     await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");

@@ -54,14 +54,23 @@ class VerticalNavBarController extends GetxController {
 
   Future<void> onTabSelected(int index) async {
     selectedIndex.value = index;
+    await analytics.logEvent(AnalyticsEventNames.kidClickHomeButton, {
+      AnalyticsParameterNames.roleParent: AnalyticsScreenNames.kidHomeScreen,
+    });
     if (index == 1) {
       _initializeGoalsIfNeeded();
       completeGoalsTutorial();
       await analytics.buttonClicked(AnalyticsEventNames.kidGoalsNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
+      await analytics.logEvent(AnalyticsEventNames.kidClickGoalButton, {
+        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.kidHomeScreen,
+      });
       appBarController.configureForHome();
     } else if (index == 2) {
       appBarController.configureForMarket();
       await analytics.buttonClicked(AnalyticsEventNames.kidMarketNavigationClicked,AnalyticsScreenNames.kidBaseScreen);
+      await analytics.logEvent(AnalyticsEventNames.kidClickShopButton, {
+        AnalyticsParameterNames.roleParent: AnalyticsScreenNames.kidHomeScreen,
+      });
 
     } else {
       appBarController.configureForHome();

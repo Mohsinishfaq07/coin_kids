@@ -263,6 +263,10 @@ class DragAndDropMoneyController extends GetxController {
           jarCreationController.kidService.updateSpendingJar(
               kid.kidId, finalBalance,
               color: jarCreationController.colors[jarCreationController.selectedColorIndex.value].value);
+
+          await analytics.logEvent(AnalyticsEventNames.kidJarCreated, {
+            AnalyticsParameterNames.roleChild: AnalyticsScreenNames.addOrRequestMoney,
+          });
         } else {
           KidDialog.show(
             emoji: Assets.icCoinStar,

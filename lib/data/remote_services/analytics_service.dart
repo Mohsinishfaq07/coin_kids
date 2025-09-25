@@ -234,11 +234,11 @@ class AnalyticsService extends GetxService {
   }
 
   Future<void> logGoogleSignInSuccess(String screen, String userType) async {
-    await _analytics.logSignUp(signUpMethod: AnalyticsParameterNames.google);
+    await _analytics.logSignUp(signUpMethod: AnalyticsParameterNames.signInGoogle);
     await _analytics.logEvent(
       name: AnalyticsEventNames.signInSuccess,
       parameters: {
-        AnalyticsParameterNames.signInMethod: AnalyticsParameterNames.google,
+        AnalyticsParameterNames.signInMethod: AnalyticsParameterNames.signInGoogle,
         AnalyticsParameterNames.screenName: screen,
         AnalyticsParameterNames.userType: userType
       },
