@@ -70,10 +70,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>com.apple.developer.applesignin</key>
+	<!-- <key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
-	</array>
+	</array> -->
 	<key>FirebaseAppCheckEnabled</key>
 	<true/>
 	<key>FirebaseAppCheckDebugEnabled</key>

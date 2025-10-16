@@ -156,7 +156,7 @@ class AnalyticsEventNames {
 
   // new events
   static const String signupGoogle = 'signup_method_google';
-  static const String signupApple = 'signup_method_apple';
+  // static const String signupApple = 'signup_method_apple';
   static const String signupForm = 'signup_form_completed';
 
   static const String kidProfileCreated = 'kd_created_profile_successful';
@@ -248,7 +248,7 @@ class AnalyticsParameterNames {
 // new perameters
   static const String signInMethod = 'sign_in_method';
   static const String signInGoogle = "google_signup";
-  static const String signInApple = "apple_signup";
+  // static const String signInApple = "apple_signup";
   static const String signUpFormCompleted = "form_completed_signup";
   static const String kidProfileCreated = 'kid_profile_created';
 

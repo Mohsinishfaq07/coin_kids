@@ -103,31 +103,31 @@ class SignInController extends GetxController {
       Get.back();
     }
   }
-  Future<void> signInWithApple() async {
-    try {
-      isLoading.value = true;
-      showLoadingDialog("Signing in...");
-
-      final credential = await _authService.signInWithApple();
-
-      if (credential.user != null) {
-        await logScreenTime(); // Log screen time before navigation
-        SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
-        // If user already exists, directly finalize role
-        final bool exists = await _authService.checkUserExists(credential.user!.uid);
-        if (exists) {
-          roleSelectionController.finalizeRole(UserRole.child);
-        } else {
-          Get.offAllNamed(Routes.roleSelection);
-        }
-      }
-    } catch (e) {
-      ToastUtil.showExceptionToast(e);
-      Get.log(e.toString());
-    } finally {
-      isLoading.value = false;
-      Get.back();
-    }
-  }
+  // Future<void> signInWithApple() async {
+  //   try {
+  //     isLoading.value = true;
+  //     showLoadingDialog("Signing in...");
+  //
+  //     final credential = await _authService.signInWithApple();
+  //
+  //     if (credential.user != null) {
+  //       await logScreenTime(); // Log screen time before navigation
+  //       SharedPreferencesHelper.saveBool(SharedPreferencesHelper.isEverLoggedIn, true);
+  //       // If user already exists, directly finalize role
+  //       final bool exists = await _authService.checkUserExists(credential.user!.uid);
+  //       if (exists) {
+  //         roleSelectionController.finalizeRole(UserRole.child);
+  //       } else {
+  //         Get.offAllNamed(Routes.roleSelection);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     ToastUtil.showExceptionToast(e);
+  //     Get.log(e.toString());
+  //   } finally {
+  //     isLoading.value = false;
+  //     Get.back();
+  //   }
+  // }
 
 }

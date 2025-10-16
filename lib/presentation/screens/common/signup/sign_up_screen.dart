@@ -56,106 +56,7 @@ class SignupScreen extends GetView<SignupController> {
               child: Column(
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  if (Platform.isIOS) ...[
-                    // Google Login Button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
-                      ),
-                      onPressed: () async {
-                        try {
-                          await controller.signInWithGoogle();
-                          // await controller.analytics.logSignUpSuccess("signup_google", "sign_up_screen");
-                          await controller.analytics.logEvent(AnalyticsEventNames.signupGoogle, {
-                            AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInGoogle,
-                          });
-                        } catch (e) {
-                          Get.log("Error: $e");
-                          await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                            child: SvgPicture.asset(Assets.icGoogle, height: 24),
-                          ),
-                          Text(
-                            "Sign in with Google",
-                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                          ),
-                          SizedBox.shrink()
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16.h,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
-                      ),
-                      onPressed: () async {
-                        try {
-                          await controller.signInWithApple();
-                          await controller.analytics.logSignUpSuccess("Signup_apple", "sign_up_screen");
-                          await controller.analytics.logEvent(AnalyticsEventNames.signupApple, {
-                            AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInApple,
-                          });
-                        } catch (e) {
-                          Get.log("Error: $e");
-                          await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 10.w, left: 10.w),
-                            child: SvgPicture.asset(Assets.icApple, height: 24),
-                          ),
-                          Text(
-                            "Sign in with Apple",
-                            style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
-                          ),
-                          SizedBox.shrink()
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account? ",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.textPrimary, fontSize: 12.sp),
-                        ),
-                        GestureDetector(
-                            onTap: () {
-                              Get.offNamed(Routes.signIn);
-                            },
-                            child: Text(
-                              "LOGIN",
-                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp, color: AppColors.buttonPrimary),
-                            )),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 16.h, bottom: 16.h),
-                      child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
-                    ),
-                  ],
+
                   if (Platform.isAndroid) ...[
                     // Google Login Button
                     ElevatedButton(
@@ -347,7 +248,108 @@ class SignupScreen extends GetView<SignupController> {
                     ),
                   ),
                   // Terms and Conditions at bottom
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              //    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  if (Platform.isIOS) ...[
+                    // Google Login Button
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.red,
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //     fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
+                    //   ),
+                    //   onPressed: () async {
+                    //     try {
+                    //       await controller.signInWithGoogle();
+                    //       // await controller.analytics.logSignUpSuccess("signup_google", "sign_up_screen");
+                    //       await controller.analytics.logEvent(AnalyticsEventNames.signupGoogle, {
+                    //         AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInGoogle,
+                    //       });
+                    //     } catch (e) {
+                    //       Get.log("Error: $e");
+                    //       await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                    //     }
+                    //   },
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       Padding(
+                    //         padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                    //         child: SvgPicture.asset(Assets.icGoogle, height: 24),
+                    //       ),
+                    //       Text(
+                    //         "Sign in with Google",
+                    //         style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                    //       ),
+                    //       SizedBox.shrink()
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 16.h,
+                    // ),
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.black,
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //     fixedSize: Size(screenWidth * 0.84, 50), // Responsive width
+                    //   ),
+                    //   onPressed: () async {
+                    //     try {
+                    //       await controller.signInWithApple();
+                    //       await controller.analytics.logSignUpSuccess("Signup_apple", "sign_up_screen");
+                    //       await controller.analytics.logEvent(AnalyticsEventNames.signupApple, {
+                    //         AnalyticsParameterNames.roleParent: AnalyticsParameterNames.signInApple,
+                    //       });
+                    //     } catch (e) {
+                    //       Get.log("Error: $e");
+                    //       await controller.analytics.logSignUpFailure(e.toString(), "sign_up_screen");
+                    //     }
+                    //   },
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       Padding(
+                    //         padding: EdgeInsets.only(right: 10.w, left: 10.w),
+                    //         child: SvgPicture.asset(Assets.icApple, height: 24),
+                    //       ),
+                    //       Text(
+                    //         "Sign in with Apple",
+                    //         style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp),
+                    //       ),
+                    //       SizedBox.shrink()
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
+                    //   child: Text("OR", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54, fontWeight: FontWeight.w800)),
+                    // ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account? ",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.textPrimary, fontSize: 12.sp),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              Get.offNamed(Routes.signIn);
+                            },
+                            child: Text(
+                              "LOGIN",
+                              style: AppTextStyle.labelLarge.copyWith(fontSize: 14.sp, color: AppColors.buttonPrimary),
+                            )),
+                      ],
+                    ),
+
+                  ],
+
+                //  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
                     child: RichText(

@@ -6,7 +6,7 @@ import 'package:coin_kids/data/remote_services/analytics_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'parent_service.dart';
@@ -164,55 +164,55 @@ class AuthService extends GetxController {
   }
 
   // Apple Sign In
-  Future<UserCredential> signInWithApple() async {
-    try {
-      final isAvailable = await SignInWithApple.isAvailable();
-
-      if (!isAvailable) {
-        throw Exception('Apple Sign In is not available on this device');
-      }
-
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-
-      // Sign in to Firebase
-      final UserCredential userCredential = await _auth.signInWithCredential(oauthCredential);
-
-      // Update user stream immediately
-      user.value = userCredential.user;
-
-      // If this is a new user, create parent document
-      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
-        final String? email = userCredential.user?.email;
-        final String name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
-
-        final parent = ParentModel(
-          id: userCredential.user!.uid,
-          email: email ?? '',
-          password: '',
-          name: name.isEmpty ? 'Apple User' : name,
-          createdAt: DateTime.now(),
-          dob: 0,
-          gender: '',
-        );
-
-        await _parentService.createParent(parent);
-      }
-
-      return userCredential;
-    } catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
+  // Future<UserCredential> signInWithApple() async {
+  //   try {
+  //     final isAvailable = await SignInWithApple.isAvailable();
+  //
+  //     if (!isAvailable) {
+  //       throw Exception('Apple Sign In is not available on this device');
+  //     }
+  //
+  //     final appleCredential = await SignInWithApple.getAppleIDCredential(
+  //       scopes: [
+  //         AppleIDAuthorizationScopes.email,
+  //         AppleIDAuthorizationScopes.fullName,
+  //       ],
+  //     );
+  //
+  //     final oauthCredential = OAuthProvider("apple.com").credential(
+  //       idToken: appleCredential.identityToken,
+  //       accessToken: appleCredential.authorizationCode,
+  //     );
+  //
+  //     // Sign in to Firebase
+  //     final UserCredential userCredential = await _auth.signInWithCredential(oauthCredential);
+  //
+  //     // Update user stream immediately
+  //     user.value = userCredential.user;
+  //
+  //     // If this is a new user, create parent document
+  //     if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+  //       final String? email = userCredential.user?.email;
+  //       final String name = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
+  //
+  //       final parent = ParentModel(
+  //         id: userCredential.user!.uid,
+  //         email: email ?? '',
+  //         password: '',
+  //         name: name.isEmpty ? 'Apple User' : name,
+  //         createdAt: DateTime.now(),
+  //         dob: 0,
+  //         gender: '',
+  //       );
+  //
+  //       await _parentService.createParent(parent);
+  //     }
+  //
+  //     return userCredential;
+  //   } catch (e) {
+  //     throw _handleAuthException(e);
+  //   }
+  // }
 
   // Handle auth state changes
   void handleAuthChanged(User? firebaseUser) async {
